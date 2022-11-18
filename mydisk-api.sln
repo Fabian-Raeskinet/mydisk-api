@@ -3,9 +3,54 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4985AA99-1619-45B8-AA07-4E99D91ACAB7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Api", "src\MyDisk.Api\MyDisk.Api.csproj", "{72E993AC-7BD6-41D0-922F-EC66A0EF9F46}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Domain", "src\MyDisk.Domain\MyDisk.Domain.csproj", "{93CEA3DD-C019-483B-A716-CBB8457F60A9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Infrastructure", "src\MyDisk.Infrastructure\MyDisk.Infrastructure.csproj", "{4072E9AF-8C96-4200-8237-157D2F93DC9C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Services", "src\MyDisk.Services\MyDisk.Services.csproj", "{02A63BAA-E5DC-47FC-B347-9C03D0CA224C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Conf", "src\MyDisk.Conf\MyDisk.Conf.csproj", "{613627DF-08B4-4CD6-8A1E-59532AC9DA87}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{72E993AC-7BD6-41D0-922F-EC66A0EF9F46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72E993AC-7BD6-41D0-922F-EC66A0EF9F46}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72E993AC-7BD6-41D0-922F-EC66A0EF9F46}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72E993AC-7BD6-41D0-922F-EC66A0EF9F46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93CEA3DD-C019-483B-A716-CBB8457F60A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93CEA3DD-C019-483B-A716-CBB8457F60A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93CEA3DD-C019-483B-A716-CBB8457F60A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93CEA3DD-C019-483B-A716-CBB8457F60A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4072E9AF-8C96-4200-8237-157D2F93DC9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4072E9AF-8C96-4200-8237-157D2F93DC9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4072E9AF-8C96-4200-8237-157D2F93DC9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4072E9AF-8C96-4200-8237-157D2F93DC9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02A63BAA-E5DC-47FC-B347-9C03D0CA224C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02A63BAA-E5DC-47FC-B347-9C03D0CA224C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02A63BAA-E5DC-47FC-B347-9C03D0CA224C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02A63BAA-E5DC-47FC-B347-9C03D0CA224C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{613627DF-08B4-4CD6-8A1E-59532AC9DA87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{613627DF-08B4-4CD6-8A1E-59532AC9DA87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{613627DF-08B4-4CD6-8A1E-59532AC9DA87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{613627DF-08B4-4CD6-8A1E-59532AC9DA87}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{72E993AC-7BD6-41D0-922F-EC66A0EF9F46} = {4985AA99-1619-45B8-AA07-4E99D91ACAB7}
+		{93CEA3DD-C019-483B-A716-CBB8457F60A9} = {4985AA99-1619-45B8-AA07-4E99D91ACAB7}
+		{4072E9AF-8C96-4200-8237-157D2F93DC9C} = {4985AA99-1619-45B8-AA07-4E99D91ACAB7}
+		{02A63BAA-E5DC-47FC-B347-9C03D0CA224C} = {4985AA99-1619-45B8-AA07-4E99D91ACAB7}
+		{613627DF-08B4-4CD6-8A1E-59532AC9DA87} = {4985AA99-1619-45B8-AA07-4E99D91ACAB7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CDEBD79A-8B81-483D-9476-808386234780}
