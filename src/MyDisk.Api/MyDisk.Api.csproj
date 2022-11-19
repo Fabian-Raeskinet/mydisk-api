@@ -7,11 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\MyDisk.Conf\MyDisk.Conf.csproj" />
+    <ProjectReference Include="..\MyDisk.Domain\MyDisk.Domain.csproj" />
+    <ProjectReference Include="..\MyDisk.Services\MyDisk.Services.csproj" />
   </ItemGroup>
 
 </Project>

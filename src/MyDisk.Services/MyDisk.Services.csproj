@@ -6,4 +6,14 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="11.0.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MyDisk.Domain\MyDisk.Domain.csproj" />
+    <ProjectReference Include="..\MyDisk.Infrastructure\MyDisk.Infrastructure.csproj" />
+  </ItemGroup>
+
 </Project>
