@@ -14,5 +14,14 @@ namespace MyDisk.Api.Controllers
             var result = _mediator.Send(command);
             return result.Result != null ? Ok(result.Result) : BadRequest();
         }
+
+        [HttpPost]
+        [Route("attach-author")]
+        [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
+        public async Task<IActionResult> AttachAuthor([FromBody] AttachAuthorCommand command)
+        {
+            var result = _mediator.Send(command);
+            return result.Result != null ? Ok(result.Result) : BadRequest();
+        }
     }
 }

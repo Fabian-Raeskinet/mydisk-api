@@ -6,12 +6,11 @@ namespace MyDisk.Services.Disks.Command
 {
     public class CreateDiskCommand : IRequest<Guid>
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public DateTime ReleaseDate { get; set; }
-        public string? Author { get; set; }
     }
 
-    public class CreateDiskCommandHandler : IRequestHandler<CreateDiskCommand, Guid>
+    public class Hadnler : IRequestHandler<CreateDiskCommand, Guid>
     {
         public async Task<Guid> Handle(CreateDiskCommand request, CancellationToken cancellationToken)
         {
@@ -20,11 +19,10 @@ namespace MyDisk.Services.Disks.Command
                 Id = Guid.NewGuid(),
                 Name = request.Name,
                 ReleaseDate = request.ReleaseDate,
-                Author = request.Author,
                 CreatedDateTime = DateTime.Now
             };
 
-            StaticContent.ContextData.Add(entity);
+            StaticContent.DiskData.Add(entity);
 
             return entity.Id;
         }

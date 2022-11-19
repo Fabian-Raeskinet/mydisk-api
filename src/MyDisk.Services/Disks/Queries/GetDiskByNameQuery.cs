@@ -1,6 +1,8 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using MyDisk.Domain.Models;
 using MyDisk.Infrastructure.Persistence;
+using MyDisk.Services.Authors.DTOs;
 using MyDisk.Services.Disks.DTOs;
 
 namespace MyDisk.Services.Disks.Queries
@@ -10,18 +12,21 @@ namespace MyDisk.Services.Disks.Queries
         public string? Name { get; set; }
     }
 
-    public class GetDiskByNameHandler : IRequestHandler<GetDiskByNameQuery, DiskResponse>
+    public class Handler : IRequestHandler<GetDiskByNameQuery, DiskResponse>
     {
-        public async Task<DiskResponse?> Handle(GetDiskByNameQuery request, CancellationToken cancellationToken)
+        private readonly IMapper _mapper;
+        public Handler(IMapper mapper)
         {
-            var data = StaticContent.ContextData.Where(d => d.Name == request.Name).FirstOrDefault();
+            _mapper = mapper;
+        }
+
+
+        public async Task<DiskResponse?>? Handle(GetDiskByNameQuery request, CancellationToken cancellationToken)
+        {
+            var data = StaticContent.DiskData.Where(d => d.Name == request.Name).FirstOrDefault();
             if (data != null)
             {
-                return new DiskResponse { 
-                    Name = data.Name,
-                    Author = data.Author,
-                    ReleaseDate = data.ReleaseDate 
-                };
+                return _mapper.Map<DiskResponse>(data);
             }
             return null;
         }

@@ -14,7 +14,7 @@ namespace MyDisk.Services.Disks.Queries
 
         public async Task<List<Disk>> Handle(GetDisksQuery request, CancellationToken cancellationToken)
         {
-            return StaticContent.ContextData;
+            return StaticContent.DiskData;
         }
     }
 }

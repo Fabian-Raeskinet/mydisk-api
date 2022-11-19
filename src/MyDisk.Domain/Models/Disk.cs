@@ -7,6 +7,6 @@
         public DateTime CreatedDateTime { get; set; }
         public DateTime? ReleaseDate { get; set; }
         public string? ImageUrl { get; set; }
-        public string? Author { get; set; }
+        public Author? Author { get; set; }
     }
 }
