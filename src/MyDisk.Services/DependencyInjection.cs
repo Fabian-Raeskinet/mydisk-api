@@ -25,7 +25,6 @@ namespace MyDisk.Services
         {
             services.AddMediatR(typeof(GetAllDisksQueryHandler).Assembly);
             services.AddValidatorsFromAssemblyContaining<GetDiskByNameRequestValidator>();
-            //services.AddSingleton(typeof(IPipelineBehavior<,>), typeof(ValidatorPipelineBehavior<,>));
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
             return services;

@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using MyDisk.Services.Common.Exceptions;
 
 namespace MyDisk.Api.Filters
 {
@@ -12,7 +13,8 @@ namespace MyDisk.Api.Filters
         {
             _exceptionHandlers = new Dictionary<Type, Action<ExceptionContext>>
             {
-                { typeof(ValidationException), HandleValidationException }
+                { typeof(ValidationException), HandleValidationException },
+                { typeof(EntityNotFoundException), HandleEntityNotFoundException }
             };
         }
 
@@ -39,6 +41,18 @@ namespace MyDisk.Api.Filters
                 var errors = exception.Errors;
 
                 context.Result = new BadRequestObjectResult(errors.Select(c => c.ErrorMessage));
+
+                context.ExceptionHandled = true;
+            }
+        }
+
+        private void HandleEntityNotFoundException(ExceptionContext context)
+        {
+            if (context.Exception is EntityNotFoundException exception)
+            {
+                var error = exception.Message;
+
+                context.Result = new BadRequestObjectResult(new List<string> { error });
 
                 context.ExceptionHandled = true;
             }
