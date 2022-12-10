@@ -1,4 +1,5 @@
-﻿using MyDisk.Services.Common.Filters;
+﻿using MyDisk.Api.Filters;
+using MyDisk.Services.Common.Filters;
 using MyDisk.Services.Filters;
 
 namespace MyDisk.Api.App_Start
@@ -10,11 +11,10 @@ namespace MyDisk.Api.App_Start
             services.AddControllers();
             services.AddMvc(options =>
             {
-                options.Filters.Add<ServiceValidationExceptionFilter>();
+                options.Filters.Add<ApiExceptionFilterAttribute>();
                 options.Filters.Add<ServiceEntityNotFoundExceptionFilter>();
             });
                
-
             return services;
         }
     }
