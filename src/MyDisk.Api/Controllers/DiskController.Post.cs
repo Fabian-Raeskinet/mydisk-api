@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MyDisk.Services.Disks.Command;
+using MyDisk.Services.Disks.Requests;
 
 namespace MyDisk.Api.Controllers
 {
@@ -7,21 +7,21 @@ namespace MyDisk.Api.Controllers
     {
         [HttpPost]
         [Route("create-disk")]
-        [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(Guid), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateDisk([FromBody] CreateDiskCommand command)
+        [ProducesResponseType(typeof(Guid), 200)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> CreateDisk([FromBody] CreateDiskRequest command)
         {
-            var result = _mediator.Send(command);
-            return result.Result != null ? Ok(result.Result) : BadRequest();
+            return Ok(await _mediator.Send(command));
         }
 
         [HttpPost]
         [Route("attach-author")]
-        [ProducesResponseType(typeof(Guid), StatusCodes.Status200OK)]
-        public async Task<IActionResult> AttachAuthor([FromBody] AttachAuthorCommand command)
+        [ProducesResponseType(typeof(Guid), 200)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> AttachAuthor([FromBody] AttachAuthorRequest command)
         {
-            var result = _mediator.Send(command);
-            return result.Result != null ? Ok(result.Result) : BadRequest();
+            var result = await _mediator.Send(command);
+            return result != null ? Ok(result) : BadRequest();
         }
     }
 }

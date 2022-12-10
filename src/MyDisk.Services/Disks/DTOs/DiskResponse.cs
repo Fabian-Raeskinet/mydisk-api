@@ -1,5 +1,4 @@
-﻿using MyDisk.Domain.Models;
-using MyDisk.Services.Authors.DTOs;
+﻿using MyDisk.Services.Authors.DTOs;
 
 namespace MyDisk.Services.Disks.DTOs
 {
