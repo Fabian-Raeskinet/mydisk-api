@@ -15,7 +15,7 @@ namespace MyDisk.Services.Common.Behaviors
         public async Task Process(TRequest request, CancellationToken cancellationToken)
         {
             var requestName = typeof(TRequest).Name;
-            _logger.LogInformation("MyDisk Request: {Name}", requestName);
+            _logger.LogInformation("MyDisk entering Request: {Name}", requestName);
         }
     }
 }
