@@ -12,7 +12,7 @@ namespace MyDisk.Api.Filters
         {
             _exceptionHandlers = new Dictionary<Type, Action<ExceptionContext>>
             {
-                {typeof(ValidationException), HandleValidationException }
+                { typeof(ValidationException), HandleValidationException }
             };
         }
 

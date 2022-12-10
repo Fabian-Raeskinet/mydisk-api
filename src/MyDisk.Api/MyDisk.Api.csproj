@@ -12,7 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MyDisk.Conf\MyDisk.Conf.csproj" />
     <ProjectReference Include="..\MyDisk.Domain\MyDisk.Domain.csproj" />
     <ProjectReference Include="..\MyDisk.Services\MyDisk.Services.csproj" />
   </ItemGroup>

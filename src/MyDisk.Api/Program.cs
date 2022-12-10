@@ -1,6 +1,5 @@
 using MyDisk.Api;
 using MyDisk.Api.App_Start;
-using MyDisk.Conf;
 using MyDisk.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApiServices();
 builder.Services.AddApplicationMvc(builder.Configuration);
 builder.Services.AddApplicationServices();
-builder.Services.AddInfrastructureServices(builder.Configuration);
 
 var app = builder.Build();
 
