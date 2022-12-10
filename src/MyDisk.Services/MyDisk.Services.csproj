@@ -22,6 +22,7 @@
   <ItemGroup>
     <Folder Include="Authors\Commands\" />
     <Folder Include="Authors\Queries\" />
+    <Folder Include="Common\Models\" />
   </ItemGroup>
 
 </Project>
