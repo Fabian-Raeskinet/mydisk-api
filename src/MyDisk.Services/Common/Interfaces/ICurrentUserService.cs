@@ -1,4 +1,4 @@
-﻿namespace MyDisk.Services.Interfaces
+﻿namespace MyDisk.Services.Common.Interfaces
 {
     public interface ICurrentUserService
     {

@@ -9,6 +9,7 @@ namespace MyDisk.Services.Disks
         public MapperProfiles()
         {
             CreateMap<Disk, DiskResponse>();
+            CreateMap<Disk, DiskEntity>();
         }
     }
 }

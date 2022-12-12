@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MyDisk.Domain.Models;
 using MyDisk.Services.Disks.DTOs;
 using MyDisk.Services.Disks.Requests;
 
@@ -9,7 +8,7 @@ namespace MyDisk.Api.Controllers
     {
         [HttpGet]
         [Route("disks")]
-        [ProducesResponseType(typeof(List<Disk>), 200)]
+        [ProducesResponseType(typeof(List<DiskEntity>), 200)]
         [ProducesResponseType(404)]
         public async Task<IActionResult> GetAllDisks()
         {

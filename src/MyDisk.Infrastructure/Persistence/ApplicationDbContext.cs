@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using MyDisk.Infrastructure.Persistence.Interfaces;
-using MyDisk.Domain.Models;
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using MyDisk.Infrastructure.Persistence.Identity;
 using Duende.IdentityServer.EntityFramework.Options;
 using Microsoft.Extensions.Options;
+using MyDisk.Services.Common.Interfaces;
+using MyDisk.Domain.Models;
 
 namespace MyDisk.Infrastructure.Persistence
 {

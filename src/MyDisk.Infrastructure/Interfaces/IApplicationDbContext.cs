@@ -1,7 +1,7 @@
 ﻿using MyDisk.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace MyDisk.Infrastructure.Persistence.Interfaces
+namespace MyDisk.Services.Common.Interfaces
 {
     public interface IApplicationDbContext
     {

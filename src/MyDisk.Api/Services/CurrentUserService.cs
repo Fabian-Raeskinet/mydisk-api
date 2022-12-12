@@ -1,4 +1,4 @@
-﻿using MyDisk.Services.Interfaces;
+﻿using MyDisk.Services.Common.Interfaces;
 using System.Security.Claims;
 
 namespace MyDisk.Api.Services

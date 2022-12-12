@@ -15,14 +15,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MyDisk.Domain\MyDisk.Domain.csproj" />
-    <ProjectReference Include="..\MyDisk.Infrastructure\MyDisk.Infrastructure.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Authors\Commands\" />
     <Folder Include="Authors\Queries\" />
     <Folder Include="Common\Models\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MyDisk.Infrastructure\MyDisk.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

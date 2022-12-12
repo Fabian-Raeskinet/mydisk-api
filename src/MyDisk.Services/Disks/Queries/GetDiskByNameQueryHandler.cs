@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using MediatR;
-using MyDisk.Domain.Models;
 using MyDisk.Infrastructure.Persistence;
 using MyDisk.Services.Disks.DTOs;
 using MyDisk.Services.Disks.Requests;
