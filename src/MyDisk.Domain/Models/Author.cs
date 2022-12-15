@@ -1,8 +1,7 @@
-﻿namespace MyDisk.Domain.Models
+﻿namespace MyDisk.Domain.Models;
+
+public class Author
 {
-    public class Author
-    {
-        public Guid Id { get; set; }
-        public string? Pseudonyme { get; set; }
-    }
+    public Guid Id { get; set; }
+    public string? Pseudonyme { get; set; }
 }

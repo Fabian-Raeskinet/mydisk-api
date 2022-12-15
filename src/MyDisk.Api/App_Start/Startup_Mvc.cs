@@ -1,18 +1,15 @@
 ﻿using MyDisk.Api.Filters;
 
-namespace MyDisk.Api.App_Start
+namespace MyDisk.Api;
+
+public static class StartupMvc
 {
-    public static class Startup_Mvc
+    public static void AddApplicationMvc(this IServiceCollection services)
     {
-        public static IServiceCollection AddApplicationMvc(this IServiceCollection services, IConfiguration config)
+        services.AddControllers();
+        services.AddMvc(options =>
         {
-            services.AddControllers();
-            services.AddMvc(options =>
-            {
-                options.Filters.Add<ApiExceptionFilterAttribute>();
-            });
-               
-            return services;
-        }
+            options.Filters.Add<ApiExceptionFilterAttribute>();
+        });
     }
 }

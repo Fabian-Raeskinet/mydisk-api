@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
+namespace MyDisk.Infrastructure.Persistence.Identity;
 
-namespace MyDisk.Infrastructure.Persistence.Identity
+public class ApplicationUser : IdentityUser
 {
-    public class ApplicationUser : IdentityUser
-    {
-    }
 }

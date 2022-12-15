@@ -1,10 +1,9 @@
-﻿using MyDisk.Domain.Models;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
+using MyDisk.Domain.Models;
 
-namespace MyDisk.Services.Common.Interfaces
+namespace MyDisk.Infrastructure.Interfaces;
+
+public interface IApplicationDbContext
 {
-    public interface IApplicationDbContext
-    {
-        DbSet<Disk> Disks { get; }
-    }
+    DbSet<Disk> Disks { get; }
 }

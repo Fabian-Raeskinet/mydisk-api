@@ -4,23 +4,20 @@ using MyDisk.Infrastructure.Persistence;
 using MyDisk.Services.Disks.DTOs;
 using MyDisk.Services.Disks.Requests;
 
-namespace MyDisk.Services.Disks.Queries
+namespace MyDisk.Services.Disks.Queries;
+
+public class GetAllDisksQueryHandler : IRequestHandler<GetDiskByNameRequest, DiskResponse?>
 {
-    public class GetAllDisksQueryHandler : IRequestHandler<GetDiskByNameRequest, DiskResponse>
+    private readonly IMapper _mapper;
+    public GetAllDisksQueryHandler(IMapper mapper)
     {
-        private readonly IMapper _mapper;
-        public GetAllDisksQueryHandler(IMapper mapper)
-        {
-            _mapper = mapper;
-        }
+        _mapper = mapper;
+    }
 
-        public async Task<DiskResponse?> Handle(GetDiskByNameRequest request, CancellationToken cancellationToken)
-        {
-            var data = StaticContent.DiskData.Where(d => d.Name == request.Name).FirstOrDefault();
+    public Task<DiskResponse?> Handle(GetDiskByNameRequest request, CancellationToken cancellationToken)
+    {
+        var data = StaticContent.DiskData.FirstOrDefault(d => d.Name == request.Name);
 
-            if (data == null) return null;
-
-            return _mapper.Map<DiskResponse>(data);
-        }
+        return Task.FromResult(data == null ? null : _mapper.Map<DiskResponse>(data));
     }
 }

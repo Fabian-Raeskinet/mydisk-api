@@ -1,16 +1,15 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using MyDisk.Infrastructure.Interfaces;
 using MyDisk.Infrastructure.Persistence;
-using MyDisk.Services.Common.Interfaces;
 
-namespace MyDisk.Infrastructure
+namespace MyDisk.Infrastructure;
+
+public static class DependencyInjection
 {
-    public static class DependencyInjection
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
     {
-        public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
-        {
-            services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
+        services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
 
-            return services;
-        }
+        return services;
     }
 }

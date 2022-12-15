@@ -2,14 +2,13 @@
 using MyDisk.Domain.Models;
 using MyDisk.Services.Disks.DTOs;
 
-namespace MyDisk.Services.Disks
+namespace MyDisk.Services.Disks;
+
+public class MapperProfiles : Profile
 {
-    public class MapperProfiles : Profile
+    public MapperProfiles()
     {
-        public MapperProfiles()
-        {
-            CreateMap<Disk, DiskResponse>();
-            CreateMap<Disk, DiskEntity>();
-        }
+        CreateMap<Disk, DiskResponse>();
+        CreateMap<Disk, DiskEntity>();
     }
 }

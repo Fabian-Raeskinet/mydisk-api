@@ -1,12 +1,11 @@
 using MyDisk.Api;
-using MyDisk.Api.App_Start;
 using MyDisk.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddApiServices();
-builder.Services.AddApplicationMvc(builder.Configuration);
+builder.Services.AddApplicationMvc();
 builder.Services.AddApplicationServices();
 
 var app = builder.Build();
@@ -19,9 +18,9 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
-app.UseCors(builder =>
+app.UseCors(corsPolicyBuilder =>
     {
-        builder.AllowAnyOrigin()
+        corsPolicyBuilder.AllowAnyOrigin()
         .AllowAnyMethod()
         .AllowAnyHeader();
     }
