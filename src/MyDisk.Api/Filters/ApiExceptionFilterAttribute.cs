@@ -46,7 +46,7 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         if (context.Exception is not EntityNotFoundException exception) return;
         var error = exception.Message;
 
-        context.Result = new BadRequestObjectResult(new List<string> { error });
+        context.Result = new NotFoundObjectResult(new List<string> { error });
 
         context.ExceptionHandled = true;
     }
