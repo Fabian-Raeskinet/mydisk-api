@@ -6,12 +6,12 @@ namespace MyDisk.Services.Disks.Requests;
 
 public class GetDiskByNameRequest : IRequest<DiskResponse>
 {
-    public string? Name { get; init; }
+    public string? Name { get; set; }
 }
 
-public abstract class GetDiskByNameRequestValidator : AbstractValidator<GetDiskByNameRequest>
+public class GetDiskByNameRequestValidator : AbstractValidator<GetDiskByNameRequest>
 {
-    protected GetDiskByNameRequestValidator()
+    public GetDiskByNameRequestValidator()
     {
         RuleFor(x => x.Name).NotEmpty().NotNull();
     }
