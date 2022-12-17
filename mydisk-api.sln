@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{EC901D4B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Api.Tests", "MyDisk.Api.Tests\MyDisk.Api.Tests.csproj", "{E45B1D9B-0B44-4A09-BD16-CEFC11F039BF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Domain.Tests", "MyDisk.Domain.Tests\MyDisk.Domain.Tests.csproj", "{870C1525-192B-446A-9663-5217966790C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{E45B1D9B-0B44-4A09-BD16-CEFC11F039BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E45B1D9B-0B44-4A09-BD16-CEFC11F039BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E45B1D9B-0B44-4A09-BD16-CEFC11F039BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{870C1525-192B-446A-9663-5217966790C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{870C1525-192B-446A-9663-5217966790C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{870C1525-192B-446A-9663-5217966790C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{870C1525-192B-446A-9663-5217966790C0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +59,7 @@ Global
 		{4072E9AF-8C96-4200-8237-157D2F93DC9C} = {4985AA99-1619-45B8-AA07-4E99D91ACAB7}
 		{02A63BAA-E5DC-47FC-B347-9C03D0CA224C} = {4985AA99-1619-45B8-AA07-4E99D91ACAB7}
 		{E45B1D9B-0B44-4A09-BD16-CEFC11F039BF} = {EC901D4B-AF3C-4ACC-829C-FDEBCDB2BC74}
+		{870C1525-192B-446A-9663-5217966790C0} = {EC901D4B-AF3C-4ACC-829C-FDEBCDB2BC74}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CDEBD79A-8B81-483D-9476-808386234780}

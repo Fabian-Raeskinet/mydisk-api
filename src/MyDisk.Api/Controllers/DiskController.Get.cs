@@ -14,17 +14,17 @@ public partial class DiskController
     {
         var query = new GetAllDisksRequest();
         var results = await _mediator.Send(query);
-        return results.Any() ? Ok(results) : NotFound();
+        return Ok(results);
     }
 
     [HttpGet]
     [Route("disk-by-name")]
     [ProducesResponseType(typeof(DiskResponse), 200)]
+    [ProducesResponseType(typeof(List<string>),400)]
     [ProducesResponseType(404)]
-    public async Task<IActionResult> GetByName([FromQuery] string name)
+    public async Task<IActionResult> GetByName([FromQuery] string? name)
     {
-        var query = new GetDiskByNameRequest { Name = name };
-        var result = await _mediator.Send(query);
+        var result = await _mediator.Send(new GetDiskByNameRequest{Name = name});
         return result != null ? Ok(result) : NotFound();
     }
 }
