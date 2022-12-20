@@ -1,4 +1,6 @@
 ﻿using MediatR;
+using MyDisk.Domain.Models;
+using MyDisk.Infrastructure.Interfaces.IRepositories;
 using MyDisk.Services.Disks.DTOs;
 using MyDisk.Services.Disks.Requests;
 
@@ -80,14 +82,20 @@ public class AttachAuthorShould
         mediator.Verify(x => x.Send(It.IsAny<AttachAuthorRequest>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
-    [Theory, AutoDomainData]
-    public async Task ReturnsNotFoundResult([Frozen] Mock<IMediator> mediator, [NoAutoProperties] DiskController sut) =>
-        throw new NotImplementedException();
-
-    [Theory, AutoDomainData]
-    public async Task ReturnsBadRequest([NoAutoProperties] DiskController sut, [NoAutoProperties] AttachAuthorRequest request)
-    {
-        var result = await sut.AttachAuthor(request);
-        result.Should().BeOfType<BadRequestObjectResult>();
-    }
+    // [Theory, AutoDomainData]
+    // public async Task ReturnsNotFoundResult(
+    //     [Frozen] Mock<IDiskRepository> repository,
+    //     [NoAutoProperties] DiskController sut)
+    // {
+    //     repository.Setup(x => x.GetDiskByFilter(It.IsAny<Func<Disk, bool>>())).Returns(() => null);
+    //     var result = await sut.AttachAuthor(It.IsAny<AttachAuthorRequest>());
+    //     result.Should().BeOfType<NotFoundObjectResult>();
+    // }
+    //
+    // [Theory, AutoDomainData]
+    // public async Task ReturnsBadRequest([NoAutoProperties] DiskController sut, [NoAutoProperties] AttachAuthorRequest request)
+    // {
+    //     var result = await sut.AttachAuthor(request);
+    //     result.Should().BeOfType<BadRequestObjectResult>();
+    // }
 }
