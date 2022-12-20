@@ -7,6 +7,9 @@ namespace MyDisk.Infrastructure.Repositories;
 public class DiskRepository : IDiskRepository
 {
     public List<Disk>? GetDisks() => StaticContent.DiskData;
-
     public Disk? GetDiskByFilter(Func<Disk, bool> predicate) => StaticContent.DiskData.FirstOrDefault(predicate);
+    public Guid CreateDisk(Disk disk) {
+        StaticContent.DiskData.Add(disk);
+        return disk.Id;
+    }
 }

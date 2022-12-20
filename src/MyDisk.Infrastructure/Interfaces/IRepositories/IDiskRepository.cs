@@ -6,4 +6,5 @@ public interface IDiskRepository
 {
     public List<Disk>? GetDisks();
     public Disk? GetDiskByFilter(Func<Disk, bool> predicate);
+    public Guid CreateDisk(Disk disk);
 }

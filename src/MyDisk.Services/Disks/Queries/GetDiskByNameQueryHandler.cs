@@ -1,17 +1,16 @@
 ﻿using AutoMapper;
 using MediatR;
 using MyDisk.Infrastructure.Interfaces.IRepositories;
-using MyDisk.Infrastructure.Persistence;
 using MyDisk.Services.Disks.DTOs;
 using MyDisk.Services.Disks.Requests;
 
 namespace MyDisk.Services.Disks.Queries;
 
-public class GetAllDisksQueryHandler : IRequestHandler<GetDiskByNameRequest, DiskResponse?>
+public class GetDiskByNameQueryHandler : IRequestHandler<GetDiskByNameRequest, DiskResponse?>
 {
     private readonly IMapper _mapper;
     private readonly IDiskRepository _repository;
-    public GetAllDisksQueryHandler(IMapper mapper, IDiskRepository repository)
+    public GetDiskByNameQueryHandler(IMapper mapper, IDiskRepository repository)
     {
         _mapper = mapper;
         _repository = repository;

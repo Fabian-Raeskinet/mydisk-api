@@ -7,12 +7,12 @@ using MyDisk.Services.Disks.Requests;
 
 namespace MyDisk.Services.Disks.Queries;
 
-public class GetDisksQueryHandler : IRequestHandler<GetAllDisksRequest, List<DiskEntity>>
+public class GetAllDisksQueryHandler : IRequestHandler<GetAllDisksRequest, List<DiskEntity>>
 {
     private readonly IMapper _mapper;
     private readonly IDiskRepository _repository;
 
-    public GetDisksQueryHandler(IMapper mapper, IDiskRepository repository)
+    public GetAllDisksQueryHandler(IMapper mapper, IDiskRepository repository)
     {
         _mapper = mapper;
         _repository = repository;
