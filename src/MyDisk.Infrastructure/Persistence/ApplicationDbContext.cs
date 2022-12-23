@@ -18,6 +18,7 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
     { }
 
     public DbSet<Disk> Disks => Set<Disk>();
+    public DbSet<Author> Authors => Set<Author>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -25,5 +26,9 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
 
         base.OnModelCreating(builder);
     }
-
+    
+    public async Task<int> SaveChangesAsync()
+    {
+        return await base.SaveChangesAsync();
+    }
 }

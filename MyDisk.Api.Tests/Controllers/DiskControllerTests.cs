@@ -1,7 +1,10 @@
-﻿using MediatR;
+﻿using FluentValidation;
+using MediatR;
 using MyDisk.Domain.Models;
 using MyDisk.Infrastructure.Interfaces.IRepositories;
+using MyDisk.Services.Common.Behaviors;
 using MyDisk.Services.Disks.DTOs;
+using MyDisk.Services.Disks.Queries;
 using MyDisk.Services.Disks.Requests;
 
 namespace MyDisk.Api.Tests.Controllers;
@@ -43,11 +46,37 @@ public class GetDiskByNameShould
         mediator.Verify(x => x.Send(It.IsAny<GetDiskByNameRequest>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
+//     [Theory, AutoDomainData]
+//     public async void ReturnsBadRequest([NoAutoProperties] DiskController sut)
+//     {
+//         string? name = null;
+//         var result = await sut.GetByName(name);
+//         result.Should().BeOfType<BadRequestObjectResult>();
+//
+//         var request = new GetDiskByNameRequest { Name = null };
+//         
+//         var commandHandler = new GetDiskByNameQueryHandler();
+//         var validationBehaviour =
+//             new ValidationBehaviour<GetDiskByNameRequest, DiskResponse>(new List<IValidator<GetDiskByNameRequest>>());
+//         
+//         await Assert.ThrowsAsync<ValidationException>(() =>
+//             validationBehaviour.Handle(request, () =>
+//             {
+//                 return
+//             }, It.IsAny<CancellationToken>()));
+//         
+//         
+//         https://stackoverflow.com/questions/60687927/unit-testing-validation-through-mediatr-pipelinebehavior
+//     }
+// }
+
     // [Theory, AutoDomainData]
-    // public async void ReturnsBadRequest([Frozen] Mock<IMediator> mediator, [NoAutoProperties] DiskController sut)
+    // public async void ReturnsBadRequest([Frozen] Mock<IMediator> mediator, [NoAutoProperties] DiskController sut, DiskResponse response)
     // {
     //     string? name = null;
+    //     mediator.Setup(x => x.Send(It.IsAny<GetDiskByNameRequest>(), It.IsAny<CancellationToken>())).ReturnsAsync(response).Verifiable();
     //     var result = await sut.GetByName(name);
+    //     mediator.Verify();
     //     result.Should().BeOfType<BadRequestObjectResult>();
     // }
 }
@@ -55,7 +84,8 @@ public class GetDiskByNameShould
 public class CreateDiskShould
 {
     [Theory, AutoDomainData]
-    public async Task ReturnsOkResult([Frozen] Mock<IMediator> mediator, [NoAutoProperties] DiskController sut, Guid diskId)
+    public async Task ReturnsOkResult([Frozen] Mock<IMediator> mediator, [NoAutoProperties] DiskController sut,
+        Guid diskId)
     {
         mediator.Setup(x => x.Send(It.IsAny<CreateDiskRequest>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(diskId);

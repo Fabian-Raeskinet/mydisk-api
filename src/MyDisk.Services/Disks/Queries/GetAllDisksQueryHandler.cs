@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
 using MyDisk.Infrastructure.Interfaces.IRepositories;
-using MyDisk.Infrastructure.Persistence;
 using MyDisk.Services.Disks.DTOs;
 using MyDisk.Services.Disks.Requests;
 
@@ -21,7 +20,7 @@ public class GetAllDisksQueryHandler : IRequestHandler<GetAllDisksRequest, List<
     public async Task<List<DiskEntity>> Handle(GetAllDisksRequest request, CancellationToken cancellationToken)
     {
         //await Task.Delay(5000);
-        var result = _repository.GetDisks();
+        var result = await _repository.GetDisksAsync();
         return _mapper.Map<List<DiskEntity>>(result);
     }
 }

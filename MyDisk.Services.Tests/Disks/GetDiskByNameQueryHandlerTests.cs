@@ -1,4 +1,5 @@
-﻿using AutoFixture.Xunit2;
+﻿using System.Linq.Expressions;
+using AutoFixture.Xunit2;
 using AutoMapper;
 using FluentAssertions;
 using Moq;
@@ -23,7 +24,7 @@ public class GetDiskByNameQueryHandlerTestsShould
         Disk disk
     )
     {
-        repositoryMock.Setup(x => x.GetDiskByFilter(It.IsAny<Func<Disk, bool>>())).Returns(disk);
+        repositoryMock.Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>())).ReturnsAsync(disk);
 
         var result = await sut.Handle(It.IsAny<GetDiskByNameRequest>(), It.IsAny<CancellationToken>());
         
@@ -39,7 +40,7 @@ public class GetDiskByNameQueryHandlerTestsShould
         GetDiskByNameQueryHandler sut
     )
     {
-        repositoryMock.Setup(x => x.GetDiskByFilter(It.IsAny<Func<Disk, bool>>())).Returns(() => null);
+        repositoryMock.Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>())).ReturnsAsync(() => null);
 
         var result = await sut.Handle(It.IsAny<GetDiskByNameRequest>(), It.IsAny<CancellationToken>());
         

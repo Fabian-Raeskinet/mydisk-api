@@ -21,11 +21,11 @@ public class CreateDiskCommandHandlerTestsShould
     )
     {
         request.ReleaseDate = "2022-12-20";
-        repositoryMock.Setup(x => x.CreateDisk(disk)).Returns(disk.Id);
+        repositoryMock.Setup(x => x.CreateDiskAsync(disk)).ReturnsAsync(disk.Id);
 
         var result = await sut.Handle(request, It.IsAny<CancellationToken>());
 
-        repositoryMock.Verify(x => x.CreateDisk(It.IsAny<Disk>()), Times.Once);
+        repositoryMock.Verify(x => x.CreateDiskAsync(It.IsAny<Disk>()), Times.Once);
         result.Should().NotBeEmpty();
     }
 }

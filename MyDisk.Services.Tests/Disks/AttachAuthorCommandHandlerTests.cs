@@ -1,4 +1,5 @@
-﻿using AutoFixture.Xunit2;
+﻿using System.Linq.Expressions;
+using AutoFixture.Xunit2;
 using AutoMapper;
 using FluentAssertions;
 using Moq;
@@ -26,13 +27,13 @@ public class AttachAuthorCommandHandlerTestsShould
         Disk disk
     )
     {
-        authorRepositoryMock.Setup(x => x.GetAuthorByFilter(It.IsAny<Func<Author, bool>>())).Returns(author);
-        diskRepositoryMock.Setup(x => x.GetDiskByFilter(It.IsAny<Func<Disk, bool>>())).Returns(disk);
+        authorRepositoryMock.Setup(x => x.GetAuthorByFilterAsync(It.IsAny<Expression<Func<Author, bool>>>())).ReturnsAsync(author);
+        diskRepositoryMock.Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>())).ReturnsAsync(disk);
 
         var result = await sut.Handle(request, It.IsAny<CancellationToken>());
 
-        authorRepositoryMock.Verify(x => x.GetAuthorByFilter(It.IsAny<Func<Author, bool>>()), Times.Once);
-        diskRepositoryMock.Verify(x => x.GetDiskByFilter(It.IsAny<Func<Disk, bool>>()), Times.Once);
+        authorRepositoryMock.Verify(x => x.GetAuthorByFilterAsync(It.IsAny<Expression<Func<Author, bool>>>()), Times.Once);
+        diskRepositoryMock.Verify(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()), Times.Once);
         mapperMock.Verify(x => x.Map<DiskResponse>(It.IsAny<Disk>()), Times.Once);
         result.Should().NotBeNull();
     }
@@ -46,8 +47,8 @@ public class AttachAuthorCommandHandlerTestsShould
         AttachAuthorCommandHandler sut
     )
     {
-        authorRepositoryMock.Setup(x => x.GetAuthorByFilter(It.IsAny<Func<Author, bool>>())).Returns(() => null);
-        diskRepositoryMock.Setup(x => x.GetDiskByFilter(It.IsAny<Func<Disk, bool>>())).Returns(() => null);
+        authorRepositoryMock.Setup(x => x.GetAuthorByFilterAsync(It.IsAny<Expression<Func<Author, bool>>>())).ReturnsAsync(() => null);
+        diskRepositoryMock.Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>())).ReturnsAsync(() => null);
 
         var result = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
 

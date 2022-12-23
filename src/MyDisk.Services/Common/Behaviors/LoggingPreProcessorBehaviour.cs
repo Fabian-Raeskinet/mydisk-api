@@ -16,5 +16,6 @@ public class LoggingPreProcessorBehaviour<TRequest> : IRequestPreProcessor<TRequ
     {
         var requestName = typeof(TRequest).Name;
         _logger.LogInformation("MyDisk entering Request: {Name}", requestName);
+        await Task.CompletedTask;
     }
 }

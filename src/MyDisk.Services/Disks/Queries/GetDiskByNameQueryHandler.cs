@@ -10,16 +10,17 @@ public class GetDiskByNameQueryHandler : IRequestHandler<GetDiskByNameRequest, D
 {
     private readonly IMapper _mapper;
     private readonly IDiskRepository _repository;
+
     public GetDiskByNameQueryHandler(IMapper mapper, IDiskRepository repository)
     {
         _mapper = mapper;
         _repository = repository;
     }
 
-    public Task<DiskResponse?> Handle(GetDiskByNameRequest request, CancellationToken cancellationToken)
+    public async Task<DiskResponse?> Handle(GetDiskByNameRequest request, CancellationToken cancellationToken)
     {
-        var data = _repository.GetDiskByFilter(d => d.Name == request.Name);
+        var data = await _repository.GetDiskByFilterAsync(d => d.Name == request.Name);
 
-        return Task.FromResult(data == null ? null : _mapper.Map<DiskResponse>(data));
+        return data == null ? null : _mapper.Map<DiskResponse>(data);
     }
 }

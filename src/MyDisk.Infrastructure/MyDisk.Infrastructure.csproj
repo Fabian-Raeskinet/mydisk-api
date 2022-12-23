@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Persistence\Configurations" />
+    <Folder Include="Persistence\Migrations" />
     <Folder Include="Persistence\Migrations\" />
     <Folder Include="Persistence\Configurations\" />
     <Folder Include="Repositories\" />
@@ -15,6 +17,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.ApiAuthorization.IdentityServer" Version="7.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>

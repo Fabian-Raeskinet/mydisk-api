@@ -21,11 +21,12 @@ public class CreateDiskCommandHandler : IRequestHandler<CreateDiskRequest, Guid>
         {
             Id = Guid.NewGuid(),
             Name = request.Name,
-            ReleaseDate = DateTime.ParseExact(request.ReleaseDate, "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture),
+            ReleaseDate = DateTime.ParseExact(request.ReleaseDate, "yyyy-MM-dd",
+                System.Globalization.CultureInfo.InvariantCulture),
             CreatedDateTime = DateTime.Now
         };
 
-       _repository.CreateDisk(entity);
+        await _repository.CreateDiskAsync(entity);
 
         return entity.Id;
     }

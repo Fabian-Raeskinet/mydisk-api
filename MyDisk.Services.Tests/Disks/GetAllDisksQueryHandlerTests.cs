@@ -22,7 +22,7 @@ public class GetAllDisksQueryHandlerTestsShould
         List<Disk> disks
     )
     {
-        repositoryMock.Setup(x => x.GetDisks()).Returns(disks);
+        repositoryMock.Setup(x => x.GetDisksAsync()).ReturnsAsync(disks);
 
         var result = await sut.Handle(It.IsAny<GetAllDisksRequest>(), It.IsAny<CancellationToken>());
 
@@ -39,7 +39,7 @@ public class GetAllDisksQueryHandlerTestsShould
         [NoAutoProperties] List<Disk> disks
     )
     {
-        repositoryMock.Setup(x => x.GetDisks()).Returns(disks);
+        repositoryMock.Setup(x => x.GetDisksAsync()).ReturnsAsync(disks);
 
         var result = await sut.Handle(It.IsAny<GetAllDisksRequest>(), It.IsAny<CancellationToken>());
 
