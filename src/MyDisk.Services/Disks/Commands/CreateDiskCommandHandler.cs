@@ -1,6 +1,6 @@
 ﻿using MediatR;
+using MyDisk.Domain.Interfaces.IRepositories;
 using MyDisk.Domain.Models;
-using MyDisk.Infrastructure.Interfaces.IRepositories;
 using MyDisk.Services.Disks.Requests;
 
 namespace MyDisk.Services.Disks.Commands;

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MyDisk.Domain.Interfaces.IRepositories;
 using MyDisk.Infrastructure.Interfaces;
-using MyDisk.Infrastructure.Interfaces.IRepositories;
 using MyDisk.Infrastructure.Persistence;
 using MyDisk.Infrastructure.Repositories;
 

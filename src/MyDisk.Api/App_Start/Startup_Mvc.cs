@@ -1,4 +1,5 @@
-﻿using MyDisk.Api.Filters;
+﻿using FluentValidation.AspNetCore;
+using MyDisk.Api.Filters;
 
 namespace MyDisk.Api;
 
@@ -8,9 +9,7 @@ public static class StartupMvc
     {
         services.AddControllers()
             .ConfigureApiBehaviorOptions(options => options.SuppressModelStateInvalidFilter = true);
-        services.AddMvc(options =>
-        {
-            options.Filters.Add<ApiExceptionFilterAttribute>();
-        });
+        services.AddMvc(options => { options.Filters.Add<ApiExceptionFilterAttribute>(); })
+            .AddFluentValidation(x => x.AutomaticValidationEnabled = false);
     }
 }

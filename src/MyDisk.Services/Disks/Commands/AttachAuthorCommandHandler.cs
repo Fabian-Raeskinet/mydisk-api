@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using MediatR;
-using MyDisk.Infrastructure.Interfaces.IRepositories;
+using MyDisk.Domain.Interfaces.IRepositories;
 using MyDisk.Services.Common.Exceptions;
 using MyDisk.Services.Disks.DTOs;
 using MyDisk.Services.Disks.Requests;

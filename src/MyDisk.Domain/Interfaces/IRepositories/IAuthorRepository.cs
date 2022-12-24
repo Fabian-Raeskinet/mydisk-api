@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using MyDisk.Domain.Models;
 
-namespace MyDisk.Infrastructure.Interfaces.IRepositories;
+namespace MyDisk.Domain.Interfaces.IRepositories;
 
 public interface IAuthorRepository
 {
