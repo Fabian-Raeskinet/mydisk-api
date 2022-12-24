@@ -124,3 +124,28 @@ public class AttachAuthorShould
     //     result.Should().BeOfType<BadRequestObjectResult>();
     // }
 }
+
+public class DeleteDiskByIdShould
+{
+    [Theory, AutoDomainData]
+    public async Task ReturnsNoContentResult([Frozen] Mock<IMediator> mediator, [NoAutoProperties] DiskController sut)
+    {
+        mediator.Setup(x => x.Send(It.IsAny<DeleteDiskRequest>(), It.IsAny<CancellationToken>()))
+            .Verifiable();
+        var result = await sut.DeleteDiskById(It.IsAny<Guid>());
+        result.Should().BeOfType<NoContentResult>();
+        mediator.Verify(x => x.Send(It.IsAny<DeleteDiskRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+}
+public class DeleteDiskByNameShould
+{
+    [Theory, AutoDomainData]
+    public async Task ReturnsNoContentResult([Frozen] Mock<IMediator> mediator, [NoAutoProperties] DiskController sut)
+    {
+        mediator.Setup(x => x.Send(It.IsAny<DeleteDiskRequest>(), It.IsAny<CancellationToken>()))
+            .Verifiable();
+        var result = await sut.DeleteDiskByName(It.IsAny<string>());
+        result.Should().BeOfType<NoContentResult>();
+        mediator.Verify(x => x.Send(It.IsAny<DeleteDiskRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+}
