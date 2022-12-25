@@ -149,3 +149,16 @@ public class DeleteDiskByNameShould
         mediator.Verify(x => x.Send(It.IsAny<DeleteDiskRequest>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 }
+
+public class UpdateDiskShould
+{
+    [Theory, AutoDomainData]
+    public async Task ReturnsOkResult([Frozen] Mock<IMediator> mediator, [NoAutoProperties] DiskController sut)
+    {
+        mediator.Setup(x => x.Send(It.IsAny<UpdateDiskRequest>(), It.IsAny<CancellationToken>()))
+            .Verifiable();
+        var result = await sut.UpdateDisk(It.IsAny<UpdateDiskRequest>());
+        result.Should().BeOfType<OkObjectResult>();
+        mediator.Verify(x => x.Send(It.IsAny<UpdateDiskRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+    }
+}
