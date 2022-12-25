@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using MyDisk.Domain.Models;
+using MyDisk.Domain.Entities;
 
 namespace MyDisk.Domain.Interfaces.IRepositories;
 

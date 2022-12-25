@@ -1,11 +1,10 @@
-﻿
-
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MyDisk.Domain.Common;
 
-namespace MyDisk.Domain.Models;
+namespace MyDisk.Domain.Entities;
 
-public class Author
+public class Author : BaseEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

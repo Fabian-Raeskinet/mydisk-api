@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using MyDisk.Domain.Models;
+using MyDisk.Domain.Entities;
 using MyDisk.Services.Disks.DTOs;
 
 namespace MyDisk.Services.Disks;

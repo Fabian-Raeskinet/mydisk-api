@@ -1,4 +1,4 @@
-﻿using MyDisk.Domain.Models;
+﻿using MyDisk.Domain.Entities;
 
 namespace MyDisk.Infrastructure.Persistence;
 

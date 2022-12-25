@@ -1,8 +1,8 @@
 ﻿using AutoFixture.Xunit2;
 using FluentAssertions;
 using Moq;
+using MyDisk.Domain.Entities;
 using MyDisk.Domain.Interfaces.IRepositories;
-using MyDisk.Domain.Models;
 using MyDisk.Domain.Tests;
 using MyDisk.Services.Disks.Commands;
 using MyDisk.Services.Disks.Requests;

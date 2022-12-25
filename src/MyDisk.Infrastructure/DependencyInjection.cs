@@ -1,19 +1,26 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MyDisk.Domain.Interfaces;
 using MyDisk.Domain.Interfaces.IRepositories;
 using MyDisk.Infrastructure.Interfaces;
 using MyDisk.Infrastructure.Persistence;
+using MyDisk.Infrastructure.Persistence.Interceptors;
 using MyDisk.Infrastructure.Repositories;
+using MyDisk.Infrastructure.Services;
 
 namespace MyDisk.Infrastructure;
 
 public static class DependencyInjection
 {
-    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration) => 
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services,
+        IConfiguration configuration) =>
         services
             .AddRepositories()
-            .AddDatabaseConfiguration(configuration);
+            .AddDatabaseConfiguration(configuration)
+            .AddDateTimeService();
+
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         services.AddScoped<IAuthorRepository, AuthorRepository>();
@@ -27,10 +34,14 @@ public static class DependencyInjection
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
                 builder => builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
-        
+
         services.AddScoped<ApplicationDbContextInitializer>();
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
-        
+        services.AddScoped<EntitySaveChangesInterceptor>();
+
         return services;
     }
+
+    private static IServiceCollection AddDateTimeService(this IServiceCollection services) =>
+        services.AddTransient<IDateTime, DateTimeService>();
 }

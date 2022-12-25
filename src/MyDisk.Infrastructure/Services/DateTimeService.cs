@@ -1,0 +1,8 @@
+﻿using MyDisk.Domain.Interfaces;
+
+namespace MyDisk.Infrastructure.Services;
+
+public class DateTimeService : IDateTime
+{
+    public DateTime Now => DateTime.Now;
+}

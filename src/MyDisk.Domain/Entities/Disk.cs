@@ -1,9 +1,10 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using MyDisk.Domain.Common;
 
-namespace MyDisk.Domain.Models;
+namespace MyDisk.Domain.Entities;
 
-public class Disk
+public class Disk : BaseEntity
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
