@@ -9,4 +9,5 @@ public interface IDiskRepository
     public Task<Disk?> GetDiskByFilterAsync(Expression<Func<Disk, bool>> predicate);
     public Task<Guid> CreateDiskAsync(Disk disk);
     public Task<bool> DeleteDiskAsync(Disk disk);
+    public Task UpdateDiskAsync(Disk disk);
 }

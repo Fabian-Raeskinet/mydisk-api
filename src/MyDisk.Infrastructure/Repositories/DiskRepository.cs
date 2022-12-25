@@ -34,4 +34,10 @@ public class DiskRepository : IDiskRepository
         await _context.SaveChangesAsync();
         return true;
     }
+
+    public async Task UpdateDiskAsync(Disk disk)
+    {
+        _context.Disks.Update(disk);
+        await _context.SaveChangesAsync();
+    }
 }
