@@ -52,7 +52,7 @@ public class ApplicationDbContextInitializer
         if (!_context.Authors.Any())
         {
             _context.Authors.Add(new Author { Pseudonyme = "Orelsan" });
-            
+
             await _context.SaveChangesAsync();
         }
 
@@ -60,14 +60,14 @@ public class ApplicationDbContextInitializer
         {
             _context.Disks.Add(new Disk
             {
-                Name = "Jeannine", Id = Guid.NewGuid(), ReleaseDate = new DateTime(2018, 8, 29), Author = new Author { Pseudonyme = "Lomepal" },
-                CreatedDateTime = DateTime.Now
+                Name = "Jeannine", Id = Guid.NewGuid(), ReleaseDate = new DateTime(2018, 8, 29),
+                Author = new Author { Pseudonyme = "Lomepal" },
             });
             _context.Disks.Add(
                 new Disk()
                 {
                     Name = "Chocolat", Id = Guid.NewGuid(), ReleaseDate = new DateTime(2016, 2, 14),
-                    Author = new Author { Pseudonyme = "Roméo Elvis" }, CreatedDateTime = DateTime.Now
+                    Author = new Author { Pseudonyme = "Roméo Elvis" }
                 }
             );
 

@@ -23,7 +23,6 @@ public class CreateDiskCommandHandler : IRequestHandler<CreateDiskRequest, Guid>
             Name = request.Name,
             ReleaseDate = DateTime.ParseExact(request.ReleaseDate, "yyyy-MM-dd",
                 System.Globalization.CultureInfo.InvariantCulture),
-            CreatedDateTime = DateTime.Now
         };
 
         await _repository.CreateDiskAsync(entity);
