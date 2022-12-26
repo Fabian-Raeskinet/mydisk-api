@@ -15,11 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyDisk.Services", "src\MyDi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{EC901D4B-AF3C-4ACC-829C-FDEBCDB2BC74}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Api.Tests", "MyDisk.Api.Tests\MyDisk.Api.Tests.csproj", "{E45B1D9B-0B44-4A09-BD16-CEFC11F039BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Api.Tests", "tests\MyDisk.Api.Tests\MyDisk.Api.Tests.csproj", "{E45B1D9B-0B44-4A09-BD16-CEFC11F039BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Domain.Tests", "MyDisk.Domain.Tests\MyDisk.Domain.Tests.csproj", "{870C1525-192B-446A-9663-5217966790C0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Domain.Tests", "tests\MyDisk.Domain.Tests\MyDisk.Domain.Tests.csproj", "{870C1525-192B-446A-9663-5217966790C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Services.Tests", "MyDisk.Services.Tests\MyDisk.Services.Tests.csproj", "{B84FE21A-BCBA-4790-BE06-90D448E7C6CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Services.Tests", "tests\MyDisk.Services.Tests\MyDisk.Services.Tests.csproj", "{B84FE21A-BCBA-4790-BE06-90D448E7C6CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
