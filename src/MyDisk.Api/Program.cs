@@ -6,9 +6,8 @@ using MyDisk.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApiServices();
-builder.Services.AddApplicationMvc();
+builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
 
 var app = builder.Build();
