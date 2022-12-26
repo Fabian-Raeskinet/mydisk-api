@@ -18,7 +18,6 @@ public class GetAllDisksQueryHandlerTestsShould
         [Frozen] Mock<IMapper> mapperMock,
         [Frozen] Mock<IDiskRepository> repositoryMock,
         GetAllDisksQueryHandler sut,
-        GetAllDisksRequest request,
         List<Disk> disks
     )
     {
@@ -35,7 +34,6 @@ public class GetAllDisksQueryHandlerTestsShould
         [Frozen] Mock<IMapper> mapperMock,
         [Frozen] Mock<IDiskRepository> repositoryMock,
         GetAllDisksQueryHandler sut,
-        GetAllDisksRequest request,
         [NoAutoProperties] List<Disk> disks
     )
     {

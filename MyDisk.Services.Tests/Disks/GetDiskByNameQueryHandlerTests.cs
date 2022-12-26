@@ -20,7 +20,6 @@ public class GetDiskByNameQueryHandlerTestsShould
         [Frozen] Mock<IMapper> mapperMock,
         [Frozen] Mock<IDiskRepository> repositoryMock,
         GetDiskByNameQueryHandler sut,
-        GetDiskByNameRequest request,
         Disk disk
     )
     {
