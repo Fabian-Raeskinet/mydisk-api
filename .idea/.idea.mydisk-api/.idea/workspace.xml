@@ -5,15 +5,10 @@
     <projectFile profileName="MyDisk.Api">src/MyDisk.Api/MyDisk.Api.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="add Validators">
-      <change afterPath="$PROJECT_DIR$/src/MyDisk.Api/Controllers/LoginController.cs" afterDir="false" />
+    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="refactor api services config">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/App_Start/Startup_Mvc.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyDisk.Api/App_Start/Startup_Mvc.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/Controllers/DiskController.Delete.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyDisk.Api/Controllers/DiskController.Delete.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyDisk.Api/DependencyInjection.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/MyDisk.Api.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyDisk.Api/MyDisk.Api.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyDisk.Api/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Disks/Requests/DeleteDiskRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyDisk.Services/Disks/Requests/DeleteDiskRequest.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,6 +16,8 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/53f68e7d96cb4fc7a99643667e11faa329000/36/1766f996/MatcherFactory.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7790469866d943e39174c4a5771cfe8741880/b3/cfdf5e8f/BindingInfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/19ba5a289f2afd3f4d5e862cb3f3efee6181683a31ee31b86c2298b1f51114b/ServiceProvider.cs" root0="SKIP_HIGHLIGHTING" />
@@ -28,9 +25,14 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b2f7b8a43bdbe87c291db52377bbace80ad9e971d414d037b16557135a7c99/OperationalStoreOptions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bd1d5c50194fea68ff3559c160230b0ab50f5acf4ce3061bffd6d62958e2182/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Api/Controllers/DiskController.Delete.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Api/Controllers/DiskController.Delete.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Api/DependencyInjection.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Api/DependencyInjection.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Api/Program.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Api/Program.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Api/Program.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/MyDisk.Services/Common/Enums/DeleteDiskByPropertyEnum.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Services/Disks/Requests/DeleteDiskRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Services/Disks/Requests/DeleteDiskRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Services/Disks/Requests/DeleteDiskRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Services/Disks/Requests/DeleteDiskRequest.cs" root0="SKIP_HIGHLIGHTING" />
@@ -69,7 +71,21 @@
       <option name="project" value="LOCAL" />
       <updated>1672066418785</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="add delete disk by property">
+      <created>1672068984968</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1672068984968</updated>
+    </task>
+    <task id="LOCAL-00003" summary="refactor api services config">
+      <created>1672069008196</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1672069008196</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="false" />
@@ -87,7 +103,9 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="add Validators" />
-    <option name="LAST_COMMIT_MESSAGE" value="add Validators" />
+    <MESSAGE value="add delete disk by property" />
+    <MESSAGE value="refactor api services config" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor api services config" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
