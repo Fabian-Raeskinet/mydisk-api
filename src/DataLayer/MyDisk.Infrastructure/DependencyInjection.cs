@@ -35,7 +35,7 @@ public static class DependencyInjection
     {
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                builder => builder.MigrationsAssembly(typeof(ApplicationDbContext).Assembly.FullName)));
+                builder => builder.MigrationsAssembly("..\\MyDisk.Migrations\\MyDisk.Migrations.csproj")));
 
         services.AddScoped<ApplicationDbContextInitializer>();
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());

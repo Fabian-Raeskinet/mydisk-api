@@ -5,47 +5,109 @@
     <projectFile profileName="MyDisk.Api">src/MyDisk.Api/MyDisk.Api.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="refactor api services config">
+    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="refactor api services config, add newtonsoft config">
+      <change afterPath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/dataSources.local.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/DependencyInjection.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Interfaces/IApplicationDbContext.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/MyDisk.Infrastructure.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Persistence/ApplicationDbContext.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Persistence/ApplicationDbContextInitializer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Persistence/Identity/ApplicationUser.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Persistence/Identity/IdentityService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Persistence/Interceptors/EntitySaveChangesInterceptor.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Repositories/AuthorRepository.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Repositories/DiskRepository.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Services/DateTimeService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Migrations/ApplicationDbContextFactory.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Migrations/MyDisk.Migrations.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Migrations/appsettings.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyDisk.Api/DependencyInjection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mydisk-api.sln" beforeDir="false" afterPath="$PROJECT_DIR$/mydisk-api.sln" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/MyDisk.Api.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyDisk.Api/MyDisk.Api.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Domain/Entities/Author.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyDisk.Domain/Entities/Author.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/DependencyInjection.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Interfaces/IApplicationDbContext.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/MyDisk.Infrastructure.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/ApplicationDbContext.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/ApplicationDbContextInitializer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Identity/ApplicationUser.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Identity/IdentityService.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Interceptors/EntitySaveChangesInterceptor.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Migrations/20221223230110_InitialMigration.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Migrations/20221223230110_InitialMigration.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Migrations/20221225095647_updateBaseEntity.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Migrations/20221225095647_updateBaseEntity.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Migrations/20221225100905_remove CreatedDateTime Field.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Migrations/20221225100905_remove CreatedDateTime Field.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Migrations/ApplicationDbContextModelSnapshot.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Repositories/AuthorRepository.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Repositories/DiskRepository.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Services/DateTimeService.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/MyDisk.Services.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyDisk.Services/MyDisk.Services.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JSON File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="develop" />
+      </map>
+    </option>
+  </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/53f68e7d96cb4fc7a99643667e11faa329000/36/1766f996/MatcherFactory.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7790469866d943e39174c4a5771cfe8741880/b3/cfdf5e8f/BindingInfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/19ba5a289f2afd3f4d5e862cb3f3efee6181683a31ee31b86c2298b1f51114b/ServiceProvider.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/38284ca4f4afe378f96fccac3e179f4bceda7a74eb151623b66d2dc3634d9b/ExceptionAggregator.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7ecf697f25d55be4508ccda492c1408b81d0f778dff9e95c4c7585f0952fa78b/TokenResponse.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8271807a61bb8a8540cf6d7a38534480374a4aac934ee4f53d7efdc9aea37ae/IOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b2f7b8a43bdbe87c291db52377bbace80ad9e971d414d037b16557135a7c99/OperationalStoreOptions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bd1d5c50194fea68ff3559c160230b0ab50f5acf4ce3061bffd6d62958e2182/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Api/Controllers/DiskController.Delete.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Api/Controllers/DiskController.Delete.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Api/DependencyInjection.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Api/DependencyInjection.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Api/Program.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Api/Program.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Api/Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Domain/Entities/Author.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/MyDisk.Services/Common/Enums/DeleteDiskByPropertyEnum.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Services/Disks/Requests/DeleteDiskRequest.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Services/Disks/Requests/DeleteDiskRequest.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Services/Disks/Requests/DeleteDiskRequest.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Services/Disks/Requests/DeleteDiskRequest.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Services/Disks/Requests/UpdateDiskRequest.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Services/Disks/Requests/UpdateDiskRequest.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="false" />
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="Toolset" />
+  </component>
+  <component name="ProjectId" id="2LEqBLzOopwYqTAHOsazqasaPJK" />
   <component name="ProjectLevelVcsManager">
     <ConfirmationsSetting value="2" id="Add" />
   </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "rider.external.source.directories": [
+      "C:\\Users\\raeskinet.fabian\\AppData\\Roaming\\JetBrains\\Rider2022.3\\resharper-host\\DecompilerCache",
+      "C:\\Users\\raeskinet.fabian\\AppData\\Roaming\\JetBrains\\Rider2022.3\\resharper-host\\SourcesCache",
+      "C:\\Users\\raeskinet.fabian\\AppData\\Local\\Symbols\\src"
+    ]
+  }
+}]]></component>
   <component name="RunManager">
     <configuration name="MyDisk.Api" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/src/MyDisk.Api/MyDisk.Api.csproj" />
@@ -63,6 +125,7 @@
       </method>
     </configuration>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task id="LOCAL-00001" summary="add Validators">
       <created>1672066418785</created>
@@ -85,8 +148,20 @@
       <option name="project" value="LOCAL" />
       <updated>1672069008196</updated>
     </task>
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="refactor api services config, add newtonsoft config" />
+      <created>1675446456311</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1675446456311</updated>
+      <workItem from="1675446457857" duration="1699000" />
+      <workItem from="1676107115865" duration="5293000" />
+    </task>
     <option name="localTasksCounter" value="4" />
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="false" />
   <component name="UnityUnitTestConfiguration" currentTestLauncher="Both" />
@@ -102,6 +177,7 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="add Validators" />
     <MESSAGE value="add delete disk by property" />
     <MESSAGE value="refactor api services config" />

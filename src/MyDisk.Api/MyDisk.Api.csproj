@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DataLayer\MyDisk.Infrastructure\MyDisk.Infrastructure.csproj" />
     <ProjectReference Include="..\MyDisk.Services\MyDisk.Services.csproj" />
   </ItemGroup>
 
