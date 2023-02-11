@@ -7,46 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="remove src solution folder">
-      <change afterPath="$PROJECT_DIR$/MyDisk.Infrastructure/DependencyInjection.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Infrastructure/Interfaces/IApplicationDbContext.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Infrastructure/MyDisk.Infrastructure.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Infrastructure/Persistence/ApplicationDbContext.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Infrastructure/Persistence/ApplicationDbContextInitializer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Infrastructure/Persistence/Identity/ApplicationUser.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Infrastructure/Persistence/Identity/IdentityService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Infrastructure/Persistence/Interceptors/EntitySaveChangesInterceptor.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Infrastructure/Repositories/AuthorRepository.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Infrastructure/Repositories/DiskRepository.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Infrastructure/Services/DateTimeService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Migrations/ApplicationDbContextFactory.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Migrations/Migrations/20230211123827_Initial_Migration.Designer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Migrations/Migrations/20230211123827_Initial_Migration.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Migrations/Migrations/ApplicationDbContextModelSnapshot.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Migrations/MyDisk.Migrations.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Migrations/appsettings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/DependencyInjection.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/Interfaces/IApplicationDbContext.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/MyDisk.Infrastructure.csproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/Persistence/ApplicationDbContext.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/Persistence/ApplicationDbContextInitializer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/Persistence/Identity/ApplicationUser.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/Persistence/Identity/IdentityService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/Persistence/Interceptors/EntitySaveChangesInterceptor.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/Repositories/AuthorRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/Repositories/DiskRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/Services/DateTimeService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataLayer/MyDisk.Migrations/ApplicationDbContextFactory.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataLayer/MyDisk.Migrations/Migrations/20230211123827_Initial_Migration.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataLayer/MyDisk.Migrations/Migrations/20230211123827_Initial_Migration.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataLayer/MyDisk.Migrations/Migrations/ApplicationDbContextModelSnapshot.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataLayer/MyDisk.Migrations/MyDisk.Migrations.csproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DataLayer/MyDisk.Migrations/appsettings.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Api/MyDisk.Api.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api/MyDisk.Api.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services/MyDisk.Services.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/MyDisk.Services.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mydisk-api.sln" beforeDir="false" afterPath="$PROJECT_DIR$/mydisk-api.sln" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Api.Tests/MyDisk.Api.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MyDisk.Api.Tests/MyDisk.Api.Tests.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Services.Tests/MyDisk.Services.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/tests/MyDisk.Services.Tests/MyDisk.Services.Tests.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -172,7 +133,7 @@
       <option name="presentableId" value="Default" />
       <updated>1675446456311</updated>
       <workItem from="1675446457857" duration="1699000" />
-      <workItem from="1676107115865" duration="6326000" />
+      <workItem from="1676107115865" duration="6625000" />
     </task>
     <task id="LOCAL-00004" summary="Move solution to Data solution folder, creation of dbContextFactory, reset migrations">
       <created>1676119295150</created>
@@ -188,7 +149,14 @@
       <option name="project" value="LOCAL" />
       <updated>1676119685790</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="remove src solution folder">
+      <created>1676120312330</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1676120312330</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
