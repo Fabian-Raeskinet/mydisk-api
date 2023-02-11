@@ -5,45 +5,139 @@
     <projectFile profileName="MyDisk.Api">src/MyDisk.Api/MyDisk.Api.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="refactor api services config, add newtonsoft config">
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/dataSources.local.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/DependencyInjection.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Interfaces/IApplicationDbContext.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/MyDisk.Infrastructure.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Persistence/ApplicationDbContext.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Persistence/ApplicationDbContextInitializer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Persistence/Identity/ApplicationUser.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Persistence/Identity/IdentityService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Persistence/Interceptors/EntitySaveChangesInterceptor.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Repositories/AuthorRepository.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Repositories/DiskRepository.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Services/DateTimeService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Migrations/ApplicationDbContextFactory.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Migrations/MyDisk.Migrations.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/DataLayer/MyDisk.Migrations/appsettings.json" afterDir="false" />
+    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="Move solution to Data solution folder, creation of dbContextFactory, reset migrations">
+      <change afterPath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/DependencyInjection.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/Interfaces/IApplicationDbContext.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/MyDisk.Infrastructure.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/Persistence/ApplicationDbContext.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/Persistence/ApplicationDbContextInitializer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/Persistence/Identity/ApplicationUser.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/Persistence/Identity/IdentityService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/Persistence/Interceptors/EntitySaveChangesInterceptor.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/Repositories/AuthorRepository.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/Repositories/DiskRepository.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataLayer/MyDisk.Infrastructure/Services/DateTimeService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataLayer/MyDisk.Migrations/ApplicationDbContextFactory.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataLayer/MyDisk.Migrations/Migrations/20230211123827_Initial_Migration.Designer.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataLayer/MyDisk.Migrations/Migrations/20230211123827_Initial_Migration.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataLayer/MyDisk.Migrations/Migrations/ApplicationDbContextModelSnapshot.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataLayer/MyDisk.Migrations/MyDisk.Migrations.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/DataLayer/MyDisk.Migrations/appsettings.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Delete.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Get.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Post.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Put.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Api/DependencyInjection.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Api/Filters/ApiExceptionFilterAttribute.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Api/MyDisk.Api.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Api/Program.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Api/Properties/launchSettings.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Api/Services/CurrentUserService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Api/appsettings.Development.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Api/appsettings.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Conf/DependencyInjection.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Conf/MyDisk.Conf.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Domain/Common/BaseEntity.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Domain/Entities/Author.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Domain/Entities/Disk.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Domain/Interfaces/IDateTime.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Domain/Interfaces/IIdentityService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Domain/Interfaces/IRepositories/IAuthorRepository.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Domain/Interfaces/IRepositories/IDiskRepository.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Domain/MyDisk.Domain.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Authors/DTOs/AuthorResponse.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Authors/MapperProfiles.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Common/Behaviors/LoggingPostProcessorBehaviour.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Common/Behaviors/LoggingPreProcessorBehaviour.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Common/Behaviors/ValidationBehaviour.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Common/Enums/DeleteDiskByPropertyEnum.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Common/Exceptions/EntityNotFoundException.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Common/Interfaces/ICurrentUserService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/DependencyInjection.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/Commands/AttachAuthorCommandHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/Commands/CreateDiskCommandHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/Commands/DeleteDiskCommandHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/Commands/UpdateDiskCommandHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/DTOs/DiskEntity.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/DTOs/DiskResponse.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/MapperProfiles.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/Queries/GetAllDisksQueryHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/Queries/GetDiskByNameQueryHandler.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/Requests/AttachAuthorRequest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/Requests/CreateDiskRequest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/Requests/DeleteDiskRequest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/Requests/GetAllDisksRequest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/Requests/GetDiskByNameRequest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/Requests/UpdateDiskRequest.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services/MyDisk.Services.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mydisk-api.sln" beforeDir="false" afterPath="$PROJECT_DIR$/mydisk-api.sln" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/MyDisk.Api.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyDisk.Api/MyDisk.Api.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Domain/Entities/Author.cs" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyDisk.Domain/Entities/Author.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/DependencyInjection.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Interfaces/IApplicationDbContext.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/MyDisk.Infrastructure.csproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/ApplicationDbContext.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/ApplicationDbContextInitializer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Identity/ApplicationUser.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Identity/IdentityService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Interceptors/EntitySaveChangesInterceptor.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Migrations/20221223230110_InitialMigration.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Migrations/20221223230110_InitialMigration.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Migrations/20221225095647_updateBaseEntity.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Migrations/20221225095647_updateBaseEntity.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Migrations/20221225100905_remove CreatedDateTime Field.Designer.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Migrations/20221225100905_remove CreatedDateTime Field.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Persistence/Migrations/ApplicationDbContextModelSnapshot.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Repositories/AuthorRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Repositories/DiskRepository.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Infrastructure/Services/DateTimeService.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/MyDisk.Services.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/src/MyDisk.Services/MyDisk.Services.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/DependencyInjection.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Interfaces/IApplicationDbContext.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/MyDisk.Infrastructure.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Persistence/ApplicationDbContext.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Persistence/ApplicationDbContextInitializer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Persistence/Identity/ApplicationUser.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Persistence/Identity/IdentityService.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Persistence/Interceptors/EntitySaveChangesInterceptor.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Repositories/AuthorRepository.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Repositories/DiskRepository.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataLayer/MyDisk.Infrastructure/Services/DateTimeService.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataLayer/MyDisk.Migrations/ApplicationDbContextFactory.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataLayer/MyDisk.Migrations/Migrations/20230211123827_Initial_Migration.Designer.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataLayer/MyDisk.Migrations/Migrations/20230211123827_Initial_Migration.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataLayer/MyDisk.Migrations/Migrations/ApplicationDbContextModelSnapshot.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataLayer/MyDisk.Migrations/MyDisk.Migrations.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/DataLayer/MyDisk.Migrations/appsettings.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/Controllers/DiskController.Delete.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/Controllers/DiskController.Get.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/Controllers/DiskController.Post.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/Controllers/DiskController.Put.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/Controllers/DiskController.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/DependencyInjection.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/Filters/ApiExceptionFilterAttribute.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/MyDisk.Api.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/Program.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/Properties/launchSettings.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/Services/CurrentUserService.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/appsettings.Development.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Api/appsettings.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Conf/DependencyInjection.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Conf/MyDisk.Conf.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Domain/Common/BaseEntity.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Domain/Entities/Author.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Domain/Entities/Disk.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Domain/Interfaces/IDateTime.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Domain/Interfaces/IIdentityService.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Domain/Interfaces/IRepositories/IAuthorRepository.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Domain/Interfaces/IRepositories/IDiskRepository.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Domain/MyDisk.Domain.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Authors/DTOs/AuthorResponse.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Authors/MapperProfiles.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Common/Behaviors/LoggingPostProcessorBehaviour.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Common/Behaviors/LoggingPreProcessorBehaviour.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Common/Behaviors/ValidationBehaviour.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Common/Enums/DeleteDiskByPropertyEnum.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Common/Exceptions/EntityNotFoundException.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Common/Interfaces/ICurrentUserService.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/DependencyInjection.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Disks/Commands/AttachAuthorCommandHandler.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Disks/Commands/CreateDiskCommandHandler.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Disks/Commands/DeleteDiskCommandHandler.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Disks/Commands/UpdateDiskCommandHandler.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Disks/DTOs/DiskEntity.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Disks/DTOs/DiskResponse.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Disks/MapperProfiles.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Disks/Queries/GetAllDisksQueryHandler.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Disks/Queries/GetDiskByNameQueryHandler.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Disks/Requests/AttachAuthorRequest.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Disks/Requests/CreateDiskRequest.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Disks/Requests/DeleteDiskRequest.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Disks/Requests/GetAllDisksRequest.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Disks/Requests/GetDiskByNameRequest.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/Disks/Requests/UpdateDiskRequest.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MyDisk.Services/MyDisk.Services.csproj" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,7 +168,6 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b2f7b8a43bdbe87c291db52377bbace80ad9e971d414d037b16557135a7c99/OperationalStoreOptions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bd1d5c50194fea68ff3559c160230b0ab50f5acf4ce3061bffd6d62958e2182/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Domain/Entities/Author.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/src/MyDisk.Services/Common/Enums/DeleteDiskByPropertyEnum.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -108,11 +201,26 @@
     ]
   }
 }]]></component>
-  <component name="RunManager">
+  <component name="RunManager" selected=".NET Launch Settings Profile.MyDisk.Api">
     <configuration name="MyDisk.Api" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/src/MyDisk.Api/MyDisk.Api.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net7.0" />
       <option name="LAUNCH_PROFILE_NAME" value="MyDisk.Api" />
+      <option name="USE_EXTERNAL_CONSOLE" value="0" />
+      <option name="USE_MONO" value="0" />
+      <option name="RUNTIME_ARGUMENTS" value="" />
+      <option name="GENERATE_APPLICATIONHOST_CONFIG" value="1" />
+      <option name="SHOW_IIS_EXPRESS_OUTPUT" value="0" />
+      <option name="SEND_DEBUG_REQUEST" value="1" />
+      <option name="ADDITIONAL_IIS_EXPRESS_ARGUMENTS" value="" />
+      <method v="2">
+        <option name="Build" />
+      </method>
+    </configuration>
+    <configuration name="MyDisk.Api: IIS Express" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
+      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/MyDisk.Api/MyDisk.Api.csproj" />
+      <option name="LAUNCH_PROFILE_TFM" value="net7.0" />
+      <option name="LAUNCH_PROFILE_NAME" value="IIS Express" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
@@ -155,9 +263,16 @@
       <option name="presentableId" value="Default" />
       <updated>1675446456311</updated>
       <workItem from="1675446457857" duration="1699000" />
-      <workItem from="1676107115865" duration="5293000" />
+      <workItem from="1676107115865" duration="5793000" />
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Move solution to Data solution folder, creation of dbContextFactory, reset migrations">
+      <created>1676119295150</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1676119295150</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -181,7 +296,8 @@
     <MESSAGE value="add Validators" />
     <MESSAGE value="add delete disk by property" />
     <MESSAGE value="refactor api services config" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor api services config" />
+    <MESSAGE value="Move solution to Data solution folder, creation of dbContextFactory, reset migrations" />
+    <option name="LAST_COMMIT_MESSAGE" value="Move solution to Data solution folder, creation of dbContextFactory, reset migrations" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
