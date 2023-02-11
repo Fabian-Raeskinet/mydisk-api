@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyDisk.Api", "MyDisk.Api\My
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyDisk.Domain", "MyDisk.Domain\MyDisk.Domain.csproj", "{93CEA3DD-C019-483B-A716-CBB8457F60A9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyDisk.Infrastructure", "DataLayer\MyDisk.Infrastructure\MyDisk.Infrastructure.csproj", "{4072E9AF-8C96-4200-8237-157D2F93DC9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyDisk.Infrastructure", "MyDisk.Infrastructure\MyDisk.Infrastructure.csproj", "{4072E9AF-8C96-4200-8237-157D2F93DC9C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyDisk.Services", "MyDisk.Services\MyDisk.Services.csproj", "{02A63BAA-E5DC-47FC-B347-9C03D0CA224C}"
 EndProject
@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Services.Tests", "te
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataLayer", "DataLayer", "{AF2E4B42-8CEE-4C43-9C5D-D984B42FEA3C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Migrations", "DataLayer\MyDisk.Migrations\MyDisk.Migrations.csproj", "{1D663875-0D7C-4194-BB8F-C2CBC48DF380}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Migrations", "MyDisk.Migrations\MyDisk.Migrations.csproj", "{1D663875-0D7C-4194-BB8F-C2CBC48DF380}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
