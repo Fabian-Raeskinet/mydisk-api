@@ -6,25 +6,11 @@
     <projectFile profileName="MyDisk.Api">src/MyDisk.Api/MyDisk.Api.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="rename solution folder">
-      <change afterPath="$PROJECT_DIR$/MyDisk.Tests.Api/AutoApiDataAttribute.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Tests.Api/MyDisk.Tests.Api.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Tests.Domain/MyDisk.Tests.Domain.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Tests.Services/AutoServiceDataAttribute.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Tests.Services/MyDisk.Tests.Services.csproj" afterDir="false" />
+    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="create tests solution folders and autodata-attribute">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Api.Tests/Controllers/DiskControllerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api.Tests/Controllers/DiskControllerTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Api.Tests/MyDisk.Api.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api.Tests/MyDisk.Api.Tests.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Api.Tests/Usings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api.Tests/Usings.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Domain.Tests/AutoDomainDataAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Tests.Domain/AutoDomainDataAttribute.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/AttachAuthorCommandHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/AttachAuthorCommandHandlerTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/CreateDiskCommandHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/CreateDiskCommandHandlerTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/DeleteDiskCommandHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/DeleteDiskCommandHandlerTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetAllDisksQueryHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetAllDisksQueryHandlerTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetDiskByNameQueryHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetDiskByNameQueryHandlerTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/UpdateDiskCommandHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/UpdateDiskCommandHandlerTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/MyDisk.Services.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/MyDisk.Services.Tests.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mydisk-api.sln" beforeDir="false" afterPath="$PROJECT_DIR$/mydisk-api.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Tests.Api/AutoApiDataAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Tests.Api/AutoApiDataAttribute.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Tests.Domain/AutoDomainDataAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Tests.Domain/AutoDomainDataAttribute.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Tests.Services/AutoServiceDataAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Tests.Services/AutoServiceDataAttribute.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,6 +41,8 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b2f7b8a43bdbe87c291db52377bbace80ad9e971d414d037b16557135a7c99/OperationalStoreOptions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bd1d5c50194fea68ff3559c160230b0ab50f5acf4ce3061bffd6d62958e2182/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Infrastructure/DependencyInjection.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Services.Tests/Disks/AttachAuthorCommandHandlerTests.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Services.Tests/Disks/AttachAuthorCommandHandlerTests.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -155,7 +143,7 @@
       <updated>1675446456311</updated>
       <workItem from="1675446457857" duration="1699000" />
       <workItem from="1676107115865" duration="6814000" />
-      <workItem from="1676485294285" duration="3948000" />
+      <workItem from="1676485294285" duration="4575000" />
     </task>
     <task id="LOCAL-00004" summary="Move solution to Data solution folder, creation of dbContextFactory, reset migrations">
       <created>1676119295150</created>
@@ -213,7 +201,14 @@
       <option name="project" value="LOCAL" />
       <updated>1676487998531</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="create tests solution folders and autodata-attribute">
+      <created>1676489979449</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1676489979449</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -244,7 +239,8 @@
     <MESSAGE value="create Interface solution folder &amp; move tests solutions" />
     <MESSAGE value="fix migrationAssembly reference" />
     <MESSAGE value="rename solution folder" />
-    <option name="LAST_COMMIT_MESSAGE" value="rename solution folder" />
+    <MESSAGE value="create tests solution folders and autodata-attribute" />
+    <option name="LAST_COMMIT_MESSAGE" value="create tests solution folders and autodata-attribute" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
