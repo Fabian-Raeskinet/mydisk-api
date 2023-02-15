@@ -6,38 +6,9 @@
     <projectFile profileName="MyDisk.Api">src/MyDisk.Api/MyDisk.Api.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="create Services solution folder">
-      <change afterPath="$PROJECT_DIR$/.idea/config/applicationhost.config" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Api.Tests/Controllers/DiskControllerTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Api.Tests/MyDisk.Api.Tests.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Api.Tests/Usings.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Domain.Tests/AutoDomainDataAttribute.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Domain.Tests/MyDisk.Domain.Tests.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Domain.Tests/Usings.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/AttachAuthorCommandHandlerTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/CreateDiskCommandHandlerTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/DeleteDiskCommandHandlerTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetAllDisksQueryHandlerTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetDiskByNameQueryHandlerTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/UpdateDiskCommandHandlerTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/MyDisk.Services.Tests.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Usings.cs" afterDir="false" />
+    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="create Interface solution folder &amp; move tests solutions">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mydisk-api.sln" beforeDir="false" afterPath="$PROJECT_DIR$/mydisk-api.sln" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Api.Tests/Controllers/DiskControllerTests.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Api.Tests/MyDisk.Api.Tests.csproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Api.Tests/Usings.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Domain.Tests/AutoDomainDataAttribute.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Domain.Tests/MyDisk.Domain.Tests.csproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Domain.Tests/Usings.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Services.Tests/Disks/AttachAuthorCommandHandlerTests.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Services.Tests/Disks/CreateDiskCommandHandlerTests.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Services.Tests/Disks/DeleteDiskCommandHandlerTests.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Services.Tests/Disks/GetAllDisksQueryHandlerTests.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Services.Tests/Disks/GetDiskByNameQueryHandlerTests.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Services.Tests/Disks/UpdateDiskCommandHandlerTests.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Services.Tests/MyDisk.Services.Tests.csproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Services.Tests/Usings.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Infrastructure/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Infrastructure/DependencyInjection.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -167,7 +138,7 @@
       <updated>1675446456311</updated>
       <workItem from="1675446457857" duration="1699000" />
       <workItem from="1676107115865" duration="6814000" />
-      <workItem from="1676485294285" duration="710000" />
+      <workItem from="1676485294285" duration="2024000" />
     </task>
     <task id="LOCAL-00004" summary="Move solution to Data solution folder, creation of dbContextFactory, reset migrations">
       <created>1676119295150</created>
@@ -204,7 +175,14 @@
       <option name="project" value="LOCAL" />
       <updated>1676120572069</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="create Interface solution folder &amp; move tests solutions">
+      <created>1676486096333</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1676486096333</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -232,7 +210,8 @@
     <MESSAGE value="remove src solution folder" />
     <MESSAGE value="create Business solution folder" />
     <MESSAGE value="create Services solution folder" />
-    <option name="LAST_COMMIT_MESSAGE" value="create Services solution folder" />
+    <MESSAGE value="create Interface solution folder &amp; move tests solutions" />
+    <option name="LAST_COMMIT_MESSAGE" value="create Interface solution folder &amp; move tests solutions" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
