@@ -1,12 +1,13 @@
 ﻿using MediatR;
 using MyDisk.Services.Disks.DTOs;
 using MyDisk.Services.Disks.Requests;
+using MyDisk.Tests.Api;
 
 namespace MyDisk.Api.Tests.Controllers;
 
 public class GetAllDisksShould
 {
-    [Theory, AutoDomainData]
+    [Theory, AutoApiData]
     public async void ReturnsOkResultTest([Frozen] Mock<IMediator> mediator, [NoAutoProperties] DiskController sut)
     {
         mediator.Setup(x => x.Send(It.IsAny<GetAllDisksRequest>(), It.IsAny<CancellationToken>()))
@@ -19,7 +20,7 @@ public class GetAllDisksShould
 
 public class GetDiskByNameShould
 {
-    [Theory, AutoDomainData]
+    [Theory, AutoApiData]
     public async void ReturnsOkResult([Frozen] Mock<IMediator> mediator, [NoAutoProperties] DiskController sut,
         DiskResponse response)
     {
@@ -30,7 +31,7 @@ public class GetDiskByNameShould
         mediator.Verify(x => x.Send(It.IsAny<GetDiskByNameRequest>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
-    [Theory, AutoDomainData]
+    [Theory, AutoApiData]
     public async void ReturnsNotFound([Frozen] Mock<IMediator> mediator, [NoAutoProperties] DiskController sut)
     {
         DiskResponse? response = null;
@@ -41,7 +42,7 @@ public class GetDiskByNameShould
         mediator.Verify(x => x.Send(It.IsAny<GetDiskByNameRequest>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
-//     [Theory, AutoDomainData]
+//     [Theory, AutoApiData]
 //     public async void ReturnsBadRequest([NoAutoProperties] DiskController sut)
 //     {
 //         string? name = null;
@@ -65,7 +66,7 @@ public class GetDiskByNameShould
 //     }
 // }
 
-    // [Theory, AutoDomainData]
+    // [Theory, AutoApiData]
     // public async void ReturnsBadRequest([Frozen] Mock<IMediator> mediator, [NoAutoProperties] DiskController sut, DiskResponse response)
     // {
     //     string? name = null;
@@ -78,7 +79,7 @@ public class GetDiskByNameShould
 
 public class CreateDiskShould
 {
-    [Theory, AutoDomainData]
+    [Theory, AutoApiData]
     public async Task ReturnsOkResult([Frozen] Mock<IMediator> mediator, [NoAutoProperties] DiskController sut,
         Guid diskId)
     {
@@ -89,7 +90,7 @@ public class CreateDiskShould
         mediator.Verify(x => x.Send(It.IsAny<CreateDiskRequest>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
-    // [Theory, AutoDomainData]
+    // [Theory, AutoApiData]
     // public async Task ReturnsBadRequest([NoAutoProperties] DiskController sut, [NoAutoProperties] CreateDiskRequest request)
     // {
     //     var result = await sut.CreateDisk(request);
@@ -99,7 +100,7 @@ public class CreateDiskShould
 
 public class AttachAuthorShould
 {
-    [Theory, AutoDomainData]
+    [Theory, AutoApiData]
     public async Task ReturnsOkResult([Frozen] Mock<IMediator> mediator, [NoAutoProperties] DiskController sut)
     {
         var result = await sut.AttachAuthor(It.IsAny<AttachAuthorRequest>());
@@ -107,7 +108,7 @@ public class AttachAuthorShould
         mediator.Verify(x => x.Send(It.IsAny<AttachAuthorRequest>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
-    // [Theory, AutoDomainData]
+    // [Theory, AutoApiData]
     // public async Task ReturnsNotFoundResult(
     //     [Frozen] Mock<IDiskRepository> repository,
     //     [NoAutoProperties] DiskController sut)
@@ -117,7 +118,7 @@ public class AttachAuthorShould
     //     result.Should().BeOfType<NotFoundObjectResult>();
     // }
     //
-    // [Theory, AutoDomainData]
+    // [Theory, AutoApiData]
     // public async Task ReturnsBadRequest([NoAutoProperties] DiskController sut, [NoAutoProperties] AttachAuthorRequest request)
     // {
     //     var result = await sut.AttachAuthor(request);
@@ -127,7 +128,7 @@ public class AttachAuthorShould
 
 public class DeleteDiskByIdShould
 {
-    [Theory, AutoDomainData]
+    [Theory, AutoApiData]
     public async Task ReturnsNoContentResult([Frozen] Mock<IMediator> mediator, [NoAutoProperties] DiskController sut)
     {
         mediator.Setup(x => x.Send(It.IsAny<DeleteDiskRequest>(), It.IsAny<CancellationToken>()))
@@ -139,7 +140,7 @@ public class DeleteDiskByIdShould
 }
 public class DeleteDiskByNameShould
 {
-    [Theory, AutoDomainData]
+    [Theory, AutoApiData]
     public async Task ReturnsNoContentResult([Frozen] Mock<IMediator> mediator, [NoAutoProperties] DiskController sut)
     {
         mediator.Setup(x => x.Send(It.IsAny<DeleteDiskRequest>(), It.IsAny<CancellationToken>()))
@@ -152,7 +153,7 @@ public class DeleteDiskByNameShould
 
 public class UpdateDiskShould
 {
-    [Theory, AutoDomainData]
+    [Theory, AutoApiData]
     public async Task ReturnsOkResult([Frozen] Mock<IMediator> mediator, [NoAutoProperties] DiskController sut)
     {
         mediator.Setup(x => x.Send(It.IsAny<UpdateDiskRequest>(), It.IsAny<CancellationToken>()))

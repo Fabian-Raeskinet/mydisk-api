@@ -4,16 +4,16 @@ using FluentAssertions;
 using Moq;
 using MyDisk.Domain.Entities;
 using MyDisk.Domain.Interfaces.IRepositories;
-using MyDisk.Domain.Tests;
 using MyDisk.Services.Disks.DTOs;
 using MyDisk.Services.Disks.Queries;
 using MyDisk.Services.Disks.Requests;
+using MyDisk.Tests.Services;
 
 namespace MyDisk.Services.Tests.Disks;
 
 public class GetAllDisksQueryHandlerTestsShould
 {
-    [Theory, AutoDomainData]
+    [Theory, AutoServiceData]
     public async Task FindData(
         [Frozen] Mock<IMapper> mapperMock,
         [Frozen] Mock<IDiskRepository> repositoryMock,
@@ -29,7 +29,7 @@ public class GetAllDisksQueryHandlerTestsShould
         result.Should().NotBeNull();
     }
 
-    [Theory, AutoDomainData]
+    [Theory, AutoServiceData]
     public async Task NotFindData(
         [Frozen] Mock<IMapper> mapperMock,
         [Frozen] Mock<IDiskRepository> repositoryMock,

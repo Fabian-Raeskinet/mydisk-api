@@ -27,6 +27,7 @@
     <ProjectReference Include="..\MyDisk.Api\MyDisk.Api.csproj" />
     <ProjectReference Include="..\MyDisk.Domain.Tests\MyDisk.Domain.Tests.csproj" />
     <ProjectReference Include="..\MyDisk.Services\MyDisk.Services.csproj" />
+    <ProjectReference Include="..\MyDisk.Tests.Api\MyDisk.Tests.Api.csproj" />
   </ItemGroup>
 
 </Project>

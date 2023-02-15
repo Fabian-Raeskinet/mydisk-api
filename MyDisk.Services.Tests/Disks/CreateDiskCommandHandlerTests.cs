@@ -3,15 +3,15 @@ using FluentAssertions;
 using Moq;
 using MyDisk.Domain.Entities;
 using MyDisk.Domain.Interfaces.IRepositories;
-using MyDisk.Domain.Tests;
 using MyDisk.Services.Disks.Commands;
 using MyDisk.Services.Disks.Requests;
+using MyDisk.Tests.Services;
 
 namespace MyDisk.Services.Tests.Disks;
 
 public class CreateDiskCommandHandlerTestsShould
 {
-    [Theory, AutoDomainData]
+    [Theory, AutoServiceData]
     public async Task CreateDisk
     (
         [Frozen] Mock<IDiskRepository> repositoryMock,

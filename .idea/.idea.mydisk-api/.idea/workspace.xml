@@ -7,7 +7,23 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="rename solution folder">
+      <change afterPath="$PROJECT_DIR$/MyDisk.Tests.Api/AutoApiDataAttribute.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Tests.Api/MyDisk.Tests.Api.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Tests.Domain/MyDisk.Tests.Domain.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Tests.Services/AutoServiceDataAttribute.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Tests.Services/MyDisk.Tests.Services.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Api.Tests/Controllers/DiskControllerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api.Tests/Controllers/DiskControllerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Api.Tests/MyDisk.Api.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api.Tests/MyDisk.Api.Tests.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Api.Tests/Usings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api.Tests/Usings.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Domain.Tests/AutoDomainDataAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Tests.Domain/AutoDomainDataAttribute.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/AttachAuthorCommandHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/AttachAuthorCommandHandlerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/CreateDiskCommandHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/CreateDiskCommandHandlerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/DeleteDiskCommandHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/DeleteDiskCommandHandlerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetAllDisksQueryHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetAllDisksQueryHandlerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetDiskByNameQueryHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetDiskByNameQueryHandlerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/UpdateDiskCommandHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/UpdateDiskCommandHandlerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/MyDisk.Services.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/MyDisk.Services.Tests.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mydisk-api.sln" beforeDir="false" afterPath="$PROJECT_DIR$/mydisk-api.sln" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -139,7 +155,7 @@
       <updated>1675446456311</updated>
       <workItem from="1675446457857" duration="1699000" />
       <workItem from="1676107115865" duration="6814000" />
-      <workItem from="1676485294285" duration="2678000" />
+      <workItem from="1676485294285" duration="3948000" />
     </task>
     <task id="LOCAL-00004" summary="Move solution to Data solution folder, creation of dbContextFactory, reset migrations">
       <created>1676119295150</created>
@@ -190,7 +206,14 @@
       <option name="project" value="LOCAL" />
       <updated>1676487545234</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="rename solution folder">
+      <created>1676487998531</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1676487998531</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

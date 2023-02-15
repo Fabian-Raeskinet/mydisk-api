@@ -4,17 +4,17 @@ using FluentAssertions;
 using Moq;
 using MyDisk.Domain.Entities;
 using MyDisk.Domain.Interfaces.IRepositories;
-using MyDisk.Domain.Tests;
 using MyDisk.Services.Common.Enums;
 using MyDisk.Services.Common.Exceptions;
 using MyDisk.Services.Disks.Commands;
 using MyDisk.Services.Disks.Requests;
+using MyDisk.Tests.Services;
 
 namespace MyDisk.Services.Tests.Disks;
 
 public class DeleteDiskCommandHandlerTestsShould
 {
-    [Theory, AutoDomainData]
+    [Theory, AutoServiceData]
     public async Task ShouldDeleteById
     (
         [Frozen] Mock<IDiskRepository> diskRepositoryMock,
@@ -34,7 +34,7 @@ public class DeleteDiskCommandHandlerTestsShould
         diskRepositoryMock.Verify(x => x.DeleteDiskAsync(It.IsAny<Disk>()), Times.Once);
     }
     
-    [Theory, AutoDomainData]
+    [Theory, AutoServiceData]
     public async Task ShouldDeleteByName
     (
         [Frozen] Mock<IDiskRepository> diskRepositoryMock,
@@ -54,7 +54,7 @@ public class DeleteDiskCommandHandlerTestsShould
         diskRepositoryMock.Verify(x => x.DeleteDiskAsync(It.IsAny<Disk>()), Times.Once);
     }    
     
-    [Theory, AutoDomainData]
+    [Theory, AutoServiceData]
     public async Task ShouldThrowInvalidOperationExceptionBecauseNullValue
     (
         [Frozen] Mock<IDiskRepository> diskRepositoryMock,
@@ -69,7 +69,7 @@ public class DeleteDiskCommandHandlerTestsShould
         diskRepositoryMock.Verify(x => x.DeleteDiskAsync(It.IsAny<Disk>()), Times.Never);
     }
     
-    [Theory, AutoDomainData]
+    [Theory, AutoServiceData]
     public async Task ShouldThrowInvalidOperationExceptionBecauseIncorrectProperty
     (
         [Frozen] Mock<IDiskRepository> diskRepositoryMock,
@@ -85,7 +85,7 @@ public class DeleteDiskCommandHandlerTestsShould
         diskRepositoryMock.Verify(x => x.DeleteDiskAsync(It.IsAny<Disk>()), Times.Never);
     }
     
-    [Theory, AutoDomainData]
+    [Theory, AutoServiceData]
     public async Task ShouldThrowEntityNotFoundException
     (
         [Frozen] Mock<IDiskRepository> diskRepositoryMock,

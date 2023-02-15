@@ -5,17 +5,17 @@ using FluentAssertions;
 using Moq;
 using MyDisk.Domain.Entities;
 using MyDisk.Domain.Interfaces.IRepositories;
-using MyDisk.Domain.Tests;
 using MyDisk.Services.Common.Exceptions;
 using MyDisk.Services.Disks.Commands;
 using MyDisk.Services.Disks.DTOs;
 using MyDisk.Services.Disks.Requests;
+using MyDisk.Tests.Services;
 
 namespace MyDisk.Services.Tests.Disks;
 
 public class AttachAuthorCommandHandlerTestsShould
 {
-    [Theory, AutoDomainData]
+    [Theory, AutoServiceData]
     public async Task AttachAuthorToDisk
     (
         [Frozen] Mock<IAuthorRepository> authorRepositoryMock,
@@ -38,7 +38,7 @@ public class AttachAuthorCommandHandlerTestsShould
         result.Should().NotBeNull();
     }
 
-    [Theory, AutoDomainData]
+    [Theory, AutoServiceData]
     public async Task ThrowsEntityNotFoundException
     (
         [Frozen] Mock<IAuthorRepository> authorRepositoryMock,
