@@ -6,7 +6,7 @@
     <projectFile profileName="MyDisk.Api">src/MyDisk.Api/MyDisk.Api.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="create tests solution folders and autodata-attribute">
+    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="configure customization">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MyDisk.Tests.Api/AutoApiDataAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Tests.Api/AutoApiDataAttribute.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MyDisk.Tests.Domain/AutoDomainDataAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Tests.Domain/AutoDomainDataAttribute.cs" afterDir="false" />
@@ -43,6 +43,9 @@
     <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Infrastructure/DependencyInjection.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Services.Tests/Disks/AttachAuthorCommandHandlerTests.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Services.Tests/Disks/AttachAuthorCommandHandlerTests.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Tests.Api/AutoApiDataAttribute.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Tests.Domain/AutoDomainDataAttribute.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Tests.Services/AutoServiceDataAttribute.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -143,7 +146,7 @@
       <updated>1675446456311</updated>
       <workItem from="1675446457857" duration="1699000" />
       <workItem from="1676107115865" duration="6814000" />
-      <workItem from="1676485294285" duration="4575000" />
+      <workItem from="1676485294285" duration="4683000" />
     </task>
     <task id="LOCAL-00004" summary="Move solution to Data solution folder, creation of dbContextFactory, reset migrations">
       <created>1676119295150</created>
@@ -208,7 +211,14 @@
       <option name="project" value="LOCAL" />
       <updated>1676489979449</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="configure customization">
+      <created>1676490594807</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1676490594807</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -240,7 +250,8 @@
     <MESSAGE value="fix migrationAssembly reference" />
     <MESSAGE value="rename solution folder" />
     <MESSAGE value="create tests solution folders and autodata-attribute" />
-    <option name="LAST_COMMIT_MESSAGE" value="create tests solution folders and autodata-attribute" />
+    <MESSAGE value="configure customization" />
+    <option name="LAST_COMMIT_MESSAGE" value="configure customization" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

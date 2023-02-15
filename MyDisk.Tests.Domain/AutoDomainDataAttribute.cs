@@ -14,13 +14,13 @@ public class InlineAutoDomainDataAttribute : InlineAutoDataAttribute
     public InlineAutoDomainDataAttribute(params object[] values) : base(new AutoDomainDataAttribute(), values) { }
 }
 
-public class DomainCustomization : CompositeCustomization
+internal class DomainCustomization : CompositeCustomization
 {
     public DomainCustomization() 
         : base(new CommonCustomization(), new AutoMoqCustomization()) { }
 }
 
-public class CommonCustomization : ICustomization
+internal class CommonCustomization : ICustomization
 {
     public void Customize(IFixture fixture) { }
 }

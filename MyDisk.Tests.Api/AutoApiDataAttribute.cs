@@ -14,13 +14,13 @@ public class InlineAutoApiDataAttribute : InlineAutoDataAttribute
     public InlineAutoApiDataAttribute(params object[] values) : base(new AutoApiDataAttribute(), values) { }
 }
 
-public class ApiCustomization : CompositeCustomization
+internal class ApiCustomization : CompositeCustomization
 {
     public ApiCustomization() 
         : base(new CommonCustomization(), new AutoMoqCustomization()) { }
 }
 
-public class CommonCustomization : ICustomization
+internal class CommonCustomization : ICustomization
 {
     public void Customize(IFixture fixture) { }
 }
