@@ -23,9 +23,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\MyDisk.Domain\MyDisk.Domain.csproj" />
-      <ProjectReference Include="..\..\src\MyDisk.Services\MyDisk.Services.csproj" />
       <ProjectReference Include="..\MyDisk.Domain.Tests\MyDisk.Domain.Tests.csproj" />
+      <ProjectReference Include="..\MyDisk.Domain\MyDisk.Domain.csproj" />
+      <ProjectReference Include="..\MyDisk.Services\MyDisk.Services.csproj" />
     </ItemGroup>
 
 </Project>

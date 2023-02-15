@@ -12,18 +12,23 @@ namespace MyDisk.Infrastructure.Persistence;
 
 public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, IApplicationDbContext
 {
-    private readonly EntitySaveChangesInterceptor _saveChangesInterceptor;
+    private readonly EntitySaveChangesInterceptor? _saveChangesInterceptor;
 
     public ApplicationDbContext
     (
         DbContextOptions<ApplicationDbContext> options,
         IOptions<OperationalStoreOptions> operationalStoreOptions,
-        EntitySaveChangesInterceptor saveChangesInterceptor
+        EntitySaveChangesInterceptor? saveChangesInterceptor
     ) : base(options, operationalStoreOptions)
     {
         _saveChangesInterceptor = saveChangesInterceptor;
     }
 
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IOptions<OperationalStoreOptions> operationalStoreOptions) 
+        : base(options, operationalStoreOptions)
+    {
+        
+    }
     public DbSet<Disk> Disks => Set<Disk>();
     public DbSet<Author> Authors => Set<Author>();
 
@@ -36,7 +41,7 @@ public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, 
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.AddInterceptors(_saveChangesInterceptor);
+        if (_saveChangesInterceptor != null) optionsBuilder.AddInterceptors(_saveChangesInterceptor);
     }
 
     public async Task<int> SaveChangesAsync()
