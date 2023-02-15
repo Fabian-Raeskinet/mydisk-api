@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Business", "Business", "{93
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{BA736A1A-0672-4774-A13C-475B23638DB8}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interface", "Interface", "{3C374A58-CF84-4E0F-85F2-B395F1741185}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interfaces", "Interfaces", "{3C374A58-CF84-4E0F-85F2-B395F1741185}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

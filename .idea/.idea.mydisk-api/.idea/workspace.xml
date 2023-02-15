@@ -6,9 +6,9 @@
     <projectFile profileName="MyDisk.Api">src/MyDisk.Api/MyDisk.Api.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="create Interface solution folder &amp; move tests solutions">
+    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="rename solution folder">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Infrastructure/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Infrastructure/DependencyInjection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mydisk-api.sln" beforeDir="false" afterPath="$PROJECT_DIR$/mydisk-api.sln" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -38,6 +38,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8271807a61bb8a8540cf6d7a38534480374a4aac934ee4f53d7efdc9aea37ae/IOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b2f7b8a43bdbe87c291db52377bbace80ad9e971d414d037b16557135a7c99/OperationalStoreOptions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bd1d5c50194fea68ff3559c160230b0ab50f5acf4ce3061bffd6d62958e2182/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Infrastructure/DependencyInjection.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -138,7 +139,7 @@
       <updated>1675446456311</updated>
       <workItem from="1675446457857" duration="1699000" />
       <workItem from="1676107115865" duration="6814000" />
-      <workItem from="1676485294285" duration="2024000" />
+      <workItem from="1676485294285" duration="2678000" />
     </task>
     <task id="LOCAL-00004" summary="Move solution to Data solution folder, creation of dbContextFactory, reset migrations">
       <created>1676119295150</created>
@@ -182,7 +183,14 @@
       <option name="project" value="LOCAL" />
       <updated>1676486096333</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="fix migrationAssembly reference">
+      <created>1676487545234</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1676487545234</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -211,7 +219,9 @@
     <MESSAGE value="create Business solution folder" />
     <MESSAGE value="create Services solution folder" />
     <MESSAGE value="create Interface solution folder &amp; move tests solutions" />
-    <option name="LAST_COMMIT_MESSAGE" value="create Interface solution folder &amp; move tests solutions" />
+    <MESSAGE value="fix migrationAssembly reference" />
+    <MESSAGE value="rename solution folder" />
+    <option name="LAST_COMMIT_MESSAGE" value="rename solution folder" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
