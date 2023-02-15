@@ -6,8 +6,38 @@
     <projectFile profileName="MyDisk.Api">src/MyDisk.Api/MyDisk.Api.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="remove src solution folder">
+    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="create Services solution folder">
+      <change afterPath="$PROJECT_DIR$/.idea/config/applicationhost.config" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Api.Tests/Controllers/DiskControllerTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Api.Tests/MyDisk.Api.Tests.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Api.Tests/Usings.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Domain.Tests/AutoDomainDataAttribute.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Domain.Tests/MyDisk.Domain.Tests.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Domain.Tests/Usings.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/AttachAuthorCommandHandlerTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/CreateDiskCommandHandlerTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/DeleteDiskCommandHandlerTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetAllDisksQueryHandlerTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetDiskByNameQueryHandlerTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/UpdateDiskCommandHandlerTests.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/MyDisk.Services.Tests.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Usings.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mydisk-api.sln" beforeDir="false" afterPath="$PROJECT_DIR$/mydisk-api.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Api.Tests/Controllers/DiskControllerTests.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Api.Tests/MyDisk.Api.Tests.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Api.Tests/Usings.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Domain.Tests/AutoDomainDataAttribute.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Domain.Tests/MyDisk.Domain.Tests.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Domain.Tests/Usings.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Services.Tests/Disks/AttachAuthorCommandHandlerTests.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Services.Tests/Disks/CreateDiskCommandHandlerTests.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Services.Tests/Disks/DeleteDiskCommandHandlerTests.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Services.Tests/Disks/GetAllDisksQueryHandlerTests.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Services.Tests/Disks/GetDiskByNameQueryHandlerTests.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Services.Tests/Disks/UpdateDiskCommandHandlerTests.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Services.Tests/MyDisk.Services.Tests.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/MyDisk.Services.Tests/Usings.cs" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -37,7 +67,6 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8271807a61bb8a8540cf6d7a38534480374a4aac934ee4f53d7efdc9aea37ae/IOptions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b2f7b8a43bdbe87c291db52377bbace80ad9e971d414d037b16557135a7c99/OperationalStoreOptions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bd1d5c50194fea68ff3559c160230b0ab50f5acf4ce3061bffd6d62958e2182/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/src/MyDisk.Domain/Entities/Author.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -54,28 +83,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "rider.external.source.directories": [
-      "C:\\Users\\raeskinet.fabian\\AppData\\Roaming\\JetBrains\\Rider2022.3\\resharper-host\\DecompilerCache",
-      "C:\\Users\\raeskinet.fabian\\AppData\\Roaming\\JetBrains\\Rider2022.3\\resharper-host\\SourcesCache",
-      "C:\\Users\\raeskinet.fabian\\AppData\\Local\\Symbols\\src"
+  &quot;keyToStringList&quot;: {
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\raeskinet.fabian\\AppData\\Roaming\\JetBrains\\Rider2022.3\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\raeskinet.fabian\\AppData\\Roaming\\JetBrains\\Rider2022.3\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\raeskinet.fabian\\AppData\\Local\\Symbols\\src&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.MyDisk.Api">
     <configuration name="MyDisk.Api" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
-      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/src/MyDisk.Api/MyDisk.Api.csproj" />
+      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/MyDisk.Api/MyDisk.Api.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net7.0" />
-      <option name="LAUNCH_PROFILE_NAME" value="MyDisk.Api" />
+      <option name="LAUNCH_PROFILE_NAME" value="IIS Express" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
       <option name="USE_MONO" value="0" />
       <option name="RUNTIME_ARGUMENTS" value="" />
@@ -102,6 +131,10 @@
         <option name="Build" />
       </method>
     </configuration>
+    <list>
+      <item itemvalue=".NET Launch Settings Profile.MyDisk.Api" />
+      <item itemvalue=".NET Launch Settings Profile.MyDisk.Api: IIS Express" />
+    </list>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -133,7 +166,8 @@
       <option name="presentableId" value="Default" />
       <updated>1675446456311</updated>
       <workItem from="1675446457857" duration="1699000" />
-      <workItem from="1676107115865" duration="6625000" />
+      <workItem from="1676107115865" duration="6814000" />
+      <workItem from="1676485294285" duration="710000" />
     </task>
     <task id="LOCAL-00004" summary="Move solution to Data solution folder, creation of dbContextFactory, reset migrations">
       <created>1676119295150</created>
@@ -156,7 +190,21 @@
       <option name="project" value="LOCAL" />
       <updated>1676120312330</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="create Business solution folder">
+      <created>1676120496995</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1676120496995</updated>
+    </task>
+    <task id="LOCAL-00008" summary="create Services solution folder">
+      <created>1676120572069</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1676120572069</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -182,7 +230,9 @@
     <MESSAGE value="refactor api services config" />
     <MESSAGE value="Move solution to Data solution folder, creation of dbContextFactory, reset migrations" />
     <MESSAGE value="remove src solution folder" />
-    <option name="LAST_COMMIT_MESSAGE" value="remove src solution folder" />
+    <MESSAGE value="create Business solution folder" />
+    <MESSAGE value="create Services solution folder" />
+    <option name="LAST_COMMIT_MESSAGE" value="create Services solution folder" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -190,14 +240,7 @@
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/src/MyDisk.Services/Disks/Commands/DeleteDiskCommandHandler.cs</url>
           <line>19</line>
-          <properties documentPath="C:\Users\raeskinet.fabian\Documents\Github\MyDisk\mydisk-api\src\MyDisk.Services\Disks\Commands\DeleteDiskCommandHandler.cs" initialLine="19" containingFunctionPresentation="method 'Handle'">
-            <startOffsets>
-              <option value="578" />
-            </startOffsets>
-            <endOffsets>
-              <option value="604" />
-            </endOffsets>
-          </properties>
+          <properties documentPath="C:\Users\raeskinet.fabian\Documents\Github\MyDisk\mydisk-api\src\MyDisk.Services\Disks\Commands\DeleteDiskCommandHandler.cs" initialLine="19" containingFunctionPresentation="method 'Handle'" />
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>
