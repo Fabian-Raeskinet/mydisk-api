@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\MyDisk.Domain\MyDisk.Domain.csproj" />
     <ProjectReference Include="..\MyDisk.Infrastructure\MyDisk.Infrastructure.csproj" />
+    <ProjectReference Include="..\MyDisk.RetryService\MyDisk.RetryService.csproj" />
   </ItemGroup>
 
 </Project>

@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Tests.Services", "My
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Tests.Api", "MyDisk.Tests.Api\MyDisk.Tests.Api.csproj", "{BFC565D4-99FA-425E-9E90-D1F48C492C6C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.RetryService", "MyDisk.RetryService\MyDisk.RetryService.csproj", "{C6ED47B2-101D-4C6D-A331-129BD35F9E60}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -85,6 +87,10 @@ Global
 		{BFC565D4-99FA-425E-9E90-D1F48C492C6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFC565D4-99FA-425E-9E90-D1F48C492C6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFC565D4-99FA-425E-9E90-D1F48C492C6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6ED47B2-101D-4C6D-A331-129BD35F9E60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6ED47B2-101D-4C6D-A331-129BD35F9E60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6ED47B2-101D-4C6D-A331-129BD35F9E60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6ED47B2-101D-4C6D-A331-129BD35F9E60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -101,6 +107,7 @@ Global
 		{9B5FBDF7-7427-4AF5-B10E-FC86A9651643} = {8A4D5B92-342B-4ADD-BDF0-214FC709E4A9}
 		{7020AE84-13F2-4E67-BDED-E5DFDBCF6CEF} = {8A4D5B92-342B-4ADD-BDF0-214FC709E4A9}
 		{BFC565D4-99FA-425E-9E90-D1F48C492C6C} = {8A4D5B92-342B-4ADD-BDF0-214FC709E4A9}
+		{C6ED47B2-101D-4C6D-A331-129BD35F9E60} = {BA736A1A-0672-4774-A13C-475B23638DB8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CDEBD79A-8B81-483D-9476-808386234780}

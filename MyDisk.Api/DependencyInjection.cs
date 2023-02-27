@@ -1,17 +1,19 @@
 ﻿using FluentValidation.AspNetCore;
 using MyDisk.Api.Filters;
+using MyDisk.RetryService;
 using Newtonsoft.Json.Converters;
 
 namespace MyDisk.Api;
 
 public static class DependencyInjection
 {
-    public static void AddApiServices(this IServiceCollection services)
+    public static void AddApiServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddEndpointsApiExplorer();
         services.AddMvcConfiguration();
         services.AddControllerConfiguration();
         services.AddSwaggerConfiguration();
+        services.AddOptionSettings(configuration);
     }
 
     private static void AddMvcConfiguration(this IServiceCollection services)
@@ -32,4 +34,7 @@ public static class DependencyInjection
         services.AddSwaggerGen();
         services.AddSwaggerGenNewtonsoftSupport();
     }
+
+    private static void AddOptionSettings(this IServiceCollection services, IConfiguration configuration) =>
+        services.Configure<RetryServiceSettings>(configuration.GetSection(nameof(RetryServiceSettings)));
 }
