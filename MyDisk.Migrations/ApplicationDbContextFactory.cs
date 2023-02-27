@@ -15,7 +15,7 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
             .AddJsonFile("appsettings.json", true, true)
             .Build();
 
-        var connectionString = configuration.GetConnectionString("localdb");
+        var connectionString = args.Any() ? args[0] : configuration.GetConnectionString("DefaultConnection");
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         optionsBuilder.UseSqlServer(
             connectionString,
