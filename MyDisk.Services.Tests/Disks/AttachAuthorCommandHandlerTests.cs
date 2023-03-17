@@ -1,57 +1,62 @@
 ﻿using System.Linq.Expressions;
-using AutoFixture.Xunit2;
-using AutoMapper;
 using FluentAssertions;
 using Moq;
 using MyDisk.Domain.Entities;
 using MyDisk.Domain.Exceptions;
-using MyDisk.Domain.Interfaces.IRepositories;
 using MyDisk.Services.Disks.Commands;
 using MyDisk.Services.Disks.DTOs;
 using MyDisk.Services.Disks.Requests;
 using MyDisk.Tests.Services;
+using MyDisk.Tests.Utils;
 
 namespace MyDisk.Services.Tests.Disks;
 
 public class AttachAuthorCommandHandlerTestsShould
 {
-    [Theory, AutoServiceData]
+    [Theory]
+    [AutoServiceData]
     public async Task AttachAuthorToDisk
     (
-        [Frozen] Mock<IAuthorRepository> authorRepositoryMock,
-        [Frozen] Mock<IDiskRepository> diskRepositoryMock,
-        [Frozen] Mock<IMapper> mapperMock,
         AttachAuthorRequest request,
         AttachAuthorCommandHandler sut,
-        Author author,
-        Disk disk
+        DiskResponse diskResponse
     )
     {
-        authorRepositoryMock.Setup(x => x.GetAuthorByFilterAsync(It.IsAny<Expression<Func<Author, bool>>>())).ReturnsAsync(author);
-        diskRepositoryMock.Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>())).ReturnsAsync(disk);
+        // Arrange
+        sut.Mapper.AsMock()
+            .Setup(x => x.Map<DiskResponse>(It.IsAny<Disk>()))
+            .Returns(diskResponse);
 
-        var result = await sut.Handle(request, It.IsAny<CancellationToken>());
+        // Act
+        var act = await sut.Handle(request, It.IsAny<CancellationToken>());
 
-        authorRepositoryMock.Verify(x => x.GetAuthorByFilterAsync(It.IsAny<Expression<Func<Author, bool>>>()), Times.Once);
-        diskRepositoryMock.Verify(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()), Times.Once);
-        mapperMock.Verify(x => x.Map<DiskResponse>(It.IsAny<Disk>()), Times.Once);
-        result.Should().NotBeNull();
+        // Assert
+        sut.Mapper.AsMock()
+            .Verify(x => x.Map<DiskResponse>(It.IsAny<Disk>()), Times.Once);
+        act.Should().BeEquivalentTo(diskResponse);
     }
 
-    [Theory, AutoServiceData]
+    [Theory]
+    [AutoServiceData]
     public async Task ThrowsEntityNotFoundException
     (
-        [Frozen] Mock<IAuthorRepository> authorRepositoryMock,
-        [Frozen] Mock<IDiskRepository> diskRepositoryMock,
         AttachAuthorRequest request,
         AttachAuthorCommandHandler sut
     )
     {
-        authorRepositoryMock.Setup(x => x.GetAuthorByFilterAsync(It.IsAny<Expression<Func<Author, bool>>>())).ReturnsAsync(() => null);
-        diskRepositoryMock.Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>())).ReturnsAsync(() => null);
+        // Arrange
+        sut.AuthorRepository.AsMock()
+            .Setup(x => x.GetAuthorByFilterAsync(It.IsAny<Expression<Func<Author, bool>>>()))
+            .ReturnsAsync(() => null);
+        
+        sut.DiskRepository.AsMock()
+            .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
+            .ReturnsAsync(() => null);
 
-        var result = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
+        // Act
+        var act = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
 
-        await result.Should().ThrowAsync<ObjectNotFoundException>();
+        // Assert
+        await act.Should().ThrowAsync<ObjectNotFoundException>();
     }
 }

@@ -9,26 +9,28 @@ namespace MyDisk.Services.Disks.Commands;
 
 public class AttachAuthorCommandHandler : IRequestHandler<AttachAuthorRequest, DiskResponse>
 {
-    private readonly IMapper _mapper;
-    private readonly IAuthorRepository _authorRepository;
-    private readonly IDiskRepository _diskRepository;
-    public AttachAuthorCommandHandler(IMapper mapper, IAuthorRepository repository, IAuthorRepository authorRepository, IDiskRepository diskRepository)
+    public AttachAuthorCommandHandler(IMapper mapper, IAuthorRepository repository, IAuthorRepository authorRepository,
+        IDiskRepository diskRepository)
     {
-        _mapper = mapper;
-        _authorRepository = authorRepository;
-        _diskRepository = diskRepository;
+        Mapper = mapper;
+        AuthorRepository = authorRepository;
+        DiskRepository = diskRepository;
     }
+
+    public IMapper Mapper { get; }
+    public IAuthorRepository AuthorRepository { get; }
+    public IDiskRepository DiskRepository { get; }
 
     public async Task<DiskResponse> Handle(AttachAuthorRequest request, CancellationToken cancellationToken)
     {
-        var author = await _authorRepository.GetAuthorByFilterAsync(x => x.Id == request.AuthorId);
-        var disk = await  _diskRepository.GetDiskByFilterAsync(x => x.Id == request.DiskId);
+        var author = await AuthorRepository.GetAuthorByFilterAsync(x => x.Id == request.AuthorId);
+        var disk = await DiskRepository.GetDiskByFilterAsync(x => x.Id == request.DiskId);
 
         if (author == null || disk == null)
             throw new ObjectNotFoundException("no matches found");
 
         disk.Author = author;
 
-        return _mapper.Map<DiskResponse>(disk);
+        return Mapper.Map<DiskResponse>(disk);
     }
 }

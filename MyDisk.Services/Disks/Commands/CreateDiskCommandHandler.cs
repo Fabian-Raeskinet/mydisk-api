@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using System.Globalization;
+using MediatR;
 using MyDisk.Domain.Entities;
 using MyDisk.Domain.Interfaces.IRepositories;
 using MyDisk.Services.Disks.Requests;
@@ -7,12 +8,12 @@ namespace MyDisk.Services.Disks.Commands;
 
 public class CreateDiskCommandHandler : IRequestHandler<CreateDiskRequest, Guid>
 {
-    public IDiskRepository DiskRepository { get; }
-
     public CreateDiskCommandHandler(IDiskRepository repository)
     {
         DiskRepository = repository;
     }
+
+    public IDiskRepository DiskRepository { get; }
 
     public async Task<Guid> Handle(CreateDiskRequest request, CancellationToken cancellationToken)
     {
@@ -22,7 +23,7 @@ public class CreateDiskCommandHandler : IRequestHandler<CreateDiskRequest, Guid>
             Id = Guid.NewGuid(),
             Name = request.Name,
             ReleaseDate = DateTime.ParseExact(request.ReleaseDate, "yyyy-MM-dd",
-                System.Globalization.CultureInfo.InvariantCulture),
+                CultureInfo.InvariantCulture)
         };
 
         await DiskRepository.CreateDiskAsync(entity);
