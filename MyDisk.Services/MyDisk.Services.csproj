@@ -17,6 +17,7 @@
   <ItemGroup>
     <Folder Include="Authors\Commands\" />
     <Folder Include="Authors\Queries\" />
+    <Folder Include="Common\Exceptions" />
     <Folder Include="Common\Models\" />
   </ItemGroup>
 

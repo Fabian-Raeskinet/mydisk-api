@@ -4,8 +4,8 @@ using AutoMapper;
 using FluentAssertions;
 using Moq;
 using MyDisk.Domain.Entities;
+using MyDisk.Domain.Exceptions;
 using MyDisk.Domain.Interfaces.IRepositories;
-using MyDisk.Services.Common.Exceptions;
 using MyDisk.Services.Disks.Commands;
 using MyDisk.Services.Disks.DTOs;
 using MyDisk.Services.Disks.Requests;
@@ -52,6 +52,6 @@ public class AttachAuthorCommandHandlerTestsShould
 
         var result = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
 
-        await result.Should().ThrowAsync<EntityNotFoundException>();
+        await result.Should().ThrowAsync<ObjectNotFoundException>();
     }
 }

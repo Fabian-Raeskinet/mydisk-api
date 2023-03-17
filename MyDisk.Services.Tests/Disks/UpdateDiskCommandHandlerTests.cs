@@ -4,8 +4,8 @@ using AutoMapper;
 using FluentAssertions;
 using Moq;
 using MyDisk.Domain.Entities;
+using MyDisk.Domain.Exceptions;
 using MyDisk.Domain.Interfaces.IRepositories;
-using MyDisk.Services.Common.Exceptions;
 using MyDisk.Services.Disks.Commands;
 using MyDisk.Services.Disks.DTOs;
 using MyDisk.Services.Disks.Requests;
@@ -51,6 +51,6 @@ public class UpdateDiskCommandHandlerTests
 
         diskRepositoryMock.Verify(x => x.UpdateDiskAsync(It.IsAny<Disk>()), Times.Never);
         mapper.Verify(x => x.Map<DiskResponse>(It.IsAny<Disk>()), Times.Never);
-        await result.Should().ThrowAsync<EntityNotFoundException>();
+        await result.Should().ThrowAsync<ObjectNotFoundException>();
     }
 }

@@ -3,9 +3,9 @@ using AutoFixture.Xunit2;
 using FluentAssertions;
 using Moq;
 using MyDisk.Domain.Entities;
+using MyDisk.Domain.Exceptions;
 using MyDisk.Domain.Interfaces.IRepositories;
 using MyDisk.Services.Common.Enums;
-using MyDisk.Services.Common.Exceptions;
 using MyDisk.Services.Disks.Commands;
 using MyDisk.Services.Disks.Requests;
 using MyDisk.Tests.Services;
@@ -98,7 +98,7 @@ public class DeleteDiskCommandHandlerTestsShould
         
         var result = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
 
-        await result.Should().ThrowAsync<EntityNotFoundException>();
+        await result.Should().ThrowAsync<ObjectNotFoundException>();
         diskRepositoryMock.Verify(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()), Times.Once);
         diskRepositoryMock.Verify(x => x.DeleteDiskAsync(It.IsAny<Disk>()), Times.Never);
     }

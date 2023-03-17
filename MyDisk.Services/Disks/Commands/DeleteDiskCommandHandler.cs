@@ -1,7 +1,7 @@
 ﻿using MediatR;
+using MyDisk.Domain.Exceptions;
 using MyDisk.Domain.Interfaces.IRepositories;
 using MyDisk.Services.Common.Enums;
-using MyDisk.Services.Common.Exceptions;
 using MyDisk.Services.Disks.Requests;
 
 namespace MyDisk.Services.Disks.Commands;
@@ -28,7 +28,7 @@ public class DeleteDiskCommandHandler : IRequestHandler<DeleteDiskRequest, Unit>
         };
 
         if (disk == null)
-            throw new EntityNotFoundException();
+            throw new ObjectNotFoundException();
 
         await _repository.DeleteDiskAsync(disk);
 

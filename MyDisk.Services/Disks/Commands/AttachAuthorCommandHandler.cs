@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
+using MyDisk.Domain.Exceptions;
 using MyDisk.Domain.Interfaces.IRepositories;
-using MyDisk.Services.Common.Exceptions;
 using MyDisk.Services.Disks.DTOs;
 using MyDisk.Services.Disks.Requests;
 
@@ -25,7 +25,7 @@ public class AttachAuthorCommandHandler : IRequestHandler<AttachAuthorRequest, D
         var disk = await  _diskRepository.GetDiskByFilterAsync(x => x.Id == request.DiskId);
 
         if (author == null || disk == null)
-            throw new EntityNotFoundException("no matches found");
+            throw new ObjectNotFoundException("no matches found");
 
         disk.Author = author;
 

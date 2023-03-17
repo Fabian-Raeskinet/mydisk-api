@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
+using MyDisk.Domain.Exceptions;
 using MyDisk.Domain.Interfaces.IRepositories;
-using MyDisk.Services.Common.Exceptions;
 using MyDisk.Services.Disks.DTOs;
 using MyDisk.Services.Disks.Requests;
 
@@ -23,7 +23,7 @@ public class UpdateDiskCommandHandler : IRequestHandler<UpdateDiskRequest, DiskR
         var disk = await _repository.GetDiskByFilterAsync(x => x.Id == request.Id);
 
         if (disk == null)
-            throw new EntityNotFoundException();
+            throw new ObjectNotFoundException();
 
         if (request.Name is not null) disk.Name = request.Name;
         if (request.ReleaseDate is not null) disk.ReleaseDate = request.ReleaseDate;
