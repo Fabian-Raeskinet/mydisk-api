@@ -48,7 +48,7 @@ public class AttachAuthorCommandHandlerTestsShould
         sut.AuthorRepository.AsMock()
             .Setup(x => x.GetAuthorByFilterAsync(It.IsAny<Expression<Func<Author, bool>>>()))
             .ReturnsAsync(() => null);
-        
+
         sut.DiskRepository.AsMock()
             .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
             .ReturnsAsync(() => null);

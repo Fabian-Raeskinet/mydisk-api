@@ -132,10 +132,10 @@ public class DeleteDiskCommandHandlerTestsShould
 
         // Assert
         await act.Should().ThrowAsync<ObjectNotFoundException>();
-        
+
         sut.DiskRepository.AsMock()
             .Verify(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()), Times.Once);
-        
+
         sut.DiskRepository.AsMock()
             .Verify(x => x.DeleteDiskAsync(It.IsAny<Disk>()), Times.Never);
     }

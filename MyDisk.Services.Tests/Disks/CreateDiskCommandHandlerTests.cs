@@ -50,6 +50,6 @@ public class CreateDiskCommandHandlerTestsShould
         // Assert
         sut.DiskRepository.AsMock()
             .Verify(x => x.CreateDiskAsync(It.IsAny<Disk>()), Times.Never);
-       await  act.Should().ThrowAsync<InvalidOperationException>();
+        await act.Should().ThrowAsync<InvalidOperationException>();
     }
 }
