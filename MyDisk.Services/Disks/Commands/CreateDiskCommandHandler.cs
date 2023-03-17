@@ -7,11 +7,11 @@ namespace MyDisk.Services.Disks.Commands;
 
 public class CreateDiskCommandHandler : IRequestHandler<CreateDiskRequest, Guid>
 {
-    private readonly IDiskRepository _repository;
+    public IDiskRepository DiskRepository { get; }
 
     public CreateDiskCommandHandler(IDiskRepository repository)
     {
-        _repository = repository;
+        DiskRepository = repository;
     }
 
     public async Task<Guid> Handle(CreateDiskRequest request, CancellationToken cancellationToken)
@@ -25,7 +25,7 @@ public class CreateDiskCommandHandler : IRequestHandler<CreateDiskRequest, Guid>
                 System.Globalization.CultureInfo.InvariantCulture),
         };
 
-        await _repository.CreateDiskAsync(entity);
+        await DiskRepository.CreateDiskAsync(entity);
 
         return entity.Id;
     }
