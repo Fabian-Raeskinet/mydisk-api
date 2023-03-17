@@ -13,6 +13,27 @@ public class ApiExceptionFilterAttributeFixture
 {
     [Theory]
     [AutoApiData]
+    public void ShouldReturnsNull(string exception)
+    {
+        // Arrange
+        var context = new ExceptionContext(new ActionContext
+        {
+            HttpContext = new DefaultHttpContext(),
+            RouteData = new RouteData(),
+            ActionDescriptor = new ActionDescriptor()
+        }, new List<IFilterMetadata>());
+    
+        context.Exception = new Exception(exception);
+    
+        // Act
+        new ApiExceptionFilterAttribute().OnException(context);
+    
+        // Assert
+        context.Result.Should().BeNull();
+    }
+    
+    [Theory]
+    [AutoApiData]
     public void ShouldReturnsBadRequestObjectResult(string exception)
     {
         // Arrange
@@ -30,6 +51,7 @@ public class ApiExceptionFilterAttributeFixture
     
         // Assert
         context.Result.Should().BeOfType<BadRequestObjectResult>();
+        context.Exception.Message.Should().Be(exception);
     }
     
     [Theory]
@@ -51,5 +73,6 @@ public class ApiExceptionFilterAttributeFixture
     
         // Assert
         context.Result.Should().BeOfType<NotFoundObjectResult>();
+        context.Exception.Message.Should().Be(exception);
     }
 }
