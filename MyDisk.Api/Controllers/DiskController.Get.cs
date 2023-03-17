@@ -13,7 +13,7 @@ public partial class DiskController
     public async Task<IActionResult> GetAllDisks()
     {
         var query = new GetAllDisksRequest();
-        var results = await _mediator.Send(query);
+        var results = await Mediator.Send(query);
         return Ok(results);
     }
 
@@ -24,7 +24,7 @@ public partial class DiskController
     [ProducesResponseType(404)]
     public async Task<IActionResult> GetByName([FromQuery] string? name)
     {
-        var result = await _mediator.Send(new GetDiskByNameRequest{Name = name});
+        var result = await Mediator.Send(new GetDiskByNameRequest{Name = name});
         return result != null ? Ok(result) : NotFound();
     }
 }

@@ -12,6 +12,6 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> UpdateDisk([FromBody] UpdateDiskRequest command)
     {
-        return Ok(await _mediator.Send(command));
+        return Ok(await Mediator.Send(command));
     }
 }

@@ -12,7 +12,7 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> DeleteDiskById([FromBody] Guid diskId)
     {
-        await _mediator.Send(new DeleteDiskRequest { Property = DeleteDiskByPropertyEnum.Id, Value = diskId.ToString() });
+        await Mediator.Send(new DeleteDiskRequest { Property = DeleteDiskByPropertyEnum.Id, Value = diskId.ToString() });
         return NoContent();
     }
     
@@ -22,7 +22,7 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> DeleteDiskByName(string name)
     {
-        await _mediator.Send(new DeleteDiskRequest { Property = DeleteDiskByPropertyEnum.Name, Value = name });
+        await Mediator.Send(new DeleteDiskRequest { Property = DeleteDiskByPropertyEnum.Name, Value = name });
         return NoContent();
     }
 
@@ -32,7 +32,7 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> DeleteDiskByName([FromBody] DeleteDiskRequest request)
     {
-        await _mediator.Send(new DeleteDiskRequest { Property = request.Property, Value = request.Value });
+        await Mediator.Send(new DeleteDiskRequest { Property = request.Property, Value = request.Value });
         return NoContent();
     }
 }

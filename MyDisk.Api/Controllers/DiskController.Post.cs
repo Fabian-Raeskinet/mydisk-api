@@ -11,7 +11,7 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> CreateDisk([FromBody] CreateDiskRequest command)
     {
-        return Ok(await _mediator.Send(command));
+        return Ok(await Mediator.Send(command));
     }
 
     [HttpPost]
@@ -20,7 +20,7 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> AttachAuthor([FromBody] AttachAuthorRequest command)
     {
-        var result = await _mediator.Send(command);
+        var result = await Mediator.Send(command);
         return Ok(result);
     }
 }
