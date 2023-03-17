@@ -1,4 +1,4 @@
-﻿namespace MyDisk.Services.Authors.DTOs;
+﻿namespace Contracts.Disks;
 
 public class AuthorResponse
 {

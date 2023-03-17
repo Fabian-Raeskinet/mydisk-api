@@ -1,12 +1,11 @@
-﻿using MediatR;
+﻿using Contracts.Disks;
+using MediatR;
 using MyDisk.Domain.Exceptions;
 using MyDisk.Domain.Interfaces.IRepositories;
-using MyDisk.Services.Common.Enums;
-using MyDisk.Services.Disks.Requests;
 
-namespace MyDisk.Services.Disks.Commands;
+namespace MyDisk.Services.Disks;
 
-public class DeleteDiskCommandHandler : IRequestHandler<DeleteDiskRequest, Unit>
+public class DeleteDiskCommandHandler : IRequestHandler<DeleteDiskCommand, Unit>
 {
     public DeleteDiskCommandHandler(IDiskRepository repository)
     {
@@ -15,7 +14,7 @@ public class DeleteDiskCommandHandler : IRequestHandler<DeleteDiskRequest, Unit>
 
     public IDiskRepository DiskRepository { get; }
 
-    public async Task<Unit> Handle(DeleteDiskRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(DeleteDiskCommand request, CancellationToken cancellationToken)
     {
         if (request.Value == null)
             throw new InvalidOperationException();

@@ -1,12 +1,12 @@
 ﻿using System.Reflection;
+using Contracts.Validators.Disks;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MyDisk.RetryService;
 using MyDisk.Services.Common.Behaviors;
-using MyDisk.Services.Disks.Queries;
-using MyDisk.Services.Disks.Requests;
+using MyDisk.Services.Disks;
 
 namespace MyDisk.Services;
 
@@ -29,7 +29,7 @@ public static class DependencyInjection
     private static IServiceCollection AddMediatRServices(this IServiceCollection services)
     {
         services.AddMediatR(typeof(GetAllDisksQueryHandler).Assembly);
-        services.AddValidatorsFromAssemblyContaining<GetDiskByNameRequestValidator>();
+        services.AddValidatorsFromAssemblyContaining<GetDiskByNameQueryValidator>();
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
         return services;

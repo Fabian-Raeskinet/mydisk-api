@@ -1,8 +1,8 @@
-﻿using FluentAssertions;
+﻿using Contracts.Disks;
+using FluentAssertions;
 using Moq;
 using MyDisk.Domain.Entities;
-using MyDisk.Services.Disks.Commands;
-using MyDisk.Services.Disks.Requests;
+using MyDisk.Services.Disks;
 using MyDisk.Tests.Services;
 using MyDisk.Tests.Utils;
 
@@ -15,7 +15,7 @@ public class CreateDiskCommandHandlerTestsShould
     public async Task CreateDisk
     (
         CreateDiskCommandHandler sut,
-        CreateDiskRequest request,
+        CreateDiskCommand request,
         Disk disk
     )
     {
@@ -39,7 +39,7 @@ public class CreateDiskCommandHandlerTestsShould
     public async Task ThrowInvalidOperationException
     (
         CreateDiskCommandHandler sut,
-        CreateDiskRequest request
+        CreateDiskCommand request
     )
     {
         // Arrange

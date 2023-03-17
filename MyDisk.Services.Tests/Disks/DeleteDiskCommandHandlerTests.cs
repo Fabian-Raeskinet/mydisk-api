@@ -1,12 +1,11 @@
 ﻿using System.Linq.Expressions;
 using AutoFixture.Xunit2;
+using Contracts.Disks;
 using FluentAssertions;
 using Moq;
 using MyDisk.Domain.Entities;
 using MyDisk.Domain.Exceptions;
-using MyDisk.Services.Common.Enums;
-using MyDisk.Services.Disks.Commands;
-using MyDisk.Services.Disks.Requests;
+using MyDisk.Services.Disks;
 using MyDisk.Tests.Services;
 using MyDisk.Tests.Utils;
 
@@ -18,7 +17,7 @@ public class DeleteDiskCommandHandlerTestsShould
     [AutoServiceData]
     public async Task ShouldDeleteById
     (
-        DeleteDiskRequest request,
+        DeleteDiskCommand request,
         DeleteDiskCommandHandler sut,
         Disk disk
     )
@@ -48,7 +47,7 @@ public class DeleteDiskCommandHandlerTestsShould
     [AutoServiceData]
     public async Task ShouldDeleteByName
     (
-        DeleteDiskRequest request,
+        DeleteDiskCommand request,
         DeleteDiskCommandHandler sut,
         Disk disk
     )
@@ -78,7 +77,7 @@ public class DeleteDiskCommandHandlerTestsShould
     [AutoServiceData]
     public async Task ShouldThrowInvalidOperationExceptionBecauseNullValue
     (
-        [NoAutoProperties] DeleteDiskRequest request,
+        [NoAutoProperties] DeleteDiskCommand request,
         DeleteDiskCommandHandler sut
     )
     {
@@ -97,7 +96,7 @@ public class DeleteDiskCommandHandlerTestsShould
     [AutoServiceData]
     public async Task ShouldThrowInvalidOperationExceptionBecauseIncorrectProperty
     (
-        [NoAutoProperties] DeleteDiskRequest request,
+        [NoAutoProperties] DeleteDiskCommand request,
         DeleteDiskCommandHandler sut
     )
     {
@@ -118,7 +117,7 @@ public class DeleteDiskCommandHandlerTestsShould
     [AutoServiceData]
     public async Task ShouldThrowEntityNotFoundException
     (
-        DeleteDiskRequest request,
+        DeleteDiskCommand request,
         DeleteDiskCommandHandler sut
     )
     {

@@ -1,5 +1,4 @@
-﻿using MyDisk.Services.Disks.DTOs;
-using MyDisk.Services.Disks.Requests;
+﻿using Contracts.Disks;
 using MyDisk.Tests.Api;
 using MyDisk.Tests.Utils;
 
@@ -13,7 +12,7 @@ public class GetAllDisksShould
     {
         // Arrange
         sut.Mediator.AsMock()
-            .Setup(x => x.Send(It.IsAny<GetAllDisksRequest>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.Send(It.IsAny<GetAllDisksQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<DiskEntity>());
         // Act
         var act = await sut.GetAllDisks();
@@ -21,7 +20,7 @@ public class GetAllDisksShould
         // Assert
         act.Should().BeOfType<OkObjectResult>();
         sut.Mediator.AsMock()
-            .Verify(x => x.Send(It.IsAny<GetAllDisksRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(x => x.Send(It.IsAny<GetAllDisksQuery>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 }
 
@@ -33,7 +32,7 @@ public class GetDiskByNameShould
     {
         // Arrange
         sut.Mediator.AsMock()
-            .Setup(x => x.Send(It.IsAny<GetDiskByNameRequest>(), It.IsAny<CancellationToken>()))
+            .Setup(x => x.Send(It.IsAny<GetDiskByNameQuery>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync(response);
 
         // Act
@@ -42,7 +41,7 @@ public class GetDiskByNameShould
         // Assert
         act.Should().BeOfType<OkObjectResult>();
         sut.Mediator.AsMock()
-            .Verify(x => x.Send(It.IsAny<GetDiskByNameRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(x => x.Send(It.IsAny<GetDiskByNameQuery>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Theory]
@@ -52,7 +51,7 @@ public class GetDiskByNameShould
         // Arrange
         DiskResponse? response = null;
         sut.Mediator.AsMock()
-            .Setup(x => x.Send(It.IsAny<GetDiskByNameRequest>(), It.IsAny<CancellationToken>()))!
+            .Setup(x => x.Send(It.IsAny<GetDiskByNameQuery>(), It.IsAny<CancellationToken>()))!
             .ReturnsAsync(response);
 
         // Act
@@ -61,7 +60,7 @@ public class GetDiskByNameShould
         // Assert
         act.Should().BeOfType<NotFoundResult>();
         sut.Mediator.AsMock()
-            .Verify(x => x.Send(It.IsAny<GetDiskByNameRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(x => x.Send(It.IsAny<GetDiskByNameQuery>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
     // [Theory]
@@ -91,16 +90,16 @@ public class GetDiskByNameShould
         {
             // Arrange
             sut.Mediator.AsMock()
-                .Setup(x => x.Send(It.IsAny<CreateDiskRequest>(), It.IsAny<CancellationToken>()))
+                .Setup(x => x.Send(It.IsAny<CreateDiskCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(diskId);
 
             // Act
-            var act = await sut.CreateDisk(It.IsAny<CreateDiskRequest>());
+            var act = await sut.CreateDisk(It.IsAny<CreateDiskCommand>());
 
             // Assert
             act.Should().BeOfType<OkObjectResult>();
             sut.Mediator.AsMock()
-                .Verify(x => x.Send(It.IsAny<CreateDiskRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+                .Verify(x => x.Send(It.IsAny<CreateDiskCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 
@@ -111,12 +110,12 @@ public class GetDiskByNameShould
         public async Task ReturnsOkResult([NoAutoProperties] DiskController sut)
         {
             // Act
-            var act = await sut.AttachAuthor(It.IsAny<AttachAuthorRequest>());
+            var act = await sut.AttachAuthor(It.IsAny<AttachAuthorCommand>());
 
             // Assert
             act.Should().BeOfType<OkObjectResult>();
             sut.Mediator.AsMock()
-                .Verify(x => x.Send(It.IsAny<AttachAuthorRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+                .Verify(x => x.Send(It.IsAny<AttachAuthorCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 
@@ -128,7 +127,7 @@ public class GetDiskByNameShould
         {
             // Arrange
             sut.Mediator.AsMock()
-                .Setup(x => x.Send(It.IsAny<DeleteDiskRequest>(), It.IsAny<CancellationToken>()))
+                .Setup(x => x.Send(It.IsAny<DeleteDiskCommand>(), It.IsAny<CancellationToken>()))
                 .Verifiable();
 
             // Act
@@ -137,7 +136,7 @@ public class GetDiskByNameShould
             // Assert
             act.Should().BeOfType<NoContentResult>();
             sut.Mediator.AsMock()
-                .Verify(x => x.Send(It.IsAny<DeleteDiskRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+                .Verify(x => x.Send(It.IsAny<DeleteDiskCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 
@@ -149,7 +148,7 @@ public class GetDiskByNameShould
         {
             // Arrange
             sut.Mediator.AsMock()
-                .Setup(x => x.Send(It.IsAny<DeleteDiskRequest>(), It.IsAny<CancellationToken>()))
+                .Setup(x => x.Send(It.IsAny<DeleteDiskCommand>(), It.IsAny<CancellationToken>()))
                 .Verifiable();
 
             // Act
@@ -158,7 +157,7 @@ public class GetDiskByNameShould
             // Assert
             act.Should().BeOfType<NoContentResult>();
             sut.Mediator.AsMock()
-                .Verify(x => x.Send(It.IsAny<DeleteDiskRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+                .Verify(x => x.Send(It.IsAny<DeleteDiskCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
     
@@ -166,11 +165,11 @@ public class GetDiskByNameShould
     {
         [Theory]
         [AutoApiData]
-        public async Task ReturnsNoContentResult([NoAutoProperties] DiskController sut, DeleteDiskRequest request)
+        public async Task ReturnsNoContentResult([NoAutoProperties] DiskController sut, DeleteDiskCommand request)
         {
             // Arrange
             sut.Mediator.AsMock()
-                .Setup(x => x.Send(It.IsAny<DeleteDiskRequest>(), It.IsAny<CancellationToken>()))
+                .Setup(x => x.Send(It.IsAny<DeleteDiskCommand>(), It.IsAny<CancellationToken>()))
                 .Verifiable();
 
             // Act
@@ -179,7 +178,7 @@ public class GetDiskByNameShould
             // Assert
             act.Should().BeOfType<NoContentResult>();
             sut.Mediator.AsMock()
-                .Verify(x => x.Send(It.IsAny<DeleteDiskRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+                .Verify(x => x.Send(It.IsAny<DeleteDiskCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 
@@ -191,16 +190,16 @@ public class GetDiskByNameShould
         {
             // Arrange
             sut.Mediator.AsMock()
-                .Setup(x => x.Send(It.IsAny<UpdateDiskRequest>(), It.IsAny<CancellationToken>()))
+                .Setup(x => x.Send(It.IsAny<UpdateDiskCommand>(), It.IsAny<CancellationToken>()))
                 .Verifiable();
 
             // Act
-            var result = await sut.UpdateDisk(It.IsAny<UpdateDiskRequest>());
+            var result = await sut.UpdateDisk(It.IsAny<UpdateDiskCommand>());
 
             // Assert
             result.Should().BeOfType<OkObjectResult>();
             sut.Mediator.AsMock()
-                .Verify(x => x.Send(It.IsAny<UpdateDiskRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+                .Verify(x => x.Send(It.IsAny<UpdateDiskCommand>(), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }

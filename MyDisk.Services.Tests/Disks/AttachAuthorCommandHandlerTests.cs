@@ -1,11 +1,10 @@
 ﻿using System.Linq.Expressions;
+using Contracts.Disks;
 using FluentAssertions;
 using Moq;
 using MyDisk.Domain.Entities;
 using MyDisk.Domain.Exceptions;
-using MyDisk.Services.Disks.Commands;
-using MyDisk.Services.Disks.DTOs;
-using MyDisk.Services.Disks.Requests;
+using MyDisk.Services.Disks;
 using MyDisk.Tests.Services;
 using MyDisk.Tests.Utils;
 
@@ -17,7 +16,7 @@ public class AttachAuthorCommandHandlerTestsShould
     [AutoServiceData]
     public async Task AttachAuthorToDisk
     (
-        AttachAuthorRequest request,
+        AttachAuthorCommand request,
         AttachAuthorCommandHandler sut,
         DiskResponse diskResponse
     )
@@ -40,7 +39,7 @@ public class AttachAuthorCommandHandlerTestsShould
     [AutoServiceData]
     public async Task ThrowsEntityNotFoundException
     (
-        AttachAuthorRequest request,
+        AttachAuthorCommand request,
         AttachAuthorCommandHandler sut
     )
     {

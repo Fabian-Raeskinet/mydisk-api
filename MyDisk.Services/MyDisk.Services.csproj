@@ -15,13 +15,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Authors\Commands\" />
-    <Folder Include="Authors\Queries\" />
-    <Folder Include="Common\Exceptions" />
-    <Folder Include="Common\Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\Contracts.Validators\Contracts.Validators.csproj" />
+    <ProjectReference Include="..\Contracts\Contracts.csproj" />
     <ProjectReference Include="..\MyDisk.Domain\MyDisk.Domain.csproj" />
     <ProjectReference Include="..\MyDisk.Infrastructure\MyDisk.Infrastructure.csproj" />
     <ProjectReference Include="..\MyDisk.RetryService\MyDisk.RetryService.csproj" />

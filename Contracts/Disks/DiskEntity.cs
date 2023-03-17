@@ -1,7 +1,4 @@
-﻿using MyDisk.Domain.Entities;
-using MyDisk.Services.Authors.DTOs;
-
-namespace MyDisk.Services.Disks.DTOs;
+﻿namespace Contracts.Disks;
 
 public class DiskEntity
 {

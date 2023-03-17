@@ -6,19 +6,52 @@
     <projectFile profileName="MyDisk.Api">src/MyDisk.Api/MyDisk.Api.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="feat: add AuthorProfileFixture &amp; DiskProfileFixture">
+    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="feat: add policy test">
+      <change afterPath="$PROJECT_DIR$/Contracts.Validators/Contracts.Validators.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Contracts.Validators/Disks/AttachAuthorCommandValidator.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Contracts.Validators/Disks/CreateDiskCommandValidator.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Contracts.Validators/Disks/DeleteDiskCommandValidator.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Contracts.Validators/Disks/GetDiskByNameQueryValidator.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Contracts.Validators/Disks/UpdateDiskCommandValidator.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Contracts/Contracts.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Api.Tests/Controllers/DiskControllerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api.Tests/Controllers/DiskControllerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Api.Tests/Controllers/MiscellaneousControllerFixture.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api.Tests/Controllers/MiscellaneousControllerFixture.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Api.Tests/MyDisk.Api.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api.Tests/MyDisk.Api.Tests.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Delete.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Delete.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Get.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Get.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Post.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Post.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Put.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Put.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/AttachAuthorCommandHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/AttachAuthorCommandHandlerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/CreateDiskCommandHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/CreateDiskCommandHandlerTests.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/DeleteDiskCommandHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/DeleteDiskCommandHandlerTests.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetAllDisksQueryHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetAllDisksQueryHandlerTests.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetDiskByNameQueryHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetDiskByNameQueryHandlerTests.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/UpdateDiskCommandHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/UpdateDiskCommandHandlerTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/Commands/AttachAuthorCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/Commands/AttachAuthorCommandHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/Commands/CreateDiskCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/Commands/CreateDiskCommandHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/Commands/DeleteDiskCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/Commands/DeleteDiskCommandHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/Commands/UpdateDiskCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/Commands/UpdateDiskCommandHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/Queries/GetAllDisksQueryHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/Queries/GetAllDisksQueryHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/Queries/GetDiskByNameQueryHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/Queries/GetDiskByNameQueryHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Profiles/AuthorProfileFixture.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Profiles/AuthorProfileFixture.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Profiles/DiskProfileFixture.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Profiles/DiskProfileFixture.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Authors/DTOs/AuthorResponse.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts/Disks/AuthorResponse.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Authors/MapperProfiles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Authors/MapperProfiles.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Common/Enums/DeleteDiskByPropertyEnum.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts/Disks/DeleteDiskByPropertyEnum.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Common/Interfaces/ICurrentUserService.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/DependencyInjection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/Commands/AttachAuthorCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/AttachAuthorCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/Commands/CreateDiskCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/CreateDiskCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/Commands/DeleteDiskCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/DeleteDiskCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/Commands/UpdateDiskCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/UpdateDiskCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/DTOs/DiskEntity.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts/Disks/DiskEntity.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/DTOs/DiskResponse.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts/Disks/DiskResponse.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/MapperProfiles.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/MapperProfiles.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/Queries/GetAllDisksQueryHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/GetAllDisksQueryHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/Queries/GetDiskByNameQueryHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/GetDiskByNameQueryHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/Requests/AttachAuthorRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts/Disks/AttachAuthorCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/Requests/CreateDiskRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts/Disks/CreateDiskCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/Requests/DeleteDiskRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts/Disks/DeleteDiskCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/Requests/GetAllDisksRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts/Disks/GetAllDisksQuery.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/Requests/GetDiskByNameRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts/Disks/GetDiskByNameQuery.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/Requests/UpdateDiskRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts/Disks/UpdateDiskCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/MyDisk.Services.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/MyDisk.Services.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mydisk-api.sln" beforeDir="false" afterPath="$PROJECT_DIR$/mydisk-api.sln" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +102,10 @@
     <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Api/Controllers/DiskController.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Api/Controllers/DiskController.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Api/Controllers/MiscellaneousController.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Services.Tests/Disks/AttachAuthorCommandHandlerTests.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Services.Tests/Disks/CreateDiskCommandHandlerTests.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Services.Tests/Disks/CreateDiskCommandHandlerTests.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Services/Disks/Commands/AttachAuthorCommandHandler.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Services/Disks/Commands/CreateDiskCommandHandler.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -299,7 +335,28 @@
       <option name="project" value="LOCAL" />
       <updated>1679090479005</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="feat: update tests with AsMock extension">
+      <created>1679091882313</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1679091882313</updated>
+    </task>
+    <task id="LOCAL-00023" summary="styling: clean and reformat">
+      <created>1679091937079</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1679091937079</updated>
+    </task>
+    <task id="LOCAL-00024" summary="feat: add policy test">
+      <created>1679093449654</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1679093449654</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -309,38 +366,43 @@
     <option name="coveragePercentColumnWidth" value="150" />
     <option name="sortOrder" value="DESCENDING" />
     <option name="sortedColumn" value="1" />
-    <option name="symbolColumnWidth" value="302" />
+    <option name="symbolColumnWidth" value="416" />
     <coverage-tree-state>
       <expand>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 27% 1130/1540" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 32% 1061/1551" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 27% 1130/1540" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Services 54% 184/396" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 32% 1061/1551" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Services 72% 115/407" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 27% 1130/1540" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Services 54% 184/396" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="MyDisk.Services 43% 130/229" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 32% 1061/1551" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Services 72% 115/407" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="MyDisk.Services 61% 92/235" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 27% 1130/1540" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Services 54% 184/396" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="MyDisk.Services 43% 130/229" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="MyDisk.Services 43% 130/229" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 32% 1061/1551" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Services 72% 115/407" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="MyDisk.Services 61% 92/235" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="MyDisk.Services 61% 92/235" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 27% 1130/1540" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Services 54% 184/396" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="MyDisk.Services 43% 130/229" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="MyDisk.Services 43% 130/229" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Disks 64% 52/143" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 32% 1061/1551" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Services 72% 115/407" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="MyDisk.RetryService 0% 21/21" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 32% 1061/1551" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Services 72% 115/407" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="MyDisk.RetryService 0% 21/21" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="MyDisk.RetryService 0% 21/21" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
       </expand>
       <select />
@@ -381,7 +443,10 @@
     <MESSAGE value="feat: add MiscellaneousControllerFixture" />
     <MESSAGE value="feat: add CreateDiskCommandHandlerTests.cs" />
     <MESSAGE value="feat: add AuthorProfileFixture &amp; DiskProfileFixture" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: add AuthorProfileFixture &amp; DiskProfileFixture" />
+    <MESSAGE value="feat: update tests with AsMock extension" />
+    <MESSAGE value="styling: clean and reformat" />
+    <MESSAGE value="feat: add policy test" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: add policy test" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
