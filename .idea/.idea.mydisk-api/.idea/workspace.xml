@@ -6,10 +6,18 @@
     <projectFile profileName="MyDisk.Api">src/MyDisk.Api/MyDisk.Api.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="add retry service policy">
+    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="update ApiExceptionFilterAttributeFixture tests">
+      <change afterPath="$PROJECT_DIR$/MyDisk.Tests.Utils/MockExtensions.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MyDisk.Tests.Utils/MyDisk.Tests.Utils.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Api.Tests/Filters/ApiExceptionFilterAttributeFixture.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api.Tests/Filters/ApiExceptionFilterAttributeFixture.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Domain/Exceptions/EntityNotFoundException.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Domain/Exceptions/ObjectNotFoundException.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Api.Tests/Controllers/DiskControllerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api.Tests/Controllers/DiskControllerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Api.Tests/MyDisk.Api.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api.Tests/MyDisk.Api.Tests.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Delete.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Delete.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Get.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Get.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Post.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Post.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Put.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.Put.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api/Controllers/DiskController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mydisk-api.sln" beforeDir="false" afterPath="$PROJECT_DIR$/mydisk-api.sln" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,6 +56,8 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bd1d5c50194fea68ff3559c160230b0ab50f5acf4ce3061bffd6d62958e2182/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/dadd0a915db2cd1cdaa6a06a662aaa784844e42fdfb959d7cfb634a45e93d5/ExceptionPredicates.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/e71c1ec2ba258e2a68e894d51ec9332e04ea5f29be37fa878f45e9f79ff31c1/AsyncRetryEngine.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Api.Tests/Controllers/DiskControllerTests.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Api.Tests/Filters/ApiExceptionFilterAttributeFixture.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -220,7 +230,14 @@
       <option name="project" value="LOCAL" />
       <updated>1676490594807</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="update ApiExceptionFilterAttributeFixture tests">
+      <created>1679084639698</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1679084639699</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -235,52 +252,42 @@
       <expand>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 26% 1105/1484" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 26% 1108/1488" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 26% 1105/1484" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Interfaces 61% 80/206" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 26% 1108/1488" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Interfaces 61% 80/207" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 26% 1105/1484" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Interfaces 61% 80/206" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 26% 1108/1488" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Interfaces 61% 80/207" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
           <item name="MyDisk.Api 42% 80/137" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 26% 1105/1484" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Interfaces 61% 80/206" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="MyDisk.Api 42% 80/137" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="MyDisk.Api 50% 57/114" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-        </path>
-        <path>
-          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 26% 1105/1484" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Interfaces 61% 80/206" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 26% 1108/1488" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Interfaces 61% 80/207" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
           <item name="MyDisk.Api 42% 80/137" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
           <item name="MyDisk.Api 50% 57/114" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Filters 90% 3/29" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 26% 1105/1484" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Interfaces 61% 80/206" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 26% 1108/1488" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Interfaces 61% 80/207" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
           <item name="MyDisk.Api 42% 80/137" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
           <item name="MyDisk.Api 50% 57/114" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Filters 90% 3/29" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="ApiExceptionFilterAttribute 90% 3/29" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Controllers 72% 12/43" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 26% 1105/1484" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Interfaces 61% 80/206" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 26% 1108/1488" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Interfaces 61% 80/207" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
           <item name="MyDisk.Api 42% 80/137" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
           <item name="MyDisk.Api 50% 57/114" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Filters 90% 3/29" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="ApiExceptionFilterAttribute 90% 3/29" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="HandleValidationException(ExceptionContext) 75% 2/8" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Controllers 72% 12/43" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="DiskController 89% 4/35" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
       </expand>
       <select />
@@ -313,7 +320,8 @@
     <MESSAGE value="rename solution folder" />
     <MESSAGE value="create tests solution folders and autodata-attribute" />
     <MESSAGE value="configure customization" />
-    <option name="LAST_COMMIT_MESSAGE" value="configure customization" />
+    <MESSAGE value="update ApiExceptionFilterAttributeFixture tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="update ApiExceptionFilterAttributeFixture tests" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -323,19 +331,6 @@
           <line>19</line>
           <properties documentPath="C:\Users\raeskinet.fabian\Documents\Github\MyDisk\mydisk-api\src\MyDisk.Services\Disks\Commands\DeleteDiskCommandHandler.cs" initialLine="19" containingFunctionPresentation="method 'Handle'" />
           <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/MyDisk.Api.Tests/Filters/ApiExceptionFilterAttributeFixture.cs</url>
-          <line>53</line>
-          <properties documentPath="C:\Users\raeskinet.fabian\Documents\Github\MyDisk\mydisk-api\MyDisk.Api.Tests\Filters\ApiExceptionFilterAttributeFixture.cs" initialLine="51" containingFunctionPresentation="method 'ShouldReturnsBadRequestObjectResult'">
-            <startOffsets>
-              <option value="1596" />
-            </startOffsets>
-            <endOffsets>
-              <option value="1655" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="12" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
