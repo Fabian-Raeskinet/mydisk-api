@@ -30,7 +30,7 @@ public partial class DiskController
     [Route("delete-by-property")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> DeleteDiskByName([FromBody] DeleteDiskRequest request)
+    public async Task<IActionResult> DeleteDiskByProperty([FromBody] DeleteDiskRequest request)
     {
         await Mediator.Send(new DeleteDiskRequest { Property = request.Property, Value = request.Value });
         return NoContent();

@@ -161,6 +161,27 @@ public class GetDiskByNameShould
                 .Verify(x => x.Send(It.IsAny<DeleteDiskRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
+    
+    public class DeleteDiskByPropertyShould
+    {
+        [Theory]
+        [AutoApiData]
+        public async Task ReturnsNoContentResult([NoAutoProperties] DiskController sut, DeleteDiskRequest request)
+        {
+            // Arrange
+            sut.Mediator.AsMock()
+                .Setup(x => x.Send(It.IsAny<DeleteDiskRequest>(), It.IsAny<CancellationToken>()))
+                .Verifiable();
+
+            // Act
+            var act = await sut.DeleteDiskByProperty(request);
+
+            // Assert
+            act.Should().BeOfType<NoContentResult>();
+            sut.Mediator.AsMock()
+                .Verify(x => x.Send(It.IsAny<DeleteDiskRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+    }
 
     public class UpdateDiskShould
     {

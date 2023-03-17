@@ -7,10 +7,10 @@ namespace MyDisk.Api.Controllers;
 [ApiController]
 public partial class DiskController : ControllerBase
 {
-    public IMediator Mediator { get; }
-
     public DiskController(IMediator mediator)
     {
         Mediator = mediator;
     }
+
+    public IMediator Mediator { get; }
 }
