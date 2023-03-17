@@ -66,6 +66,84 @@ public class GetDiskByNameShould
 //     }
 // }
 
+    // [Theory]
+    // [AutoDomainData]
+    // public async Task ShouldThrowException(
+    //     Mock<ICurrentUserService> currentUserServiceMock,
+    //     AssociateStakeholderToAccountRequest request
+    // )
+    // {
+    //     // Arrange
+    //     request.SignInEmail = "certainEmail";
+    //     var claimsEmail = "otherEmail";
+    //         
+    //     currentUserServiceMock
+    //         .Setup(x => x.Email)
+    //         .Returns(claimsEmail);
+    //     var del = new Mock<RequestHandlerDelegate<AssociateStakeholderToAccountNotification?>>();
+    //     var sut = new AuthorizationPipelineBehaviour<IRequest<AssociateStakeholderToAccountNotification?>, AssociateStakeholderToAccountNotification?>(currentUserServiceMock.Object);
+    //         
+    //     // Act
+    //     Func<Task> act = async () => await sut.Handle(request, del.Object, default);
+    //         
+    //     //Assert
+    //     await act.Should().ThrowAsync<ArgumentException>();
+    // }
+    
+    // [Theory]
+    // [AutoDomainData]
+    // public async Task ReturnsBadRequest
+    // (
+    //     [Frozen] Mock<IMediator> mediator
+    // )
+    // {
+    //     var request = new EanValidationRequest();
+    //     var del = new Mock<RequestHandlerDelegate<Unit>>();
+    //     var sut = new ValidatorPipelineBehavior<EanValidationRequest, Unit>(
+    //         new List<IValidator<EanValidationRequest>> { new EanValidationRequestValidator() });
+    //
+    //     //Act
+    //     Func<Task> act = async () => await sut.Handle(request, del.Object, default);
+    //
+    //     await act.Should().ThrowAsync<ValidationException>();
+    // }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    // var request = new EanValidationRequest();
+    // var del = new Mock<RequestHandlerDelegate<Unit>>();
+    // var sut = new ValidatorPipelineBehavior<EanValidationRequest, Unit>(
+    //     new List<IValidator<EanValidationRequest>> { new EanValidationRequestValidator() });
+    //         
+    // //Act
+    // Func<Task> act = async () => await sut.Handle(request, del.Object, default);
+    //         
+    // await act.Should().ThrowAsync<ValidationException>();
+    //         
+    //         
+    // // Arrange
+    // var context = new ExceptionContext(new ActionContext
+    // {
+    //     HttpContext = new DefaultHttpContext(),
+    //     RouteData = new RouteData(),
+    //     ActionDescriptor = new ActionDescriptor()
+    // }, new List<IFilterMetadata>());
+    //
+    // context.Exception = new ValidationException("test");
+    //
+    // // Act
+    // new ApiExceptionFilterAttribute().OnException(context);
+    //
+    // // Assert
+    // context.Result.Should().BeOfType<BadRequestObjectResult>();
+
     /*  [Theory, AutoApiData]
       public async void ReturnsBadRequest
       (
