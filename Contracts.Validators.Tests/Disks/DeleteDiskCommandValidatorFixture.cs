@@ -14,7 +14,7 @@ public class DeleteDiskCommandValidatorFixture
     [Theory]
     [InlineAutoServiceData(null, "value")]
     [InlineAutoServiceData(null, null)]
-    public async Task ShouldThrowValidationException(DeleteDiskByPropertyEnum property, string value)
+    public async Task ShouldThrowValidationException(DeleteDiskByProperty property, string value)
     {
         // Arrange
         var request = new DeleteDiskCommand{Property = property, Value = value};

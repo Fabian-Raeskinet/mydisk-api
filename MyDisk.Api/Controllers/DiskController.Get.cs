@@ -19,11 +19,11 @@ public partial class DiskController
     [HttpGet]
     [Route("disk-by-name")]
     [ProducesResponseType(typeof(DiskResponse), 200)]
-    [ProducesResponseType(typeof(List<string>),400)]
+    [ProducesResponseType(typeof(List<string>), 400)]
     [ProducesResponseType(404)]
     public async Task<IActionResult> GetByName([FromQuery] string? name)
     {
-        var result = await Mediator.Send(new GetDiskByNameQuery{Name = name});
-        return result != null ? Ok(result) : NotFound();
+        var result = await Mediator.Send(new GetDiskByNameQuery { Name = name });
+        return Ok(result);
     }
 }

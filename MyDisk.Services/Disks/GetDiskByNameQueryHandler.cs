@@ -2,6 +2,7 @@
 using Contracts.Disks;
 using MediatR;
 using MyDisk.Domain;
+using MyDisk.Domain.Exceptions;
 
 namespace MyDisk.Services.Disks;
 
@@ -20,6 +21,9 @@ public class GetDiskByNameQueryHandler : IRequestHandler<GetDiskByNameQuery, Dis
     {
         var data = await DiskRepository.GetDiskByFilterAsync(d => d.Name == request.Name);
 
-        return data == null ? null : Mapper.Map<DiskResponse>(data);
+        if (data == null)
+            throw new ObjectNotFoundException();
+
+        return Mapper.Map<DiskResponse>(data);
     }
 }

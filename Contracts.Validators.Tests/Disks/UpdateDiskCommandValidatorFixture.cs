@@ -12,17 +12,20 @@ namespace Contracts.Validators.Tests.Disks;
 public class UpdateDiskCommandValidatorFixture
 {
     [Theory]
-    [InlineAutoServiceData("", "value", "")]
-    [InlineAutoServiceData(null, "value", "value")]
-    public async Task ShouldThrowValidationException(string id, string name, string releaseDate)
+    // [InlineAutoServiceData("", "value", "")]
+    // [InlineAutoServiceData(null, "value", "value")]
+    [AutoServiceData]
+    public async Task ShouldThrowValidationException(Guid id, string name, string releaseDate)
     {
         // Arrange
-        var request = new UpdateDiskCommand
-        {
-            Name = name,
-            Id = id,
-            ReleaseDate = releaseDate
-        };
+        // var request = new UpdateDiskCommand
+        // {
+        //     Name = name,
+        //     Id = id,
+        //     ReleaseDate = releaseDate
+        // };
+
+        var request = new UpdateDiskCommand();
         var del = new Mock<RequestHandlerDelegate<DiskResponse>>();
         var sut = new ValidationBehaviour<UpdateDiskCommand, DiskResponse>(
             new List<IValidator<UpdateDiskCommand>> { new UpdateDiskCommandValidator() });
