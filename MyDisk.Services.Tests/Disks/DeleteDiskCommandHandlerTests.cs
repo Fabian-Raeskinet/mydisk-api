@@ -23,7 +23,7 @@ public class DeleteDiskCommandHandlerTestsShould
     )
     {
         // Arrange
-        request.Property = DeleteDiskByPropertyEnum.Id;
+        request.Property = DeleteDiskByProperty.Id;
 
         sut.DiskRepository.AsMock()
             .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
@@ -53,7 +53,7 @@ public class DeleteDiskCommandHandlerTestsShould
     )
     {
         // Arrange
-        request.Property = DeleteDiskByPropertyEnum.Name;
+        request.Property = DeleteDiskByProperty.Name;
 
         sut.DiskRepository.AsMock()
             .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))

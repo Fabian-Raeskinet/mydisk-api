@@ -21,9 +21,9 @@ public class DeleteDiskCommandHandler : IRequestHandler<DeleteDiskCommand, Unit>
 
         var disk = request.Property switch
         {
-            DeleteDiskByPropertyEnum.Id => await DiskRepository.GetDiskByFilterAsync(x =>
+            DeleteDiskByProperty.Id => await DiskRepository.GetDiskByFilterAsync(x =>
                 x.Id == new Guid(request.Value)),
-            DeleteDiskByPropertyEnum.Name => await DiskRepository.GetDiskByFilterAsync(x => x.Name == request.Value),
+            DeleteDiskByProperty.Name => await DiskRepository.GetDiskByFilterAsync(x => x.Name == request.Value),
             _ => throw new InvalidOperationException()
         };
 

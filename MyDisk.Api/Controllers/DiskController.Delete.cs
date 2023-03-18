@@ -11,7 +11,7 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> DeleteDiskById([FromBody] Guid diskId)
     {
-        await Mediator.Send(new DeleteDiskCommand { Property = DeleteDiskByPropertyEnum.Id, Value = diskId.ToString() });
+        await Mediator.Send(new DeleteDiskCommand { Property = Contracts.Disks.DeleteDiskByProperty.Id, Value = diskId.ToString() });
         return NoContent();
     }
     
@@ -21,7 +21,7 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> DeleteDiskByName(string name)
     {
-        await Mediator.Send(new DeleteDiskCommand { Property = DeleteDiskByPropertyEnum.Name, Value = name });
+        await Mediator.Send(new DeleteDiskCommand { Property = Contracts.Disks.DeleteDiskByProperty.Name, Value = name });
         return NoContent();
     }
 

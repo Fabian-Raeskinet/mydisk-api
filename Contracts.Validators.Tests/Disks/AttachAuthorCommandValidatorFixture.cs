@@ -11,13 +11,16 @@ namespace Contracts.Validators.Tests.Disks;
 
 public class AttachAuthorCommandValidatorFixture
 {
+    
+    //TODO
+    // demander thomas/thierry ce qui est mieux comme type d'entrée pour les contrats
     [Theory]
-    [InlineAutoServiceData("", "")]
-    [InlineAutoServiceData("", "value")]
-    [InlineAutoServiceData("value", "")]
-    [InlineAutoServiceData(null, "value")]
+    // [InlineAutoServiceData("", "")]
+    // [InlineAutoServiceData("", "66a7609b-634e-4449-9ff8-7e757f98d86a")]
+    // [InlineAutoServiceData("66a7609b-634e-4449-9ff8-7e757f98d86a", "")]
+    [InlineAutoServiceData(null, "66a7609b-634e-4449-9ff8-7e757f98d86a")]
     [InlineAutoServiceData(null, null)]
-    public async Task ShouldThrowValidationException(string authorId, string diskId)
+    public async Task ShouldThrowValidationException(Guid authorId, Guid diskId)
     {
         // Arrange
         var request = new AttachAuthorCommand { AuthorId = authorId, DiskId = diskId };

@@ -22,8 +22,8 @@ public class AttachAuthorCommandHandler : IRequestHandler<AttachAuthorCommand, D
 
     public async Task<DiskResponse> Handle(AttachAuthorCommand request, CancellationToken cancellationToken)
     {
-        var author = await AuthorRepository.GetAuthorByFilterAsync(x => x.Id == new Guid(request.AuthorId));
-        var disk = await DiskRepository.GetDiskByFilterAsync(x => x.Id == new Guid(request.DiskId));
+        var author = await AuthorRepository.GetAuthorByFilterAsync(x => x.Id == request.AuthorId);
+        var disk = await DiskRepository.GetDiskByFilterAsync(x => x.Id == request.DiskId);
 
         if (author == null || disk == null)
             throw new ObjectNotFoundException("no matches found");

@@ -1,6 +1,6 @@
 ﻿namespace Contracts.Disks;
 
-public enum DeleteDiskByPropertyEnum
+public enum DeleteDiskByProperty
 {
     Id = 1,
     Name = 2

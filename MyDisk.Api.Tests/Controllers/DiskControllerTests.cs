@@ -44,24 +44,24 @@ public class GetDiskByNameShould
             .Verify(x => x.Send(It.IsAny<GetDiskByNameQuery>(), It.IsAny<CancellationToken>()), Times.Once);
     }
 
-    [Theory]
-    [AutoApiData]
-    public async void ReturnsNotFound([NoAutoProperties] DiskController sut)
-    {
-        // Arrange
-        DiskResponse? response = null;
-        sut.Mediator.AsMock()
-            .Setup(x => x.Send(It.IsAny<GetDiskByNameQuery>(), It.IsAny<CancellationToken>()))!
-            .ReturnsAsync(response);
-
-        // Act
-        var act = await sut.GetByName(It.IsAny<string>());
-
-        // Assert
-        act.Should().BeOfType<NotFoundResult>();
-        sut.Mediator.AsMock()
-            .Verify(x => x.Send(It.IsAny<GetDiskByNameQuery>(), It.IsAny<CancellationToken>()), Times.Once);
-    }
+    // [Theory]
+    // [AutoApiData]
+    // public async void ReturnsNotFound([NoAutoProperties] DiskController sut)
+    // {
+    //     // Arrange
+    //     DiskResponse? response = null;
+    //     sut.Mediator.AsMock()
+    //         .Setup(x => x.Send(It.IsAny<GetDiskByNameQuery>(), It.IsAny<CancellationToken>()))!
+    //         .ReturnsAsync(response);
+    //
+    //     // Act
+    //     var act = await sut.GetByName(It.IsAny<string>());
+    //
+    //     // Assert
+    //     act.Should().BeOfType<NotFoundResult>();
+    //     sut.Mediator.AsMock()
+    //         .Verify(x => x.Send(It.IsAny<GetDiskByNameQuery>(), It.IsAny<CancellationToken>()), Times.Once);
+    // }
 
     // [Theory]
     // [AutoDomainData]

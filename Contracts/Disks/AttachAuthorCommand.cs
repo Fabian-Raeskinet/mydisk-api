@@ -4,6 +4,6 @@ namespace Contracts.Disks;
 
 public class AttachAuthorCommand : IRequest<DiskResponse>
 {
-    public string AuthorId { get; set; }
-    public string DiskId { get; set; }
+    public Guid AuthorId { get; set; }
+    public Guid DiskId { get; set; }
 }
