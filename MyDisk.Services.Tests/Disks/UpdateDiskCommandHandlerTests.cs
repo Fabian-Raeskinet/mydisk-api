@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Globalization;
+using System.Linq.Expressions;
 using Contracts.Disks;
 using FluentAssertions;
 using Moq;
@@ -22,6 +23,8 @@ public class UpdateDiskCommandHandlerTests
     )
     {
         // Arrange
+        request.Id = Guid.NewGuid().ToString();
+        request.ReleaseDate = DateTime.Now.ToString(CultureInfo.CurrentCulture);
         sut.DiskRepository.AsMock()
             .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
             .ReturnsAsync(disk);

@@ -5,7 +5,7 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MyDisk.RetryService;
-using MyDisk.Services.Common.Behaviors;
+using MyDisk.Services.Behaviors;
 using MyDisk.Services.Disks;
 
 namespace MyDisk.Services;

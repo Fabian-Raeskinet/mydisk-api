@@ -1,8 +1,12 @@
 ﻿using System.Linq.Expressions;
 using Contracts.Disks;
+using Contracts.Validators.Disks;
 using FluentAssertions;
+using FluentValidation;
+using MediatR;
 using Moq;
 using MyDisk.Domain.Entities;
+using MyDisk.Services.Behaviors;
 using MyDisk.Services.Disks;
 using MyDisk.Tests.Services;
 using MyDisk.Tests.Utils;
@@ -52,5 +56,23 @@ public class GetDiskByNameQueryHandlerTestsShould
         sut.Mapper.AsMock()
             .Verify(x => x.Map<DiskResponse>(It.IsAny<Disk>()), Times.Never);
         act.Should().BeNull();
+    }
+}
+public class ValidationBehaviourFixture
+{
+
+    
+    [Theory]
+    [AutoServiceData]
+    public async Task ShouldNotThrowValidationExceptionBecauseNoValidators(GetDiskByNameQuery request)
+    {
+        var del = new Mock<RequestHandlerDelegate<DiskResponse>>();
+        var sut = new ValidationBehaviour<GetDiskByNameQuery, DiskResponse>(
+            new List<IValidator<GetDiskByNameQuery>> { });
+        
+        //Act
+        Func<Task> act = async () => await sut.Handle(request, del.Object, default);
+
+        await act.Should().NotThrowAsync<ValidationException>();
     }
 }

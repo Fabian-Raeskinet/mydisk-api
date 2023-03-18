@@ -11,7 +11,7 @@ public class AutoServiceDataAttribute : AutoDataAttribute
 
 public class InlineAutoServiceDataAttribute : InlineAutoDataAttribute
 {
-    public InlineAutoServiceDataAttribute(params object[] values) : base(new AutoServiceDataAttribute(), values) { }
+    public InlineAutoServiceDataAttribute(params object?[]? values) : base(new AutoServiceDataAttribute(), values) { }
 }
 
 internal class ServiceCustomization : CompositeCustomization

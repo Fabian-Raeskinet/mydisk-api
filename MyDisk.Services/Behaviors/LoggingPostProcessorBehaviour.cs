@@ -2,7 +2,7 @@
 using MediatR.Pipeline;
 using Microsoft.Extensions.Logging;
 
-namespace MyDisk.Services.Common.Behaviors;
+namespace MyDisk.Services.Behaviors;
 
 public class LoggingPostProcessorBehaviour<TRequest, TResponse> : IRequestPostProcessor<TRequest, TResponse> where TRequest : IRequest<TResponse>
 {
