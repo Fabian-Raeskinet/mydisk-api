@@ -6,33 +6,11 @@
     <projectFile profileName="MyDisk.Api">src/MyDisk.Api/MyDisk.Api.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="refactor: architecture">
-      <change afterPath="$PROJECT_DIR$/Contracts.Validators.Tests/Contracts.Validators.Tests.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Contracts.Validators.Tests/Disks/AttachAuthorCommandValidatorFixture.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Contracts.Validators.Tests/Disks/CreateDiskCommandValidatorFixture.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Contracts.Validators.Tests/Disks/DeleteDiskCommandValidatorFixture.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Contracts.Validators.Tests/Disks/GetDiskByNameQueryValidatorFixture.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Contracts.Validators.Tests/Disks/UpdateDiskCommandValidatorFixture.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Contracts.Validators.Tests/Usings.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/dataSources/7dca47b7-dd25-45cc-9491-11bbbd6e4347.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/dataSources/7dca47b7-dd25-45cc-9491-11bbbd6e4347.xml" afterDir="false" />
+    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="tests: add validators tests">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Contracts.Validators/Disks/DeleteDiskCommandValidator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts.Validators/Disks/DeleteDiskCommandValidator.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Contracts/Disks/AttachAuthorCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts/Disks/AttachAuthorCommand.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Contracts/Disks/DeleteDiskCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts/Disks/DeleteDiskCommand.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Contracts/Disks/UpdateDiskCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts/Disks/UpdateDiskCommand.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Conf/DependencyInjection.cs" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Conf/MyDisk.Conf.csproj" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetDiskByNameQueryHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetDiskByNameQueryHandlerTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/UpdateDiskCommandHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/UpdateDiskCommandHandlerTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/MyDisk.Services.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/MyDisk.Services.Tests.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Common/Behaviors/LoggingPostProcessorBehaviour.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Behaviors/LoggingPostProcessorBehaviour.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Common/Behaviors/LoggingPreProcessorBehaviour.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Behaviors/LoggingPreProcessorBehaviour.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Common/Behaviors/ValidationBehaviour.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Behaviors/ValidationBehaviour.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/DependencyInjection.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/AttachAuthorCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/AttachAuthorCommandHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/UpdateDiskCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/UpdateDiskCommandHandler.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/MyDisk.Tests.Services/AutoServiceDataAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Tests.Services/AutoServiceDataAttribute.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mydisk-api.sln" beforeDir="false" afterPath="$PROJECT_DIR$/mydisk-api.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contracts.Validators/Disks/CreateDiskCommandValidator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts.Validators/Disks/CreateDiskCommandValidator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contracts.Validators/Disks/GetDiskByNameQueryValidator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts.Validators/Disks/GetDiskByNameQueryValidator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Api/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Api/appsettings.Development.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,7 +84,7 @@
     ]
   }
 }</component>
-  <component name="RunManager" selected="258f927b-f578-4b1e-b440-e61c6d1ae7ab">
+  <component name="RunManager" selected=".NET Launch Settings Profile.MyDisk.Api">
     <configuration name="MyDisk.Api" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/MyDisk.Api/MyDisk.Api.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net7.0" />
@@ -176,7 +154,7 @@
       <workItem from="1676485294285" duration="4683000" />
       <workItem from="1679099652126" duration="299000" />
       <workItem from="1679131636622" duration="2014000" />
-      <workItem from="1679141702372" duration="3541000" />
+      <workItem from="1679141702372" duration="4770000" />
     </task>
     <task id="LOCAL-00004" summary="Move solution to Data solution folder, creation of dbContextFactory, reset migrations">
       <created>1676119295150</created>
@@ -339,32 +317,57 @@
       <option name="project" value="LOCAL" />
       <updated>1679099883844</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="tests: add validators tests">
+      <created>1679146746437</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1679146746437</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="UnitTestsCoverage.Settings">
-    <option name="coveragePercentColumnWidth" value="127" />
+    <option name="coveragePercentColumnWidth" value="125" />
     <option name="sortOrder" value="DESCENDING" />
     <option name="sortedColumn" value="1" />
-    <option name="symbolColumnWidth" value="348" />
+    <option name="symbolColumnWidth" value="341" />
     <coverage-tree-state>
       <expand>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 36% 1014/1578" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 39% 962/1578" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 36% 1014/1578" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Services 74% 116/452" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 39% 962/1578" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Services 83% 77/452" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
         <path>
           <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
-          <item name="Total 36% 1014/1578" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
-          <item name="Interfaces 71% 73/254" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Total 39% 962/1578" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Services 83% 77/452" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="MyDisk.Services 70% 52/173" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 39% 962/1578" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Services 83% 77/452" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="MyDisk.Services 70% 52/173" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="MyDisk.Services 70% 52/173" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 39% 962/1578" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Interfaces 75% 63/254" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 39% 962/1578" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Data 0% 801/801" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
         </path>
       </expand>
       <select />
@@ -409,7 +412,8 @@
     <MESSAGE value="styling: clean and reformat" />
     <MESSAGE value="feat: add policy test" />
     <MESSAGE value="refactor: architecture" />
-    <option name="LAST_COMMIT_MESSAGE" value="refactor: architecture" />
+    <MESSAGE value="tests: add validators tests" />
+    <option name="LAST_COMMIT_MESSAGE" value="tests: add validators tests" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -419,21 +423,6 @@
           <line>19</line>
           <properties documentPath="C:\Users\raeskinet.fabian\Documents\Github\MyDisk\mydisk-api\src\MyDisk.Services\Disks\Commands\DeleteDiskCommandHandler.cs" initialLine="19" containingFunctionPresentation="method 'Handle'" />
           <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/MyDisk.Services/Disks/UpdateDiskCommandHandler.cs</url>
-          <line>21</line>
-          <properties documentPath="C:\Users\raeskinet.fabian\Documents\Github\MyDisk\mydisk-api\MyDisk.Services\Disks\UpdateDiskCommandHandler.cs" initialLine="21" containingFunctionPresentation="method 'Handle'">
-            <startOffsets>
-              <option value="598" />
-              <option value="656" />
-            </startOffsets>
-            <endOffsets>
-              <option value="708" />
-              <option value="706" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
