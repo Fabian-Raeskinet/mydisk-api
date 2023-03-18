@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 using Contracts.Disks;
 using MediatR;
+using MyDisk.Domain;
 using MyDisk.Domain.Entities;
-using MyDisk.Domain.Interfaces.IRepositories;
 
 namespace MyDisk.Services.Disks;
 

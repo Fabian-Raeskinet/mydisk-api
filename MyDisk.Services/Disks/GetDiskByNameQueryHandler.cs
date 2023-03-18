@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Contracts.Disks;
 using MediatR;
-using MyDisk.Domain.Interfaces.IRepositories;
+using MyDisk.Domain;
 
 namespace MyDisk.Services.Disks;
 

@@ -1,7 +1,7 @@
 ﻿using Contracts.Disks;
 using MediatR;
+using MyDisk.Domain;
 using MyDisk.Domain.Exceptions;
-using MyDisk.Domain.Interfaces.IRepositories;
 
 namespace MyDisk.Services.Disks;
 

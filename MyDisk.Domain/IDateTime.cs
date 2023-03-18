@@ -1,4 +1,4 @@
-﻿namespace MyDisk.Domain.Interfaces;
+﻿namespace MyDisk.Domain;
 
 public interface IDateTime
 {

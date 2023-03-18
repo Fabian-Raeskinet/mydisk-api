@@ -25,7 +25,7 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
                 b.CommandTimeout(600);
             });
 
-        var dbContext = new ApplicationDbContext(optionsBuilder.Options, new OperationalStoreOptionsMigrations());
+        var dbContext = new ApplicationDbContext(optionsBuilder.Options);
            
         return dbContext;
     }

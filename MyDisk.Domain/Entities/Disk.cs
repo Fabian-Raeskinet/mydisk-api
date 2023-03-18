@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using MyDisk.Domain.Common;
 
 namespace MyDisk.Domain.Entities;
 

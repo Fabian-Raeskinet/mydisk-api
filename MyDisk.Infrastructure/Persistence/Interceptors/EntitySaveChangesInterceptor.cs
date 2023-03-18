@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using MyDisk.Domain.Common;
-using MyDisk.Domain.Interfaces;
+using MyDisk.Domain;
+using MyDisk.Domain.Entities;
 
 namespace MyDisk.Infrastructure.Persistence.Interceptors;
 

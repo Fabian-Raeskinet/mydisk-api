@@ -1,31 +1,27 @@
-﻿using System.Reflection;
+﻿
+using System.Reflection;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
-using MyDisk.Infrastructure.Persistence.Identity;
-using Duende.IdentityServer.EntityFramework.Options;
-using Microsoft.Extensions.Options;
 using MyDisk.Domain.Entities;
 using MyDisk.Infrastructure.Interfaces;
 using MyDisk.Infrastructure.Persistence.Interceptors;
 
 namespace MyDisk.Infrastructure.Persistence;
 
-public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>, IApplicationDbContext
+public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
     private readonly EntitySaveChangesInterceptor? _saveChangesInterceptor;
 
     public ApplicationDbContext
     (
         DbContextOptions<ApplicationDbContext> options,
-        IOptions<OperationalStoreOptions> operationalStoreOptions,
         EntitySaveChangesInterceptor? saveChangesInterceptor
-    ) : base(options, operationalStoreOptions)
+    ) : base(options)
     {
         _saveChangesInterceptor = saveChangesInterceptor;
     }
 
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IOptions<OperationalStoreOptions> operationalStoreOptions) 
-        : base(options, operationalStoreOptions)
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
+        : base(options)
     {
         
     }

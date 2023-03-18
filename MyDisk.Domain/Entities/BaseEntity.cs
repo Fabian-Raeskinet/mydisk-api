@@ -1,4 +1,4 @@
-﻿namespace MyDisk.Domain.Common;
+﻿namespace MyDisk.Domain.Entities;
 
 public abstract class BaseEntity
 {
