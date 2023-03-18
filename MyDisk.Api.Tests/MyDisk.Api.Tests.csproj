@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -24,9 +24,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Contracts\Contracts.csproj" />
     <ProjectReference Include="..\MyDisk.Api\MyDisk.Api.csproj" />
     <ProjectReference Include="..\MyDisk.Domain.Tests\MyDisk.Domain.Tests.csproj" />
     <ProjectReference Include="..\MyDisk.Services\MyDisk.Services.csproj" />
+    <ProjectReference Include="..\MyDisk.Tests.Api\MyDisk.Tests.Api.csproj" />
+    <ProjectReference Include="..\MyDisk.Tests.Utils\MyDisk.Tests.Utils.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,12 +1,9 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using MyDisk.Domain.Interfaces;
-using MyDisk.Domain.Interfaces.IRepositories;
+using MyDisk.Domain;
 using MyDisk.Infrastructure.Interfaces;
 using MyDisk.Infrastructure.Persistence;
-using MyDisk.Infrastructure.Persistence.Identity;
 using MyDisk.Infrastructure.Persistence.Interceptors;
 using MyDisk.Infrastructure.Repositories;
 using MyDisk.Infrastructure.Services;
@@ -20,8 +17,7 @@ public static class DependencyInjection
         services
             .AddRepositories()
             .AddDatabaseConfiguration(configuration)
-            .AddDateTimeService()
-            .AddIdentityService();
+            .AddDateTimeService();
 
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
@@ -45,19 +41,4 @@ public static class DependencyInjection
 
     private static IServiceCollection AddDateTimeService(this IServiceCollection services) =>
         services.AddTransient<IDateTime, DateTimeService>();
-
-    private static IServiceCollection AddIdentityService(this IServiceCollection services)
-    {
-        services
-            .AddDefaultIdentity<ApplicationUser>()
-            .AddRoles<IdentityRole>()
-            .AddEntityFrameworkStores<ApplicationDbContext>();
-
-        services.AddIdentityServer()
-            .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
-
-        services.AddTransient<IIdentityService, IdentityService>();
-
-        return services;
-    }
 }

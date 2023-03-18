@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using MyDisk.Domain.Common;
-using MyDisk.Domain.Interfaces;
+using MyDisk.Domain;
+using MyDisk.Domain.Entities;
 
 namespace MyDisk.Infrastructure.Persistence.Interceptors;
 
@@ -36,13 +36,13 @@ public class EntitySaveChangesInterceptor : SaveChangesInterceptor
         {
             if (entry.State == EntityState.Added)
             {
-                entry.Entity.CreatedAt = DateTime.Now;
-                entry.Entity.UpdatedAt = DateTime.Now;
+                entry.Entity.CreatedAt = DateTimeOffset.Now;
+                entry.Entity.UpdatedAt = DateTimeOffset.Now;
             }
 
             if (entry.State is EntityState.Added or EntityState.Modified)
             {
-                entry.Entity.UpdatedAt = DateTime.Now;
+                entry.Entity.UpdatedAt = DateTimeOffset.Now;
             }
         }
     }

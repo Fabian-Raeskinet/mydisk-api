@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using MyDisk.Services.Common.Exceptions;
+using MyDisk.Domain.Exceptions;
 
 namespace MyDisk.Api.Filters;
 
@@ -14,7 +14,7 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         _exceptionHandlers = new Dictionary<Type, Action<ExceptionContext>?>
         {
             { typeof(ValidationException), HandleValidationException },
-            { typeof(EntityNotFoundException), HandleEntityNotFoundException }
+            { typeof(ObjectNotFoundException), HandleEntityNotFoundException }
         };
     }
 
@@ -43,7 +43,7 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 
     private void HandleEntityNotFoundException(ExceptionContext context)
     {
-        if (context.Exception is not EntityNotFoundException exception) return;
+        if (context.Exception is not ObjectNotFoundException exception) return;
         var error = exception.Message;
 
         context.Result = new NotFoundObjectResult(new List<string> { error });

@@ -1,4 +1,4 @@
-﻿using MyDisk.Domain.Interfaces;
+﻿using MyDisk.Domain;
 
 namespace MyDisk.Infrastructure.Services;
 

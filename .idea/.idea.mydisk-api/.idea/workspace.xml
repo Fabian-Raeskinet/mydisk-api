@@ -6,8 +6,32 @@
     <projectFile profileName="MyDisk.Api">src/MyDisk.Api/MyDisk.Api.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="rename solution folder">
+    <list default="true" id="07f2b15f-a5ad-4b95-9811-b2e3b95a7c4d" name="Changes" comment="refactor: architecture">
+      <change afterPath="$PROJECT_DIR$/Contracts.Validators.Tests/Contracts.Validators.Tests.csproj" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Contracts.Validators.Tests/Disks/AttachAuthorCommandValidatorFixture.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Contracts.Validators.Tests/Disks/CreateDiskCommandValidatorFixture.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Contracts.Validators.Tests/Disks/DeleteDiskCommandValidatorFixture.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Contracts.Validators.Tests/Disks/GetDiskByNameQueryValidatorFixture.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Contracts.Validators.Tests/Disks/UpdateDiskCommandValidatorFixture.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Contracts.Validators.Tests/Usings.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/dataSources/7dca47b7-dd25-45cc-9491-11bbbd6e4347.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/dataSources/7dca47b7-dd25-45cc-9491-11bbbd6e4347.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.mydisk-api/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contracts.Validators/Disks/DeleteDiskCommandValidator.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts.Validators/Disks/DeleteDiskCommandValidator.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contracts/Disks/AttachAuthorCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts/Disks/AttachAuthorCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contracts/Disks/DeleteDiskCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts/Disks/DeleteDiskCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Contracts/Disks/UpdateDiskCommand.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Contracts/Disks/UpdateDiskCommand.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Conf/DependencyInjection.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Conf/MyDisk.Conf.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetDiskByNameQueryHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/GetDiskByNameQueryHandlerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/UpdateDiskCommandHandlerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/Disks/UpdateDiskCommandHandlerTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services.Tests/MyDisk.Services.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services.Tests/MyDisk.Services.Tests.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Common/Behaviors/LoggingPostProcessorBehaviour.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Behaviors/LoggingPostProcessorBehaviour.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Common/Behaviors/LoggingPreProcessorBehaviour.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Behaviors/LoggingPreProcessorBehaviour.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Common/Behaviors/ValidationBehaviour.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Behaviors/ValidationBehaviour.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/DependencyInjection.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/DependencyInjection.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/AttachAuthorCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/AttachAuthorCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Services/Disks/UpdateDiskCommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Services/Disks/UpdateDiskCommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/MyDisk.Tests.Services/AutoServiceDataAttribute.cs" beforeDir="false" afterPath="$PROJECT_DIR$/MyDisk.Tests.Services/AutoServiceDataAttribute.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mydisk-api.sln" beforeDir="false" afterPath="$PROJECT_DIR$/mydisk-api.sln" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -33,12 +57,22 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/53f68e7d96cb4fc7a99643667e11faa329000/36/1766f996/MatcherFactory.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7790469866d943e39174c4a5771cfe8741880/b3/cfdf5e8f/BindingInfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/19ba5a289f2afd3f4d5e862cb3f3efee6181683a31ee31b86c2298b1f51114b/ServiceProvider.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/2a5cc194fee19ec98ae1c3a8395d4f42f3d0dc84adbe34dcc08c28eec6bc9b1/TaskAwaiter.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/38284ca4f4afe378f96fccac3e179f4bceda7a74eb151623b66d2dc3634d9b/ExceptionAggregator.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/4dc18e8baaf1a871657a7f850fac57bffd8e2d14d5fc10ac5c26b3c239667/ApiAuthorizationDbContext.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/4dd1529387a55910aa796c84a7bb0c23ddc85073765fb381a967e8e91aab56/ResultPredicates.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5592b6c4d129c2c2d2e552847dd47209b368db795ac7642b49555c8943a9cb9/XUnit2TestFramework.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5b41719e5de9b1c8f56068ede8b7a820b6561038ff22525cd952b0d3df621ec5/PolicyBuilder.OrSyntax.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/7ecf697f25d55be4508ccda492c1408b81d0f778dff9e95c4c7585f0952fa78b/TokenResponse.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8271807a61bb8a8540cf6d7a38534480374a4aac934ee4f53d7efdc9aea37ae/IOptions.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/82bc1a384bb8bd24f7e1e447d6eee5431455ed531e2da4246edc3ed4cba8f8/AsyncPolicy.TResult.ExecuteOverloads.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8fad43879c4cd949bb193bcf82b97d853b3b4a2246d374b6117c71e2876f74/PolicyBase.ContextAndKeys.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b2f7b8a43bdbe87c291db52377bbace80ad9e971d414d037b16557135a7c99/OperationalStoreOptions.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bc55ae671a88627605bb9f3e3d91e26d30e97784e7bbb87f3eee711195b5c3/Future.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bd1d5c50194fea68ff3559c160230b0ab50f5acf4ce3061bffd6d62958e2182/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Infrastructure/DependencyInjection.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/dadd0a915db2cd1cdaa6a06a662aaa784844e42fdfb959d7cfb634a45e93d5/ExceptionPredicates.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/e71c1ec2ba258e2a68e894d51ec9332e04ea5f29be37fa878f45e9f79ff31c1/AsyncRetryEngine.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock://C:/Users/raeskinet.fabian/Documents/Github/MyDisk/mydisk-api/MyDisk.Tests.Services/AutoServiceDataAttribute.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -72,7 +106,7 @@
     ]
   }
 }</component>
-  <component name="RunManager" selected=".NET Launch Settings Profile.MyDisk.Api">
+  <component name="RunManager" selected="258f927b-f578-4b1e-b440-e61c6d1ae7ab">
     <configuration name="MyDisk.Api" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/MyDisk.Api/MyDisk.Api.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net7.0" />
@@ -139,7 +173,10 @@
       <updated>1675446456311</updated>
       <workItem from="1675446457857" duration="1699000" />
       <workItem from="1676107115865" duration="6814000" />
-      <workItem from="1676485294285" duration="2678000" />
+      <workItem from="1676485294285" duration="4683000" />
+      <workItem from="1679099652126" duration="299000" />
+      <workItem from="1679131636622" duration="2014000" />
+      <workItem from="1679141702372" duration="3541000" />
     </task>
     <task id="LOCAL-00004" summary="Move solution to Data solution folder, creation of dbContextFactory, reset migrations">
       <created>1676119295150</created>
@@ -190,11 +227,148 @@
       <option name="project" value="LOCAL" />
       <updated>1676487545234</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="rename solution folder">
+      <created>1676487998531</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1676487998531</updated>
+    </task>
+    <task id="LOCAL-00012" summary="create tests solution folders and autodata-attribute">
+      <created>1676489979449</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1676489979449</updated>
+    </task>
+    <task id="LOCAL-00013" summary="configure customization">
+      <created>1676490594807</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1676490594807</updated>
+    </task>
+    <task id="LOCAL-00014" summary="update ApiExceptionFilterAttributeFixture tests">
+      <created>1679084639698</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1679084639699</updated>
+    </task>
+    <task id="LOCAL-00015" summary="refactor: DiskController with public Mediator prop">
+      <created>1679086375062</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1679086375062</updated>
+    </task>
+    <task id="LOCAL-00016" summary="refactor: DiskController tests">
+      <created>1679086394031</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1679086394031</updated>
+    </task>
+    <task id="LOCAL-00017" summary="test: add new DeleteByPropery test">
+      <created>1679086892972</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1679086892972</updated>
+    </task>
+    <task id="LOCAL-00018" summary="refactor: migrate from private to public prop">
+      <created>1679086918923</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1679086918923</updated>
+    </task>
+    <task id="LOCAL-00019" summary="feat: add MiscellaneousControllerFixture">
+      <created>1679088734829</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1679088734829</updated>
+    </task>
+    <task id="LOCAL-00020" summary="feat: add CreateDiskCommandHandlerTests.cs">
+      <created>1679088762322</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1679088762322</updated>
+    </task>
+    <task id="LOCAL-00021" summary="feat: add AuthorProfileFixture &amp; DiskProfileFixture">
+      <created>1679090479005</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1679090479005</updated>
+    </task>
+    <task id="LOCAL-00022" summary="feat: update tests with AsMock extension">
+      <created>1679091882313</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1679091882313</updated>
+    </task>
+    <task id="LOCAL-00023" summary="styling: clean and reformat">
+      <created>1679091937079</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1679091937079</updated>
+    </task>
+    <task id="LOCAL-00024" summary="feat: add policy test">
+      <created>1679093449654</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1679093449654</updated>
+    </task>
+    <task id="LOCAL-00025" summary="refactor: architecture">
+      <created>1679096129085</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1679096129085</updated>
+    </task>
+    <task id="LOCAL-00026" summary="refactor: architecture">
+      <created>1679099883844</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1679099883844</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="UnitTestsCoverage.Settings">
+    <option name="coveragePercentColumnWidth" value="127" />
+    <option name="sortOrder" value="DESCENDING" />
+    <option name="sortedColumn" value="1" />
+    <option name="symbolColumnWidth" value="348" />
+    <coverage-tree-state>
+      <expand>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 36% 1014/1578" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 36% 1014/1578" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Services 74% 116/452" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+        <path>
+          <item name="rootNode" type="c53c71d1:RiderDotCoverCoverageTreeModel$RootNode" />
+          <item name="Total 36% 1014/1578" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+          <item name="Interfaces 71% 73/254" type="8b8fad3a:RiderDotCoverCoverageTreeNode" />
+        </path>
+      </expand>
+      <select />
+    </coverage-tree-state>
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="false" />
   <component name="UnityUnitTestConfiguration" currentTestLauncher="Both" />
@@ -221,7 +395,21 @@
     <MESSAGE value="create Interface solution folder &amp; move tests solutions" />
     <MESSAGE value="fix migrationAssembly reference" />
     <MESSAGE value="rename solution folder" />
-    <option name="LAST_COMMIT_MESSAGE" value="rename solution folder" />
+    <MESSAGE value="create tests solution folders and autodata-attribute" />
+    <MESSAGE value="configure customization" />
+    <MESSAGE value="update ApiExceptionFilterAttributeFixture tests" />
+    <MESSAGE value="refactor: DiskController with public Mediator prop" />
+    <MESSAGE value="refactor: DiskController tests" />
+    <MESSAGE value="test: add new DeleteByPropery test" />
+    <MESSAGE value="refactor: migrate from private to public prop" />
+    <MESSAGE value="feat: add MiscellaneousControllerFixture" />
+    <MESSAGE value="feat: add CreateDiskCommandHandlerTests.cs" />
+    <MESSAGE value="feat: add AuthorProfileFixture &amp; DiskProfileFixture" />
+    <MESSAGE value="feat: update tests with AsMock extension" />
+    <MESSAGE value="styling: clean and reformat" />
+    <MESSAGE value="feat: add policy test" />
+    <MESSAGE value="refactor: architecture" />
+    <option name="LAST_COMMIT_MESSAGE" value="refactor: architecture" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -231,6 +419,21 @@
           <line>19</line>
           <properties documentPath="C:\Users\raeskinet.fabian\Documents\Github\MyDisk\mydisk-api\src\MyDisk.Services\Disks\Commands\DeleteDiskCommandHandler.cs" initialLine="19" containingFunctionPresentation="method 'Handle'" />
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/MyDisk.Services/Disks/UpdateDiskCommandHandler.cs</url>
+          <line>21</line>
+          <properties documentPath="C:\Users\raeskinet.fabian\Documents\Github\MyDisk\mydisk-api\MyDisk.Services\Disks\UpdateDiskCommandHandler.cs" initialLine="21" containingFunctionPresentation="method 'Handle'">
+            <startOffsets>
+              <option value="598" />
+              <option value="656" />
+            </startOffsets>
+            <endOffsets>
+              <option value="708" />
+              <option value="706" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

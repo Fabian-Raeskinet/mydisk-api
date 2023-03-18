@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MyDisk.Services.Common.Enums;
-using MyDisk.Services.Disks.Requests;
+﻿using Contracts.Disks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MyDisk.Api.Controllers;
 
@@ -12,7 +11,7 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> DeleteDiskById([FromBody] Guid diskId)
     {
-        await _mediator.Send(new DeleteDiskRequest { Property = DeleteDiskByPropertyEnum.Id, Value = diskId.ToString() });
+        await Mediator.Send(new DeleteDiskCommand { Property = DeleteDiskByPropertyEnum.Id, Value = diskId.ToString() });
         return NoContent();
     }
     
@@ -22,7 +21,7 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> DeleteDiskByName(string name)
     {
-        await _mediator.Send(new DeleteDiskRequest { Property = DeleteDiskByPropertyEnum.Name, Value = name });
+        await Mediator.Send(new DeleteDiskCommand { Property = DeleteDiskByPropertyEnum.Name, Value = name });
         return NoContent();
     }
 
@@ -30,9 +29,9 @@ public partial class DiskController
     [Route("delete-by-property")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> DeleteDiskByName([FromBody] DeleteDiskRequest request)
+    public async Task<IActionResult> DeleteDiskByProperty([FromBody] DeleteDiskCommand request)
     {
-        await _mediator.Send(new DeleteDiskRequest { Property = request.Property, Value = request.Value });
+        await Mediator.Send(new DeleteDiskCommand { Property = request.Property, Value = request.Value });
         return NoContent();
     }
 }

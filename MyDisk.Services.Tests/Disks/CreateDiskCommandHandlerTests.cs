@@ -1,31 +1,55 @@
-﻿using AutoFixture.Xunit2;
+﻿using Contracts.Disks;
 using FluentAssertions;
 using Moq;
 using MyDisk.Domain.Entities;
-using MyDisk.Domain.Interfaces.IRepositories;
-using MyDisk.Domain.Tests;
-using MyDisk.Services.Disks.Commands;
-using MyDisk.Services.Disks.Requests;
+using MyDisk.Services.Disks;
+using MyDisk.Tests.Services;
+using MyDisk.Tests.Utils;
 
 namespace MyDisk.Services.Tests.Disks;
 
 public class CreateDiskCommandHandlerTestsShould
 {
-    [Theory, AutoDomainData]
+    [Theory]
+    [AutoServiceData]
     public async Task CreateDisk
     (
-        [Frozen] Mock<IDiskRepository> repositoryMock,
-        [Frozen] Disk disk,
         CreateDiskCommandHandler sut,
-        CreateDiskRequest request
+        CreateDiskCommand request,
+        Disk disk
     )
     {
+        // Arrange
         request.ReleaseDate = "2022-12-20";
-        repositoryMock.Setup(x => x.CreateDiskAsync(disk)).ReturnsAsync(disk.Id);
+        sut.DiskRepository.AsMock()
+            .Setup(x => x.CreateDiskAsync(disk))
+            .ReturnsAsync(disk.Id);
 
-        var result = await sut.Handle(request, It.IsAny<CancellationToken>());
+        // Act
+        var act = await sut.Handle(request, It.IsAny<CancellationToken>());
 
-        repositoryMock.Verify(x => x.CreateDiskAsync(It.IsAny<Disk>()), Times.Once);
-        result.Should().NotBeEmpty();
+        // Assert
+        sut.DiskRepository.AsMock()
+            .Verify(x => x.CreateDiskAsync(It.IsAny<Disk>()), Times.Once);
+        act.Should().NotBeEmpty();
+    }
+
+    [Theory]
+    [AutoServiceData]
+    public async Task ThrowInvalidOperationException
+    (
+        CreateDiskCommandHandler sut,
+        CreateDiskCommand request
+    )
+    {
+        // Arrange
+        request.ReleaseDate = null;
+        // Act
+        var act = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
+
+        // Assert
+        sut.DiskRepository.AsMock()
+            .Verify(x => x.CreateDiskAsync(It.IsAny<Disk>()), Times.Never);
+        await act.Should().ThrowAsync<InvalidOperationException>();
     }
 }

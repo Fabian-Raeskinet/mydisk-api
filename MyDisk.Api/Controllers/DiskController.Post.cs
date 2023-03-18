@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MyDisk.Services.Disks.Requests;
+﻿using Contracts.Disks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MyDisk.Api.Controllers;
 
@@ -9,18 +9,18 @@ public partial class DiskController
     [Route("create-disk")]
     [ProducesResponseType(typeof(Guid), 200)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> CreateDisk([FromBody] CreateDiskRequest command)
+    public async Task<IActionResult> CreateDisk([FromBody] CreateDiskCommand command)
     {
-        return Ok(await _mediator.Send(command));
+        return Ok(await Mediator.Send(command));
     }
 
     [HttpPost]
     [Route("attach-author")]
     [ProducesResponseType(typeof(Guid), 200)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> AttachAuthor([FromBody] AttachAuthorRequest command)
+    public async Task<IActionResult> AttachAuthor([FromBody] AttachAuthorCommand command)
     {
-        var result = await _mediator.Send(command);
+        var result = await Mediator.Send(command);
         return Ok(result);
     }
 }

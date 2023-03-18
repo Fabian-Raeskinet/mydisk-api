@@ -10,16 +10,13 @@
     <PackageReference Include="FluentValidation.AspNetCore" Version="10.3.4" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\MyDisk.Infrastructure\MyDisk.Infrastructure.csproj" />
+    <ProjectReference Include="..\MyDisk.RetryService\MyDisk.RetryService.csproj" />
     <ProjectReference Include="..\MyDisk.Services\MyDisk.Services.csproj" />
   </ItemGroup>
 

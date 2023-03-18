@@ -1,56 +1,67 @@
-﻿using System.Linq.Expressions;
-using AutoFixture.Xunit2;
-using AutoMapper;
+﻿using System.Globalization;
+using System.Linq.Expressions;
+using Contracts.Disks;
 using FluentAssertions;
 using Moq;
 using MyDisk.Domain.Entities;
-using MyDisk.Domain.Interfaces.IRepositories;
-using MyDisk.Domain.Tests;
-using MyDisk.Services.Common.Exceptions;
-using MyDisk.Services.Disks.Commands;
-using MyDisk.Services.Disks.DTOs;
-using MyDisk.Services.Disks.Requests;
+using MyDisk.Domain.Exceptions;
+using MyDisk.Services.Disks;
+using MyDisk.Tests.Services;
+using MyDisk.Tests.Utils;
 
 namespace MyDisk.Services.Tests.Disks;
 
 public class UpdateDiskCommandHandlerTests
 {
-    [Theory, AutoDomainData]
+    [Theory]
+    [AutoServiceData]
     public async Task ShouldUpdateDisk
     (
-        [Frozen] Mock<IDiskRepository> diskRepositoryMock,
-        [Frozen] Mock<IMapper> mapper,
-        Disk disk,
-        UpdateDiskRequest request,
-        UpdateDiskCommandHandler sut
+        UpdateDiskCommandHandler sut,
+        UpdateDiskCommand request,
+        Disk disk
     )
     {
-        diskRepositoryMock.Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
+        // Arrange
+        request.Id = Guid.NewGuid().ToString();
+        request.ReleaseDate = DateTime.Now.ToString(CultureInfo.CurrentCulture);
+        sut.DiskRepository.AsMock()
+            .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
             .ReturnsAsync(disk);
 
-        var result = await sut.Handle(request, It.IsAny<CancellationToken>());
+        // Act
+        var act = await sut.Handle(request, It.IsAny<CancellationToken>());
 
-        diskRepositoryMock.Verify(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()), Times.Once);
-        diskRepositoryMock.Verify(x => x.UpdateDiskAsync(It.IsAny<Disk>()), Times.Once);
-        mapper.Verify(x => x.Map<DiskResponse>(It.IsAny<Disk>()), Times.Once);
+        // Assert
+        sut.DiskRepository.AsMock()
+            .Verify(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()), Times.Once);
+        sut.DiskRepository.AsMock()
+            .Verify(x => x.UpdateDiskAsync(It.IsAny<Disk>()), Times.Once);
+        sut.Mapper.AsMock()
+            .Verify(x => x.Map<DiskResponse>(It.IsAny<Disk>()), Times.Once);
     }
 
-    [Theory, AutoDomainData]
+    [Theory]
+    [AutoServiceData]
     public async Task ShouldThrowEntityNotFoundException
     (
-        [Frozen] Mock<IDiskRepository> diskRepositoryMock,
-        [Frozen] Mock<IMapper> mapper,
-        UpdateDiskRequest request,
-        UpdateDiskCommandHandler sut
+        UpdateDiskCommandHandler sut,
+        UpdateDiskCommand request
     )
     {
-        diskRepositoryMock.Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
+        // Arrange
+        sut.DiskRepository.AsMock()
+            .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
             .ReturnsAsync(() => null);
 
+        // Act
         var result = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
 
-        diskRepositoryMock.Verify(x => x.UpdateDiskAsync(It.IsAny<Disk>()), Times.Never);
-        mapper.Verify(x => x.Map<DiskResponse>(It.IsAny<Disk>()), Times.Never);
-        await result.Should().ThrowAsync<EntityNotFoundException>();
+        // Assert
+        sut.DiskRepository.AsMock()
+            .Verify(x => x.UpdateDiskAsync(It.IsAny<Disk>()), Times.Never);
+        sut.Mapper.AsMock()
+            .Verify(x => x.Map<DiskResponse>(It.IsAny<Disk>()), Times.Never);
+        await result.Should().ThrowAsync<ObjectNotFoundException>();
     }
 }

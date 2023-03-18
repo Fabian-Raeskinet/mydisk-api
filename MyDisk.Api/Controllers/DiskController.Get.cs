@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using MyDisk.Services.Disks.DTOs;
-using MyDisk.Services.Disks.Requests;
+﻿using Contracts.Disks;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MyDisk.Api.Controllers;
 
@@ -12,8 +11,8 @@ public partial class DiskController
     [ProducesResponseType(404)]
     public async Task<IActionResult> GetAllDisks()
     {
-        var query = new GetAllDisksRequest();
-        var results = await _mediator.Send(query);
+        var query = new GetAllDisksQuery();
+        var results = await Mediator.Send(query);
         return Ok(results);
     }
 
@@ -24,7 +23,7 @@ public partial class DiskController
     [ProducesResponseType(404)]
     public async Task<IActionResult> GetByName([FromQuery] string? name)
     {
-        var result = await _mediator.Send(new GetDiskByNameRequest{Name = name});
+        var result = await Mediator.Send(new GetDiskByNameQuery{Name = name});
         return result != null ? Ok(result) : NotFound();
     }
 }
