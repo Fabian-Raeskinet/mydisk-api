@@ -1,6 +1,6 @@
-﻿using MediatR;
+﻿using MediatorExtension;
+using MediatR;
 using MyDisk.Contracts.Disks;
-using MyDisk.Services;
 using MyDisk.Tests.Api;
 using MyDisk.Tests.Utils;
 

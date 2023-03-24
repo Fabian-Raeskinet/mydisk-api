@@ -1,5 +1,6 @@
 ﻿using AutoFixture.Xunit2;
 using FluentAssertions;
+using MediatorExtension;
 using Moq;
 using MyDisk.Contracts.Disks;
 using MyDisk.Domain.Entities;

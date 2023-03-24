@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using AutoFixture.Xunit2;
 using FluentAssertions;
+using MediatorExtension;
 using MediatR;
 using Moq;
 using MyDisk.Contracts.Disks;
