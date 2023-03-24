@@ -14,7 +14,8 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         _exceptionHandlers = new Dictionary<Type, Action<ExceptionContext>?>
         {
             { typeof(ValidationException), HandleValidationException },
-            { typeof(ObjectNotFoundException), HandleEntityNotFoundException }
+            { typeof(ObjectNotFoundException), HandleEntityNotFoundException },
+            { typeof(FormatException), HandleFormatException }
         };
     }
 
@@ -47,6 +48,16 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         var error = exception.Message;
 
         context.Result = new NotFoundObjectResult(new List<string> { error });
+
+        context.ExceptionHandled = true;
+    }
+    
+    private void HandleFormatException(ExceptionContext context)
+    {
+        if (context.Exception is not FormatException exception) return;
+        var error = exception.Message;
+
+        context.Result = new BadRequestObjectResult(new List<string> { error });
 
         context.ExceptionHandled = true;
     }

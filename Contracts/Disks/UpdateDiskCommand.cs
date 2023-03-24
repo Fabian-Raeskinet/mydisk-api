@@ -1,10 +1,8 @@
-﻿using MediatR;
+﻿namespace MyDisk.Contracts.Disks;
 
-namespace Contracts.Disks;
-
-public class UpdateDiskCommand : IRequest<DiskResponse>
+public class UpdateDiskCommand
 {
     public Guid? Id { get; set; }
     public string? Name { get; set; }
-    public string? ReleaseDate { get; set; }
+    public DateTime? ReleaseDate { get; set; }
 }

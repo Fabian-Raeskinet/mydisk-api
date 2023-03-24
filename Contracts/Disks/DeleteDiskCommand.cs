@@ -1,8 +1,6 @@
-﻿using MediatR;
+﻿namespace MyDisk.Contracts.Disks;
 
-namespace Contracts.Disks;
-
-public class DeleteDiskCommand : IRequest<Unit>
+public class DeleteDiskCommand
 {
     public DeleteDiskByProperty Property { get; set; }
     public string? Value { get; set; }

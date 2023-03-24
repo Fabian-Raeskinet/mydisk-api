@@ -1,8 +1,8 @@
 ﻿using System.Globalization;
 using System.Linq.Expressions;
-using Contracts.Disks;
 using FluentAssertions;
 using Moq;
+using MyDisk.Contracts.Disks;
 using MyDisk.Domain.Entities;
 using MyDisk.Domain.Exceptions;
 using MyDisk.Services.Disks;
@@ -18,12 +18,12 @@ public class UpdateDiskCommandHandlerTests
     public async Task ShouldUpdateDisk
     (
         UpdateDiskCommandHandler sut,
-        UpdateDiskCommand request,
+        Request<UpdateDiskCommand, DiskResponse> request,
         Disk disk
     )
     {
         // Arrange
-        request.ReleaseDate = DateTime.Now.ToString(CultureInfo.CurrentCulture);
+        request.Value.ReleaseDate = DateTime.Now;
         sut.DiskRepository.AsMock()
             .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
             .ReturnsAsync(disk);
@@ -45,7 +45,7 @@ public class UpdateDiskCommandHandlerTests
     public async Task ShouldThrowEntityNotFoundException
     (
         UpdateDiskCommandHandler sut,
-        UpdateDiskCommand request
+        Request<UpdateDiskCommand, DiskResponse> request
     )
     {
         // Arrange

@@ -1,53 +1,38 @@
-using Contracts.Disks;
 using Contracts.Validators.Disks;
 using FluentAssertions;
-using FluentValidation;
-using MediatR;
-using Moq;
-using MyDisk.Services.Behaviors;
+using MyDisk.Contracts.Disks;
 using MyDisk.Tests.Services;
 
 namespace Contracts.Validators.Tests.Disks;
 
 public class AttachAuthorCommandValidatorFixture
 {
-    
-    //TODO
-    // demander thomas/thierry ce qui est mieux comme type d'entrée pour les contrats
     [Theory]
-    // [InlineAutoServiceData("", "")]
-    // [InlineAutoServiceData("", "66a7609b-634e-4449-9ff8-7e757f98d86a")]
-    // [InlineAutoServiceData("66a7609b-634e-4449-9ff8-7e757f98d86a", "")]
-    [InlineAutoServiceData(null, "66a7609b-634e-4449-9ff8-7e757f98d86a")]
-    [InlineAutoServiceData(null, null)]
-    public async Task ShouldThrowValidationException(Guid authorId, Guid diskId)
+    [AutoServiceData]
+    public async Task ShouldThrowValidationException()
     {
         // Arrange
-        var request = new AttachAuthorCommand { AuthorId = authorId, DiskId = diskId };
-        var del = new Mock<RequestHandlerDelegate<DiskResponse>>();
-        var sut = new ValidationBehaviour<AttachAuthorCommand, DiskResponse>(
-            new List<IValidator<AttachAuthorCommand>> { new AttachAuthorCommandValidator() });
+        var request = new AttachAuthorCommand
+        {
+            AuthorId = null,
+            DiskId = null
+        };
 
         // Act
-        Func<Task> act = async () => await sut.Handle(request, del.Object, default);
+        var act = await new AttachAuthorCommandValidator().ValidateAsync(request);
 
         // Assert
-        await act.Should().ThrowAsync<ValidationException>();
+        act.IsValid.Should().BeFalse();
     }
 
     [Theory]
     [AutoServiceData]
     public async Task ShouldNotThrowValidationExceptionBecauseValidRequest(AttachAuthorCommand request)
     {
-        // Arrange
-        var del = new Mock<RequestHandlerDelegate<DiskResponse>>();
-        var sut = new ValidationBehaviour<AttachAuthorCommand, DiskResponse>(
-            new List<IValidator<AttachAuthorCommand>> { new AttachAuthorCommandValidator() });
-
         // Act
-        Func<Task> act = async () => await sut.Handle(request, del.Object, default);
+        var act = await new AttachAuthorCommandValidator().ValidateAsync(request);
 
         // Assert
-        await act.Should().NotThrowAsync<ValidationException>();
+        act.IsValid.Should().BeTrue();
     }
 }

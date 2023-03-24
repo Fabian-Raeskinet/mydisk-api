@@ -1,6 +1,6 @@
-﻿using Contracts.Disks;
-using FluentAssertions;
+﻿using FluentAssertions;
 using Moq;
+using MyDisk.Contracts.Disks;
 using MyDisk.Domain.Entities;
 using MyDisk.Services.Disks;
 using MyDisk.Tests.Services;
@@ -15,12 +15,12 @@ public class CreateDiskCommandHandlerTestsShould
     public async Task CreateDisk
     (
         CreateDiskCommandHandler sut,
-        CreateDiskCommand request,
+        Request<CreateDiskCommand, Guid> request,
         Disk disk
     )
     {
         // Arrange
-        request.ReleaseDate = "2022-12-20";
+        request.Value.ReleaseDate = DateTime.Now;
         sut.DiskRepository.AsMock()
             .Setup(x => x.CreateDiskAsync(disk))
             .ReturnsAsync(disk.Id);
@@ -39,11 +39,11 @@ public class CreateDiskCommandHandlerTestsShould
     public async Task ThrowInvalidOperationException
     (
         CreateDiskCommandHandler sut,
-        CreateDiskCommand request
+        Request<CreateDiskCommand, Guid> request
     )
     {
         // Arrange
-        request.ReleaseDate = null;
+        request.Value.ReleaseDate = null;
         // Act
         var act = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
 

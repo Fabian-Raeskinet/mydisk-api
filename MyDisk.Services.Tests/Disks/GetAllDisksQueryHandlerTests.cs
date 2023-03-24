@@ -1,7 +1,7 @@
 ﻿using AutoFixture.Xunit2;
-using Contracts.Disks;
 using FluentAssertions;
 using Moq;
+using MyDisk.Contracts.Disks;
 using MyDisk.Domain.Entities;
 using MyDisk.Services.Disks;
 using MyDisk.Tests.Services;
@@ -24,11 +24,11 @@ public class GetAllDisksQueryHandlerTestsShould
             .ReturnsAsync(disks);
 
         // Act
-        var act = await sut.Handle(It.IsAny<GetAllDisksQuery>(), It.IsAny<CancellationToken>());
+        var act = await sut.Handle(It.IsAny<Request<GetAllDisksQuery, List<DiskResponse>>>(), It.IsAny<CancellationToken>());
 
         // Assert
         sut.Mapper.AsMock()
-            .Verify(x => x.Map<List<DiskEntity>>(disks), Times.Once);
+            .Verify(x => x.Map<List<DiskResponse>>(disks), Times.Once);
         act.Should().NotBeNull();
     }
 
@@ -44,11 +44,11 @@ public class GetAllDisksQueryHandlerTestsShould
             .Setup(x => x.GetDisksAsync()).ReturnsAsync(disks);
 
         // Act
-        var act = await sut.Handle(It.IsAny<GetAllDisksQuery>(), It.IsAny<CancellationToken>());
+        var act = await sut.Handle(It.IsAny<Request<GetAllDisksQuery, List<DiskResponse>>>(), It.IsAny<CancellationToken>());
 
         // Assert
         sut.Mapper.AsMock()
-            .Verify(x => x.Map<List<DiskEntity>>(disks), Times.Once);
+            .Verify(x => x.Map<List<DiskResponse>>(disks), Times.Once);
         act.Should().BeEmpty();
     }
 }

@@ -1,9 +1,6 @@
-﻿using MediatR;
+﻿namespace MyDisk.Contracts.Disks;
 
-namespace Contracts.Disks;
-
-public class GetDiskByNameQuery : IRequest<DiskResponse>
+public class GetDiskByNameQuery
 {
-    public string? Name { get; set; }
+    public string? Name { get; init; }
 }
-

@@ -1,5 +1,6 @@
-﻿using Contracts.Disks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using MyDisk.Contracts.Disks;
+using MyDisk.Services;
 
 namespace MyDisk.Api.Controllers;
 
@@ -11,7 +12,7 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> CreateDisk([FromBody] CreateDiskCommand command)
     {
-        return Ok(await Mediator.Send(command));
+        return Ok(await Mediator.Send(new Request<CreateDiskCommand, Guid> { Value = command }));
     }
 
     [HttpPost]
@@ -20,7 +21,7 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> AttachAuthor([FromBody] AttachAuthorCommand command)
     {
-        var result = await Mediator.Send(command);
+        var result = await Mediator.Send(new Request<AttachAuthorCommand, Guid> { Value = command });
         return Ok(result);
     }
 }

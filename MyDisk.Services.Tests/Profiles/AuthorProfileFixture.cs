@@ -1,6 +1,6 @@
 using AutoMapper;
-using Contracts.Disks;
 using FluentAssertions;
+using MyDisk.Contracts.Disks;
 using MyDisk.Domain.Entities;
 using MyDisk.Services.Disks;
 using MyDisk.Tests.Services;

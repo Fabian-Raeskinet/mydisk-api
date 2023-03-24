@@ -1,8 +1,9 @@
 ﻿using System.Linq.Expressions;
 using AutoFixture.Xunit2;
-using Contracts.Disks;
 using FluentAssertions;
+using MediatR;
 using Moq;
+using MyDisk.Contracts.Disks;
 using MyDisk.Domain.Entities;
 using MyDisk.Domain.Exceptions;
 using MyDisk.Services.Disks;
@@ -17,13 +18,13 @@ public class DeleteDiskCommandHandlerTestsShould
     [AutoServiceData]
     public async Task ShouldDeleteById
     (
-        DeleteDiskCommand request,
+        Request<DeleteDiskCommand, Unit> request,
         DeleteDiskCommandHandler sut,
         Disk disk
     )
     {
         // Arrange
-        request.Property = DeleteDiskByProperty.Id;
+        request.Value.Property = DeleteDiskByProperty.Id;
 
         sut.DiskRepository.AsMock()
             .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
@@ -47,13 +48,13 @@ public class DeleteDiskCommandHandlerTestsShould
     [AutoServiceData]
     public async Task ShouldDeleteByName
     (
-        DeleteDiskCommand request,
+        Request<DeleteDiskCommand, Unit> request,
         DeleteDiskCommandHandler sut,
         Disk disk
     )
     {
         // Arrange
-        request.Property = DeleteDiskByProperty.Name;
+        request.Value.Property = DeleteDiskByProperty.Name;
 
         sut.DiskRepository.AsMock()
             .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
@@ -77,7 +78,7 @@ public class DeleteDiskCommandHandlerTestsShould
     [AutoServiceData]
     public async Task ShouldThrowInvalidOperationExceptionBecauseNullValue
     (
-        [NoAutoProperties] DeleteDiskCommand request,
+        [NoAutoProperties] Request<DeleteDiskCommand, Unit> request,
         DeleteDiskCommandHandler sut
     )
     {
@@ -96,7 +97,7 @@ public class DeleteDiskCommandHandlerTestsShould
     [AutoServiceData]
     public async Task ShouldThrowInvalidOperationExceptionBecauseIncorrectProperty
     (
-        [NoAutoProperties] DeleteDiskCommand request,
+        [NoAutoProperties] Request<DeleteDiskCommand, Unit> request,
         DeleteDiskCommandHandler sut
     )
     {
@@ -117,7 +118,7 @@ public class DeleteDiskCommandHandlerTestsShould
     [AutoServiceData]
     public async Task ShouldThrowEntityNotFoundException
     (
-        DeleteDiskCommand request,
+        Request<DeleteDiskCommand, Unit> request,
         DeleteDiskCommandHandler sut
     )
     {

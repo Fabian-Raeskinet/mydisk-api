@@ -1,10 +1,6 @@
-using Contracts.Disks;
 using Contracts.Validators.Disks;
 using FluentAssertions;
-using FluentValidation;
-using MediatR;
-using Moq;
-using MyDisk.Services.Behaviors;
+using MyDisk.Contracts.Disks;
 using MyDisk.Tests.Services;
 
 namespace Contracts.Validators.Tests.Disks;
@@ -12,44 +8,28 @@ namespace Contracts.Validators.Tests.Disks;
 public class UpdateDiskCommandValidatorFixture
 {
     [Theory]
-    // [InlineAutoServiceData("", "value", "")]
-    // [InlineAutoServiceData(null, "value", "value")]
     [AutoServiceData]
-    public async Task ShouldThrowValidationException(Guid id, string name, string releaseDate)
+    public async Task ShouldThrowValidationException(string name)
     {
         // Arrange
-        // var request = new UpdateDiskCommand
-        // {
-        //     Name = name,
-        //     Id = id,
-        //     ReleaseDate = releaseDate
-        // };
+        var request = new UpdateDiskCommand
+            { Name = name, ReleaseDate = DateTime.Parse("30-07-23 16:01:55"), Id = null };
 
-        var request = new UpdateDiskCommand();
-        var del = new Mock<RequestHandlerDelegate<DiskResponse>>();
-        var sut = new ValidationBehaviour<UpdateDiskCommand, DiskResponse>(
-            new List<IValidator<UpdateDiskCommand>> { new UpdateDiskCommandValidator() });
-        
         // Act
-        Func<Task> act = async () => await sut.Handle(request, del.Object, default);
-        
+        var act = await new UpdateDiskCommandValidator().ValidateAsync(request);
+
         // Assert
-        await act.Should().ThrowAsync<ValidationException>();
+        act.IsValid.Should().BeFalse();
     }
-    
+
     [Theory]
     [AutoServiceData]
     public async Task ShouldNotThrowValidationExceptionBecauseValidRequest(UpdateDiskCommand request)
     {
-        // Arrange
-        var del = new Mock<RequestHandlerDelegate<DiskResponse>>();
-        var sut = new ValidationBehaviour<UpdateDiskCommand, DiskResponse>(
-            new List<IValidator<UpdateDiskCommand>> { new UpdateDiskCommandValidator() });
-        
         // Act
-        Func<Task> act = async () => await sut.Handle(request, del.Object, default);
+        var act = await new UpdateDiskCommandValidator().ValidateAsync(request);
 
         // Assert
-        await act.Should().NotThrowAsync<ValidationException>();
+        act.IsValid.Should().BeTrue();
     }
 }

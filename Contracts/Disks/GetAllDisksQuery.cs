@@ -1,5 +1,3 @@
-﻿using MediatR;
+﻿namespace MyDisk.Contracts.Disks;
 
-namespace Contracts.Disks;
-
-public class GetAllDisksQuery : IRequest<List<DiskEntity>> { }
+public class GetAllDisksQuery { }
