@@ -1,7 +1,7 @@
-﻿using MediatR;
+﻿using MediatorExtension;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using MyDisk.Contracts.Disks;
-using MyDisk.Services;
 
 namespace MyDisk.Api.Controllers;
 

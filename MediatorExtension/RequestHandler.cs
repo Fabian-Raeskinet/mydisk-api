@@ -1,11 +1,7 @@
 using MediatR;
 
-namespace MyDisk.Services;
+namespace MediatorExtension;
 
-public class Request<TRequest, TResponse> : IRequest<TResponse>
-{
-    public TRequest Value { get; init; } = default!;
-}
 
 public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<Request<TRequest, TResponse>, TResponse>
 {

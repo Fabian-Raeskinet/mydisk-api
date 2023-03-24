@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MediatorExtension;
 using MyDisk.Contracts.Disks;
 using MyDisk.Domain;
 

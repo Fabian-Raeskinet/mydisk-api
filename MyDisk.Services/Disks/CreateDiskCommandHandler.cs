@@ -1,4 +1,5 @@
-﻿using MyDisk.Contracts.Disks;
+﻿using MediatorExtension;
+using MyDisk.Contracts.Disks;
 using MyDisk.Domain;
 using MyDisk.Domain.Entities;
 

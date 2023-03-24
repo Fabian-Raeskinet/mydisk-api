@@ -1,11 +1,12 @@
-﻿using MediatR;
+﻿using MediatorExtension;
+using MediatR;
 using MyDisk.Contracts.Disks;
 using MyDisk.Domain;
 using MyDisk.Domain.Exceptions;
 
 namespace MyDisk.Services.Disks;
 
-public class DeleteDiskCommandHandler : RequestHandler<DeleteDiskCommand, Unit>
+public class DeleteDiskCommandHandler : MediatorExtension.RequestHandler<DeleteDiskCommand, Unit>
 {
     public DeleteDiskCommandHandler(IDiskRepository repository)
     {

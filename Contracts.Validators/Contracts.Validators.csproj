@@ -7,11 +7,12 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentValidation" Version="11.5.1"/>
+        <PackageReference Include="FluentValidation" Version="11.5.1" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Contracts\Contracts.csproj"/>
+        <ProjectReference Include="..\Contracts\Contracts.csproj" />
+        <ProjectReference Include="..\MediatorExtension\MediatorExtension.csproj" />
     </ItemGroup>
 
 </Project>
