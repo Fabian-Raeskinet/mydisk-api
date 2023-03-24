@@ -4,7 +4,8 @@ using Microsoft.Extensions.Logging;
 
 namespace MyDisk.Services.Behaviors;
 
-public class LoggingPostProcessorBehaviour<TRequest, TResponse> : IRequestPostProcessor<TRequest, TResponse> where TRequest : IRequest<TResponse>
+public class LoggingPostProcessorBehaviour<TRequest, TResponse> : IRequestPostProcessor<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
 {
     private readonly ILogger _logger;
 

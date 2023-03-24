@@ -8,27 +8,27 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="6.0.4" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0" />
-      <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
+        <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="6.0.4"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.0">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="appsettings.json" />
-      <Content Include="appsettings.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
+        <None Remove="appsettings.json"/>
+        <Content Include="appsettings.json">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MyDisk.Infrastructure\MyDisk.Infrastructure.csproj" />
+        <ProjectReference Include="..\MyDisk.Infrastructure\MyDisk.Infrastructure.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Migrations" />
+        <Folder Include="Migrations"/>
     </ItemGroup>
 
 </Project>

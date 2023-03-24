@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using MyDisk.Domain;
 using MyDisk.Domain.Entities;
 using MyDisk.Infrastructure.Interfaces;
-using MyDisk.Infrastructure.Persistence;
 
 namespace MyDisk.Infrastructure.Repositories;
 
@@ -16,5 +15,8 @@ public class AuthorRepository : IAuthorRepository
         _context = context;
     }
 
-    public async Task<Author?> GetAuthorByFilterAsync(Expression<Func<Author, bool>> predicate) => await _context.Authors.FirstOrDefaultAsync(predicate);
+    public async Task<Author?> GetAuthorByFilterAsync(Expression<Func<Author, bool>> predicate)
+    {
+        return await _context.Authors.FirstOrDefaultAsync(predicate);
+    }
 }

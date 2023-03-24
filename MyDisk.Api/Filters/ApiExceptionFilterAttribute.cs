@@ -51,7 +51,7 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 
         context.ExceptionHandled = true;
     }
-    
+
     private void HandleFormatException(ExceptionContext context)
     {
         if (context.Exception is not FormatException exception) return;

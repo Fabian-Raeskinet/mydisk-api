@@ -1,4 +1,3 @@
-using FluentAssertions;
 using Moq;
 using MyDisk.Services.Miscellaneous;
 using MyDisk.Tests.Services;

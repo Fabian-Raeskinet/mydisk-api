@@ -6,7 +6,8 @@ namespace MyDisk.Services.Authors;
 
 public class MapperProfiles : Profile
 {
-    public MapperProfiles() {
+    public MapperProfiles()
+    {
         CreateMap<Author, AuthorResponse>();
     }
 }
