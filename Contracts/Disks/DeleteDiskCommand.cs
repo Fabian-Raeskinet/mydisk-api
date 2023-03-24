@@ -2,6 +2,6 @@
 
 public class DeleteDiskCommand
 {
-    public DeleteDiskByProperty Property { get; set; }
+    public DeleteDiskByProperty? Property { get; set; }
     public string? Value { get; set; }
 }

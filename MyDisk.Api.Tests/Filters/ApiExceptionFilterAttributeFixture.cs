@@ -22,16 +22,16 @@ public class ApiExceptionFilterAttributeFixture
             RouteData = new RouteData(),
             ActionDescriptor = new ActionDescriptor()
         }, new List<IFilterMetadata>());
-    
+
         context.Exception = new Exception(exception);
-    
+
         // Act
         new ApiExceptionFilterAttribute().OnException(context);
-    
+
         // Assert
         context.Result.Should().BeNull();
     }
-    
+
     [Theory]
     [AutoApiData]
     public void ShouldReturnsBadRequestObjectResult(string exception)
@@ -43,17 +43,17 @@ public class ApiExceptionFilterAttributeFixture
             RouteData = new RouteData(),
             ActionDescriptor = new ActionDescriptor()
         }, new List<IFilterMetadata>());
-    
+
         context.Exception = new ValidationException(exception);
-    
+
         // Act
         new ApiExceptionFilterAttribute().OnException(context);
-    
+
         // Assert
         context.Result.Should().BeOfType<BadRequestObjectResult>();
         context.Exception.Message.Should().Be(exception);
     }
-    
+
     [Theory]
     [AutoApiData]
     public void ShouldReturnsNotFoundObjectResult(string exception)
@@ -65,12 +65,12 @@ public class ApiExceptionFilterAttributeFixture
             RouteData = new RouteData(),
             ActionDescriptor = new ActionDescriptor()
         }, new List<IFilterMetadata>());
-    
+
         context.Exception = new ObjectNotFoundException(exception);
-    
+
         // Act
         new ApiExceptionFilterAttribute().OnException(context);
-    
+
         // Assert
         context.Result.Should().BeOfType<NotFoundObjectResult>();
         context.Exception.Message.Should().Be(exception);

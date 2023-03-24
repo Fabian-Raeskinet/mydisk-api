@@ -6,8 +6,8 @@ namespace MyDisk.Infrastructure.Persistence;
 
 public class ApplicationDbContextInitializer
 {
-    private ILogger<ApplicationDbContextInitializer> _logger;
     private readonly ApplicationDbContext _context;
+    private readonly ILogger<ApplicationDbContextInitializer> _logger;
 
     public ApplicationDbContextInitializer(ILogger<ApplicationDbContextInitializer> logger,
         ApplicationDbContext context)
@@ -20,10 +20,7 @@ public class ApplicationDbContextInitializer
     {
         try
         {
-            if (_context.Database.IsSqlServer())
-            {
-                await _context.Database.MigrateAsync();
-            }
+            if (_context.Database.IsSqlServer()) await _context.Database.MigrateAsync();
         }
         catch (Exception ex)
         {
@@ -61,10 +58,10 @@ public class ApplicationDbContextInitializer
             _context.Disks.Add(new Disk
             {
                 Name = "Jeannine", Id = Guid.NewGuid(), ReleaseDate = new DateTime(2018, 8, 29),
-                Author = new Author { Pseudonyme = "Lomepal" },
+                Author = new Author { Pseudonyme = "Lomepal" }
             });
             _context.Disks.Add(
-                new Disk()
+                new Disk
                 {
                     Name = "Chocolat", Id = Guid.NewGuid(), ReleaseDate = new DateTime(2016, 2, 14),
                     Author = new Author { Pseudonyme = "Roméo Elvis" }

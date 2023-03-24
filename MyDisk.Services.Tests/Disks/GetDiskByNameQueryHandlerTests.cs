@@ -1,12 +1,9 @@
 ﻿using System.Linq.Expressions;
 using FluentAssertions;
-using FluentValidation;
-using MediatR;
 using Moq;
 using MyDisk.Contracts.Disks;
 using MyDisk.Domain.Entities;
 using MyDisk.Domain.Exceptions;
-using MyDisk.Services.Behaviors;
 using MyDisk.Services.Disks;
 using MyDisk.Tests.Services;
 using MyDisk.Tests.Utils;
@@ -29,7 +26,8 @@ public class GetDiskByNameQueryHandlerTestsShould
             .ReturnsAsync(disk);
 
         // Act
-        var act = await sut.Handle(It.IsAny<Request<GetDiskByNameQuery, DiskResponse>>(), It.IsAny<CancellationToken>());
+        var act = await sut.Handle(It.IsAny<Request<GetDiskByNameQuery, DiskResponse>>(),
+            It.IsAny<CancellationToken>());
 
         // Assert
         sut.Mapper.AsMock()
@@ -50,7 +48,8 @@ public class GetDiskByNameQueryHandlerTestsShould
             .ReturnsAsync(() => null);
 
         // Act
-        var act = async () => await sut.Handle(It.IsAny<Request<GetDiskByNameQuery, DiskResponse>>(), It.IsAny<CancellationToken>());
+        var act = async () =>
+            await sut.Handle(It.IsAny<Request<GetDiskByNameQuery, DiskResponse>>(), It.IsAny<CancellationToken>());
 
         // Assert
         sut.Mapper.AsMock()

@@ -8,5 +8,6 @@ public class Author : BaseEntity
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
+
     public string? Pseudonyme { get; set; }
 }

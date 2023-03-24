@@ -17,7 +17,7 @@ public class DeleteDiskCommandHandler : RequestHandler<DeleteDiskCommand, Unit>
     public override async Task<Unit> Handle(Request<DeleteDiskCommand, Unit> request,
         CancellationToken cancellationToken)
     {
-        if (request.Value == null)
+        if (request.Value.Value == null)
             throw new InvalidOperationException();
 
         var disk = request.Value.Property switch

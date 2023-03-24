@@ -15,7 +15,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
-    
+
     // Initialise and seed database
     using var scope = app.Services.CreateScope();
     var initializer = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitializer>();
@@ -33,8 +33,8 @@ app.UseAuthorization();
 app.UseCors(corsPolicyBuilder =>
     {
         corsPolicyBuilder.AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader();
+            .AllowAnyMethod()
+            .AllowAnyHeader();
     }
 );
 

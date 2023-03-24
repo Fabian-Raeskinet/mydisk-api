@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore;
 using MyDisk.Domain;
 using MyDisk.Domain.Entities;
 using MyDisk.Infrastructure.Interfaces;
-using MyDisk.Infrastructure.Persistence;
 
 namespace MyDisk.Infrastructure.Repositories;
 
@@ -16,10 +15,15 @@ public class DiskRepository : IDiskRepository
         _context = context;
     }
 
-    public async Task<List<Disk>?> GetDisksAsync() => await _context.Disks.Include(x => x.Author).ToListAsync();
+    public async Task<List<Disk>?> GetDisksAsync()
+    {
+        return await _context.Disks.Include(x => x.Author).ToListAsync();
+    }
 
-    public async Task<Disk?> GetDiskByFilterAsync(Expression<Func<Disk, bool>> predicate) =>
-        await _context.Disks.Include(x => x.Author).FirstOrDefaultAsync(predicate);
+    public async Task<Disk?> GetDiskByFilterAsync(Expression<Func<Disk, bool>> predicate)
+    {
+        return await _context.Disks.Include(x => x.Author).FirstOrDefaultAsync(predicate);
+    }
 
     public async Task<Guid> CreateDiskAsync(Disk disk)
     {

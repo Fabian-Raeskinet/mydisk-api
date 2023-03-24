@@ -68,7 +68,8 @@ public class CreateDiskShould
         // Assert
         act.Should().BeOfType<OkObjectResult>();
         sut.Mediator.AsMock()
-            .Verify(x => x.Send(It.IsAny<Request<CreateDiskCommand, Guid>>(), It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(x => x.Send(It.IsAny<Request<CreateDiskCommand, Guid>>(), It.IsAny<CancellationToken>()),
+                Times.Once);
     }
 }
 
@@ -84,7 +85,8 @@ public class AttachAuthorShould
         // Assert
         act.Should().BeOfType<OkObjectResult>();
         sut.Mediator.AsMock()
-            .Verify(x => x.Send(It.IsAny<Request<AttachAuthorCommand, Guid>>(), It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(x => x.Send(It.IsAny<Request<AttachAuthorCommand, Guid>>(), It.IsAny<CancellationToken>()),
+                Times.Once);
     }
 }
 
@@ -105,7 +107,8 @@ public class DeleteDiskByIdShould
         // Assert
         act.Should().BeOfType<NoContentResult>();
         sut.Mediator.AsMock()
-            .Verify(x => x.Send(It.IsAny<Request<DeleteDiskCommand, Unit>>(), It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(x => x.Send(It.IsAny<Request<DeleteDiskCommand, Unit>>(), It.IsAny<CancellationToken>()),
+                Times.Once);
     }
 }
 
@@ -126,7 +129,8 @@ public class DeleteDiskByNameShould
         // Assert
         act.Should().BeOfType<NoContentResult>();
         sut.Mediator.AsMock()
-            .Verify(x => x.Send(It.IsAny<Request<DeleteDiskCommand, Unit>>(), It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(x => x.Send(It.IsAny<Request<DeleteDiskCommand, Unit>>(), It.IsAny<CancellationToken>()),
+                Times.Once);
     }
 }
 
@@ -147,7 +151,8 @@ public class DeleteDiskByPropertyShould
         // Assert
         act.Should().BeOfType<NoContentResult>();
         sut.Mediator.AsMock()
-            .Verify(x => x.Send(It.IsAny<Request<DeleteDiskCommand, Unit>>(), It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(x => x.Send(It.IsAny<Request<DeleteDiskCommand, Unit>>(), It.IsAny<CancellationToken>()),
+                Times.Once);
     }
 }
 
@@ -168,6 +173,7 @@ public class UpdateDiskShould
         // Assert
         result.Should().BeOfType<OkObjectResult>();
         sut.Mediator.AsMock()
-            .Verify(x => x.Send(It.IsAny<Request<UpdateDiskCommand, DiskResponse>>(), It.IsAny<CancellationToken>()), Times.Once);
+            .Verify(x => x.Send(It.IsAny<Request<UpdateDiskCommand, DiskResponse>>(), It.IsAny<CancellationToken>()),
+                Times.Once);
     }
 }

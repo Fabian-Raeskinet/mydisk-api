@@ -38,15 +38,17 @@ public static class DependencyInjection
         services.AddSwaggerGenNewtonsoftSupport();
     }
 
-    private static void AddOptionSettings(this IServiceCollection services, IConfiguration configuration) =>
+    private static void AddOptionSettings(this IServiceCollection services, IConfiguration configuration)
+    {
         services.Configure<RetryServiceSettings>(configuration.GetSection(nameof(RetryServiceSettings)));
+    }
 
     private static void AddPolicyRegistry(this IServiceCollection services)
     {
         var httpRetryPolicy = RetryPolicy.Create<HttpResponse>(x => x.StatusCode != 200, 3, 1000);
-        var registry = new PolicyRegistry()
+        var registry = new PolicyRegistry
         {
-            {"HttpRetryPolicy", httpRetryPolicy}
+            { "HttpRetryPolicy", httpRetryPolicy }
         };
 
         services.AddSingleton<IReadOnlyPolicyRegistry<string>>(registry);

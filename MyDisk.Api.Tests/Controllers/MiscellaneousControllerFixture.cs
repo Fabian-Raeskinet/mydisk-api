@@ -25,5 +25,4 @@ public class MiscellaneousControllerFixture
                 .Verify(x => x.Send(It.IsAny<RetryServiceRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
-
 }

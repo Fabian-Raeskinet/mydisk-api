@@ -13,11 +13,13 @@ namespace MyDisk.Infrastructure;
 public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services,
-        IConfiguration configuration) =>
-        services
+        IConfiguration configuration)
+    {
+        return services
             .AddRepositories()
             .AddDatabaseConfiguration(configuration)
             .AddDateTimeService();
+    }
 
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
@@ -39,6 +41,8 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddDateTimeService(this IServiceCollection services) =>
-        services.AddTransient<IDateTime, DateTimeService>();
+    private static IServiceCollection AddDateTimeService(this IServiceCollection services)
+    {
+        return services.AddTransient<IDateTime, DateTimeService>();
+    }
 }

@@ -24,7 +24,8 @@ public class GetAllDisksQueryHandlerTestsShould
             .ReturnsAsync(disks);
 
         // Act
-        var act = await sut.Handle(It.IsAny<Request<GetAllDisksQuery, List<DiskResponse>>>(), It.IsAny<CancellationToken>());
+        var act = await sut.Handle(It.IsAny<Request<GetAllDisksQuery, List<DiskResponse>>>(),
+            It.IsAny<CancellationToken>());
 
         // Assert
         sut.Mapper.AsMock()
@@ -44,7 +45,8 @@ public class GetAllDisksQueryHandlerTestsShould
             .Setup(x => x.GetDisksAsync()).ReturnsAsync(disks);
 
         // Act
-        var act = await sut.Handle(It.IsAny<Request<GetAllDisksQuery, List<DiskResponse>>>(), It.IsAny<CancellationToken>());
+        var act = await sut.Handle(It.IsAny<Request<GetAllDisksQuery, List<DiskResponse>>>(),
+            It.IsAny<CancellationToken>());
 
         // Assert
         sut.Mapper.AsMock()

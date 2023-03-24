@@ -1,3 +1,5 @@
 ﻿namespace MyDisk.Contracts.Disks;
 
-public class GetAllDisksQuery { }
+public class GetAllDisksQuery
+{
+}

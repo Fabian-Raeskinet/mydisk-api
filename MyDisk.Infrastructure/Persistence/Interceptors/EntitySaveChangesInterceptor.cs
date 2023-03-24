@@ -20,8 +20,9 @@ public class EntitySaveChangesInterceptor : SaveChangesInterceptor
 
         return base.SavingChanges(eventData, result);
     }
-    
-    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData, InterceptionResult<int> result, CancellationToken cancellationToken = default)
+
+    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData,
+        InterceptionResult<int> result, CancellationToken cancellationToken = default)
     {
         UpdateEntities(eventData.Context);
 
@@ -40,10 +41,7 @@ public class EntitySaveChangesInterceptor : SaveChangesInterceptor
                 entry.Entity.UpdatedAt = DateTimeOffset.Now;
             }
 
-            if (entry.State is EntityState.Added or EntityState.Modified)
-            {
-                entry.Entity.UpdatedAt = DateTimeOffset.Now;
-            }
+            if (entry.State is EntityState.Added or EntityState.Modified) entry.Entity.UpdatedAt = DateTimeOffset.Now;
         }
     }
 }
