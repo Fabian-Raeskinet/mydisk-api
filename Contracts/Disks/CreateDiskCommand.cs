@@ -1,9 +1,7 @@
-﻿using MediatR;
+﻿namespace MyDisk.Contracts.Disks;
 
-namespace Contracts.Disks;
-
-public class CreateDiskCommand : IRequest<Guid>
+public class CreateDiskCommand
 {
     public string? Name { get; set; }
-    public string? ReleaseDate { get; set; }
+    public DateTime? ReleaseDate { get; set; }
 }

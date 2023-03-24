@@ -1,12 +1,10 @@
-﻿using System.Globalization;
-using Contracts.Disks;
-using MediatR;
+﻿using MyDisk.Contracts.Disks;
 using MyDisk.Domain;
 using MyDisk.Domain.Entities;
 
 namespace MyDisk.Services.Disks;
 
-public class CreateDiskCommandHandler : IRequestHandler<CreateDiskCommand, Guid>
+public class CreateDiskCommandHandler : RequestHandler<CreateDiskCommand, Guid>
 {
     public CreateDiskCommandHandler(IDiskRepository repository)
     {
@@ -15,15 +13,15 @@ public class CreateDiskCommandHandler : IRequestHandler<CreateDiskCommand, Guid>
 
     public IDiskRepository DiskRepository { get; }
 
-    public async Task<Guid> Handle(CreateDiskCommand request, CancellationToken cancellationToken)
+    public override async Task<Guid> Handle(Request<CreateDiskCommand, Guid> request,
+        CancellationToken cancellationToken)
     {
-        if (request.ReleaseDate == null) throw new InvalidOperationException();
+        if (request.Value.ReleaseDate == null) throw new InvalidOperationException();
         var entity = new Disk
         {
             Id = Guid.NewGuid(),
-            Name = request.Name,
-            ReleaseDate = DateTime.ParseExact(request.ReleaseDate, "yyyy-MM-dd",
-                CultureInfo.InvariantCulture)
+            Name = request.Value.Name,
+            ReleaseDate = request.Value.ReleaseDate
         };
 
         await DiskRepository.CreateDiskAsync(entity);

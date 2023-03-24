@@ -1,9 +1,7 @@
-﻿using MediatR;
+﻿namespace MyDisk.Contracts.Disks;
 
-namespace Contracts.Disks;
-
-public class AttachAuthorCommand : IRequest<DiskResponse>
+public class AttachAuthorCommand
 {
-    public Guid AuthorId { get; set; }
-    public Guid DiskId { get; set; }
+    public Guid? AuthorId { get; set; }
+    public Guid? DiskId { get; set; }
 }

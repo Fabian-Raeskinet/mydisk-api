@@ -1,4 +1,4 @@
-﻿namespace Contracts.Disks;
+﻿namespace MyDisk.Contracts.Disks;
 
 public enum DeleteDiskByProperty
 {

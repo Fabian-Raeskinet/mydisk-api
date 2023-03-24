@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
-using Contracts.Disks;
-using MediatR;
+using MyDisk.Contracts.Disks;
 using MyDisk.Domain;
 using MyDisk.Domain.Exceptions;
 
 namespace MyDisk.Services.Disks;
 
-public class UpdateDiskCommandHandler : IRequestHandler<UpdateDiskCommand, DiskResponse>
+public class UpdateDiskCommandHandler : RequestHandler<UpdateDiskCommand, DiskResponse>
 {
     public UpdateDiskCommandHandler(IDiskRepository repository, IMapper mapper)
     {
@@ -17,15 +16,16 @@ public class UpdateDiskCommandHandler : IRequestHandler<UpdateDiskCommand, DiskR
     public IDiskRepository DiskRepository { get; }
     public IMapper Mapper { get; }
 
-    public async Task<DiskResponse> Handle(UpdateDiskCommand request, CancellationToken cancellationToken)
+    public override async Task<DiskResponse> Handle(Request<UpdateDiskCommand, DiskResponse> request,
+        CancellationToken cancellationToken)
     {
-        var disk = await DiskRepository.GetDiskByFilterAsync(x => request.Id != null && x.Id == request.Id);
+        var disk = await DiskRepository.GetDiskByFilterAsync(x => request.Value.Id != null && x.Id == request.Value.Id);
 
         if (disk == null)
             throw new ObjectNotFoundException();
 
-        if (request.Name is not null) disk.Name = request.Name;
-        if (request.ReleaseDate is not null) disk.ReleaseDate = DateTime.Parse(request.ReleaseDate);
+        if (request.Value.Name is not null) disk.Name = request.Value.Name;
+        if (request.Value.ReleaseDate is not null) disk.ReleaseDate = request.Value.ReleaseDate;
 
         await DiskRepository.UpdateDiskAsync(disk);
 

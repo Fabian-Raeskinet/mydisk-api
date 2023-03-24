@@ -1,11 +1,11 @@
-﻿using Contracts.Disks;
-using MediatR;
+﻿using MediatR;
+using MyDisk.Contracts.Disks;
 using MyDisk.Domain;
 using MyDisk.Domain.Exceptions;
 
 namespace MyDisk.Services.Disks;
 
-public class DeleteDiskCommandHandler : IRequestHandler<DeleteDiskCommand, Unit>
+public class DeleteDiskCommandHandler : RequestHandler<DeleteDiskCommand, Unit>
 {
     public DeleteDiskCommandHandler(IDiskRepository repository)
     {
@@ -14,16 +14,17 @@ public class DeleteDiskCommandHandler : IRequestHandler<DeleteDiskCommand, Unit>
 
     public IDiskRepository DiskRepository { get; }
 
-    public async Task<Unit> Handle(DeleteDiskCommand request, CancellationToken cancellationToken)
+    public override async Task<Unit> Handle(Request<DeleteDiskCommand, Unit> request,
+        CancellationToken cancellationToken)
     {
         if (request.Value == null)
             throw new InvalidOperationException();
 
-        var disk = request.Property switch
+        var disk = request.Value.Property switch
         {
             DeleteDiskByProperty.Id => await DiskRepository.GetDiskByFilterAsync(x =>
-                x.Id == new Guid(request.Value)),
-            DeleteDiskByProperty.Name => await DiskRepository.GetDiskByFilterAsync(x => x.Name == request.Value),
+                x.Id == new Guid(request.Value.Value)),
+            DeleteDiskByProperty.Name => await DiskRepository.GetDiskByFilterAsync(x => x.Name == request.Value.Value),
             _ => throw new InvalidOperationException()
         };
 

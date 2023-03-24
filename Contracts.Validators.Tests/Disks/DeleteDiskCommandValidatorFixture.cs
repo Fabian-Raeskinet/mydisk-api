@@ -1,10 +1,6 @@
-using Contracts.Disks;
 using Contracts.Validators.Disks;
 using FluentAssertions;
-using FluentValidation;
-using MediatR;
-using Moq;
-using MyDisk.Services.Behaviors;
+using MyDisk.Contracts.Disks;
 using MyDisk.Tests.Services;
 
 namespace Contracts.Validators.Tests.Disks;
@@ -17,31 +13,23 @@ public class DeleteDiskCommandValidatorFixture
     public async Task ShouldThrowValidationException(DeleteDiskByProperty property, string value)
     {
         // Arrange
-        var request = new DeleteDiskCommand{Property = property, Value = value};
-        var del = new Mock<RequestHandlerDelegate<Unit>>();
-        var sut = new ValidationBehaviour<DeleteDiskCommand, Unit>(
-            new List<IValidator<DeleteDiskCommand>> { new DeleteDiskCommandValidator() });
-        
+        var request = new DeleteDiskCommand { Property = property, Value = value };
+
         // Act
-        Func<Task> act = async () => await sut.Handle(request, del.Object, default);
-        
-        // Assert
-        await act.Should().ThrowAsync<ValidationException>();
-    }
-    
-    [Theory]
-    [AutoServiceData]
-    public async Task ShouldNotThrowValidationExceptionBecauseValidRequest(DeleteDiskCommand request)
-    {
-        // Arrange
-        var del = new Mock<RequestHandlerDelegate<Unit>>();
-        var sut = new ValidationBehaviour<DeleteDiskCommand, Unit>(
-            new List<IValidator<DeleteDiskCommand>> { new DeleteDiskCommandValidator() });
-        
-        // Act
-        Func<Task> act = async () => await sut.Handle(request, del.Object, default);
+        var act = await new DeleteDiskCommandValidator().ValidateAsync(request);
 
         // Assert
-        await act.Should().NotThrowAsync<ValidationException>();
+        act.IsValid.Should().BeFalse();
+    }
+
+    [Theory]
+    [AutoServiceData]
+    public async Task ShouldNotThrowValidationException(DeleteDiskCommand request)
+    {
+        // Act
+        var act = await new DeleteDiskCommandValidator().ValidateAsync(request);
+
+        // Assert
+        act.IsValid.Should().BeTrue();
     }
 }

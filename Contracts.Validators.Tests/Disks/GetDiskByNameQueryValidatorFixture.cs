@@ -1,10 +1,6 @@
-using Contracts.Disks;
 using Contracts.Validators.Disks;
 using FluentAssertions;
-using FluentValidation;
-using MediatR;
-using Moq;
-using MyDisk.Services.Behaviors;
+using MyDisk.Contracts.Disks;
 using MyDisk.Tests.Services;
 
 namespace Contracts.Validators.Tests.Disks;
@@ -17,30 +13,23 @@ public class GetDiskByNameQueryValidatorFixture
     public async Task ShouldThrowValidationException(string name)
     {
         // Arrange
-        var request = new GetDiskByNameQuery{Name = name};
-        var del = new Mock<RequestHandlerDelegate<DiskResponse>>();
-        var sut = new ValidationBehaviour<GetDiskByNameQuery, DiskResponse>(
-            new List<IValidator<GetDiskByNameQuery>> { new GetDiskByNameQueryValidator() });
-        
+        var request = new GetDiskByNameQuery { Name = name };
+
         // Act
-        Func<Task> act = async () => await sut.Handle(request, del.Object, default);
-        
-        // Assert
-        await act.Should().ThrowAsync<ValidationException>();
-    }
-    
-    [Theory]
-    [AutoServiceData]
-    public async Task ShouldNotThrowValidationExceptionBecauseValidRequest(GetDiskByNameQuery request)
-    {
-        var del = new Mock<RequestHandlerDelegate<DiskResponse>>();
-        var sut = new ValidationBehaviour<GetDiskByNameQuery, DiskResponse>(
-            new List<IValidator<GetDiskByNameQuery>> { new GetDiskByNameQueryValidator() });
-        
-        // Act
-        Func<Task> act = async () => await sut.Handle(request, del.Object, default);
+        var act = await new GetDiskByNameQueryValidator().ValidateAsync(request);
 
         // Assert
-        await act.Should().NotThrowAsync<ValidationException>();
+        act.IsValid.Should().BeFalse();
+    }
+
+    [Theory]
+    [AutoServiceData]
+    public async Task ShouldNotThrowValidationException(GetDiskByNameQuery request)
+    {
+        // Act
+        var act = await new GetDiskByNameQueryValidator().ValidateAsync(request);
+
+        // Assert
+        act.IsValid.Should().BeTrue();
     }
 }
