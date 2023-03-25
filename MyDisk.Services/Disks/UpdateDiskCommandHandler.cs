@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using MediatorExtension;
+using MediatR;
 using MyDisk.Contracts.Disks;
 using MyDisk.Domain;
 using MyDisk.Domain.Exceptions;
 
 namespace MyDisk.Services.Disks;
 
-public class UpdateDiskCommandHandler : RequestHandler<UpdateDiskCommand, DiskResponse>
+public class UpdateDiskCommandHandler : MediatorExtension.RequestHandler<UpdateDiskCommand, Unit>
 {
     public UpdateDiskCommandHandler(IDiskRepository repository, IMapper mapper)
     {
@@ -17,7 +18,7 @@ public class UpdateDiskCommandHandler : RequestHandler<UpdateDiskCommand, DiskRe
     public IDiskRepository DiskRepository { get; }
     public IMapper Mapper { get; }
 
-    public override async Task<DiskResponse> Handle(Request<UpdateDiskCommand, DiskResponse> request,
+    public override async Task<Unit> Handle(Request<UpdateDiskCommand, Unit> request,
         CancellationToken cancellationToken)
     {
         var disk = await DiskRepository.GetDiskByFilterAsync(x => request.Value.Id != null && x.Id == request.Value.Id);
@@ -29,7 +30,6 @@ public class UpdateDiskCommandHandler : RequestHandler<UpdateDiskCommand, DiskRe
         if (request.Value.ReleaseDate is not null) disk.ReleaseDate = request.Value.ReleaseDate;
 
         await DiskRepository.UpdateDiskAsync(disk);
-
-        return Mapper.Map<DiskResponse>(disk);
+        return Unit.Value;
     }
 }

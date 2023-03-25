@@ -1,5 +1,7 @@
 using Contracts.Validators.Disks;
 using FluentAssertions;
+using MediatorExtension;
+using MediatR;
 using MyDisk.Contracts.Disks;
 using MyDisk.Tests.Services;
 
@@ -12,11 +14,8 @@ public class AttachAuthorCommandValidatorFixture
     public async Task ShouldThrowValidationException()
     {
         // Arrange
-        var request = new AttachAuthorCommand
-        {
-            AuthorId = null,
-            DiskId = null
-        };
+        var command = new AttachAuthorCommand { AuthorId = null, DiskId = null };
+        var request = new Request<AttachAuthorCommand, Unit> { Value = command };
 
         // Act
         var act = await new AttachAuthorCommandValidator().ValidateAsync(request);
@@ -27,7 +26,7 @@ public class AttachAuthorCommandValidatorFixture
 
     [Theory]
     [AutoServiceData]
-    public async Task ShouldNotThrowValidationExceptionBecauseValidRequest(AttachAuthorCommand request)
+    public async Task ShouldNotThrowValidationExceptionBecauseValidRequest(Request<AttachAuthorCommand, Unit> request)
     {
         // Act
         var act = await new AttachAuthorCommandValidator().ValidateAsync(request);

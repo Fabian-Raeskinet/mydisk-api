@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using FluentAssertions;
 using MediatorExtension;
+using MediatR;
 using Moq;
 using MyDisk.Contracts.Disks;
 using MyDisk.Domain.Entities;
@@ -17,30 +18,23 @@ public class AttachAuthorCommandHandlerTestsShould
     [AutoServiceData]
     public async Task AttachAuthorToDisk
     (
-        Request<AttachAuthorCommand, DiskResponse> request,
-        AttachAuthorCommandHandler sut,
-        DiskResponse diskResponse
+        Request<AttachAuthorCommand, Unit> request,
+        AttachAuthorCommandHandler sut
     )
     {
-        // Arrange
-        sut.Mapper.AsMock()
-            .Setup(x => x.Map<DiskResponse>(It.IsAny<Disk>()))
-            .Returns(diskResponse);
-
         // Act
         var act = await sut.Handle(request, It.IsAny<CancellationToken>());
 
         // Assert
-        sut.Mapper.AsMock()
-            .Verify(x => x.Map<DiskResponse>(It.IsAny<Disk>()), Times.Once);
-        act.Should().BeEquivalentTo(diskResponse);
+        sut.DiskRepository.AsMock()
+            .Verify(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()), Times.Once);
     }
 
     [Theory]
     [AutoServiceData]
     public async Task ThrowsEntityNotFoundException
     (
-        Request<AttachAuthorCommand, DiskResponse> request,
+        Request<AttachAuthorCommand, Unit> request,
         AttachAuthorCommandHandler sut
     )
     {
