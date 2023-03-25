@@ -1,7 +1,6 @@
 using Contracts.Validators.Disks;
 using FluentAssertions;
 using MediatorExtension.Disks;
-using MyDisk.Contracts.Disks;
 using MyDisk.Tests.Services;
 
 namespace Contracts.Validators.Tests.Disks;
@@ -13,9 +12,8 @@ public class UpdateDiskCommandValidatorFixture
     public async Task ShouldThrowValidationException(string name)
     {
         // Arrange
-        var command = new UpdateDiskCommand
+        var request = new UpdateDiskCommandRequest
             { Name = name, ReleaseDate = DateTime.Parse("30-07-23 16:01:55"), Id = null };
-        var request = new UpdateDiskCommandRequest { Value = command };
 
         // Act
         var act = await new UpdateDiskCommandValidator().ValidateAsync(request);

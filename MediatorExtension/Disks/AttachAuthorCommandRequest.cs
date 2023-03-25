@@ -3,6 +3,6 @@ using MyDisk.Contracts.Disks;
 
 namespace MediatorExtension.Disks;
 
-public class AttachAuthorCommandRequest : Request<AttachAuthorCommand, Unit>
+public class AttachAuthorCommandRequest : AttachAuthorCommand, IRequest<Unit>
 {
 }

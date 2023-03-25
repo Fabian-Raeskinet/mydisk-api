@@ -24,7 +24,7 @@ public class DeleteDiskCommandHandlerTestsShould
     )
     {
         // Arrange
-        request.Value.Property = DeleteDiskByProperty.Id;
+        request.Property = DeleteDiskByProperty.Id;
 
         sut.DiskRepository.AsMock()
             .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
@@ -54,7 +54,7 @@ public class DeleteDiskCommandHandlerTestsShould
     )
     {
         // Arrange
-        request.Value.Property = DeleteDiskByProperty.Name;
+        request.Property = DeleteDiskByProperty.Name;
 
         sut.DiskRepository.AsMock()
             .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
@@ -78,12 +78,11 @@ public class DeleteDiskCommandHandlerTestsShould
     [AutoServiceData]
     public async Task ShouldThrowInvalidOperationExceptionBecauseNullValue
     (
-        [NoAutoProperties] DeleteDiskCommand command,
+        [NoAutoProperties] DeleteDiskCommandRequest request,
         DeleteDiskCommandHandler sut
     )
     {
         // Act
-        var request = new DeleteDiskCommandRequest { Value = command };
         var act = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
 
         // Assert
@@ -98,12 +97,11 @@ public class DeleteDiskCommandHandlerTestsShould
     [AutoServiceData]
     public async Task ShouldThrowInvalidOperationExceptionBecauseIncorrectProperty
     (
-        [NoAutoProperties] DeleteDiskCommand command,
+        [NoAutoProperties] DeleteDiskCommandRequest request,
         DeleteDiskCommandHandler sut
     )
     {
         // Arrange
-        var request = new DeleteDiskCommandRequest { Value = command };
         var act = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
 
         // Act
@@ -151,7 +149,7 @@ public class DeleteDiskCommandHandlerTestsShould
     )
     {
         // Arrange
-        request.Value.Property = request.Value.Property = null;
+        request.Property = null;
         sut.DiskRepository.AsMock()
             .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
             .ReturnsAsync(() => null);

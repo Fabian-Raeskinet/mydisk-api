@@ -22,7 +22,7 @@ public class UpdateDiskCommandHandlerTests
     )
     {
         // Arrange
-        request.Value.ReleaseDate = DateTime.Now;
+        request.ReleaseDate = DateTime.Now;
         sut.DiskRepository.AsMock()
             .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
             .ReturnsAsync(disk);

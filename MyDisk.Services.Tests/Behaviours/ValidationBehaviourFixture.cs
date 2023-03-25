@@ -17,7 +17,7 @@ public class ValidationBehaviourFixture
     public async Task ShouldThrowValidationException()
     {
         // Arrange
-        var request = new GetDiskByNameQueryRequest { Value = new GetDiskByNameQuery() };
+        var request = new GetDiskByNameQueryRequest();
         var del = new Mock<RequestHandlerDelegate<DiskResponse>>();
         var sut = new ValidationBehaviour<GetDiskByNameQueryRequest, DiskResponse>(
             new List<IValidator<GetDiskByNameQueryRequest>> { new GetDiskByNameQueryValidator() });
@@ -33,10 +33,10 @@ public class ValidationBehaviourFixture
     public async Task ShouldNotThrowValidationExceptionBecauseEmptyValidators()
     {
         // Arrange
-        var request = new Request<GetDiskByNameQuery, DiskResponse> { Value = new GetDiskByNameQuery() };
+        var request = new GetDiskByNameQueryRequest();
         var del = new Mock<RequestHandlerDelegate<DiskResponse>>();
-        var sut = new ValidationBehaviour<Request<GetDiskByNameQuery, DiskResponse>, DiskResponse>(
-            new List<IValidator<Request<GetDiskByNameQuery, DiskResponse>>>());
+        var sut = new ValidationBehaviour<GetDiskByNameQueryRequest, DiskResponse>(
+            new List<IValidator<GetDiskByNameQueryRequest>>());
 
         // Act
         Func<Task> act = async () => await sut.Handle(request, del.Object, default);

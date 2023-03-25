@@ -6,7 +6,7 @@ using MyDisk.Domain.Exceptions;
 
 namespace MyDisk.Services.Disks;
 
-public class AttachAuthorCommandHandler : MediatorExtension.RequestHandler<AttachAuthorCommandRequest, Unit>
+public class AttachAuthorCommandHandler : IRequestHandler<AttachAuthorCommandRequest, Unit>
 {
     public AttachAuthorCommandHandler(IMapper mapper, IAuthorRepository authorRepository,
         IDiskRepository diskRepository)
@@ -20,10 +20,10 @@ public class AttachAuthorCommandHandler : MediatorExtension.RequestHandler<Attac
     public IAuthorRepository AuthorRepository { get; }
     public IDiskRepository DiskRepository { get; }
 
-    public override async Task<Unit> Handle(AttachAuthorCommandRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(AttachAuthorCommandRequest request, CancellationToken cancellationToken)
     {
-        var author = await AuthorRepository.GetAuthorByFilterAsync(x => x.Id == request.Value.AuthorId);
-        var disk = await DiskRepository.GetDiskByFilterAsync(x => x.Id == request.Value.DiskId);
+        var author = await AuthorRepository.GetAuthorByFilterAsync(x => x.Id == request.AuthorId);
+        var disk = await DiskRepository.GetDiskByFilterAsync(x => x.Id == request.DiskId);
 
         if (author == null || disk == null)
             throw new ObjectNotFoundException("no matches found");

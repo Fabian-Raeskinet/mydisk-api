@@ -3,4 +3,4 @@ using MyDisk.Contracts.Disks;
 
 namespace MediatorExtension.Disks;
 
-public class UpdateDiskCommandRequest : Request<UpdateDiskCommand, Unit> { }
+public class UpdateDiskCommandRequest : UpdateDiskCommand, IRequest<Unit> { }

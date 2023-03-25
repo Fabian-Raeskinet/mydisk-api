@@ -7,6 +7,6 @@ public class UpdateDiskCommandValidator : AbstractValidator<UpdateDiskCommandReq
 {
     public UpdateDiskCommandValidator()
     {
-        RuleFor(x => x.Value.Id).NotEmpty().NotNull();
+        RuleFor(x => x.Id).NotEmpty().NotNull();
     }
 }
