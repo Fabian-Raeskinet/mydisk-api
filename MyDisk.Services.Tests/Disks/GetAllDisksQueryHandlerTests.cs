@@ -1,6 +1,6 @@
 ﻿using AutoFixture.Xunit2;
 using FluentAssertions;
-using MediatorExtension;
+using MediatorExtension.Disks;
 using Moq;
 using MyDisk.Contracts.Disks;
 using MyDisk.Domain.Entities;
@@ -25,7 +25,7 @@ public class GetAllDisksQueryHandlerTestsShould
             .ReturnsAsync(disks);
 
         // Act
-        var act = await sut.Handle(It.IsAny<Request<GetAllDisksQuery, List<DiskResponse>>>(),
+        var act = await sut.Handle(It.IsAny<GetAllDisksQueryRequest>(),
             It.IsAny<CancellationToken>());
 
         // Assert
@@ -46,7 +46,7 @@ public class GetAllDisksQueryHandlerTestsShould
             .Setup(x => x.GetDisksAsync()).ReturnsAsync(disks);
 
         // Act
-        var act = await sut.Handle(It.IsAny<Request<GetAllDisksQuery, List<DiskResponse>>>(),
+        var act = await sut.Handle(It.IsAny<GetAllDisksQueryRequest>(),
             It.IsAny<CancellationToken>());
 
         // Assert

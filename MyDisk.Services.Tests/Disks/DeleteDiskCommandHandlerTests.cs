@@ -1,8 +1,7 @@
 ﻿using System.Linq.Expressions;
 using AutoFixture.Xunit2;
 using FluentAssertions;
-using MediatorExtension;
-using MediatR;
+using MediatorExtension.Disks;
 using Moq;
 using MyDisk.Contracts.Disks;
 using MyDisk.Domain.Entities;
@@ -19,7 +18,7 @@ public class DeleteDiskCommandHandlerTestsShould
     [AutoServiceData]
     public async Task ShouldDeleteById
     (
-        Request<DeleteDiskCommand, Unit> request,
+        DeleteDiskCommandRequest request,
         DeleteDiskCommandHandler sut,
         Disk disk
     )
@@ -49,7 +48,7 @@ public class DeleteDiskCommandHandlerTestsShould
     [AutoServiceData]
     public async Task ShouldDeleteByName
     (
-        Request<DeleteDiskCommand, Unit> request,
+        DeleteDiskCommandRequest request,
         DeleteDiskCommandHandler sut,
         Disk disk
     )
@@ -84,7 +83,7 @@ public class DeleteDiskCommandHandlerTestsShould
     )
     {
         // Act
-        var request = new Request<DeleteDiskCommand, Unit> { Value = command };
+        var request = new DeleteDiskCommandRequest { Value = command };
         var act = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
 
         // Assert
@@ -104,7 +103,7 @@ public class DeleteDiskCommandHandlerTestsShould
     )
     {
         // Arrange
-        var request = new Request<DeleteDiskCommand, Unit> { Value = command };
+        var request = new DeleteDiskCommandRequest { Value = command };
         var act = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
 
         // Act
@@ -121,7 +120,7 @@ public class DeleteDiskCommandHandlerTestsShould
     [AutoServiceData]
     public async Task ShouldThrowEntityNotFoundException
     (
-        Request<DeleteDiskCommand, Unit> request,
+        DeleteDiskCommandRequest request,
         DeleteDiskCommandHandler sut
     )
     {
@@ -147,7 +146,7 @@ public class DeleteDiskCommandHandlerTestsShould
     [AutoServiceData]
     public async Task ShouldThrow
     (
-        Request<DeleteDiskCommand, Unit> request,
+        DeleteDiskCommandRequest request,
         DeleteDiskCommandHandler sut
     )
     {

@@ -1,4 +1,4 @@
-﻿using MediatorExtension;
+﻿using MediatorExtension.Disks;
 using Microsoft.AspNetCore.Mvc;
 using MyDisk.Contracts.Disks;
 
@@ -12,6 +12,6 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> UpdateDisk([FromBody] UpdateDiskCommand command)
     {
-        return Ok(await Mediator.Send(new Request<UpdateDiskCommand, DiskResponse> { Value = command }));
+        return Ok(await Mediator.Send(new UpdateDiskCommandRequest { Value = command }));
     }
 }

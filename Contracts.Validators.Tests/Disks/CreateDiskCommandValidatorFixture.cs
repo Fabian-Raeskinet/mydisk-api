@@ -1,7 +1,6 @@
 using Contracts.Validators.Disks;
 using FluentAssertions;
-using MediatorExtension;
-using MediatR;
+using MediatorExtension.Disks;
 using MyDisk.Contracts.Disks;
 using MyDisk.Tests.Services;
 
@@ -17,7 +16,7 @@ public class CreateDiskCommandValidatorFixture
         // Arrange
         var command = new CreateDiskCommand
             { Name = name, ReleaseDate = releaseDate != null ? DateTime.Parse(releaseDate) : null };
-        var request = new Request<CreateDiskCommand, Unit> { Value = command };
+        var request = new CreateDiskCommandRequest { Value = command };
 
         // Act
         var act = await new CreateDiskCommandValidator().ValidateAsync(request);
@@ -28,7 +27,7 @@ public class CreateDiskCommandValidatorFixture
 
     [Theory]
     [AutoServiceData]
-    public async Task ShouldNotThrowValidationExceptionBecauseValidRequest(Request<CreateDiskCommand, Unit> request)
+    public async Task ShouldNotThrowValidationExceptionBecauseValidRequest(CreateDiskCommandRequest request)
     {
         // Act
         var act = await new CreateDiskCommandValidator().ValidateAsync(request);

@@ -1,7 +1,6 @@
-﻿using MediatorExtension;
+﻿using MediatorExtension.Disks;
 using Microsoft.AspNetCore.Mvc;
 using MyDisk.Contracts.Disks;
-using MyDisk.Services;
 
 namespace MyDisk.Api.Controllers;
 
@@ -13,7 +12,7 @@ public partial class DiskController
     [ProducesResponseType(404)]
     public async Task<IActionResult> GetAllDisks()
     {
-        var query = new Request<GetAllDisksQuery, List<DiskResponse>> { Value = new GetAllDisksQuery() };
+        var query = new GetAllDisksQueryRequest { Value = new GetAllDisksQuery() };
         var results = await Mediator.Send(query);
         return Ok(results);
     }
@@ -25,7 +24,7 @@ public partial class DiskController
     [ProducesResponseType(404)]
     public async Task<IActionResult> GetByName([FromQuery] string? name)
     {
-        var result = await Mediator.Send(new Request<GetDiskByNameQuery, DiskResponse>
+        var result = await Mediator.Send(new GetDiskByNameQueryRequest
             { Value = new GetDiskByNameQuery { Name = name } });
         return Ok(result);
     }

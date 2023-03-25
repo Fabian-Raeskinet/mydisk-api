@@ -1,4 +1,4 @@
-﻿using MediatorExtension;
+﻿using MediatorExtension.Disks;
 using Microsoft.AspNetCore.Mvc;
 using MyDisk.Contracts.Disks;
 
@@ -12,7 +12,7 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> CreateDisk([FromBody] CreateDiskCommand command)
     {
-        return Ok(await Mediator.Send(new Request<CreateDiskCommand, Guid> { Value = command }));
+        return Ok(await Mediator.Send(new CreateDiskCommandRequest { Value = command }));
     }
 
     [HttpPost]
@@ -21,7 +21,7 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> AttachAuthor([FromBody] AttachAuthorCommand command)
     {
-        var result = await Mediator.Send(new Request<AttachAuthorCommand, Guid> { Value = command });
+        var result = await Mediator.Send(new AttachAuthorCommandRequest { Value = command });
         return Ok(result);
     }
 }

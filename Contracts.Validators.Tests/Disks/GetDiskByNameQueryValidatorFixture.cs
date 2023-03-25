@@ -1,6 +1,6 @@
 using Contracts.Validators.Disks;
 using FluentAssertions;
-using MediatorExtension;
+using MediatorExtension.Disks;
 using MyDisk.Contracts.Disks;
 using MyDisk.Tests.Services;
 
@@ -14,7 +14,7 @@ public class GetDiskByNameQueryValidatorFixture
     public async Task ShouldThrowValidationException(string name)
     {
         // Arrange
-        var request = new Request<GetDiskByNameQuery, DiskResponse>
+        var request = new GetDiskByNameQueryRequest
         {
             Value = new GetDiskByNameQuery
                 { Name = name }
@@ -29,7 +29,7 @@ public class GetDiskByNameQueryValidatorFixture
 
     [Theory]
     [AutoServiceData]
-    public async Task ShouldNotThrowValidationException(Request<GetDiskByNameQuery, DiskResponse> request)
+    public async Task ShouldNotThrowValidationException(GetDiskByNameQueryRequest request)
     {
         // Act
         var act = await new GetDiskByNameQueryValidator().ValidateAsync(request);

@@ -2,6 +2,7 @@ using Contracts.Validators.Disks;
 using FluentAssertions;
 using FluentValidation;
 using MediatorExtension;
+using MediatorExtension.Disks;
 using MediatR;
 using Moq;
 using MyDisk.Contracts.Disks;
@@ -13,14 +14,13 @@ namespace MyDisk.Services.Tests.Behaviours;
 public class ValidationBehaviourFixture
 {
     [Fact]
-    [AutoServiceData]
     public async Task ShouldThrowValidationException()
     {
         // Arrange
-        var request = new Request<GetDiskByNameQuery, DiskResponse> { Value = new GetDiskByNameQuery() };
+        var request = new GetDiskByNameQueryRequest { Value = new GetDiskByNameQuery() };
         var del = new Mock<RequestHandlerDelegate<DiskResponse>>();
-        var sut = new ValidationBehaviour<Request<GetDiskByNameQuery, DiskResponse>, DiskResponse>(
-            new List<IValidator<Request<GetDiskByNameQuery, DiskResponse>>> { new GetDiskByNameQueryValidator() });
+        var sut = new ValidationBehaviour<GetDiskByNameQueryRequest, DiskResponse>(
+            new List<IValidator<GetDiskByNameQueryRequest>> { new GetDiskByNameQueryValidator() });
 
         // Act
         Func<Task> act = async () => await sut.Handle(request, del.Object, default);
@@ -28,9 +28,8 @@ public class ValidationBehaviourFixture
         // Assert
         await act.Should().ThrowAsync<ValidationException>();
     }
-    
+
     [Fact]
-    [AutoServiceData]
     public async Task ShouldNotThrowValidationExceptionBecauseEmptyValidators()
     {
         // Arrange
@@ -45,15 +44,15 @@ public class ValidationBehaviourFixture
         // Assert
         await act.Should().NotThrowAsync<ValidationException>();
     }
-    
+
     [Theory]
     [AutoServiceData]
-    public async Task ShouldNotThrowValidationExceptionBecauseValidRequest(Request<GetDiskByNameQuery, DiskResponse> request)
+    public async Task ShouldNotThrowValidationExceptionBecauseValidRequest(GetDiskByNameQueryRequest request)
     {
         // Arrange
         var del = new Mock<RequestHandlerDelegate<DiskResponse>>();
-        var sut = new ValidationBehaviour<Request<GetDiskByNameQuery, DiskResponse>, DiskResponse>(
-            new List<IValidator<Request<GetDiskByNameQuery, DiskResponse>>> { new GetDiskByNameQueryValidator() });
+        var sut = new ValidationBehaviour<GetDiskByNameQueryRequest, DiskResponse>(
+            new List<IValidator<GetDiskByNameQueryRequest>> { new GetDiskByNameQueryValidator() });
 
         // Act
         Func<Task> act = async () => await sut.Handle(request, del.Object, default);

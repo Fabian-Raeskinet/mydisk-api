@@ -1,11 +1,9 @@
 using FluentValidation;
-using MediatorExtension;
-using MediatR;
-using MyDisk.Contracts.Disks;
+using MediatorExtension.Disks;
 
 namespace Contracts.Validators.Disks;
 
-public class UpdateDiskCommandValidator : AbstractValidator<Request<UpdateDiskCommand, Unit>>
+public class UpdateDiskCommandValidator : AbstractValidator<UpdateDiskCommandRequest>
 {
     public UpdateDiskCommandValidator()
     {

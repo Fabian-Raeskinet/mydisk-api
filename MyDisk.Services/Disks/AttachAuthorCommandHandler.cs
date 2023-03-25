@@ -1,13 +1,12 @@
 ﻿using AutoMapper;
-using MediatorExtension;
-using MyDisk.Contracts.Disks;
+using MediatorExtension.Disks;
+using MediatR;
 using MyDisk.Domain;
 using MyDisk.Domain.Exceptions;
-using Unit = MediatR.Unit;
 
 namespace MyDisk.Services.Disks;
 
-public class AttachAuthorCommandHandler : RequestHandler<AttachAuthorCommand, Unit>
+public class AttachAuthorCommandHandler : MediatorExtension.RequestHandler<AttachAuthorCommandRequest, Unit>
 {
     public AttachAuthorCommandHandler(IMapper mapper, IAuthorRepository authorRepository,
         IDiskRepository diskRepository)
@@ -21,8 +20,7 @@ public class AttachAuthorCommandHandler : RequestHandler<AttachAuthorCommand, Un
     public IAuthorRepository AuthorRepository { get; }
     public IDiskRepository DiskRepository { get; }
 
-    public override async Task<Unit> Handle(Request<AttachAuthorCommand, Unit> request,
-        CancellationToken cancellationToken)
+    public override async Task<Unit> Handle(AttachAuthorCommandRequest request, CancellationToken cancellationToken)
     {
         var author = await AuthorRepository.GetAuthorByFilterAsync(x => x.Id == request.Value.AuthorId);
         var disk = await DiskRepository.GetDiskByFilterAsync(x => x.Id == request.Value.DiskId);
