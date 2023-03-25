@@ -14,11 +14,8 @@ public partial class DiskController
     {
         await Mediator.Send(new DeleteDiskCommandRequest
         {
-            Value = new DeleteDiskCommand
-            {
-                Property = Contracts.Disks.DeleteDiskByProperty.Id,
-                Value = diskId.ToString()
-            }
+            Property = Contracts.Disks.DeleteDiskByProperty.Id,
+            Value = diskId.ToString()
         });
         return NoContent();
     }
@@ -31,11 +28,8 @@ public partial class DiskController
     {
         await Mediator.Send(new DeleteDiskCommandRequest
         {
-            Value = new DeleteDiskCommand
-            {
-                Property = Contracts.Disks.DeleteDiskByProperty.Name,
-                Value = name
-            }
+            Property = Contracts.Disks.DeleteDiskByProperty.Name,
+            Value = name
         });
         return NoContent();
     }
@@ -44,16 +38,10 @@ public partial class DiskController
     [Route("delete-by-property")]
     [ProducesResponseType(204)]
     [ProducesResponseType(400)]
-    public async Task<IActionResult> DeleteDiskByProperty([FromBody] DeleteDiskCommand request)
+    public async Task<IActionResult> DeleteDiskByProperty([FromBody] DeleteDiskCommand command)
     {
-        await Mediator.Send(new DeleteDiskCommandRequest
-        {
-            Value = new DeleteDiskCommand
-            {
-                Property = request.Property,
-                Value = request.Value
-            }
-        });
+        var request = new DeleteDiskCommandRequest { Property = command.Property, Value = command.Value };
+        await Mediator.Send(request);
         return NoContent();
     }
 }

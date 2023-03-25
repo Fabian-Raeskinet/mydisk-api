@@ -1,7 +1,6 @@
 using Contracts.Validators.Disks;
 using FluentAssertions;
 using MediatorExtension.Disks;
-using MyDisk.Contracts.Disks;
 using MyDisk.Tests.Services;
 
 namespace Contracts.Validators.Tests.Disks;
@@ -16,8 +15,7 @@ public class GetDiskByNameQueryValidatorFixture
         // Arrange
         var request = new GetDiskByNameQueryRequest
         {
-            Value = new GetDiskByNameQuery
-                { Name = name }
+            Name = name
         };
 
         // Act

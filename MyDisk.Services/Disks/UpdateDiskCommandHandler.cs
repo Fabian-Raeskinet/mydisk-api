@@ -6,7 +6,7 @@ using MyDisk.Domain.Exceptions;
 
 namespace MyDisk.Services.Disks;
 
-public class UpdateDiskCommandHandler : MediatorExtension.RequestHandler<UpdateDiskCommandRequest, Unit>
+public class UpdateDiskCommandHandler : IRequestHandler<UpdateDiskCommandRequest, Unit>
 {
     public UpdateDiskCommandHandler(IDiskRepository repository, IMapper mapper)
     {
@@ -17,15 +17,15 @@ public class UpdateDiskCommandHandler : MediatorExtension.RequestHandler<UpdateD
     public IDiskRepository DiskRepository { get; }
     public IMapper Mapper { get; }
 
-    public override async Task<Unit> Handle(UpdateDiskCommandRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(UpdateDiskCommandRequest request, CancellationToken cancellationToken)
     {
-        var disk = await DiskRepository.GetDiskByFilterAsync(x => request.Value.Id != null && x.Id == request.Value.Id);
+        var disk = await DiskRepository.GetDiskByFilterAsync(x => request.Id != null && x.Id == request.Id);
 
         if (disk == null)
             throw new ObjectNotFoundException();
 
-        if (request.Value.Name is not null) disk.Name = request.Value.Name;
-        if (request.Value.ReleaseDate is not null) disk.ReleaseDate = request.Value.ReleaseDate;
+        if (request.Name is not null) disk.Name = request.Name;
+        if (request.ReleaseDate is not null) disk.ReleaseDate = request.ReleaseDate;
 
         await DiskRepository.UpdateDiskAsync(disk);
         return Unit.Value;

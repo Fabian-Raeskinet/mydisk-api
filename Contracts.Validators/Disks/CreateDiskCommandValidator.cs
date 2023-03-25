@@ -7,7 +7,7 @@ public class CreateDiskCommandValidator : AbstractValidator<CreateDiskCommandReq
 {
     public CreateDiskCommandValidator()
     {
-        RuleFor(x => x.Value.Name).NotEmpty();
-        RuleFor(x => x.Value.ReleaseDate).NotEmpty();
+        RuleFor(x => x.Name).NotEmpty();
+        RuleFor(x => x.ReleaseDate).NotEmpty();
     }
 }

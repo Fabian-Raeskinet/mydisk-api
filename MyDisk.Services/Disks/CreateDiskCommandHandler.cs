@@ -5,7 +5,7 @@ using MyDisk.Domain.Entities;
 
 namespace MyDisk.Services.Disks;
 
-public class CreateDiskCommandHandler : MediatorExtension.RequestHandler<CreateDiskCommandRequest, Unit>
+public class CreateDiskCommandHandler : IRequestHandler<CreateDiskCommandRequest, Unit>
 {
     public CreateDiskCommandHandler(IDiskRepository repository)
     {
@@ -14,14 +14,14 @@ public class CreateDiskCommandHandler : MediatorExtension.RequestHandler<CreateD
 
     public IDiskRepository DiskRepository { get; }
 
-    public override async Task<Unit> Handle(CreateDiskCommandRequest request, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(CreateDiskCommandRequest request, CancellationToken cancellationToken)
     {
-        if (request.Value.ReleaseDate == null) throw new InvalidOperationException();
+        if (request.ReleaseDate == null) throw new InvalidOperationException();
         var entity = new Disk
         {
             Id = Guid.NewGuid(),
-            Name = request.Value.Name,
-            ReleaseDate = request.Value.ReleaseDate
+            Name = request.Name,
+            ReleaseDate = request.ReleaseDate
         };
 
         await DiskRepository.CreateDiskAsync(entity);

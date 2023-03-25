@@ -20,7 +20,7 @@ public class CreateDiskCommandHandlerTestsShould
     )
     {
         // Arrange
-        request.Value.ReleaseDate = DateTime.Now;
+        request.ReleaseDate = DateTime.Now;
         sut.DiskRepository.AsMock()
             .Setup(x => x.CreateDiskAsync(disk))
             .ReturnsAsync(disk.Id);
@@ -42,7 +42,7 @@ public class CreateDiskCommandHandlerTestsShould
     )
     {
         // Arrange
-        request.Value.ReleaseDate = null;
+        request.ReleaseDate = null;
         // Act
         var act = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
 

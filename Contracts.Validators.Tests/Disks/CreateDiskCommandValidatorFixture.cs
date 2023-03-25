@@ -14,9 +14,8 @@ public class CreateDiskCommandValidatorFixture
     public async Task ShouldThrowValidationException(string name, string? releaseDate)
     {
         // Arrange
-        var command = new CreateDiskCommand
+        var request = new CreateDiskCommandRequest
             { Name = name, ReleaseDate = releaseDate != null ? DateTime.Parse(releaseDate) : null };
-        var request = new CreateDiskCommandRequest { Value = command };
 
         // Act
         var act = await new CreateDiskCommandValidator().ValidateAsync(request);

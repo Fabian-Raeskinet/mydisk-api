@@ -7,6 +7,6 @@ public class GetDiskByNameQueryValidator : AbstractValidator<GetDiskByNameQueryR
 {
     public GetDiskByNameQueryValidator()
     {
-        RuleFor(x => x.Value.Name).NotEmpty();
+        RuleFor(x => x.Name).NotEmpty();
     }
 }

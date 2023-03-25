@@ -7,7 +7,7 @@ public class AttachAuthorCommandValidator : AbstractValidator<AttachAuthorComman
 {
     public AttachAuthorCommandValidator()
     {
-        RuleFor(x => x.Value.AuthorId).NotNull().NotEmpty();
-        RuleFor(x => x.Value.DiskId).NotNull().NotEmpty();
+        RuleFor(x => x.AuthorId).NotNull().NotEmpty();
+        RuleFor(x => x.DiskId).NotNull().NotEmpty();
     }
 }

@@ -12,7 +12,7 @@ public partial class DiskController
     [ProducesResponseType(404)]
     public async Task<IActionResult> GetAllDisks()
     {
-        var query = new GetAllDisksQueryRequest { Value = new GetAllDisksQuery() };
+        var query = new GetAllDisksQueryRequest();
         var results = await Mediator.Send(query);
         return Ok(results);
     }
@@ -24,8 +24,7 @@ public partial class DiskController
     [ProducesResponseType(404)]
     public async Task<IActionResult> GetByName([FromQuery] string? name)
     {
-        var result = await Mediator.Send(new GetDiskByNameQueryRequest
-            { Value = new GetDiskByNameQuery { Name = name } });
+        var result = await Mediator.Send(new GetDiskByNameQueryRequest { Name = name });
         return Ok(result);
     }
 }
