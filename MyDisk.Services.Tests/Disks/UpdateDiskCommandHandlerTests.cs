@@ -1,9 +1,7 @@
 ﻿using System.Linq.Expressions;
 using FluentAssertions;
-using MediatorExtension;
-using MediatR;
+using MediatorExtension.Disks;
 using Moq;
-using MyDisk.Contracts.Disks;
 using MyDisk.Domain.Entities;
 using MyDisk.Domain.Exceptions;
 using MyDisk.Services.Disks;
@@ -19,7 +17,7 @@ public class UpdateDiskCommandHandlerTests
     public async Task ShouldUpdateDisk
     (
         UpdateDiskCommandHandler sut,
-        Request<UpdateDiskCommand, Unit> request,
+        UpdateDiskCommandRequest request,
         Disk disk
     )
     {
@@ -44,7 +42,7 @@ public class UpdateDiskCommandHandlerTests
     public async Task ShouldThrowEntityNotFoundException
     (
         UpdateDiskCommandHandler sut,
-        Request<UpdateDiskCommand, Unit> request
+        UpdateDiskCommandRequest request
     )
     {
         // Arrange

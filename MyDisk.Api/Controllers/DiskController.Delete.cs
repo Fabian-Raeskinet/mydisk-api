@@ -1,5 +1,4 @@
-﻿using MediatorExtension;
-using MediatR;
+﻿using MediatorExtension.Disks;
 using Microsoft.AspNetCore.Mvc;
 using MyDisk.Contracts.Disks;
 
@@ -13,7 +12,7 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> DeleteDiskById([FromBody] Guid diskId)
     {
-        await Mediator.Send(new Request<DeleteDiskCommand, Unit>
+        await Mediator.Send(new DeleteDiskCommandRequest
         {
             Value = new DeleteDiskCommand
             {
@@ -30,7 +29,7 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> DeleteDiskByName(string name)
     {
-        await Mediator.Send(new Request<DeleteDiskCommand, Unit>
+        await Mediator.Send(new DeleteDiskCommandRequest
         {
             Value = new DeleteDiskCommand
             {
@@ -47,7 +46,7 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> DeleteDiskByProperty([FromBody] DeleteDiskCommand request)
     {
-        await Mediator.Send(new Request<DeleteDiskCommand, Unit>
+        await Mediator.Send(new DeleteDiskCommandRequest
         {
             Value = new DeleteDiskCommand
             {

@@ -2,8 +2,8 @@ using MediatR;
 
 namespace MediatorExtension;
 
-
-public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<Request<TRequest, TResponse>, TResponse>
+public abstract class RequestHandler<TRequest, TResponse> : IRequestHandler<TRequest, TResponse>
+    where TRequest : IRequest<TResponse>
 {
-    public abstract Task<TResponse> Handle(Request<TRequest, TResponse> request, CancellationToken cancellationToken);
+    public abstract Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken);
 }

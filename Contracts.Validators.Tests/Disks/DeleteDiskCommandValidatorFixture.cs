@@ -1,7 +1,6 @@
 using Contracts.Validators.Disks;
 using FluentAssertions;
-using MediatorExtension;
-using MediatR;
+using MediatorExtension.Disks;
 using MyDisk.Contracts.Disks;
 using MyDisk.Tests.Services;
 
@@ -16,7 +15,7 @@ public class DeleteDiskCommandValidatorFixture
     {
         // Arrange
         var command = new DeleteDiskCommand { Property = property, Value = value };
-        var request = new Request<DeleteDiskCommand, Unit> { Value = command };
+        var request = new DeleteDiskCommandRequest { Value = command };
 
         // Act
         var act = await new DeleteDiskCommandValidator().ValidateAsync(request);
@@ -27,7 +26,7 @@ public class DeleteDiskCommandValidatorFixture
 
     [Theory]
     [AutoServiceData]
-    public async Task ShouldNotThrowValidationException(Request<DeleteDiskCommand, Unit> request)
+    public async Task ShouldNotThrowValidationException(DeleteDiskCommandRequest request)
     {
         // Act
         var act = await new DeleteDiskCommandValidator().ValidateAsync(request);

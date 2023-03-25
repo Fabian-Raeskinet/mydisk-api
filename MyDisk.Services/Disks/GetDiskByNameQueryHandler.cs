@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using MediatorExtension;
+using MediatorExtension.Disks;
 using MyDisk.Contracts.Disks;
 using MyDisk.Domain;
 using MyDisk.Domain.Exceptions;
 
 namespace MyDisk.Services.Disks;
 
-public class GetDiskByNameQueryHandler : RequestHandler<GetDiskByNameQuery, DiskResponse>
+public class GetDiskByNameQueryHandler : RequestHandler<GetDiskByNameQueryRequest, DiskResponse>
 {
     public GetDiskByNameQueryHandler(IMapper mapper, IDiskRepository repository)
     {
@@ -17,7 +18,7 @@ public class GetDiskByNameQueryHandler : RequestHandler<GetDiskByNameQuery, Disk
     public IMapper Mapper { get; }
     public IDiskRepository DiskRepository { get; }
 
-    public override async Task<DiskResponse> Handle(Request<GetDiskByNameQuery, DiskResponse> request,
+    public override async Task<DiskResponse> Handle(GetDiskByNameQueryRequest request,
         CancellationToken cancellationToken)
     {
         var data = await DiskRepository.GetDiskByFilterAsync(d => d.Name == request.Value.Name);

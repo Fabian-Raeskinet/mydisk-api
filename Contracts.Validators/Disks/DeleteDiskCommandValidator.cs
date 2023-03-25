@@ -1,11 +1,9 @@
 using FluentValidation;
-using MediatorExtension;
-using MediatR;
-using MyDisk.Contracts.Disks;
+using MediatorExtension.Disks;
 
 namespace Contracts.Validators.Disks;
 
-public class DeleteDiskCommandValidator : AbstractValidator<Request<DeleteDiskCommand, Unit>>
+public class DeleteDiskCommandValidator : AbstractValidator<DeleteDiskCommandRequest>
 {
     public DeleteDiskCommandValidator()
     {

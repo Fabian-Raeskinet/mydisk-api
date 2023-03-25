@@ -1,10 +1,9 @@
 using FluentValidation;
-using MediatorExtension;
-using MyDisk.Contracts.Disks;
+using MediatorExtension.Disks;
 
 namespace Contracts.Validators.Disks;
 
-public class GetDiskByNameQueryValidator : AbstractValidator<Request<GetDiskByNameQuery, DiskResponse>>
+public class GetDiskByNameQueryValidator : AbstractValidator<GetDiskByNameQueryRequest>
 {
     public GetDiskByNameQueryValidator()
     {

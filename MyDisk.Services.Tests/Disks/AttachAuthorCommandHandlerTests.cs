@@ -1,9 +1,7 @@
 ﻿using System.Linq.Expressions;
 using FluentAssertions;
-using MediatorExtension;
-using MediatR;
+using MediatorExtension.Disks;
 using Moq;
-using MyDisk.Contracts.Disks;
 using MyDisk.Domain.Entities;
 using MyDisk.Domain.Exceptions;
 using MyDisk.Services.Disks;
@@ -18,7 +16,7 @@ public class AttachAuthorCommandHandlerTestsShould
     [AutoServiceData]
     public async Task AttachAuthorToDisk
     (
-        Request<AttachAuthorCommand, Unit> request,
+        AttachAuthorCommandRequest request,
         AttachAuthorCommandHandler sut
     )
     {
@@ -34,7 +32,7 @@ public class AttachAuthorCommandHandlerTestsShould
     [AutoServiceData]
     public async Task ThrowsEntityNotFoundException
     (
-        Request<AttachAuthorCommand, Unit> request,
+        AttachAuthorCommandRequest request,
         AttachAuthorCommandHandler sut
     )
     {
