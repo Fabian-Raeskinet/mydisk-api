@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using MediatorExtension;
+using MediatR;
 using Moq;
 using MyDisk.Contracts.Disks;
 using MyDisk.Domain.Entities;
@@ -16,7 +17,7 @@ public class CreateDiskCommandHandlerTestsShould
     public async Task CreateDisk
     (
         CreateDiskCommandHandler sut,
-        Request<CreateDiskCommand, Guid> request,
+        Request<CreateDiskCommand, Unit> request,
         Disk disk
     )
     {
@@ -32,7 +33,6 @@ public class CreateDiskCommandHandlerTestsShould
         // Assert
         sut.DiskRepository.AsMock()
             .Verify(x => x.CreateDiskAsync(It.IsAny<Disk>()), Times.Once);
-        act.Should().NotBeEmpty();
     }
 
     [Theory]
@@ -40,7 +40,7 @@ public class CreateDiskCommandHandlerTestsShould
     public async Task ThrowInvalidOperationException
     (
         CreateDiskCommandHandler sut,
-        Request<CreateDiskCommand, Guid> request
+        Request<CreateDiskCommand, Unit> request
     )
     {
         // Arrange

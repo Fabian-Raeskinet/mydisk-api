@@ -3,10 +3,11 @@ using MediatorExtension;
 using MyDisk.Contracts.Disks;
 using MyDisk.Domain;
 using MyDisk.Domain.Exceptions;
+using Unit = MediatR.Unit;
 
 namespace MyDisk.Services.Disks;
 
-public class AttachAuthorCommandHandler : RequestHandler<AttachAuthorCommand, DiskResponse>
+public class AttachAuthorCommandHandler : RequestHandler<AttachAuthorCommand, Unit>
 {
     public AttachAuthorCommandHandler(IMapper mapper, IAuthorRepository authorRepository,
         IDiskRepository diskRepository)
@@ -20,7 +21,7 @@ public class AttachAuthorCommandHandler : RequestHandler<AttachAuthorCommand, Di
     public IAuthorRepository AuthorRepository { get; }
     public IDiskRepository DiskRepository { get; }
 
-    public override async Task<DiskResponse> Handle(Request<AttachAuthorCommand, DiskResponse> request,
+    public override async Task<Unit> Handle(Request<AttachAuthorCommand, Unit> request,
         CancellationToken cancellationToken)
     {
         var author = await AuthorRepository.GetAuthorByFilterAsync(x => x.Id == request.Value.AuthorId);
@@ -31,6 +32,6 @@ public class AttachAuthorCommandHandler : RequestHandler<AttachAuthorCommand, Di
 
         disk.Author = author;
 
-        return Mapper.Map<DiskResponse>(disk);
+        return Unit.Value;
     }
 }

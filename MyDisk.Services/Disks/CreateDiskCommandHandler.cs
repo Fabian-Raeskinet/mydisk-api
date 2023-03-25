@@ -2,10 +2,11 @@
 using MyDisk.Contracts.Disks;
 using MyDisk.Domain;
 using MyDisk.Domain.Entities;
+using Unit = MediatR.Unit;
 
 namespace MyDisk.Services.Disks;
 
-public class CreateDiskCommandHandler : RequestHandler<CreateDiskCommand, Guid>
+public class CreateDiskCommandHandler : RequestHandler<CreateDiskCommand, Unit>
 {
     public CreateDiskCommandHandler(IDiskRepository repository)
     {
@@ -14,7 +15,7 @@ public class CreateDiskCommandHandler : RequestHandler<CreateDiskCommand, Guid>
 
     public IDiskRepository DiskRepository { get; }
 
-    public override async Task<Guid> Handle(Request<CreateDiskCommand, Guid> request,
+    public override async Task<Unit> Handle(Request<CreateDiskCommand, Unit> request,
         CancellationToken cancellationToken)
     {
         if (request.Value.ReleaseDate == null) throw new InvalidOperationException();
@@ -27,6 +28,6 @@ public class CreateDiskCommandHandler : RequestHandler<CreateDiskCommand, Guid>
 
         await DiskRepository.CreateDiskAsync(entity);
 
-        return entity.Id;
+        return Unit.Value;
     }
 }

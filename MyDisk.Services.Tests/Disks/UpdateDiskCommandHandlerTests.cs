@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using FluentAssertions;
 using MediatorExtension;
+using MediatR;
 using Moq;
 using MyDisk.Contracts.Disks;
 using MyDisk.Domain.Entities;
@@ -18,7 +19,7 @@ public class UpdateDiskCommandHandlerTests
     public async Task ShouldUpdateDisk
     (
         UpdateDiskCommandHandler sut,
-        Request<UpdateDiskCommand, DiskResponse> request,
+        Request<UpdateDiskCommand, Unit> request,
         Disk disk
     )
     {
@@ -36,8 +37,6 @@ public class UpdateDiskCommandHandlerTests
             .Verify(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()), Times.Once);
         sut.DiskRepository.AsMock()
             .Verify(x => x.UpdateDiskAsync(It.IsAny<Disk>()), Times.Once);
-        sut.Mapper.AsMock()
-            .Verify(x => x.Map<DiskResponse>(It.IsAny<Disk>()), Times.Once);
     }
 
     [Theory]
@@ -45,7 +44,7 @@ public class UpdateDiskCommandHandlerTests
     public async Task ShouldThrowEntityNotFoundException
     (
         UpdateDiskCommandHandler sut,
-        Request<UpdateDiskCommand, DiskResponse> request
+        Request<UpdateDiskCommand, Unit> request
     )
     {
         // Arrange
@@ -59,8 +58,7 @@ public class UpdateDiskCommandHandlerTests
         // Assert
         sut.DiskRepository.AsMock()
             .Verify(x => x.UpdateDiskAsync(It.IsAny<Disk>()), Times.Never);
-        sut.Mapper.AsMock()
-            .Verify(x => x.Map<DiskResponse>(It.IsAny<Disk>()), Times.Never);
+
         await result.Should().ThrowAsync<ObjectNotFoundException>();
     }
 }

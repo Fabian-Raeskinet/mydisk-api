@@ -1,13 +1,15 @@
 using FluentValidation;
+using MediatorExtension;
+using MediatR;
 using MyDisk.Contracts.Disks;
 
 namespace Contracts.Validators.Disks;
 
-public class AttachAuthorCommandValidator : AbstractValidator<AttachAuthorCommand>
+public class AttachAuthorCommandValidator : AbstractValidator<Request<AttachAuthorCommand, Unit>>
 {
     public AttachAuthorCommandValidator()
     {
-        RuleFor(x => x.AuthorId).NotNull().NotEmpty();
-        RuleFor(x => x.DiskId).NotNull().NotEmpty();
+        RuleFor(x => x.Value.AuthorId).NotNull().NotEmpty();
+        RuleFor(x => x.Value.DiskId).NotNull().NotEmpty();
     }
 }
