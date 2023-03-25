@@ -43,6 +43,6 @@ public static class DependencyInjection
 
     private static IServiceCollection AddDateTimeService(this IServiceCollection services)
     {
-        return services.AddTransient<IDateTime, DateTimeService>();
+        return services.AddScoped<IDateTime, DateTimeService>();
     }
 }
