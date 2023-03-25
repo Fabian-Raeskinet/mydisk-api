@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net7.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="FluentAssertions" Version="6.8.0"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0"/>
+        <PackageReference Include="Moq" Version="4.18.3"/>
+        <PackageReference Include="xunit" Version="2.4.2"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="coverlet.collector" Version="3.2.0">
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Contracts\Contracts.csproj"/>
+        <ProjectReference Include="..\MyDisk.Api\MyDisk.Api.csproj"/>
+        <ProjectReference Include="..\MyDisk.Domain.Tests\MyDisk.Domain.Tests.csproj"/>
+        <ProjectReference Include="..\MyDisk.Services\MyDisk.Services.csproj"/>
+        <ProjectReference Include="..\MyDisk.Tests.Api\MyDisk.Tests.Api.csproj"/>
+        <ProjectReference Include="..\MyDisk.Tests.Utils\MyDisk.Tests.Utils.csproj"/>
+    </ItemGroup>
+
+</Project>
