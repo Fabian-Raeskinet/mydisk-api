@@ -1,7 +1,4 @@
 ﻿using System.Reflection;
-using Contracts.Validators.Disks;
-using FluentValidation;
-using MediatorExtension.Disks;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -29,8 +26,8 @@ public static class DependencyInjection
 
     private static IServiceCollection AddMediatRServices(this IServiceCollection services)
     {
-        services.AddMediatR(typeof(GetAllDisksQueryHandler).Assembly);
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+        services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
         return services;
     }

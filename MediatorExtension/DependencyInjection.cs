@@ -1,5 +1,4 @@
-using MediatorExtension.Disks;
-using MediatR;
+using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MediatorExtension;
@@ -14,7 +13,7 @@ public static class DependencyInjection
     
     private static IServiceCollection AddMediatRExtension(this IServiceCollection services)
     {
-        services.AddMediatR(typeof(GetDiskByNameQueryRequest).Assembly);
+        services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
         return services;
     }
