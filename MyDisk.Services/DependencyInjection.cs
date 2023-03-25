@@ -30,8 +30,6 @@ public static class DependencyInjection
     private static IServiceCollection AddMediatRServices(this IServiceCollection services)
     {
         services.AddMediatR(typeof(GetAllDisksQueryHandler).Assembly);
-        services.AddMediatR(typeof(GetDiskByNameQueryRequest).Assembly);
-        services.AddValidatorsFromAssemblyContaining<GetDiskByNameQueryValidator>();
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
 
         return services;
