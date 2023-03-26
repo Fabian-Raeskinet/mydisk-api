@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using MediatorExtension.Disks;
 using MediatR;
 using MyDisk.Domain;
 using MyDisk.Domain.Exceptions;

@@ -1,12 +1,11 @@
 using Contracts.Validators.Disks;
 using FluentAssertions;
 using FluentValidation;
-using MediatorExtension;
-using MediatorExtension.Disks;
 using MediatR;
 using Moq;
 using MyDisk.Contracts.Disks;
 using MyDisk.Services.Behaviors;
+using MyDisk.Services.Disks;
 using MyDisk.Tests.Services;
 
 namespace MyDisk.Services.Tests.Behaviours;

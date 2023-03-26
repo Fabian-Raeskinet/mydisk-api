@@ -8,13 +8,15 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.0" />
+        <PackageReference Include="FluentValidation" Version="11.5.1" />
+        <PackageReference Include="MediatR" Version="12.0.1" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Contracts.Validators\Contracts.Validators.csproj" />
         <ProjectReference Include="..\Contracts\Contracts.csproj" />
         <ProjectReference Include="..\MyDisk.Domain\MyDisk.Domain.csproj" />
-        <ProjectReference Include="..\MyDisk.Infrastructure\MyDisk.Infrastructure.csproj" />
         <ProjectReference Include="..\MyDisk.RetryService\MyDisk.RetryService.csproj" />
     </ItemGroup>
 
