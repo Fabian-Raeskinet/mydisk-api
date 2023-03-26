@@ -1,5 +1,5 @@
 using FluentValidation;
-using MediatorExtension.Disks;
+using MyDisk.Services.Disks;
 
 namespace Contracts.Validators.Disks;
 

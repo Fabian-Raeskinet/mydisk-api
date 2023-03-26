@@ -1,6 +1,6 @@
-﻿using MediatorExtension.Disks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using MyDisk.Contracts.Disks;
+using MyDisk.Services.Disks;
 
 namespace MyDisk.Api.Controllers;
 

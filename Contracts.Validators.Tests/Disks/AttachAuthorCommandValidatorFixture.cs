@@ -1,7 +1,7 @@
 using Contracts.Validators.Disks;
 using FluentAssertions;
-using MediatorExtension.Disks;
 using MyDisk.Contracts.Disks;
+using MyDisk.Services.Disks;
 using MyDisk.Tests.Services;
 
 namespace Contracts.Validators.Tests.Disks;

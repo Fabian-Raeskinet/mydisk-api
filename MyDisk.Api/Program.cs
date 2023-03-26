@@ -1,5 +1,4 @@
 using Contracts.Validators;
-using MediatorExtension;
 using MyDisk.Api;
 using MyDisk.Infrastructure;
 using MyDisk.Infrastructure.Persistence;
@@ -11,7 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddApiServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices();
-builder.Services.AddMediatorExtension();
 builder.Services.AddContractValidators();
 
 var app = builder.Build();

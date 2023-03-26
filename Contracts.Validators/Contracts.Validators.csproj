@@ -13,7 +13,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Contracts\Contracts.csproj" />
-        <ProjectReference Include="..\MediatorExtension\MediatorExtension.csproj" />
+        <ProjectReference Include="..\MyDisk.Services\MyDisk.Services.csproj" />
     </ItemGroup>
 
 </Project>

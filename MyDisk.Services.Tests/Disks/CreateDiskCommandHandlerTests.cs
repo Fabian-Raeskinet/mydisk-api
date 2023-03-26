@@ -1,5 +1,4 @@
 ﻿using FluentAssertions;
-using MediatorExtension.Disks;
 using Moq;
 using MyDisk.Domain.Entities;
 using MyDisk.Services.Disks;
