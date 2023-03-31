@@ -5,17 +5,17 @@ namespace MyDisk.Services.Behaviors;
 
 public class LoggingPreProcessorBehaviour<TRequest> : IRequestPreProcessor<TRequest> where TRequest : notnull
 {
-    private readonly ILogger _logger;
+    public ILogger<TRequest> Logger { get; }
 
-    public LoggingPreProcessorBehaviour(ILogger logger)
+    public LoggingPreProcessorBehaviour(ILogger<TRequest> logger)
     {
-        _logger = logger;
+        Logger = logger;
     }
 
     public async Task Process(TRequest request, CancellationToken cancellationToken)
     {
         var requestName = typeof(TRequest).Name;
-        _logger.LogInformation("MyDisk entering Request: {Name}", requestName);
+        Logger.LogInformation("MyDisk entering Request: {Name}", requestName);
         await Task.CompletedTask;
     }
 }

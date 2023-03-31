@@ -7,17 +7,17 @@ namespace MyDisk.Services.Behaviors;
 public class LoggingPostProcessorBehaviour<TRequest, TResponse> : IRequestPostProcessor<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
-    private readonly ILogger _logger;
+    public ILogger<TRequest> Logger { get; set; }
 
-    public LoggingPostProcessorBehaviour(ILogger logger)
+    public LoggingPostProcessorBehaviour(ILogger<TRequest> logger)
     {
-        _logger = logger;
+        Logger = logger;
     }
 
     public Task Process(TRequest request, TResponse response, CancellationToken cancellationToken)
     {
         var requestName = typeof(TRequest).Name;
-        _logger.LogInformation("MyDisk finished Request: {Name}", requestName);
+        Logger.LogInformation("MyDisk finished Request: {Name}", requestName);
         return Task.CompletedTask;
     }
 }
