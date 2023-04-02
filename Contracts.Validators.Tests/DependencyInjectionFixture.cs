@@ -1,0 +1,28 @@
+using FluentAssertions;
+using FluentValidation;
+using Microsoft.Extensions.DependencyInjection;
+using MyDisk.RetryService;
+using MyDisk.Services.Disks;
+
+namespace Contracts.Validators.Tests;
+
+public class DependencyInjectionFixture
+{
+    public class AddFluentValidationServicesFixture
+    {
+        [Fact]
+        public void ShouldAddService()
+        {
+            // Arrange
+            var services = new ServiceCollection();
+
+            // Act
+            services.AddContractValidators();
+            var serviceProvider = services.BuildServiceProvider();
+
+            // Assert
+            var validator = serviceProvider.GetService<IValidator<GetDiskByNameQueryRequest>>();
+            validator.Should().NotBeNull();
+        }
+    }
+}
