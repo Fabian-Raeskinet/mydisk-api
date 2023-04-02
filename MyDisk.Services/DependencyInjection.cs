@@ -40,9 +40,4 @@ public static class DependencyInjection
 
         return services;
     }
-
-    private static IServiceCollection AddRetryService(this IServiceCollection services)
-    {
-        return services.AddScoped<IRetryService, PollyRetryService>();
-    }
 }

@@ -1,6 +1,7 @@
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
+using MyDisk.Tests.Api.Customizations;
 
 namespace MyDisk.Tests.Api;
 
@@ -21,14 +22,11 @@ public class InlineAutoApiDataAttribute : InlineAutoDataAttribute
 internal class ApiCustomization : CompositeCustomization
 {
     public ApiCustomization()
-        : base(new CommonCustomization(), new AutoMoqCustomization())
-    {
-    }
-}
-
-internal class CommonCustomization : ICustomization
-{
-    public void Customize(IFixture fixture)
+        : base(
+            new AutoMoqCustomization(),
+            new ActionContextCustomization(),
+            new ExceptionContextCustomization()
+        )
     {
     }
 }

@@ -13,16 +13,9 @@ public class ApiExceptionFilterAttributeFixture
 {
     [Theory]
     [AutoApiData]
-    public void ShouldReturnsNull(string exception)
+    public void ShouldReturnsNull([NoAutoProperties] ExceptionContext context, string exception)
     {
         // Arrange
-        var context = new ExceptionContext(new ActionContext
-        {
-            HttpContext = new DefaultHttpContext(),
-            RouteData = new RouteData(),
-            ActionDescriptor = new ActionDescriptor()
-        }, new List<IFilterMetadata>());
-
         context.Exception = new Exception(exception);
 
         // Act
@@ -32,47 +25,57 @@ public class ApiExceptionFilterAttributeFixture
         context.Result.Should().BeNull();
     }
 
-    [Theory]
-    [AutoApiData]
-    public void ShouldReturnsBadRequestObjectResult(string exception)
+    public class ValidationExceptionFixture
     {
-        // Arrange
-        var context = new ExceptionContext(new ActionContext
+        [Theory]
+        [AutoApiData]
+        public void ShouldReturnsBadRequestObjectResult([NoAutoProperties] ExceptionContext context, string exception)
         {
-            HttpContext = new DefaultHttpContext(),
-            RouteData = new RouteData(),
-            ActionDescriptor = new ActionDescriptor()
-        }, new List<IFilterMetadata>());
+            // Arrange
+            context.Exception = new ValidationException(exception);
 
-        context.Exception = new ValidationException(exception);
+            // Act
+            new ApiExceptionFilterAttribute().OnException(context);
 
-        // Act
-        new ApiExceptionFilterAttribute().OnException(context);
-
-        // Assert
-        context.Result.Should().BeOfType<BadRequestObjectResult>();
-        context.Exception.Message.Should().Be(exception);
+            // Assert
+            context.Result.Should().BeOfType<BadRequestObjectResult>();
+            context.Exception.Message.Should().Be(exception);
+        }
     }
-
-    [Theory]
-    [AutoApiData]
-    public void ShouldReturnsNotFoundObjectResult(string exception)
+    
+    public class FormatExceptionFixture
     {
-        // Arrange
-        var context = new ExceptionContext(new ActionContext
+        [Theory]
+        [AutoApiData]
+        public void ShouldReturnsBadRequestObjectResult([NoAutoProperties] ExceptionContext context, string exception)
         {
-            HttpContext = new DefaultHttpContext(),
-            RouteData = new RouteData(),
-            ActionDescriptor = new ActionDescriptor()
-        }, new List<IFilterMetadata>());
+            // Arrange
+            context.Exception = new FormatException(exception);
 
-        context.Exception = new ObjectNotFoundException(exception);
+            // Act
+            new ApiExceptionFilterAttribute().OnException(context);
 
-        // Act
-        new ApiExceptionFilterAttribute().OnException(context);
+            // Assert
+            context.Result.Should().BeOfType<BadRequestObjectResult>();
+            context.Exception.Message.Should().Be(exception);
+        }
+    }
+    
+    public class ObjectNotFoundExceptionFixture
+    {
+        [Theory]
+        [AutoApiData]
+        public void ShouldReturnsBadRequestObjectResult([NoAutoProperties] ExceptionContext context, string exception)
+        {
+            // Arrange
+            context.Exception = new ObjectNotFoundException(exception);
 
-        // Assert
-        context.Result.Should().BeOfType<NotFoundObjectResult>();
-        context.Exception.Message.Should().Be(exception);
+            // Act
+            new ApiExceptionFilterAttribute().OnException(context);
+
+            // Assert
+            context.Result.Should().BeOfType<NotFoundObjectResult>();
+            context.Exception.Message.Should().Be(exception);
+        }
     }
 }

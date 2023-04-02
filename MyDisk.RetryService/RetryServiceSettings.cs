@@ -2,6 +2,6 @@
 
 public sealed class RetryServiceSettings
 {
-    public int MaxRetry { get; set; }
-    public int PolicyTimeRetryMilliSeconds { get; set; }
+    public int RetryCount { get; set; }
+    public int TimeRetryMilliSeconds { get; set; }
 }

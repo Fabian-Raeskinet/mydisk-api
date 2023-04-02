@@ -15,9 +15,10 @@ public class PollyRetryService : IRetryService
     public async Task<TResponse> ExecuteAsync<TException, TResponse>(Func<Task<TResponse>> func,
         RetryServiceSettings settings) where TException : Exception
     {
-        var policy = Policy<TResponse>.Handle<TException>()
-            .WaitAndRetryAsync(settings.MaxRetry,
-                _ => TimeSpan.FromMilliseconds(settings.PolicyTimeRetryMilliSeconds));
+        var policy = Policy<TResponse>
+            .Handle<TException>()
+            .WaitAndRetryAsync(settings.RetryCount,
+                _ => TimeSpan.FromMilliseconds(settings.TimeRetryMilliSeconds));
 
         return await policy.ExecuteAsync(func);
     }
@@ -31,9 +32,10 @@ public class PollyRetryService : IRetryService
     public async Task<TResponse> ExecuteAsync<TResponse>(Func<TResponse, bool> resultPredicate,
         Func<Task<TResponse>> func, RetryServiceSettings settings)
     {
-        var policy = Policy.HandleResult(resultPredicate)
-            .WaitAndRetryAsync(settings.MaxRetry,
-                _ => TimeSpan.FromMilliseconds(settings.PolicyTimeRetryMilliSeconds));
+        var policy = Policy
+            .HandleResult(resultPredicate)
+            .WaitAndRetryAsync(settings.RetryCount,
+                _ => TimeSpan.FromMilliseconds(settings.TimeRetryMilliSeconds));
 
         return await policy.ExecuteAsync(func);
     }

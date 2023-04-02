@@ -25,4 +25,43 @@ public class RetryServiceHandlerFixture
         sut.RetryService.AsMock()
             .Verify(x => x.ExecuteAsync<InvalidOperationException, int>(It.IsAny<Func<Task<int>>>()), Times.Once);
     }
+
+    [Theory]
+    [AutoServiceData]
+    public async Task ShouldValidateCondition
+    (
+        RetryServiceHandler sut,
+        RetryServiceRequest request
+    )
+    {
+        // Act
+        await sut.Handle(request, default);
+
+        // Assert
+        sut.RetryService.AsMock()
+            .Verify(x => x.ExecuteAsync(
+                It.Is<Func<int, bool>>(f => f.Invoke(1)),
+                It.IsAny<Func<Task<int>>>()
+            ), Times.Once);
+    }
+
+    [Theory]
+    [AutoServiceData]
+    public async Task ShouldExecuteAsyncException
+    (
+        RetryServiceHandler sut,
+        RetryServiceRequest request
+    )
+    {
+        // Act
+        await sut.Handle(request, CancellationToken.None);
+
+        // Assert
+        sut.RetryService.AsMock()
+            .Verify(
+                x => x.ExecuteAsync<InvalidOperationException, int>(
+                    It.IsAny<Func<Task<int>>>()
+                ),
+                Times.Once);
+    }
 }
