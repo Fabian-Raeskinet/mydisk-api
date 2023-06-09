@@ -30,9 +30,9 @@ public class DependencyInjectionFixture
             mediatr.Should().NotBeNull();
 
             var validationBehaviour =
-                serviceProvider.GetService<IPipelineBehavior<GetDiskByNameQueryRequest, DiskResponse>>();
+                serviceProvider.GetService<IPipelineBehavior<GetDiskByNameQueryRequest, DiskResult>>();
             validationBehaviour.Should().NotBeNull();
-            validationBehaviour.Should().BeOfType<ValidationBehaviour<GetDiskByNameQueryRequest, DiskResponse>>();
+            validationBehaviour.Should().BeOfType<ValidationBehaviour<GetDiskByNameQueryRequest, DiskResult>>();
         }
     }
 

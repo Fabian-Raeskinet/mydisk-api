@@ -15,7 +15,6 @@ public class CreateDiskCommandHandler : IRequestHandler<CreateDiskCommandRequest
 
     public async Task<Unit> Handle(CreateDiskCommandRequest request, CancellationToken cancellationToken)
     {
-        if (request.ReleaseDate == null) throw new InvalidOperationException();
         var entity = new Disk
         {
             Id = Guid.NewGuid(),

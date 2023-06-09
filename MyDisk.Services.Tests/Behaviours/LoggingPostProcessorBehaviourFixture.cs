@@ -14,9 +14,9 @@ public class LoggingPostProcessorBehaviourFixture
     [AutoServiceData]
     public async Task ShouldLog
     (
-        LoggingPostProcessorBehaviour<GetDiskByNameQueryRequest, DiskResponse> sut,
+        LoggingPostProcessorBehaviour<GetDiskByNameQueryRequest, DiskResult> sut,
         GetDiskByNameQueryRequest request,
-        DiskResponse response
+        DiskResult response
     )
     {
         // Act
