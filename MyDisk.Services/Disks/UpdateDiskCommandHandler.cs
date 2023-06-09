@@ -18,7 +18,7 @@ public class UpdateDiskCommandHandler : IRequestHandler<UpdateDiskCommandRequest
 
     public async Task<Unit> Handle(UpdateDiskCommandRequest request, CancellationToken cancellationToken)
     {
-        var disk = await DiskRepository.GetDiskByFilterAsync(x => request.Id != null && x.Id == request.Id);
+        var disk = await DiskRepository.GetDiskByFilterAsync(x => x.Id == request.Id);
 
         if (disk == null)
             throw new ObjectNotFoundException();

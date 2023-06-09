@@ -15,7 +15,7 @@ public class CreateDiskCommandValidatorFixture
     {
         // Arrange
         var request = new CreateDiskCommandRequest
-            { Name = name, ReleaseDate = releaseDate != null ? DateTime.Parse(releaseDate) : null };
+            { Name = name, ReleaseDate = DateTime.Parse(releaseDate) };
 
         // Act
         var act = await new CreateDiskCommandValidator().ValidateAsync(request);
