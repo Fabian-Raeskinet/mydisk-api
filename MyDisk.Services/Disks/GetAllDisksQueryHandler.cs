@@ -21,6 +21,6 @@ public class GetAllDisksQueryHandler : IRequestHandler<GetAllDisksQueryRequest, 
     {
         //await Task.Delay(5000);
         var result = await DiskRepository.GetDisksAsync();
-        return Mapper.Map<List<DiskResult>>(result);
+        return Mapper.Map<IEnumerable<DiskResult>>(result);
     }
 }

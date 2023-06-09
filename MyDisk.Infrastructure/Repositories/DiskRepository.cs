@@ -15,7 +15,7 @@ public class DiskRepository : IDiskRepository
         _context = context;
     }
 
-    public async Task<List<Disk>?> GetDisksAsync()
+    public async Task<IEnumerable<Disk>?> GetDisksAsync()
     {
         return await _context.Disks.Include(x => x.Author).ToListAsync();
     }

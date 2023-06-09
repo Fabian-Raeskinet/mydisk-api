@@ -48,7 +48,7 @@ public class DeleteDiskCommandHandlerFixture
 
         // Assert
         sut.DiskRepository.AsMock()
-            .Verify(x => x.GetDiskByFilterAsync(disk => disk.Id == new Guid(request.Value!)));
+            .Verify(_ => _.GetDiskByFilterAsync(disk => disk.Id == new Guid(request.Value!)));
     }
 
     [Theory]
@@ -67,7 +67,7 @@ public class DeleteDiskCommandHandlerFixture
 
         // Assert
         sut.DiskRepository.AsMock()
-            .Verify(x => x.GetDiskByFilterAsync(disk => disk.Name == request.Value));
+            .Verify(_ => _.GetDiskByFilterAsync(disk => disk.Name == request.Value));
     }
     
     [Theory]
@@ -98,7 +98,7 @@ public class DeleteDiskCommandHandlerFixture
     {
         // Arrange
         sut.DiskRepository.AsMock()
-            .Setup(x => x.GetDiskByFilterAsync(disk => disk.Id == new Guid(request.Value!)))
+            .Setup(_ => _.GetDiskByFilterAsync(disk => disk.Id == new Guid(request.Value!)))
             .ReturnsAsync((Disk?)null);
 
         // Act
@@ -122,7 +122,7 @@ public class DeleteDiskCommandHandlerFixture
         request.Value = Guid.NewGuid().ToString();
 
         sut.DiskRepository.AsMock()
-            .Setup(x => x.GetDiskByFilterAsync(x => x.Id == new Guid(request.Value!)))
+            .Setup(_ => _.GetDiskByFilterAsync(d => d.Id == new Guid(request.Value!)))
             .ReturnsAsync(disk);
 
         // Act
@@ -138,7 +138,7 @@ public class DeleteDiskCommandHandlerFixture
     public async Task Should_Returns_Unit_Object
     (
         DeleteDiskCommandRequest request,
-        Disk disk,
+        Disk returnedDisk,
         DeleteDiskCommandHandler sut
     )
     {
@@ -147,8 +147,8 @@ public class DeleteDiskCommandHandlerFixture
         request.Value = Guid.NewGuid().ToString();
 
         sut.DiskRepository.AsMock()
-            .Setup(x => x.GetDiskByFilterAsync(x => x.Id == new Guid(request.Value!)))
-            .ReturnsAsync(disk);
+            .Setup(_ => _.GetDiskByFilterAsync(disk => disk.Id == new Guid(request.Value!)))
+            .ReturnsAsync(returnedDisk);
 
         // Act
         var act = await sut.Handle(request, CancellationToken.None);

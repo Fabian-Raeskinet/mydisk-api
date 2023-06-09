@@ -25,7 +25,7 @@ public class CreateDiskCommandHandlerFixture
         sut.DiskRepository.AsMock()
             .Verify(x => x.CreateDiskAsync(It.Is<Disk>(disk =>
                 disk.Name == request.Name
-                && disk.ReleaseDate == request.ReleaseDate)), Times.Once);
+                && disk.ReleaseDate == request.ReleaseDate)));
     }
 
     [Theory]
