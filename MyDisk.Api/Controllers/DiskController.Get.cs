@@ -8,7 +8,7 @@ public partial class DiskController
 {
     [HttpGet]
     [Route("disks")]
-    [ProducesResponseType(typeof(List<DiskResponse>), 200)]
+    [ProducesResponseType(typeof(List<DiskResult>), 200)]
     [ProducesResponseType(404)]
     public async Task<IActionResult> GetAllDisks()
     {
@@ -19,7 +19,7 @@ public partial class DiskController
 
     [HttpGet]
     [Route("disk-by-name")]
-    [ProducesResponseType(typeof(DiskResponse), 200)]
+    [ProducesResponseType(typeof(DiskResult), 200)]
     [ProducesResponseType(typeof(List<string>), 400)]
     [ProducesResponseType(404)]
     public async Task<IActionResult> GetByName([FromQuery] string? name)

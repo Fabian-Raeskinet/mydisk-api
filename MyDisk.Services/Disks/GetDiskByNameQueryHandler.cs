@@ -6,7 +6,7 @@ using MyDisk.Domain.Exceptions;
 
 namespace MyDisk.Services.Disks;
 
-public class GetDiskByNameQueryHandler : IRequestHandler<GetDiskByNameQueryRequest, DiskResponse>
+public class GetDiskByNameQueryHandler : IRequestHandler<GetDiskByNameQueryRequest, DiskResult>
 {
     public GetDiskByNameQueryHandler(IMapper mapper, IDiskRepository repository)
     {
@@ -17,7 +17,7 @@ public class GetDiskByNameQueryHandler : IRequestHandler<GetDiskByNameQueryReque
     public IMapper Mapper { get; }
     public IDiskRepository DiskRepository { get; }
 
-    public async Task<DiskResponse> Handle(GetDiskByNameQueryRequest request,
+    public async Task<DiskResult> Handle(GetDiskByNameQueryRequest request,
         CancellationToken cancellationToken)
     {
         var data = await DiskRepository.GetDiskByFilterAsync(d => d.Name == request.Name);
@@ -25,6 +25,6 @@ public class GetDiskByNameQueryHandler : IRequestHandler<GetDiskByNameQueryReque
         if (data == null)
             throw new ObjectNotFoundException();
 
-        return Mapper.Map<DiskResponse>(data);
+        return Mapper.Map<DiskResult>(data);
     }
 }

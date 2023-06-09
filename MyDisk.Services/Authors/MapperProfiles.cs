@@ -8,6 +8,6 @@ public class MapperProfiles : Profile
 {
     public MapperProfiles()
     {
-        CreateMap<Author, AuthorResponse>();
+        CreateMap<Author, AuthorResult>();
     }
 }

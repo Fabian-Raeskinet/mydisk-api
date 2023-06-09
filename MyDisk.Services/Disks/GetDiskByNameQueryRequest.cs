@@ -3,6 +3,6 @@ using MyDisk.Contracts.Disks;
 
 namespace MyDisk.Services.Disks;
 
-public class GetDiskByNameQueryRequest : GetDiskByNameQuery, IRequest<DiskResponse>
+public class GetDiskByNameQueryRequest : GetDiskByNameQuery, IRequest<DiskResult>
 {
 }

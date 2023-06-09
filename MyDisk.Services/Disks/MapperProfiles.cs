@@ -8,6 +8,6 @@ public class MapperProfiles : Profile
 {
     public MapperProfiles()
     {
-        CreateMap<Disk, DiskResponse>();
+        CreateMap<Disk, DiskResult>();
     }
 }
