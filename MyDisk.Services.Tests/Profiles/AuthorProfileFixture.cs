@@ -16,7 +16,7 @@ public class AuthorProfileFixture
         // Arrange
         var config = new MapperConfiguration(cfg => { cfg.AddMaps(typeof(MapperProfiles)); });
         config.AssertConfigurationIsValid();
-        var expected = new AuthorResponse
+        var expected = new AuthorResult()
         {
             Id = author.Id,
             Pseudonyme = author.Pseudonyme
@@ -24,7 +24,7 @@ public class AuthorProfileFixture
 
         // Act
         var mapper = config.CreateMapper();
-        var act = mapper.Map<AuthorResponse>(author);
+        var act = mapper.Map<AuthorResult>(author);
 
         // Arrange
         act.Should().BeEquivalentTo(expected);

@@ -36,7 +36,7 @@ public class DiskControllerFixture
         [AutoApiData]
         public async void Should_Returns_Values
         (
-            IEnumerable<DiskResponse> diskResponses,
+            IEnumerable<DiskResult> diskResponses,
             [NoAutoProperties] DiskController sut
         )
         {
@@ -47,7 +47,7 @@ public class DiskControllerFixture
 
             // Act
             var act = await sut.GetAllDisks() as OkObjectResult;
-            var result = (IEnumerable<DiskResponse>)act!.Value!;
+            var result = (IEnumerable<DiskResult>)act!.Value!;
 
             // Assert
             result.Should().NotBeEmpty();
@@ -60,11 +60,11 @@ public class DiskControllerFixture
             // Arrange
             sut.Mediator.AsMock()
                 .Setup(_ => _.Send(It.IsAny<GetAllDisksQueryRequest>(), CancellationToken.None))
-                .ReturnsAsync(Array.Empty<DiskResponse>());
+                .ReturnsAsync(Array.Empty<DiskResult>());
 
             // Act
             var act = await sut.GetAllDisks() as OkObjectResult;
-            var result = (IEnumerable<DiskResponse>)act!.Value!;
+            var result = (IEnumerable<DiskResult>)act!.Value!;
 
             // Assert
             result.Should().BeEmpty();
@@ -108,7 +108,7 @@ public class DiskControllerFixture
         [AutoApiData]
         public async void Should_Returns_Value
         (
-            DiskResponse diskResponse,
+            DiskResult diskResponse,
             string diskName,
             [NoAutoProperties] DiskController sut
         )
@@ -120,7 +120,7 @@ public class DiskControllerFixture
 
             // Act
             var act = await sut.GetByName(diskName) as OkObjectResult;
-            var result = (DiskResponse)act!.Value!;
+            var result = (DiskResult)act!.Value!;
 
             // Assert
             result.Should().NotBeNull();

@@ -11,18 +11,18 @@ public class DiskProfileFixture
 {
     [Theory]
     [AutoServiceData]
-    public void TestDiskResponseMapping(Disk disk)
+    public void TestDiskResultMapping(Disk disk)
     {
         // Arrange
         var config = new MapperConfiguration(cfg => { cfg.AddMaps(typeof(MapperProfiles)); });
         config.AssertConfigurationIsValid();
         if (disk.Author == null) return;
-        var expected = new DiskResponse
+        var expected = new DiskResult
         {
             Id = disk.Id,
             Name = disk.Name,
             ReleaseDate = disk.ReleaseDate,
-            Author = new AuthorResponse
+            Author = new AuthorResult()
             {
                 Id = disk.Author.Id,
                 Pseudonyme = disk.Author.Pseudonyme
@@ -32,7 +32,7 @@ public class DiskProfileFixture
 
         // Act
         var mapper = config.CreateMapper();
-        var act = mapper.Map<DiskResponse>(disk);
+        var act = mapper.Map<DiskResult>(disk);
 
         // Arrange
         act.Should().BeEquivalentTo(expected);

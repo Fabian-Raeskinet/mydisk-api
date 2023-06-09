@@ -32,7 +32,7 @@ public class GetDiskByNameQueryHandlerTestsShould
 
         // Assert
         sut.Mapper.AsMock()
-            .Verify(x => x.Map<DiskResponse>(disk), Times.Once);
+            .Verify(x => x.Map<DiskResult>(disk), Times.Once);
         act.Should().NotBeNull();
     }
 

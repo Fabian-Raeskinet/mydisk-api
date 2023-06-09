@@ -17,8 +17,8 @@ public class ValidationBehaviourFixture
     {
         // Arrange
         var request = new GetDiskByNameQueryRequest();
-        var del = new Mock<RequestHandlerDelegate<DiskResponse>>();
-        var sut = new ValidationBehaviour<GetDiskByNameQueryRequest, DiskResponse>(
+        var del = new Mock<RequestHandlerDelegate<DiskResult>>();
+        var sut = new ValidationBehaviour<GetDiskByNameQueryRequest, DiskResult>(
             new List<IValidator<GetDiskByNameQueryRequest>> { new GetDiskByNameQueryValidator() });
 
         // Act
@@ -33,8 +33,8 @@ public class ValidationBehaviourFixture
     {
         // Arrange
         var request = new GetDiskByNameQueryRequest();
-        var del = new Mock<RequestHandlerDelegate<DiskResponse>>();
-        var sut = new ValidationBehaviour<GetDiskByNameQueryRequest, DiskResponse>(
+        var del = new Mock<RequestHandlerDelegate<DiskResult>>();
+        var sut = new ValidationBehaviour<GetDiskByNameQueryRequest, DiskResult>(
             new List<IValidator<GetDiskByNameQueryRequest>>());
 
         // Act
@@ -49,8 +49,8 @@ public class ValidationBehaviourFixture
     public async Task ShouldNotThrowValidationExceptionBecauseValidRequest(GetDiskByNameQueryRequest request)
     {
         // Arrange
-        var del = new Mock<RequestHandlerDelegate<DiskResponse>>();
-        var sut = new ValidationBehaviour<GetDiskByNameQueryRequest, DiskResponse>(
+        var del = new Mock<RequestHandlerDelegate<DiskResult>>();
+        var sut = new ValidationBehaviour<GetDiskByNameQueryRequest, DiskResult>(
             new List<IValidator<GetDiskByNameQueryRequest>> { new GetDiskByNameQueryValidator() });
 
         // Act
