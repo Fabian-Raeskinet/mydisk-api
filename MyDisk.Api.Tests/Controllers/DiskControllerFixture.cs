@@ -97,7 +97,11 @@ public class DiskControllerFixture
     {
         [Theory]
         [AutoApiData]
-        public async Task Should_Use_Mediator([NoAutoProperties] DiskController sut, AttachAuthorCommand command)
+        public async Task Should_Use_Mediator
+        (
+            [NoAutoProperties] DiskController sut,
+            AttachAuthorCommand command
+        )
         {
             // Act
             var act = await sut.AttachAuthor(command);
@@ -110,8 +114,11 @@ public class DiskControllerFixture
 
         [Theory]
         [AutoApiData]
-        public async Task Should_Returns_OkObjectResult([NoAutoProperties] DiskController sut,
-            AttachAuthorCommand command)
+        public async Task Should_Returns_OkObjectResult
+        (
+            [NoAutoProperties] DiskController sut,
+            AttachAuthorCommand command
+        )
         {
             // Act
             var act = await sut.AttachAuthor(command);
@@ -125,7 +132,11 @@ public class DiskControllerFixture
     {
         [Theory]
         [AutoApiData]
-        public async Task Should_Use_Mediator([NoAutoProperties] DiskController sut, Guid diskId)
+        public async Task Should_Use_Mediator
+        (
+            [NoAutoProperties] DiskController sut,
+            Guid diskId
+        )
         {
             // Act
             var act = await sut.DeleteDiskById(diskId);
@@ -138,7 +149,11 @@ public class DiskControllerFixture
 
         [Theory]
         [AutoApiData]
-        public async Task Should_Returns_NoContentResult([NoAutoProperties] DiskController sut, Guid diskId)
+        public async Task Should_Returns_NoContentResult
+        (
+            [NoAutoProperties] DiskController sut,
+            Guid diskId
+        )
         {
             // Act
             var act = await sut.DeleteDiskById(diskId);
@@ -152,7 +167,11 @@ public class DiskControllerFixture
     {
         [Theory]
         [AutoApiData]
-        public async Task Should_Use_Mediator([NoAutoProperties] DiskController sut, string diskName)
+        public async Task Should_Use_Mediator
+        (
+            [NoAutoProperties] DiskController sut,
+            string diskName
+        )
         {
             // Act
             var act = await sut.DeleteDiskByName(diskName);
@@ -165,7 +184,11 @@ public class DiskControllerFixture
 
         [Theory]
         [AutoApiData]
-        public async Task Should_Returns_NoContentResult([NoAutoProperties] DiskController sut, string diskName)
+        public async Task Should_Returns_NoContentResult
+        (
+            [NoAutoProperties] DiskController sut,
+            string diskName
+        )
         {
             // Act
             var act = await sut.DeleteDiskByName(diskName);
@@ -179,7 +202,11 @@ public class DiskControllerFixture
     {
         [Theory]
         [AutoApiData]
-        public async Task Should_Use_Mediator([NoAutoProperties] DiskController sut, DeleteDiskCommand command)
+        public async Task Should_Use_Mediator
+        (
+            [NoAutoProperties] DiskController sut,
+            DeleteDiskCommand command
+        )
         {
             // Act
             var act = await sut.DeleteDiskByProperty(command);
@@ -192,7 +219,9 @@ public class DiskControllerFixture
 
         [Theory]
         [AutoApiData]
-        public async Task Should_Returns_NoContentResult([NoAutoProperties] DiskController sut,
+        public async Task Should_Returns_NoContentResult
+        (
+            [NoAutoProperties] DiskController sut,
             DeleteDiskCommand command)
         {
             // Act
@@ -207,7 +236,11 @@ public class DiskControllerFixture
     {
         [Theory]
         [AutoApiData]
-        public async Task Should_Use_Mediator([NoAutoProperties] DiskController sut, UpdateDiskCommand command)
+        public async Task Should_Use_Mediator
+        (
+            [NoAutoProperties] DiskController sut,
+            UpdateDiskCommand command
+        )
         {
             // Act
             var act = await sut.UpdateDisk(command);
@@ -220,8 +253,11 @@ public class DiskControllerFixture
 
         [Theory]
         [AutoApiData]
-        public async Task Should_Returns_OkObjectResult([NoAutoProperties] DiskController sut,
-            UpdateDiskCommand command)
+        public async Task Should_Returns_OkObjectResult
+        (
+            [NoAutoProperties] DiskController sut,
+            UpdateDiskCommand command
+        )
         {
             // Act
             var act = await sut.UpdateDisk(command);
