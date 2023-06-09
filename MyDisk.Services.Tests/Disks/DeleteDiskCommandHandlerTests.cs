@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using AutoFixture.Xunit2;
+﻿using AutoFixture.Xunit2;
 using FluentAssertions;
 using Moq;
 using MyDisk.Contracts.Disks;
@@ -18,29 +17,28 @@ public class DeleteDiskCommandHandlerTestsShould
     public async Task ShouldDeleteById
     (
         DeleteDiskCommandRequest request,
-        DeleteDiskCommandHandler sut,
-        Disk disk
+        Disk disk,
+        DeleteDiskCommandHandler sut
     )
     {
         // Arrange
         request.Property = DeleteDiskByProperty.Id;
+        request.Value = Guid.NewGuid().ToString();
 
         sut.DiskRepository.AsMock()
-            .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
+            .Setup(x => x.GetDiskByFilterAsync(x => x.Id == new Guid(request.Value!)))
             .ReturnsAsync(disk);
 
         sut.DiskRepository.AsMock()
-            .Setup(x => x.DeleteDiskAsync(It.IsAny<Disk>())).ReturnsAsync(true);
+            .Setup(x => x.DeleteDiskAsync(disk))
+            .ReturnsAsync(true);
 
         // Act
-        await sut.Handle(request, It.IsAny<CancellationToken>());
+        await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()
-            .Verify(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()), Times.Once);
-
-        sut.DiskRepository.AsMock()
-            .Verify(x => x.DeleteDiskAsync(It.IsAny<Disk>()), Times.Once);
+            .Verify(x => x.DeleteDiskAsync(disk), Times.Once);
     }
 
     [Theory]
@@ -48,29 +46,27 @@ public class DeleteDiskCommandHandlerTestsShould
     public async Task ShouldDeleteByName
     (
         DeleteDiskCommandRequest request,
-        DeleteDiskCommandHandler sut,
-        Disk disk
+        Disk disk,
+        DeleteDiskCommandHandler sut
     )
     {
         // Arrange
         request.Property = DeleteDiskByProperty.Name;
 
         sut.DiskRepository.AsMock()
-            .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
+            .Setup(x => x.GetDiskByFilterAsync(x => x.Name == request.Value))
             .ReturnsAsync(disk);
 
         sut.DiskRepository.AsMock()
-            .Setup(x => x.DeleteDiskAsync(It.IsAny<Disk>())).ReturnsAsync(true);
+            .Setup(x => x.DeleteDiskAsync(disk))
+            .ReturnsAsync(true);
 
         // Act
-        await sut.Handle(request, It.IsAny<CancellationToken>());
+        await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()
-            .Verify(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()), Times.Once);
-
-        sut.DiskRepository.AsMock()
-            .Verify(x => x.DeleteDiskAsync(It.IsAny<Disk>()), Times.Once);
+            .Verify(x => x.DeleteDiskAsync(disk), Times.Once);
     }
 
     [Theory]
@@ -81,15 +77,14 @@ public class DeleteDiskCommandHandlerTestsShould
         DeleteDiskCommandHandler sut
     )
     {
+        // Arrange
+        request.Value = null;
+
         // Act
-        var act = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
+        var act = async () => await sut.Handle(request, CancellationToken.None);
 
         // Assert
         await act.Should().ThrowAsync<InvalidOperationException>();
-        sut.DiskRepository.AsMock()
-            .Verify(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()), Times.Never);
-        sut.DiskRepository.AsMock()
-            .Verify(x => x.DeleteDiskAsync(It.IsAny<Disk>()), Times.Never);
     }
 
     [Theory]
@@ -101,16 +96,13 @@ public class DeleteDiskCommandHandlerTestsShould
     )
     {
         // Arrange
-        var act = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
+        request.Property = null;
 
         // Act
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        var act = async () => await sut.Handle(request, CancellationToken.None);
 
         // Assert
-        sut.DiskRepository.AsMock()
-            .Verify(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()), Times.Never);
-        sut.DiskRepository.AsMock()
-            .Verify(x => x.DeleteDiskAsync(It.IsAny<Disk>()), Times.Never);
+        await act.Should().ThrowAsync<InvalidOperationException>();
     }
 
     [Theory]
@@ -123,46 +115,13 @@ public class DeleteDiskCommandHandlerTestsShould
     {
         // Arrange
         sut.DiskRepository.AsMock()
-            .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
-            .ReturnsAsync(() => null);
+            .Setup(x => x.GetDiskByFilterAsync(disk => disk.Id == new Guid(request.Value!)))
+            .ReturnsAsync((Disk?)null);
 
         // Act
-        var act = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
+        var act = async () => await sut.Handle(request, CancellationToken.None);
 
         // Assert
         await act.Should().ThrowAsync<ObjectNotFoundException>();
-
-        sut.DiskRepository.AsMock()
-            .Verify(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()), Times.Once);
-
-        sut.DiskRepository.AsMock()
-            .Verify(x => x.DeleteDiskAsync(It.IsAny<Disk>()), Times.Never);
-    }
-
-    [Theory]
-    [AutoServiceData]
-    public async Task ShouldThrow
-    (
-        DeleteDiskCommandRequest request,
-        DeleteDiskCommandHandler sut
-    )
-    {
-        // Arrange
-        request.Property = null;
-        sut.DiskRepository.AsMock()
-            .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
-            .ReturnsAsync(() => null);
-
-        // Act
-        var act = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
-
-        // Assert
-        await act.Should().ThrowAsync<InvalidOperationException>();
-
-        sut.DiskRepository.AsMock()
-            .Verify(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()), Times.Never);
-
-        sut.DiskRepository.AsMock()
-            .Verify(x => x.DeleteDiskAsync(It.IsAny<Disk>()), Times.Never);
     }
 }

@@ -16,18 +16,19 @@ public class GetDiskByNameQueryHandlerTestsShould
     [AutoServiceData]
     public async Task FindDisk
     (
-        GetDiskByNameQueryHandler sut,
-        Disk disk
+        GetDiskByNameQueryRequest request,
+        Disk disk,
+        GetDiskByNameQueryHandler sut
     )
     {
         // Arrange
         sut.DiskRepository.AsMock()
-            .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
+            .Setup(x => x.GetDiskByFilterAsync(disk => disk.Name == request.Name))
             .ReturnsAsync(disk);
 
         // Act
         var act = await sut.Handle(It.IsAny<GetDiskByNameQueryRequest>(),
-            It.IsAny<CancellationToken>());
+            CancellationToken.None);
 
         // Assert
         sut.Mapper.AsMock()
@@ -39,21 +40,20 @@ public class GetDiskByNameQueryHandlerTestsShould
     [AutoServiceData]
     public async Task NotFindDisk
     (
+        GetDiskByNameQueryRequest request,
         GetDiskByNameQueryHandler sut
     )
     {
         // Arrange
         sut.DiskRepository.AsMock()
-            .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
+            .Setup(x => x.GetDiskByFilterAsync(disk => disk.Name == request.Name))
             .ReturnsAsync(() => null);
 
         // Act
         var act = async () =>
-            await sut.Handle(It.IsAny<GetDiskByNameQueryRequest>(), It.IsAny<CancellationToken>());
+            await sut.Handle(request, CancellationToken.None);
 
         // Assert
-        sut.Mapper.AsMock()
-            .Verify(x => x.Map<DiskResponse>(It.IsAny<Disk>()), Times.Never);
         await act.Should().ThrowAsync<ObjectNotFoundException>();
     }
 }

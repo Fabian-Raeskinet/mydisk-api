@@ -6,23 +6,29 @@ namespace MyDisk.Api.Tests.Controllers;
 
 public class MiscellaneousControllerFixture
 {
-    public class RetryServiceShould
+    public class RetryServiceActionFixture
     {
         [Theory]
         [AutoApiData]
-        public async void ReturnsNoContentResult([NoAutoProperties] MiscellaneousController sut)
+        public async void Should_Use_Mediator([NoAutoProperties] MiscellaneousController sut)
         {
-            // Arrange
+            // Act
+            var act = await sut.RetryServiceAction();
+
+            // Assert
             sut.Mediator.AsMock()
-                .Setup(x => x.Send(It.IsAny<RetryServiceRequest>(), default))
-                .Verifiable();
+                .Verify(x => x.Send(It.IsAny<RetryServiceRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+        
+        [Theory]
+        [AutoApiData]
+        public async void Should_Returns_NoContentResult([NoAutoProperties] MiscellaneousController sut)
+        {
             // Act
             var act = await sut.RetryServiceAction();
 
             // Assert
             act.Should().BeOfType<NoContentResult>();
-            sut.Mediator.AsMock()
-                .Verify(x => x.Send(It.IsAny<RetryServiceRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }

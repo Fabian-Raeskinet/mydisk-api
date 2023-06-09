@@ -3,4 +3,4 @@ using MyDisk.Contracts.Disks;
 
 namespace MyDisk.Services.Disks;
 
-public class GetAllDisksQueryRequest : GetAllDisksQuery, IRequest<List<DiskResponse>> { }
+public class GetAllDisksQueryRequest : GetAllDisksQuery, IRequest<IEnumerable<DiskResponse>> { }

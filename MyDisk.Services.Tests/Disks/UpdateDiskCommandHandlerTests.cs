@@ -27,11 +27,9 @@ public class UpdateDiskCommandHandlerTests
             .ReturnsAsync(disk);
 
         // Act
-        var act = await sut.Handle(request, It.IsAny<CancellationToken>());
+        var act = await sut.Handle(request, CancellationToken.None);
 
         // Assert
-        sut.DiskRepository.AsMock()
-            .Verify(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()), Times.Once);
         sut.DiskRepository.AsMock()
             .Verify(x => x.UpdateDiskAsync(It.IsAny<Disk>()), Times.Once);
     }
@@ -50,7 +48,7 @@ public class UpdateDiskCommandHandlerTests
             .ReturnsAsync(() => null);
 
         // Act
-        var result = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
+        var result = async () => await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()

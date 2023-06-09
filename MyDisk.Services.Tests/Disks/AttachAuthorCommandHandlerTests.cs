@@ -20,11 +20,11 @@ public class AttachAuthorCommandHandlerTestsShould
     )
     {
         // Act
-        var act = await sut.Handle(request, It.IsAny<CancellationToken>());
+        var act = await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()
-            .Verify(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()), Times.Once);
+            .Verify(x => x.GetDiskByFilterAsync(disk => disk.Id == request.DiskId), Times.Once);
     }
 
     [Theory]
@@ -37,15 +37,15 @@ public class AttachAuthorCommandHandlerTestsShould
     {
         // Arrange
         sut.AuthorRepository.AsMock()
-            .Setup(x => x.GetAuthorByFilterAsync(It.IsAny<Expression<Func<Author, bool>>>()))
-            .ReturnsAsync(() => null);
+            .Setup(x => x.GetAuthorByFilterAsync(author => author.Id == request.AuthorId))
+            .ReturnsAsync((Author?)null);
 
         sut.DiskRepository.AsMock()
-            .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
-            .ReturnsAsync(() => null);
+            .Setup(x => x.GetDiskByFilterAsync(disk => disk.Id == request.DiskId))
+            .ReturnsAsync((Disk?)null);
 
         // Act
-        var act = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
+        var act = async () => await sut.Handle(request, CancellationToken.None);
 
         // Assert
         await act.Should().ThrowAsync<ObjectNotFoundException>();

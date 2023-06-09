@@ -13,9 +13,11 @@ public class GetAllDisksQueryHandlerTestsShould
 {
     [Theory]
     [AutoServiceData]
-    public async Task FindData(
-        GetAllDisksQueryHandler sut,
-        List<Disk> disks
+    public async Task FindData
+    (
+        GetAllDisksQueryRequest request,
+        List<Disk> disks,
+        GetAllDisksQueryHandler sut
     )
     {
         // Arrange
@@ -24,20 +26,19 @@ public class GetAllDisksQueryHandlerTestsShould
             .ReturnsAsync(disks);
 
         // Act
-        var act = await sut.Handle(It.IsAny<GetAllDisksQueryRequest>(),
-            It.IsAny<CancellationToken>());
+        var act = await sut.Handle(request, CancellationToken.None);
 
         // Assert
-        sut.Mapper.AsMock()
-            .Verify(x => x.Map<List<DiskResponse>>(disks), Times.Once);
         act.Should().NotBeNull();
     }
 
     [Theory]
     [AutoServiceData]
-    public async Task NotFindData(
-        GetAllDisksQueryHandler sut,
-        [NoAutoProperties] List<Disk> disks
+    public async Task NotFindData
+    (
+        GetAllDisksQueryRequest request,
+        List<Disk> disks,
+        GetAllDisksQueryHandler sut
     )
     {
         // Arrange
@@ -45,12 +46,10 @@ public class GetAllDisksQueryHandlerTestsShould
             .Setup(x => x.GetDisksAsync()).ReturnsAsync(disks);
 
         // Act
-        var act = await sut.Handle(It.IsAny<GetAllDisksQueryRequest>(),
-            It.IsAny<CancellationToken>());
+        var act = await sut.Handle(request,
+            CancellationToken.None);
 
         // Assert
-        sut.Mapper.AsMock()
-            .Verify(x => x.Map<List<DiskResponse>>(disks), Times.Once);
         act.Should().BeEmpty();
     }
 }

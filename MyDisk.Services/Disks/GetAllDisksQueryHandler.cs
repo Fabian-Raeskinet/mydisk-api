@@ -5,7 +5,7 @@ using MyDisk.Domain;
 
 namespace MyDisk.Services.Disks;
 
-public class GetAllDisksQueryHandler : IRequestHandler<GetAllDisksQueryRequest, List<DiskResponse>>
+public class GetAllDisksQueryHandler : IRequestHandler<GetAllDisksQueryRequest, IEnumerable<DiskResponse>>
 {
     public GetAllDisksQueryHandler(IMapper mapper, IDiskRepository repository)
     {
@@ -16,7 +16,7 @@ public class GetAllDisksQueryHandler : IRequestHandler<GetAllDisksQueryRequest, 
     public IMapper Mapper { get; }
     public IDiskRepository DiskRepository { get; }
 
-    public async Task<List<DiskResponse>> Handle(GetAllDisksQueryRequest request,
+    public async Task<IEnumerable<DiskResponse>> Handle(GetAllDisksQueryRequest request,
         CancellationToken cancellationToken)
     {
         //await Task.Delay(5000);

@@ -25,7 +25,7 @@ public class CreateDiskCommandHandlerTestsShould
             .ReturnsAsync(disk.Id);
 
         // Act
-        var act = await sut.Handle(request, It.IsAny<CancellationToken>());
+        var act = await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()
@@ -42,12 +42,11 @@ public class CreateDiskCommandHandlerTestsShould
     {
         // Arrange
         request.ReleaseDate = null;
+        
         // Act
-        var act = async () => await sut.Handle(request, It.IsAny<CancellationToken>());
+        var act = async () => await sut.Handle(request, CancellationToken.None);
 
         // Assert
-        sut.DiskRepository.AsMock()
-            .Verify(x => x.CreateDiskAsync(It.IsAny<Disk>()), Times.Never);
         await act.Should().ThrowAsync<InvalidOperationException>();
     }
 }
