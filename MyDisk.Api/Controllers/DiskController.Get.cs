@@ -29,7 +29,7 @@ public partial class DiskController
     }
     
     [HttpGet]
-    [Route("disk-by-name")]
+    [Route("disk-by-nameeeee")]
     [ProducesResponseType(typeof(DiskResult), 200)]
     [ProducesResponseType(typeof(List<string>), 400)]
     [ProducesResponseType(404)]
