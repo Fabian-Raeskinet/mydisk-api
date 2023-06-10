@@ -29,7 +29,7 @@ jobs:
         run: dotnet build ./mydisk-api.sln --configuration Release --no-restore
         
       - name: Test
-        run: dotnet vstest "./publish"
+        run: dotnet test
         
 
       - name: Publish
