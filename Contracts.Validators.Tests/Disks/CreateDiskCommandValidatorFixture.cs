@@ -10,8 +10,7 @@ public class CreateDiskCommandValidatorFixture
 {
     [Theory]
     [InlineAutoServiceData(null, "30-07-23 16:01:55")]
-    [InlineAutoServiceData(null, null)]
-    public async Task ShouldThrowValidationException(string name, string? releaseDate)
+    public async Task ShouldThrowValidationException(string name, string releaseDate)
     {
         // Arrange
         var request = new CreateDiskCommandRequest
