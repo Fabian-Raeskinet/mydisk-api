@@ -3,9 +3,9 @@ on:
   workflow_dispatch:
   push:
     branches:
-      - master
-      - develop
-      - features/pipeline
+    - master
+    - develop
+    - features/pipeline
 
 jobs:
   publish:
@@ -13,6 +13,7 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
+        
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
