@@ -1,7 +1,6 @@
 using System.Globalization;
 using Contracts.Validators.Disks;
 using FluentAssertions;
-using MyDisk.Contracts.Disks;
 using MyDisk.Services.Disks;
 using MyDisk.Tests.Services;
 
@@ -11,11 +10,14 @@ public class CreateDiskCommandValidatorFixture
 {
     [Theory]
     [InlineAutoServiceData(null, "30-07-23 16:01:55")]
-    public async Task ShouldThrowValidationException(string name, DateTime releaseDate)
+    public async Task ShouldThrowValidationException(string name, string releaseDate)
     {
         // Arrange
         var request = new CreateDiskCommandRequest
-            { Name = name, ReleaseDate = releaseDate};
+        {
+            Name = name,
+            ReleaseDate = DateTime.ParseExact(releaseDate, "dd-MM-yy HH:mm:ss", CultureInfo.InvariantCulture)
+        };
 
         // Act
         var act = await new CreateDiskCommandValidator().ValidateAsync(request);
