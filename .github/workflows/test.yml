@@ -25,4 +25,4 @@ jobs:
         run: dotnet build ./mydisk-api.sln --configuration Release --no-restore
 
       - name: Publish
-      - run: dotnet publish ./mydisk-api.sln --configuration Release --no-build
+        run: dotnet publish ./mydisk-api.sln --configuration Release --no-build
