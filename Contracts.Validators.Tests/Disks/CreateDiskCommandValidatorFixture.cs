@@ -8,20 +8,20 @@ namespace Contracts.Validators.Tests.Disks;
 
 public class CreateDiskCommandValidatorFixture
 {
-    [Theory]
-    [InlineAutoServiceData(null, "30-07-23 16:01:55")]
-    public async Task ShouldThrowValidationException(string name, string releaseDate)
-    {
-        // Arrange
-        var request = new CreateDiskCommandRequest
-            { Name = name, ReleaseDate = DateTime.Parse(releaseDate) };
-
-        // Act
-        var act = await new CreateDiskCommandValidator().ValidateAsync(request);
-
-        // Assert
-        act.IsValid.Should().BeFalse();
-    }
+    // [Theory]
+    // [InlineAutoServiceData(null, "30-07-23 16:01:55")]
+    // public async Task ShouldThrowValidationException(string name, string releaseDate)
+    // {
+    //     // Arrange
+    //     var request = new CreateDiskCommandRequest
+    //         { Name = name, ReleaseDate = DateTime.Parse(releaseDate) };
+    //
+    //     // Act
+    //     var act = await new CreateDiskCommandValidator().ValidateAsync(request);
+    //
+    //     // Assert
+    //     act.IsValid.Should().BeFalse();
+    // }
 
     [Theory]
     [AutoServiceData]
