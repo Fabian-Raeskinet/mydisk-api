@@ -31,6 +31,9 @@ jobs:
       - name: Publish
         run: dotnet publish ./mydisk-api.sln --configuration Release --no-build --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
         
+  deploy:
+    runs-on: Ubuntu-latest
+    steps:
       - name: Deployment
         uses: azure/webapps-deploy@v2
         with:
