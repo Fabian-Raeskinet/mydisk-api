@@ -29,7 +29,7 @@ jobs:
         run: dotnet build ./mydisk-api.sln --configuration Release --no-restore
         
       - name: Test
-        run: dotnet test --no-restore --verbosity normal --test-adapter-path:. --logger:"console;verbosity=normal" --publish-directory "./publish"
+        run: dotnet vstest --no-build --logger:"console;verbosity=normal" --test-adapter-path:. --publish-directory "./publish"
 
       - name: Publish
         run: dotnet publish ./mydisk-api.sln --configuration Release --no-build --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
