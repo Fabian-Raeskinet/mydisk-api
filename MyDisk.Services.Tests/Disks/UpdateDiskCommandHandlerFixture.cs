@@ -23,7 +23,7 @@ public class UpdateDiskCommandHandlerFixture
 
         // Assert
         sut.DiskRepository.AsMock()
-            .Verify(_ => _.GetDiskByFilterAsync(disk => request.Id != null && disk.Id == request.Id));
+            .Verify(_ => _.GetDiskByFilterAsync(disk => disk.Id == request.Id));
     }
 
     [Theory]
@@ -36,7 +36,7 @@ public class UpdateDiskCommandHandlerFixture
     {
         // Arrange
         sut.DiskRepository.AsMock()
-            .Setup(_ => _.GetDiskByFilterAsync(disk => request.Id != null && disk.Id == request.Id))
+            .Setup(_ => _.GetDiskByFilterAsync(disk => disk.Id == request.Id))
             .ReturnsAsync((Disk?)null);
 
         // Act
@@ -57,7 +57,7 @@ public class UpdateDiskCommandHandlerFixture
     {
         // Arrange
         sut.DiskRepository.AsMock()
-            .Setup(_ => _.GetDiskByFilterAsync(d => request.Id != null && d.Id == request.Id))
+            .Setup(_ => _.GetDiskByFilterAsync(d => d.Id == request.Id))
             .ReturnsAsync(disk);
 
         // Act
@@ -83,7 +83,7 @@ public class UpdateDiskCommandHandlerFixture
         request.Name = null;
         
         sut.DiskRepository.AsMock()
-            .Setup(_ => _.GetDiskByFilterAsync(d => request.Id != null && d.Id == request.Id))
+            .Setup(_ => _.GetDiskByFilterAsync(d => d.Id == request.Id))
             .ReturnsAsync(disk);
 
         // Act
@@ -108,7 +108,7 @@ public class UpdateDiskCommandHandlerFixture
         request.Name = null;
         
         sut.DiskRepository.AsMock()
-            .Setup(_ => _.GetDiskByFilterAsync(d => request.Id != null && d.Id == request.Id))
+            .Setup(_ => _.GetDiskByFilterAsync(d => d.Id == request.Id))
             .ReturnsAsync(disk);
 
         // Act
@@ -131,7 +131,7 @@ public class UpdateDiskCommandHandlerFixture
     {
         // Arrange
         sut.DiskRepository.AsMock()
-            .Setup(_ => _.GetDiskByFilterAsync(d => request.Id != null && d.Id == request.Id))
+            .Setup(_ => _.GetDiskByFilterAsync(d => d.Id == request.Id))
             .ReturnsAsync(disk);
 
         // Act

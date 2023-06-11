@@ -13,7 +13,7 @@ env:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     
     steps:
       - uses: actions/checkout@v3
@@ -30,6 +30,9 @@ jobs:
 
       - name: Publish
         run: dotnet publish ./mydisk-api.sln --configuration Release --no-build --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
+
+      - name: Test
+        run: dotnet test --no-restore
         
       - name: Deployment
         uses: azure/webapps-deploy@v2
