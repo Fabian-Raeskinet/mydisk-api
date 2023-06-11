@@ -21,7 +21,8 @@ public static class DependencyInjection
 
     private static void AddMvcConfiguration(this IServiceCollection services)
     {
-        services.AddMvc(options => { options.Filters.Add<ApiExceptionFilterAttribute>(); })
+        services
+            .AddMvc(options => { options.Filters.Add<ApiExceptionFilterAttribute>(); })
             .AddFluentValidation(x => x.AutomaticValidationEnabled = false);
     }
 
