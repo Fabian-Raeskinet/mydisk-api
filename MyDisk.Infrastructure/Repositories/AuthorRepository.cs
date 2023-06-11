@@ -8,15 +8,15 @@ namespace MyDisk.Infrastructure.Repositories;
 
 public class AuthorRepository : IAuthorRepository
 {
-    private readonly IApplicationDbContext _context;
+    public IApplicationDbContext DbContext { get; }
 
     public AuthorRepository(IApplicationDbContext context)
     {
-        _context = context;
+        DbContext = context;
     }
 
     public async Task<Author?> GetAuthorByFilterAsync(Expression<Func<Author, bool>> predicate)
     {
-        return await _context.Authors.FirstOrDefaultAsync(predicate);
+        return await DbContext.Authors.FirstOrDefaultAsync(predicate);
     }
 }
