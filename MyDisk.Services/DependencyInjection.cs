@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MyDisk.RandomServices;
 using MyDisk.RetryService;
 using MyDisk.Services.Behaviors;
 using MyDisk.Services.Disks;
@@ -16,7 +17,8 @@ public static class DependencyInjection
             .AddMediatRServices()
             .AddAutoMapperServices()
             .ConfigureILoggerServices()
-            .AddRetryService();
+            .AddRetryService()
+            .AddRandomServices();
     }
 
     private static IServiceCollection AddAutoMapperServices(this IServiceCollection services)

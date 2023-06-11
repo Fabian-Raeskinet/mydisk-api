@@ -18,6 +18,7 @@
         <ProjectReference Include="..\Contracts\Contracts.csproj" />
         <ProjectReference Include="..\MyDisk.Domain\MyDisk.Domain.csproj" />
         <ProjectReference Include="..\MyDisk.RetryService\MyDisk.RetryService.csproj" />
+        <ProjectReference Include="..\RandomServices\RandomServices.csproj" />
     </ItemGroup>
 
 </Project>
