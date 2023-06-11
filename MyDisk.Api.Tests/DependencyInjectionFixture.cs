@@ -1,8 +1,10 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MyDisk.RetryService;
 using MyDisk.Tests.Api;
+using Polly;
 using Polly.Registry;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -41,8 +43,8 @@ public class DependencyInjectionFixture
             var serviceProvider = services.BuildServiceProvider();
 
             // Assert
-            var mapper = serviceProvider.GetService<IReadOnlyPolicyRegistry<string>>();
-            mapper.Should().NotBeNull();
+            var policyRegistry = serviceProvider.GetRequiredService<IReadOnlyPolicyRegistry<string>>();
+            policyRegistry.Should().NotBeNull();
         }
 
         [Theory]
