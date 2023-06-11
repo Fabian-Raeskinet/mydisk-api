@@ -7,14 +7,14 @@ namespace MyDisk.Api.Filters;
 
 public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 {
-    private readonly IDictionary<Type, Action<ExceptionContext>?> _exceptionHandlers;
+    public IDictionary<Type, Action<ExceptionContext>?> ExceptionHandlers { get; }
 
     public ApiExceptionFilterAttribute()
     {
-        _exceptionHandlers = new Dictionary<Type, Action<ExceptionContext>?>
+        ExceptionHandlers = new Dictionary<Type, Action<ExceptionContext>?>
         {
             { typeof(ValidationException), HandleValidationException },
-            { typeof(ObjectNotFoundException), HandleEntityNotFoundException },
+            { typeof(ObjectNotFoundException), HandleObjectyNotFoundException },
             { typeof(FormatException), HandleFormatException }
         };
     }
@@ -25,14 +25,14 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         base.OnException(context);
     }
 
-    private void HandleException(ExceptionContext context)
+    public void HandleException(ExceptionContext context)
     {
         var type = context.Exception.GetType();
-        if (!_exceptionHandlers.TryGetValue(type, out var value)) return;
+        if (!ExceptionHandlers.TryGetValue(type, out var value)) return;
         value?.Invoke(context);
     }
 
-    private void HandleValidationException(ExceptionContext context)
+    public void HandleValidationException(ExceptionContext context)
     {
         if (context.Exception is not ValidationException exception) return;
         var errors = exception.Errors;
@@ -42,7 +42,7 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         context.ExceptionHandled = true;
     }
 
-    private void HandleEntityNotFoundException(ExceptionContext context)
+    public void HandleObjectyNotFoundException(ExceptionContext context)
     {
         if (context.Exception is not ObjectNotFoundException exception) return;
         var error = exception.Message;
@@ -52,7 +52,7 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         context.ExceptionHandled = true;
     }
 
-    private void HandleFormatException(ExceptionContext context)
+    public void HandleFormatException(ExceptionContext context)
     {
         if (context.Exception is not FormatException exception) return;
         var error = exception.Message;

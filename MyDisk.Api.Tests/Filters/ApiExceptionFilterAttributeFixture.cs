@@ -1,81 +1,336 @@
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.Abstractions;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.AspNetCore.Routing;
 using MyDisk.Api.Filters;
 using MyDisk.Domain.Exceptions;
 using MyDisk.Tests.Api;
+using MyDisk.Tests.Utils;
 
 namespace MyDisk.Api.Tests.Filters;
 
+public class DummyException : Exception
+{
+}
+
 public class ApiExceptionFilterAttributeFixture
 {
-    [Theory]
-    [AutoApiData]
-    public void ShouldReturnsNull([NoAutoProperties] ExceptionContext context, string exception)
-    {
-        // Arrange
-        context.Exception = new Exception(exception);
-
-        // Act
-        new ApiExceptionFilterAttribute().OnException(context);
-
-        // Assert
-        context.Result.Should().BeNull();
-    }
-
-    public class ValidationExceptionFixture
+    public class OnExceptionFixture
     {
         [Theory]
         [AutoApiData]
-        public void ShouldReturnsBadRequestObjectResult([NoAutoProperties] ExceptionContext context, string exception)
+        public void Should_Not_Handle_Exception
+        (
+            [NoAutoProperties] ExceptionContext context,
+            string exceptionMessage,
+            ApiExceptionFilterAttribute sut
+        )
         {
             // Arrange
-            context.Exception = new ValidationException(exception);
+            context.Exception = new Exception(exceptionMessage);
 
             // Act
-            new ApiExceptionFilterAttribute().OnException(context);
+            sut.OnException(context);
 
             // Assert
-            context.Result.Should().BeOfType<BadRequestObjectResult>();
-            context.Exception.Message.Should().Be(exception);
+            context.ExceptionHandled.Should().BeFalse();
         }
     }
-    
-    public class FormatExceptionFixture
+
+    public class HandleExceptionFixture
     {
         [Theory]
         [AutoApiData]
-        public void ShouldReturnsBadRequestObjectResult([NoAutoProperties] ExceptionContext context, string exception)
+        public void Should_Not_Find_Action
+        (
+            [NoAutoProperties] ExceptionContext context,
+            ApiExceptionFilterAttribute sut
+        )
         {
             // Arrange
-            context.Exception = new FormatException(exception);
+            // var invokingCount = 0;
+            // var mockExceptionHandlers = new Dictionary<Type, Action<ExceptionContext>?>
+            // {
+            //     { typeof(ObjectNotFoundException), _ => invokingCount++ },
+            // };
+            //
+            // sut.ExceptionHandlers = mockExceptionHandlers;
+            //
+            // context.Exception = new DummyException();
+            // // sut.ExceptionHandlers[typeof(ObjectNotFoundException)] = _ => invokingCount++;
+            //
+            // // Act
+            // sut.HandleException(context);
+            //
+            // // Assert
+            // invokingCount.Should().Be(0);
+            
+            // Arrange
+            var invokingCount = 0;
+            context.Exception = new DummyException();
+            sut.ExceptionHandlers[typeof(ObjectNotFoundException)] = _ => invokingCount++;
+            
+            // Act
+            sut.HandleException(context);
+            
+            // Assert
+            invokingCount.Should().Be(0);
+        }
+        
+        [Theory]
+        [AutoApiData]
+        public void Should_Find_Action
+        (
+            [NoAutoProperties] ExceptionContext context,
+            ApiExceptionFilterAttribute sut
+        )
+        {
+            // Arrange
+            var invokingCount = 0;
+            context.Exception = new ObjectNotFoundException();
+            sut.ExceptionHandlers[typeof(ObjectNotFoundException)] = _ => invokingCount++;
+            
+            // Act
+            sut.HandleException(context);
+            
+            // Assert
+            invokingCount.Should().Be(1);
+        }
+    }
+
+    public class HandleValidationExceptionFixture
+    {
+        [Theory]
+        [AutoApiData]
+        public void Should_Not_Handle_DummyException
+        (
+            [NoAutoProperties] ExceptionContext context,
+            ApiExceptionFilterAttribute sut
+        )
+        {
+            // Arrange
+            context.Exception = new DummyException();
 
             // Act
-            new ApiExceptionFilterAttribute().OnException(context);
+            sut.HandleValidationException(context);
+
+            // Assert
+            context.ExceptionHandled.Should().BeFalse();
+        }
+
+        [Theory]
+        [AutoApiData]
+        public void Should_Returns_BadRequestObjectResult
+        (
+            [NoAutoProperties] ExceptionContext context,
+            string exceptionMessage,
+            ApiExceptionFilterAttribute sut
+        )
+        {
+            // Arrange
+
+            context.Exception = new ValidationException(exceptionMessage);
+
+            // Act
+            sut.HandleValidationException(context);
 
             // Assert
             context.Result.Should().BeOfType<BadRequestObjectResult>();
-            context.Exception.Message.Should().Be(exception);
+        }
+
+        [Theory]
+        [AutoApiData]
+        public void Should_Have_ExceptionMessage
+        (
+            [NoAutoProperties] ExceptionContext context,
+            IEnumerable<ValidationFailure> validationFailures,
+            ApiExceptionFilterAttribute sut
+        )
+        {
+            // Arrange
+            var validationException = new ValidationException(validationFailures);
+            context.Exception = validationException;
+
+            // Act
+            sut.HandleValidationException(context);
+
+            // Assert
+            var test = context.Result as BadRequestObjectResult;
+            test!.Value.Should().BeEquivalentTo(validationException.Errors.Select(c => c.ErrorMessage));
+        }
+
+        [Theory]
+        [AutoApiData]
+        public void Should_Handle_Exception
+        (
+            [NoAutoProperties] ExceptionContext context,
+            string exceptionMessage,
+            ApiExceptionFilterAttribute sut
+        )
+        {
+            // Arrange
+            context.Exception = new ValidationException(exceptionMessage);
+
+            // Act
+            sut.HandleValidationException(context);
+
+            // Assert
+            context.ExceptionHandled.Should().BeTrue();
         }
     }
-    
+
+    public class HandleFormatExceptionFixture
+    {
+        [Theory]
+        [AutoApiData]
+        public void Should_Not_Handle_DummyException
+        (
+            [NoAutoProperties] ExceptionContext context,
+            ApiExceptionFilterAttribute sut
+        )
+        {
+            // Arrange
+            context.Exception = new DummyException();
+
+            // Act
+            sut.HandleFormatException(context);
+
+            // Assert
+            context.ExceptionHandled.Should().BeFalse();
+        }
+
+        [Theory]
+        [AutoApiData]
+        public void Should_Returns_BadRequestObjectResult
+        (
+            [NoAutoProperties] ExceptionContext context,
+            string exceptionMessage,
+            ApiExceptionFilterAttribute sut
+        )
+        {
+            // Arrange
+            context.Exception = new FormatException(exceptionMessage);
+
+            // Act
+            sut.HandleFormatException(context);
+
+            // Assert
+            context.Result.Should().BeOfType<BadRequestObjectResult>();
+        }
+
+        [Theory]
+        [AutoApiData]
+        public void Should_Have_ExceptionMessage
+        (
+            [NoAutoProperties] ExceptionContext context,
+            string exceptionMessage,
+            ApiExceptionFilterAttribute sut
+        )
+        {
+            // Arrange
+            context.Exception = new FormatException(exceptionMessage);
+
+            // Act
+            sut.HandleFormatException(context);
+
+            // Assert
+            context.Exception.Message.Should().Be(exceptionMessage);
+        }
+
+        [Theory]
+        [AutoApiData]
+        public void Should_Handle_Exception
+        (
+            [NoAutoProperties] ExceptionContext context,
+            string exceptionMessage,
+            ApiExceptionFilterAttribute sut
+        )
+        {
+            // Arrange
+            context.Exception = new FormatException(exceptionMessage);
+
+            // Act
+            sut.HandleFormatException(context);
+
+            // Assert
+            context.ExceptionHandled.Should().BeTrue();
+        }
+    }
+
     public class ObjectNotFoundExceptionFixture
     {
         [Theory]
         [AutoApiData]
-        public void ShouldReturnsBadRequestObjectResult([NoAutoProperties] ExceptionContext context, string exception)
+        public void Should_Not_Handle_DummyException
+        (
+            [NoAutoProperties] ExceptionContext context,
+            ApiExceptionFilterAttribute sut
+        )
         {
             // Arrange
-            context.Exception = new ObjectNotFoundException(exception);
+            context.Exception = new DummyException();
 
             // Act
-            new ApiExceptionFilterAttribute().OnException(context);
+            sut.HandleObjectyNotFoundException(context);
+
+            // Assert
+            context.ExceptionHandled.Should().BeFalse();
+        }
+
+        [Theory]
+        [AutoApiData]
+        public void Should_Returns_NotFoundObjectResult
+        (
+            [NoAutoProperties] ExceptionContext context,
+            string exceptionMessage,
+            ApiExceptionFilterAttribute sut
+        )
+        {
+            // Arrange
+            context.Exception = new ObjectNotFoundException(exceptionMessage);
+
+            // Act
+            sut.HandleObjectyNotFoundException(context);
 
             // Assert
             context.Result.Should().BeOfType<NotFoundObjectResult>();
-            context.Exception.Message.Should().Be(exception);
+        }
+
+        [Theory]
+        [AutoApiData]
+        public void Should_Have_ExceptionMessage
+        (
+            [NoAutoProperties] ExceptionContext context,
+            string exceptionMessage,
+            ApiExceptionFilterAttribute sut
+        )
+        {
+            // Arrange
+            context.Exception = new ObjectNotFoundException(exceptionMessage);
+
+            // Act
+            sut.HandleObjectyNotFoundException(context);
+
+            // Assert
+            context.Exception.Message.Should().Be(exceptionMessage);
+        }
+
+        [Theory]
+        [AutoApiData]
+        public void Should_Handle_Exception
+        (
+            [NoAutoProperties] ExceptionContext context,
+            string exceptionMessage,
+            ApiExceptionFilterAttribute sut
+        )
+        {
+            // Arrange
+            context.Exception = new ObjectNotFoundException(exceptionMessage);
+
+            // Act
+            sut.HandleObjectyNotFoundException(context);
+
+            // Assert
+            context.ExceptionHandled.Should().BeTrue();
         }
     }
 }
