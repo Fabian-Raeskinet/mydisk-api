@@ -39,7 +39,6 @@ on:
       - features/*
 
 jobs:
-- template: template.yml
   publish:
     runs-on: ${{ parameters.vmImage }}
     
