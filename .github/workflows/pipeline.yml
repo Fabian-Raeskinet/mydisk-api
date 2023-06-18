@@ -1,33 +1,76 @@
 parameters:
-  # Project's name
-  - name: projectName
-    default: "my-disks"
-    type: string
-  
-  # Dotnet SDK version
-  - name: dotnetVersion
-    default: "7.x"
-    type: string
-  
-  # VM's image
-  - name: vmImage
-    default: "windows-latest"
-    type: string
-  
-  # Path from project to build/publish
-  - name: buildPath
-    default: "**/*Web.csproj"
-    type: string
+#  # Project's name
+#  - name: projectName
+#    default: "my-disks"
+#    type: string
+#  
+#  # Dotnet SDK version
+#  - name: dotnetVersion
+#    default: "7.x"
+#    type: string
+#  
+#  # VM's image
+#  - name: vmImage
+#    default: "windows-latest"
+#    type: string
+#  
+#  # Path from project to build/publish
+#  - name: buildPath
+#    default: "**/*Web.csproj"
+#    type: string
+#
+#  # Timeout value
+#  - name: buildTimeoutInMinutes
+#    default: 60
+#    type: number
+#    
+#  # Package path
+#  - name: packagePath
+#    default: "./publish"
+#    type: string
 
-  # Timeout value
-  - name: buildTimeoutInMinutes
-    default: 60
-    type: number
-    
-  # Package path
-  - name: packagePath
-    default: "./publish"
-    type: string
+#name: Publish 🚀
+#on:
+#  workflow_dispatch:
+#  push:
+#    branches:
+#      - master
+#      - develop
+#      - features/*
+#
+#jobs:
+#  publish:
+#    runs-on: ${{ parameters.vmImage }}
+#    
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Setup .NET
+#        uses: actions/setup-dotnet@v3
+#        with:
+#          dotnet-version: ${{ parameters.dotnetVersion }}
+#
+#      - name: Restore
+#        run: dotnet restore ./mydisk-api.sln
+#
+#      - name: Build
+#        run: dotnet build ./mydisk-api.sln --configuration Release --no-restore
+#
+#      - name: Test
+#        run: dotnet test --no-restore
+#
+#      - name: Publish
+#        run: dotnet publish ./mydisk-api.sln --configuration Release --no-build --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
+#
+#      - name: Test
+#        run: dotnet test --no-restore
+#        
+#      - name: Deployment
+#        uses: azure/webapps-deploy@v2
+#        with:
+#          app-name: ${{ parameters.projectName }}
+#          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+#          package: "${{ parameters.packagePath }}"
+
 
 name: Publish 🚀
 on:
@@ -40,14 +83,14 @@ on:
 
 jobs:
   publish:
-    runs-on: ${{ parameters.vmImage }}
+    runs-on: ubuntu-latest
     
     steps:
       - uses: actions/checkout@v3
       - name: Setup .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: ${{ parameters.dotnetVersion }}
+          dotnet-version: "7.x"
 
       - name: Restore
         run: dotnet restore ./mydisk-api.sln
@@ -59,7 +102,7 @@ jobs:
         run: dotnet test --no-restore
 
       - name: Publish
-        run: dotnet publish ./mydisk-api.sln --configuration Release --no-build --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
+        run: dotnet publish ./mydisk-api.sln --configuration Release --no-build --output './publish'
 
       - name: Test
         run: dotnet test --no-restore
@@ -67,6 +110,6 @@ jobs:
       - name: Deployment
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ parameters.projectName }}
+          app-name: "my-disks"
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          package: "${{ parameters.packagePath }}"
+          package: "./publish"
