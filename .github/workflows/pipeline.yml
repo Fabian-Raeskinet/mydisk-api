@@ -1,4 +1,4 @@
-parameters:
+# parameters:
 #  # Project's name
 #  - name: projectName
 #    default: "my-disks"
