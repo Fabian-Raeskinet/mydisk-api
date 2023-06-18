@@ -87,25 +87,10 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: "7.x"
-
-      - name: Restore
-        run: dotnet restore ./mydisk-api.sln
-
-      - name: Build
-        run: dotnet build ./mydisk-api.sln --configuration Release --no-restore
-
-      - name: Test
-        run: dotnet test --no-restore
+      - uses: ./.github/actions/build
 
       - name: Publish
         run: dotnet publish ./mydisk-api.sln --configuration Release --no-build --output './publish'
-
-      - name: Test
-        run: dotnet test --no-restore
         
       - name: Deployment
         uses: azure/webapps-deploy@v2
