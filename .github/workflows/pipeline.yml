@@ -81,17 +81,17 @@ on:
       - develop
       - features/*
 
-jobs:
-  build-and-test:
-    uses: ./.github/workflows/build-and-test.yml
-    with:
-      dotnetVersion: '7.x'
-      
+jobs: 
   publish:
     runs-on: ubuntu-latest
     
     steps:
       - uses: actions/checkout@v3
+      - name: build-and-test
+        uses: ./.github/workflows/build-and-test.yml
+        with:
+          dotnetVersion: '7.x'
+          
       - name: Publish
         run: dotnet publish ./mydisk-api.sln --configuration Release --no-build --output './publish'
         
