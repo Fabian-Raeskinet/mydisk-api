@@ -28,5 +28,5 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ inputs.appName }}
-          publish-profile: ${{ inputs.profile }}
+          publish-profile: ${{ secrets[github.event.inputs.profile] }}
           package: ${{ inputs.packagePath }}
