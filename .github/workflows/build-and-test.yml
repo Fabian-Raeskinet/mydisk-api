@@ -6,6 +6,7 @@ on:
         description: 'value of the .NET version'
         required: true
         default: '7.x'
+        type: string
 
 jobs:
   build:
