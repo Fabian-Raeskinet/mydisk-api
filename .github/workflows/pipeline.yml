@@ -1,64 +1,3 @@
-# parameters:
-#  # Project's name
-#  - name: projectName
-#    default: "my-disks"
-#    type: string
-#  
-#  
-#  # Path from project to build/publish
-#  - name: buildPath
-#    default: "**/*Web.csproj"
-#    type: string
-#
-#  # Timeout value
-#  - name: buildTimeoutInMinutes
-#    default: 60
-#    type: number
-#    
-
-#name: Publish 🚀
-#on:
-#  workflow_dispatch:
-#  push:
-#    branches:
-#      - master
-#      - develop
-#      - features/*
-#
-#jobs:
-#  publish:
-#    runs-on: ${{ parameters.vmImage }}
-#    
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Setup .NET
-#        uses: actions/setup-dotnet@v3
-#        with:
-#          dotnet-version: ${{ parameters.dotnetVersion }}
-#
-#      - name: Restore
-#        run: dotnet restore ./mydisk-api.sln
-#
-#      - name: Build
-#        run: dotnet build ./mydisk-api.sln --configuration Release --no-restore
-#
-#      - name: Test
-#        run: dotnet test --no-restore
-#
-#      - name: Publish
-#        run: dotnet publish ./mydisk-api.sln --configuration Release --no-build --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
-#
-#      - name: Test
-#        run: dotnet test --no-restore
-#        
-#      - name: Deployment
-#        uses: azure/webapps-deploy@v2
-#        with:
-#          app-name: ${{ parameters.projectName }}
-#          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-#          package: "${{ parameters.packagePath }}"
-
-
 name: Publish 🚀
 on:
   workflow_dispatch:
@@ -74,17 +13,9 @@ jobs:
     with:
       dotnetVersion: '7.x'
       packagePath: './publish'
-  publish:
-    runs-on: ubuntu-latest
+  Deploy:
     needs: Build
-    
-    steps:
-      - uses: actions/checkout@v3          
-
-        
-      - name: Deployment
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: "my-disks"
-          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          package: "./publish"
+    uses: ./.github/workflows/deploy.yml
+    with:
+      appName: 'my-disk'
+      packagePath: './publish'
