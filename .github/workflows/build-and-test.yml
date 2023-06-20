@@ -14,6 +14,9 @@ on:
       packagePath:
         required: true
         type: string
+      artifactName:
+        required: true
+        type: string
 
 jobs:
   build:
@@ -40,5 +43,5 @@ jobs:
       - name: Publish Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: my-package
+          name: ${{ inputs.artifactName }}
           path: ${{ inputs.packagePath }}

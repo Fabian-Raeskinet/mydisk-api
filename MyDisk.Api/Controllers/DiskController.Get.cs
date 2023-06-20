@@ -7,7 +7,7 @@ namespace MyDisk.Api.Controllers;
 public partial class DiskController
 {
     [HttpGet]
-    [Route("disks")]
+    [Route("disksssss")]
     [ProducesResponseType(typeof(List<DiskResult>), 200)]
     [ProducesResponseType(404)]
     public async Task<IActionResult> GetAllDisks()

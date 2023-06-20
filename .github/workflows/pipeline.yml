@@ -13,6 +13,7 @@ jobs:
     with:
       dotnetVersion: '7.x'
       packagePath: './publish'
+      artifactName: 'packages'
   Deploy:
     needs: Build
     uses: ./.github/workflows/deploy.yml
@@ -21,17 +22,3 @@ jobs:
       packagePath: './publish'
     secrets:
       AZURE_PUBLISH_PROFILE: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-
-
-#  publish:
-#    runs-on: ubuntu-latest
-#    needs: Build
-#
-#    steps:
-#      - uses: actions/checkout@v3
-#      - name: Deployment
-#        uses: azure/webapps-deploy@v2
-#        with:
-#          app-name: "my-disks"
-#          publish-profile: ${{ env.publishProfile }}
-#          package: "./publish"
