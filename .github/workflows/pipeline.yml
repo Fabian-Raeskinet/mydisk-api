@@ -17,7 +17,7 @@ jobs:
     needs: Build
     uses: ./.github/workflows/deploy.yml
     with:
-      appName: 'my-disk'
+      appName: 'my-disks'
       packagePath: './publish'
     secrets:
       AZURE_PUBLISH_PROFILE: ${{ secrets.AZURE_PUBLISH_PROFILE }}
