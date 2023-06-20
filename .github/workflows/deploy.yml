@@ -24,7 +24,7 @@ on:
         description: 'publish profile'
 
 jobs:
-  build:
+  Deploy:
     runs-on: ${{ inputs.vmImage }}
     steps:
       - uses: actions/checkout@v3
