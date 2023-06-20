@@ -20,5 +20,6 @@ jobs:
     with:
       appName: 'my-disks'
       packagePath: './publish'
+      artifactName: 'packages'
     secrets:
       AZURE_PUBLISH_PROFILE: ${{ secrets.AZURE_PUBLISH_PROFILE }}
