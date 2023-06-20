@@ -4,15 +4,6 @@
 #    default: "my-disks"
 #    type: string
 #  
-#  # Dotnet SDK version
-#  - name: dotnetVersion
-#    default: "7.x"
-#    type: string
-#  
-#  # VM's image
-#  - name: vmImage
-#    default: "windows-latest"
-#    type: string
 #  
 #  # Path from project to build/publish
 #  - name: buildPath
@@ -24,10 +15,6 @@
 #    default: 60
 #    type: number
 #    
-#  # Package path
-#  - name: packagePath
-#    default: "./publish"
-#    type: string
 
 #name: Publish 🚀
 #on:
@@ -92,8 +79,7 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3          
-      - name: Publish
-        run: dotnet publish ./mydisk-api.sln --configuration Release --no-build --output './publish'
+
         
       - name: Deployment
         uses: azure/webapps-deploy@v2

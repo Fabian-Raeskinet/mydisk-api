@@ -5,12 +5,20 @@ on:
       dotnetVersion:
         description: 'value of the .NET version'
         required: true
-        default: '7.x'
+        type: string
+      vmImage:
+        description: 'image of the vm'
+        required: false
+        default: ubuntu-latest
+        type: string
+      packagePath:
+        default: './publish'
+        required: true
         type: string
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ inputs.vmImage }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup .NET
@@ -26,3 +34,6 @@ jobs:
 
       - name: Test
         run: dotnet test --no-restore
+        
+      - name: Publish
+        run: dotnet publish ./mydisk-api.sln --configuration Release --no-build --output ${{ inputs.packagePath }}
