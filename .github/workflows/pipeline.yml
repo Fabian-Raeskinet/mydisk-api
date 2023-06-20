@@ -1,6 +1,4 @@
 name: Publish 🚀
-env:
-  publishProfile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
 on:
   workflow_dispatch:
   push:
@@ -18,10 +16,12 @@ jobs:
   Deploy:
     needs: Build
     uses: ./.github/workflows/deploy.yml
+    env:
+      publishProfile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
     with:
       appName: 'my-disk'
       packagePath: './publish'
-      publishProfile: '${{ secrets.AZURE_PUBLISH_PROFILE }}'
+      publishProfile: publishProfile
 
 
 #  publish:
