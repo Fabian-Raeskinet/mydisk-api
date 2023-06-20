@@ -73,6 +73,7 @@ jobs:
     uses: ./.github/workflows/build-and-test.yml
     with:
       dotnetVersion: '7.x'
+      packagePath: './publish'
   publish:
     runs-on: ubuntu-latest
     needs: Build
