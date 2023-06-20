@@ -12,7 +12,6 @@ on:
         default: ubuntu-latest
         type: string
       packagePath:
-        default: './publish'
         required: true
         type: string
 
@@ -37,3 +36,9 @@ jobs:
         
       - name: Publish
         run: dotnet publish ./mydisk-api.sln --configuration Release --no-build --output ${{ inputs.packagePath }}
+
+      - name: Publish Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: my-package
+          path: ${{ inputs.packagePath }}

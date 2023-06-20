@@ -25,6 +25,12 @@ jobs:
     runs-on: ${{ inputs.vmImage }}
     steps:
       - uses: actions/checkout@v3
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: my-package
+          path: ${{ inputs.packagePath }}
+        
       - name: Deployment
         uses: azure/webapps-deploy@v2
         with:
