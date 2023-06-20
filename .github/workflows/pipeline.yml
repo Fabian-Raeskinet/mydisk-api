@@ -19,7 +19,8 @@ jobs:
     with:
       appName: 'my-disk'
       packagePath: './publish'
-      profile: AZURE_PUBLISH_PROFILE
+    secrets:
+      AZURE_PUBLISH_PROFILE: ${{ secrets.AZURE_PUBLISH_PROFILE }}
 
 
 #  publish:
