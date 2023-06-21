@@ -36,4 +36,4 @@ jobs:
           dotnet-version: ${{ inputs.dotnetVersion }}
           
       - name: Run Unit Test
-        run: dotnet test --no-restore
+        run: dotnet test ${{ inputs.packagePath }}/webapp/**/*.Tests.csproj
