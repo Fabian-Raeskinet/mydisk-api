@@ -23,11 +23,18 @@ jobs:
     runs-on: ${{ inputs.vmImage }}
     steps:
       - uses: actions/checkout@v3
+        
       - name: Download Unit Test Artifact
         uses: actions/download-artifact@v2
         with:
           name: ${{ inputs.artifactName }}
           path: ${{ inputs.packagePath }}/webapp
+
+      - name: Installer tree
+        run: sudo apt-get install tree
+
+      - name: Afficher l'arborescence
+        run: tree ${{ inputs.artifactName }}
           
       - uses: actions/checkout@v3
       - name: Setup .NET
