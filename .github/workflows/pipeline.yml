@@ -14,8 +14,16 @@ jobs:
       dotnetVersion: '7.x'
       packagePath: './artifacts/'
       artifactName: 'packages'
-  Deploy:
+  UnitTest:
     needs: Build
+    uses: ./.github/workflows/unit-test.yml
+    with:
+      dotnetVersion: '7.x'
+      packagePath: './artifacts/'
+      artifactName: 'packages'
+    
+  Deploy:
+    needs: UnitTest
     uses: ./.github/workflows/deploy.yml
     with:
       appName: 'my-disks'

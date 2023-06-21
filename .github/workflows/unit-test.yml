@@ -2,8 +2,8 @@ name: Unit test
 on:
   workflow_call:
     inputs:
-      appName:
-        description: 'name of the app'
+      dotnetVersion:
+        description: 'value of the .NET version'
         required: true
         type: string
       vmImage:
@@ -27,11 +27,13 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ${{ inputs.artifactName }}
-          path: ${{ inputs.packagePath }}
-
-      - name: Deployment
-        uses: azure/webapps-deploy@v2
+          path: ${{ inputs.packagePath }}/webapp
+          
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
         with:
-          app-name: ${{ inputs.appName }}
-          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          package: ${{ inputs.packagePath }}
+          dotnet-version: ${{ inputs.dotnetVersion }}
+          
+      - name: Run Unit Test
+        run: dotnet test --no-restore
