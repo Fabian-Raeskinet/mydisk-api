@@ -38,7 +38,9 @@ jobs:
         run: dotnet test --no-restore
         
       - name: Publish
-        run: dotnet publish ./mydisk-api.sln --configuration Release --no-build --output ${{ inputs.packagePath }}
+        run: |
+          mkdir artifacts
+          dotnet publish --configuration Release --output artifacts/
 
       - name: Publish Artifact
         uses: actions/upload-artifact@v2
