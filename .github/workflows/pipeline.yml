@@ -12,14 +12,14 @@ jobs:
     uses: ./.github/workflows/build-and-test.yml
     with:
       dotnetVersion: '7.x'
-      packagePath: './artifacts/'
+      packagePath: './out'
       artifactName: 'packages'
   UnitTest:
     needs: Build
     uses: ./.github/workflows/unit-test.yml
     with:
       dotnetVersion: '7.x'
-      packagePath: './artifacts/'
+      packagePath: './out'
       artifactName: 'packages'
     
   Deploy:
@@ -27,7 +27,7 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       appName: 'my-disks'
-      packagePath: './out/'
+      packagePath: './out'
       artifactName: 'packages'
     secrets:
       AZURE_PUBLISH_PROFILE: ${{ secrets.AZURE_PUBLISH_PROFILE }}
