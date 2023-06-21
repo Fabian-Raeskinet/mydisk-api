@@ -36,4 +36,4 @@ jobs:
           dotnet-version: ${{ inputs.dotnetVersion }}
           
       - name: Run Unit Test
-        run: dotnet test ${{ inputs.packagePath }}/webapp/MyDisk/mydisk-api/MyDisk.Services.Tests
+        run: dotnet test ${{ inputs.packagePath }}/webapp/mydisk-api/MyDisk.Services.Tests
