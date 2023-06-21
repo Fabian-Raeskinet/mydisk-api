@@ -34,7 +34,7 @@ jobs:
         run: sudo apt-get install tree
 
       - name: Afficher l'arborescence
-        run: tree ${{ inputs.artifactName }}
+        run: tree ${{ inputs.packagePath }}/webapp
           
       - uses: actions/checkout@v3
       - name: Setup .NET
