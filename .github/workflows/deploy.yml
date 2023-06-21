@@ -32,6 +32,7 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ${{ inputs.artifactName }}
+          path: ./artifacts/
         
       - name: Deployment
         uses: azure/webapps-deploy@v2
