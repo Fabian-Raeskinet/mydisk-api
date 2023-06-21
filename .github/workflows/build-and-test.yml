@@ -37,11 +37,20 @@ jobs:
       - name: Test
         run: dotnet test --no-restore
         
-      - name: Publish
-        run: dotnet publish --configuration Release --output ${{ inputs.packagePath }}
+      - name: Publish Unit Tests
+        run: dotnet publish --configuration Release --output ${{ inputs.packagePath }}/unittest **/*.Tests.csproj
 
-      - name: Publish Artifact
+      - name: Publish unit test Artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ inputs.artifactName }}
-          path: ${{ inputs.packagePath }}
+          path: ${{ inputs.packagePath }}/unittest
+          
+      - name: Publish Web App
+        run: dotnet publish --configuration Release --output ${{ inputs.packagePath }}/webapp
+
+      - name: Publish unit test Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ inputs.artifactName }}
+          path: ${{ inputs.packagePath }}/webapp

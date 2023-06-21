@@ -1,4 +1,4 @@
-name: Deploy 🚀
+name: Unit test 
 on:
   workflow_call:
     inputs:
@@ -17,10 +17,6 @@ on:
       artifactName:
         required: true
         type: string
-    secrets:
-      AZURE_PUBLISH_PROFILE:
-        required: true
-        description: 'publish profile'
 
 jobs:
   Deploy:
@@ -32,10 +28,10 @@ jobs:
         with:
           name: ${{ inputs.artifactName }}
           path: ${{ inputs.packagePath }}
-        
+
       - name: Deployment
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ inputs.appName }}
           publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          package: ${{ inputs.packagePath }}/webapp
+          package: ${{ inputs.packagePath }}

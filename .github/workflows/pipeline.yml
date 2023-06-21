@@ -19,7 +19,7 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       appName: 'my-disks'
-      packagePath: './artifacts/'
+      packagePath: './out/'
       artifactName: 'packages'
     secrets:
       AZURE_PUBLISH_PROFILE: ${{ secrets.AZURE_PUBLISH_PROFILE }}
