@@ -37,29 +37,27 @@ jobs:
       - name: Build
         run: dotnet build ./mydisk-api.sln --configuration Release --no-restore
 
-      - name: Publish Unit Tests
+#      - name: Publish Unit Tests
+#        run: |
+#          array=("'./MyDisk.Services.Tests.csproj'" "'./MyDisk.Api.Tests.csproj'")
+#          for project in "${array[@]}"; 
+#          do
+#            echo "$project"
+#            dotnet publish 'RandomServices.Tests' --configuration Release --output ${{ inputs.packagePath }}/unittest/service
+#            artifactName=$(basename RandomServices.Tests .csproj)
+#            echo "::set-output name=artifactName::$artifactName"
+#            echo "::set-output name=artifactPath::./out/unittest/RandomServices.Tests"
+#          done
+
+      - name: Publish Unit Test Artifacts
         run: |
-          array=("'./MyDisk.Services.Tests.csproj'" "'./MyDisk.Api.Tests.csproj'")
-          for project in "${array[@]}"; 
-          do
-            echo "$project"
-            dotnet publish 'RandomServices.Tests' --configuration Release --output ${{ inputs.packagePath }}/unittest/service
-            artifactName=$(basename RandomServices.Tests .csproj)
-            echo "::set-output name=artifactName::$artifactName"
-            echo "::set-output name=artifactPath::./out/unittest/RandomServices.Tests"
-          done
+          dotnet publish "**/*.Tests.csproj" --configuration Release --output ./out/unittest
           
       - name: Publish unit test Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ needs.publish.outputs.artifactName }}
-          path: ${{ needs.publish.outputs.artifactPath }}
-          
-#      - name: Publish unit test Artifact
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: ${{ inputs.artifactName }}
-#          path: ${{ inputs.packagePath }}/unittest/service
+          name: ${{ inputs.artifactName }}
+          path: ${{ inputs.packagePath }}/unittest
           
       - name: Publish Web App
         run: dotnet publish --configuration Release --output ${{ inputs.packagePath }}/webapp
