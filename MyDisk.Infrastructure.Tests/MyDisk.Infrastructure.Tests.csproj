@@ -24,7 +24,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\MyDisk.Infrastructure\MyDisk.Infrastructure.csproj" />
-      <ProjectReference Include="..\MyDisk.Tests.Infrastructure\MyDisk.Tests.Infrastructure.csproj" />
       <ProjectReference Include="..\MyDisk.Tests.Utils\MyDisk.Tests.Utils.csproj" />
     </ItemGroup>
 

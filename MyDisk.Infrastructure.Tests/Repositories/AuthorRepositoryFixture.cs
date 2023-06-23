@@ -3,7 +3,6 @@ using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 using MyDisk.Domain.Entities;
 using MyDisk.Infrastructure.Repositories;
-using MyDisk.Tests.Infrastructure;
 using MyDisk.Tests.Utils;
 
 namespace MyDisk.Infrastructure.Tests.Repositories;
