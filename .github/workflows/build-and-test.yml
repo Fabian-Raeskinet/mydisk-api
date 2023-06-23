@@ -37,18 +37,6 @@ jobs:
       - name: Build
         run: dotnet build ./mydisk-api.sln --configuration Release --no-restore
 
-#      - name: Publish Unit Tests
-#        run: |
-#          array=("'./MyDisk.Services.Tests.csproj'" "'./MyDisk.Api.Tests.csproj'")
-#          for project in "${array[@]}"; 
-#          do
-#            echo "$project"
-#            dotnet publish 'RandomServices.Tests' --configuration Release --output ${{ inputs.packagePath }}/unittest/service
-#            artifactName=$(basename RandomServices.Tests .csproj)
-#            echo "::set-output name=artifactName::$artifactName"
-#            echo "::set-output name=artifactPath::./out/unittest/RandomServices.Tests"
-#          done
-
       - name: Publish Unit Test Artifacts
         run: |
           find . -name "*.Tests.csproj" -type f -print0 | while IFS= read -r -d $'\0' file; do

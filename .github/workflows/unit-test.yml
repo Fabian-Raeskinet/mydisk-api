@@ -19,7 +19,7 @@ on:
         type: string
 
 jobs:
-  Deploy:
+  Test:
     runs-on: ${{ inputs.vmImage }}
     steps:
       - uses: actions/checkout@v3
@@ -28,13 +28,13 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ${{ inputs.artifactName }}
-          path: ${{ inputs.packagePath }}/unittest/service
+          path: ${{ inputs.packagePath }}/unittest
 
       - name: Installer tree
         run: sudo apt-get install tree
 
       - name: Afficher l'arborescence
-        run: tree ${{ inputs.packagePath }}/unittest/service
+        run: tree ${{ inputs.packagePath }}/unittest
           
       - uses: actions/checkout@v3
       - name: Setup .NET
@@ -43,4 +43,4 @@ jobs:
           dotnet-version: ${{ inputs.dotnetVersion }}
           
       - name: Run Unit Test
-        run: dotnet test RandomServices.Tests
+        run: dotnet test
