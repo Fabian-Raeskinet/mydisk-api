@@ -48,10 +48,18 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.RetryService.Tests", "MyDisk.RetryService.Tests\MyDisk.RetryService.Tests.csproj", "{9ED360F7-3372-4619-A78A-9AB4A54F0181}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipelines", "Pipelines", "{9A09C49C-CCCF-4C26-AA04-267E632CFA56}"
+	ProjectSection(SolutionItems) = preProject
+		azure-pipelines.yml = azure-pipelines.yml
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RandomServices", "RandomServices\RandomServices.csproj", "{83C8843C-1ED4-494C-8AD0-16106CD6D635}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RandomServices.Tests", "RandomServices.Tests\RandomServices.Tests.csproj", "{9528AABA-0AD8-495C-91F6-B66383B71D90}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{E4839A6B-FDB8-43AE-B272-1CA91838D0CA}"
+	ProjectSection(SolutionItems) = preProject
+		Nuget.config = Nuget.config
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
