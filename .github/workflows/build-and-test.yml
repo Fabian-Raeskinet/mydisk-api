@@ -39,7 +39,7 @@ jobs:
 
       - name: Publish Unit Tests
         run: |
-          for project in ${{ fromJson(inputs.projectToTests) }}
+          for project in ${{ join(inputs.projectToTests, '\n') }}
           do
             echo "Empaqueter le projet $project"
           done
