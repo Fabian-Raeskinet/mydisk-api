@@ -1,6 +1,5 @@
 trigger:
-  features/*
-
+  - features/*
 jobs:
   - job: Compile
     displayName: 'Compile and execute unit tests'
