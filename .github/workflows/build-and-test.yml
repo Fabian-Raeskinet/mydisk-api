@@ -43,7 +43,7 @@ jobs:
           for project in "${array[@]}"; 
           do
             echo "$project"
-            dotnet publish './MyDisk.Services.Tests.csproj' --configuration Release --output ${{ inputs.packagePath }}/unittest/service
+            dotnet publish 'MyDisk.Services.Tests.csproj' --configuration Release --output ${{ inputs.packagePath }}/unittest/service
           done
           
       - name: Publish unit test Artifact
