@@ -12,7 +12,7 @@ jobs:
           command: 'restore'
           projects: '**/*.sln'
           feedsToUse: 'config'
-          nugetConfigPath: '$(Build.SourcesDirectory)/src/Nuget.config'
+          nugetConfigPath: '$(Build.SourcesDirectory)/Nuget.config'
 
       - task: DotNetCoreCLI@2
         displayName: 'Build solution'
