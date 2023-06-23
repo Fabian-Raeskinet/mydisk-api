@@ -48,6 +48,15 @@ jobs:
         with:
           name: ${{ inputs.artifactName }}
           path: ${{ inputs.packagePath }}/unittest
+          
+      - name: Check Artifact Contents
+        run: |
+          if [[ $(find ./out/unittest -type f | grep -E "\.Tests\.csproj$" | wc -l) -eq $(find ./out/unittest -type f | wc -l) ]]; then
+            echo "L'artefact contient uniquement les projets de tests."
+          else
+            echo "L'artefact contient d'autres fichiers en plus des projets de tests."
+            exit 1
+          fi
 #          
 #      - name: Publish Web App
 #        run: dotnet publish --configuration Release --output ${{ inputs.packagePath }}/webapp
