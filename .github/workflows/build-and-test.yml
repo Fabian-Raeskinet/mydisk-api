@@ -40,12 +40,12 @@ jobs:
       - name: Publish Unit Tests
         run: |
           array=("'./MyDisk.Services.Tests.csproj'" "'./MyDisk.Api.Tests.csproj'")
-          for val in "${array[@]}"; 
+          for $project in "${array[@]}"; 
           do
-            echo "$val"
+            echo "$project"
+            dotnet publish $project --configuration Release --output ${{ inputs.packagePath }}/unittest/$project
           done
-
-#            dotnet publish $project --configuration Release --output ${{ inputs.packagePath }}/unittest
+          
       - name: Publish unit test Artifact
         uses: actions/upload-artifact@v2
         with:
