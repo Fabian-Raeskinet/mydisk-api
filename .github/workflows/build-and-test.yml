@@ -44,13 +44,22 @@ jobs:
           do
             echo "$project"
             dotnet publish 'RandomServices.Tests' --configuration Release --output ${{ inputs.packagePath }}/unittest/service
+            artifactName=$(basename RandomServices.Tests .csproj)
+            echo "::set-output name=artifactName::$artifactName"
+            echo "::set-output name=artifactPath::./out/unittest/RandomServices.Tests"
           done
           
       - name: Publish unit test Artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ inputs.artifactName }}
-          path: ${{ inputs.packagePath }}/unittest/service
+          name: ${{ needs.publish.outputs.artifactName }}
+          path: ${{ needs.publish.outputs.artifactPath }}
+          
+#      - name: Publish unit test Artifact
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: ${{ inputs.artifactName }}
+#          path: ${{ inputs.packagePath }}/unittest/service
           
       - name: Publish Web App
         run: dotnet publish --configuration Release --output ${{ inputs.packagePath }}/webapp
