@@ -40,7 +40,7 @@ jobs:
       - name: Publish Unit Tests
         run: |
           array=("'./MyDisk.Services.Tests.csproj'" "'./MyDisk.Api.Tests.csproj'")
-          for $project in "${array[@]}"; 
+          for project in "${array[@]}"; 
           do
             echo "$project"
             dotnet publish './MyDisk.Services.Tests.csproj' --configuration Release --output ${{ inputs.packagePath }}/unittest/service
