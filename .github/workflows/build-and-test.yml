@@ -51,7 +51,9 @@ jobs:
 
       - name: Publish Unit Test Artifacts
         run: |
-          dotnet publish "**/*.Tests.csproj" --configuration Release --output ./out/unittest
+          find . -name "*.Tests.csproj" -type f -print0 | while IFS= read -r -d $'\0' file; do
+          dotnet publish "$file" --configuration Release --output ./out/unittest
+          done
           
       - name: Publish unit test Artifact
         uses: actions/upload-artifact@v2
