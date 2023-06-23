@@ -1,34 +1,40 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
-- master
+  - features/*
+jobs:
+  - job: Compile
+    displayName: 'Compile and execute unit tests'
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+      - task: DotNetCoreCLI@2
+        displayName: 'Restore nuget'
+        inputs:
+          command: 'restore'
+          projects: '**/*.sln'
+          feedsToUse: 'config'
 
-pool:
-  vmImage: 'windows-latest'
+      - task: DotNetCoreCLI@2
+        displayName: 'Build solution'
+        inputs:
+          command: 'build'
+          projects: '$(solution)'
+          arguments: '--no-restore --configuration $(buildConfiguration) --no-incremental'
 
-variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
-  buildConfiguration: 'Release'
+      - task: DotNetCoreCLI@2
+        displayName: 'Publish Unit tests'
+        inputs:
+          command: 'publish'
+          publishWebProjects: false
+          projects: '**/*.Tests.csproj'
+          arguments: '--no-build --configuration $(buildConfiguration) --output out/tests'
+          zipAfterPublish: false
+          modifyOutputPath: false
 
-steps:
-- task: NuGetToolInstaller@1
-
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solution)'
-
-- task: VSBuild@1
-  inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\WebApp.zip" /p:DeployIisAppPath="Default Web Site"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: VSTest@2
-  inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+      - task: DotNetCoreCLI@2
+        displayName: 'Run unit tests'
+        inputs:
+          command: 'test'
+          projects: 'out/tests/*.Tests.dll'
+          arguments: '--collect:"XPlat Code Coverage" --logger trx --results-directory out/test-results --settings $(Build.SourcesDirectory)/src/coverlet.ut.runsettings'
+          publishTestResults: false
+          testRunTitle: 'Unit tests'
