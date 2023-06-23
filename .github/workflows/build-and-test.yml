@@ -31,11 +31,11 @@ jobs:
         with:
           dotnet-version: ${{ inputs.dotnetVersion }}
 
-#      - name: Restore
-#        run: dotnet restore ./mydisk-api.sln
-#
-#      - name: Build
-#        run: dotnet build ./mydisk-api.sln --configuration Release --no-restore
+      - name: Restore
+        run: dotnet restore ./mydisk-api.sln
+
+      - name: Build
+        run: dotnet build ./mydisk-api.sln --configuration Release --no-restore
 
       - name: Publish Unit Tests
         run: |
