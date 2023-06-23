@@ -1,3 +1,6 @@
+env:
+  projectToTests: ['./MyDisk.Services.Tests.csproj', './MyDisk.Api.Tests.csproj']
+
 name: Publish 🚀
 on:
   workflow_dispatch:
