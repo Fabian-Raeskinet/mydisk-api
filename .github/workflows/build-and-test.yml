@@ -39,7 +39,7 @@ jobs:
 
       - name: Publish Unit Tests
         run: |
-          for project in ('./MyDisk.Services.Tests.csproj', './MyDisk.Api.Tests.csproj')
+          for project in fromJSON("['./MyDisk.Services.Tests.csproj',  './MyDisk.Api.Tests.csproj']")
           do
             echo "Empaqueter le projet $project"
           done
