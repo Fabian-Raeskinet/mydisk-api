@@ -1,5 +1,6 @@
 trigger:
-  - features/*
+  features/*
+
 jobs:
   - job: Compile
     displayName: 'Compile and execute unit tests'
@@ -12,6 +13,7 @@ jobs:
           command: 'restore'
           projects: '**/*.sln'
           feedsToUse: 'config'
+          nugetConfigPath: '$(Build.SourcesDirectory)/src/Nuget.config'
 
       - task: DotNetCoreCLI@2
         displayName: 'Build solution'
