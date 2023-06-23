@@ -42,9 +42,9 @@ jobs:
           for project in "${{ fromJson(inputs.projectToTests) }}"
           do
             echo "Empaqueter le projet $project"
-            dotnet publish $project --configuration Release --output ${{ inputs.packagePath }}/unittest
           done
 
+#            dotnet publish $project --configuration Release --output ${{ inputs.packagePath }}/unittest
       - name: Publish unit test Artifact
         uses: actions/upload-artifact@v2
         with:
