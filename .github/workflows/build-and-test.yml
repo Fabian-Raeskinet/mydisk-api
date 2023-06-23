@@ -19,7 +19,7 @@ on:
         type: string
       projectToTests:
         required: true
-        type: comma-delimited-list
+        type: string
 
 jobs:
   Build:
