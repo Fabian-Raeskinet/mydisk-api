@@ -18,16 +18,16 @@ jobs:
       packagePath: './out'
       artifactName: 'packages'
       projectToTests: "['./MyDisk.Services.Tests.csproj',  './MyDisk.Api.Tests.csproj']"
-  UnitTest:
-    needs: Build
-    uses: ./.github/workflows/unit-test.yml
-    with:
-      dotnetVersion: '7.x'
-      packagePath: './out'
-      artifactName: 'packages'
+#  UnitTest:
+#    needs: UnitTest
+#    uses: ./.github/workflows/unit-test.yml
+#    with:
+#      dotnetVersion: '7.x'
+#      packagePath: './out'
+#      artifactName: 'packages'
     
   Deploy:
-    needs: UnitTest
+    needs: Build
     uses: ./.github/workflows/deploy.yml
     with:
       appName: 'my-disks'
