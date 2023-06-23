@@ -43,4 +43,4 @@ jobs:
           dotnet-version: ${{ inputs.dotnetVersion }}
           
       - name: Run Unit Test
-        run: dotnet test MyDisk.Services.Tests
+        run: dotnet test MyDisk.Services.Tests --no-restore
