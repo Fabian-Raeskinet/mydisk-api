@@ -8,7 +8,7 @@ on:
       - features/*
 
 env:
-  PROJECTS_TO_TESTS: ('./MyDisk.Services.Tests.csproj', './MyDisk.Api.Tests.csproj')
+  PROJECTS_TO_TESTS: "['./MyDisk.Services.Tests.csproj',  './MyDisk.Api.Tests.csproj']"
 
 jobs:
   Build:

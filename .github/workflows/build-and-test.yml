@@ -39,7 +39,7 @@ jobs:
 
       - name: Publish Unit Tests
         run: |
-          for project in "${inputs.projectToTests}"
+          for project in "${{ fromJson(inputs.dotnetVersion) }}"
           do
             echo "Empaqueter le projet $project"
             dotnet publish $project --configuration Release --output ${{ inputs.packagePath }}/unittest
