@@ -39,9 +39,10 @@ jobs:
 
       - name: Publish Unit Tests
         run: |
-          for project in "${{ fromJSON(['./MyDisk.Services.Tests.csproj',  './MyDisk.Api.Tests.csproj']) }}"
+          array=("'./MyDisk.Services.Tests.csproj'" "'./MyDisk.Api.Tests.csproj'")
+          for val in "${array[@]}"; 
           do
-            echo "Empaqueter le projet $project"
+            echo "$val"
           done
 
 #            dotnet publish $project --configuration Release --output ${{ inputs.packagePath }}/unittest
