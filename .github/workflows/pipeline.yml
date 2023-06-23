@@ -17,7 +17,7 @@ jobs:
       dotnetVersion: '7.x'
       packagePath: './out'
       artifactName: 'packages'
-      projectToTests: ${{ env.PROJECTS_TO_TESTS }}
+      projectToTests: "['./MyDisk.Services.Tests.csproj',  './MyDisk.Api.Tests.csproj']"
   UnitTest:
     needs: Build
     uses: ./.github/workflows/unit-test.yml
