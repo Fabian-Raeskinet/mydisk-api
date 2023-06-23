@@ -40,10 +40,10 @@ jobs:
       - name: Publish Unit Tests
         run: |
           - array = ${{ fromJson(inputs.projectToTests) }}
-          for project in "${array[@]}"
-          do
-            echo "Empaqueter le projet $project"
-          done
+          - for project in "${array[@]}"
+            do
+              echo "Empaqueter le projet $project"
+            done
 
 #            dotnet publish $project --configuration Release --output ${{ inputs.packagePath }}/unittest
       - name: Publish unit test Artifact
