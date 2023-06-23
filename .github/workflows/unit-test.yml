@@ -28,13 +28,13 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: ${{ inputs.artifactName }}
-          path: ${{ inputs.packagePath }}/webapp
+          path: ${{ inputs.packagePath }}/unittest/service
 
       - name: Installer tree
         run: sudo apt-get install tree
 
       - name: Afficher l'arborescence
-        run: tree ${{ inputs.packagePath }}/webapp
+        run: tree ${{ inputs.packagePath }}/unittest/service
           
       - uses: actions/checkout@v3
       - name: Setup .NET

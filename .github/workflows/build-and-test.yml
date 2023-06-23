@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ inputs.artifactName }}
-          path: ${{ inputs.packagePath }}/unittest
+          path: ${{ inputs.packagePath }}/unittest/service
           
       - name: Publish Web App
         run: dotnet publish --configuration Release --output ${{ inputs.packagePath }}/webapp
