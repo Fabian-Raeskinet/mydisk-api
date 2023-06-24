@@ -16,8 +16,8 @@ parameters:
 
 jobs:
   - deployment: Deploy
-    displayName: 'Deploy in ${{ parameters.env }}'
-    environment: ${{ parameters.env }}
+#    displayName: 'Deploy in ${{ parameters.env }}'
+#    environment: ${{ parameters.env }}
     pool:
       vmImage: 'windows-latest'
     strategy:

@@ -10,7 +10,7 @@ stages:
     jobs:
       - template: azure-pipelines-deploy.template.yml
         parameters:
-          env: 'Integration'
+#          env: 'Integration'
           azureSubscription: 'Abonnement Visual Studio Professional'
           resourceGroupName: 'MyDisk'
           webAppName: 'my-disks'
