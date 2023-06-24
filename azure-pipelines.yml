@@ -18,7 +18,7 @@ jobs:
         displayName: 'Build solution'
         inputs:
           command: 'build'
-          projects: '$(solution)'
+          projects: '**/*.sln'
           arguments: '--no-restore --configuration $(buildConfiguration) --no-incremental'
 
       - task: DotNetCoreCLI@2
