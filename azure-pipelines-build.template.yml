@@ -20,8 +20,8 @@ jobs:
         displayName: 'Build solution'
         inputs:
           command: 'build'
-          projects: '$(solution)'
-          arguments: '--no-restore --configuration $(buildConfiguration) --no-incremental'
+          projects: ${{ parameters.solution }}
+          arguments: '--no-restore --configuration ${{ parameters.buildConfiguration }} --no-incremental'
 
       - task: DotNetCoreCLI@2
         displayName: 'Publish Unit tests'
@@ -29,7 +29,7 @@ jobs:
           command: 'publish'
           publishWebProjects: false
           projects: '**/*.Tests.csproj'
-          arguments: '--no-build --configuration $(buildConfiguration) --output out/tests'
+          arguments: '--no-build --configuration ${{ parameters.buildConfiguration }} --output out/tests'
           zipAfterPublish: false
           modifyOutputPath: false
 
