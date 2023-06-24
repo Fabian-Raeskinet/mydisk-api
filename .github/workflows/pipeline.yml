@@ -35,22 +35,3 @@ jobs:
       artifactName: 'packages'
     secrets:
       AZURE_PUBLISH_PROFILE: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-  sync:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install Azure CLI
-        uses: azure/CLI@v1
-
-      - name: Login to Azure
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-      - name: Clone Azure Repos
-        run: |
-          az repos clone create --name MyDisks --organization mydisks --project MyDisks --repository MyDisks --source-url ${{ github.repository }} --source-branch ${{ github.ref }}
-          cd <azure_repos>
