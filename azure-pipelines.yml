@@ -40,6 +40,5 @@ jobs:
         inputs:
           command: 'test'
           projects: 'out/tests/*.Tests.dll'
-          arguments: '--collect:"XPlat Code Coverage" --logger trx --results-directory out/test-results --settings $(Build.SourcesDirectory)/src/coverlet.ut.runsettings'
           publishTestResults: false
           testRunTitle: 'Unit tests'
