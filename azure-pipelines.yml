@@ -1,5 +1,9 @@
 trigger:
   - features/*
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
 jobs:
   - job: Compile
     displayName: 'Compile and execute unit tests'
@@ -18,7 +22,7 @@ jobs:
         displayName: 'Build solution'
         inputs:
           command: 'build'
-          projects: '**/*.sln'
+          projects: '$(solution)'
           arguments: '--no-restore --configuration $(buildConfiguration) --no-incremental'
 
       - task: DotNetCoreCLI@2
