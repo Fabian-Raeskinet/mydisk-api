@@ -11,8 +11,8 @@ parameters:
 #    type: string
 #  - name: dataBaseUser
 #    type: string
-  - name: env
-    type: string
+#  - name: env
+#    type: string
 
 jobs:
   - deployment: Deploy
