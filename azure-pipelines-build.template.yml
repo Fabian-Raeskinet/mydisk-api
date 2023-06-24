@@ -1,0 +1,42 @@
+variables:
+  solution: '**/*.sln'
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+jobs:
+  - job: Compile
+    displayName: 'Compile and execute unit tests'
+    pool:
+      vmImage: 'windows-latest'
+    steps:
+      - task: DotNetCoreCLI@2
+        displayName: 'Restore nuget'
+        inputs:
+          command: 'restore'
+          projects: '**/*.sln'
+          feedsToUse: 'config'
+          nugetConfigPath: '$(Build.SourcesDirectory)/Nuget.config'
+
+      - task: DotNetCoreCLI@2
+        displayName: 'Build solution'
+        inputs:
+          command: 'build'
+          projects: '$(solution)'
+          arguments: '--no-restore --configuration $(buildConfiguration) --no-incremental'
+
+      - task: DotNetCoreCLI@2
+        displayName: 'Publish Unit tests'
+        inputs:
+          command: 'publish'
+          publishWebProjects: false
+          projects: '**/*.Tests.csproj'
+          arguments: '--no-build --configuration $(buildConfiguration) --output out/tests'
+          zipAfterPublish: false
+          modifyOutputPath: false
+
+      - task: DotNetCoreCLI@2
+        displayName: 'Run unit tests'
+        inputs:
+          command: 'test'
+          projects: 'out/tests/*.Tests.dll'
+          publishTestResults: false
+          testRunTitle: 'Unit tests'

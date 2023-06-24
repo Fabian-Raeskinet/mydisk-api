@@ -50,6 +50,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipelines", "Pipelines", "{9A09C49C-CCCF-4C26-AA04-267E632CFA56}"
 	ProjectSection(SolutionItems) = preProject
 		azure-pipelines.yml = azure-pipelines.yml
+		azure-pipelines-build.template.yml = azure-pipelines-build.template.yml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RandomServices", "RandomServices\RandomServices.csproj", "{83C8843C-1ED4-494C-8AD0-16106CD6D635}"
