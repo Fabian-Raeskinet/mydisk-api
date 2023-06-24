@@ -2,6 +2,6 @@ trigger:
   - features/*
   
 stages:
-  - stage: Commit_Api
+  - stage: Commit
     jobs:
       - template: azure-pipelines-build.template.yml

@@ -1,0 +1,44 @@
+parameters:
+  - name: azureSubscription
+    type: string
+  - name: resourceGroupName
+    type: string
+  - name: webAppName
+    type: string
+  - name: slotName
+    type: string
+  - name: dataBaseConnectionString
+    type: string
+  - name: dataBaseUser
+    type: string
+  - name: env
+    type: string
+
+jobs:
+  - deployment: Deploy
+    displayName: 'Deploy in ${{ parameters.env }}'
+    environment: ${{ parameters.env }}
+    pool:
+      vmImage: 'windows-latest'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - download: current
+              displayName: 'Download WebApp artifact'
+              artifact: web
+
+            - task: AzureRmWebAppDeployment@4
+              displayName: 'Deploy webapp & webjobs'
+              inputs:
+                ConnectionType: 'AzureRM'
+                azureSubscription: ${{ parameters.azureSubscription }}
+                appType: 'apiApp'
+                WebAppName: ${{ parameters.webAppName }}
+                deployToSlotOrASE: true
+                ResourceGroupName: ${{ parameters.resourceGroupName }}
+                SlotName: ${{ parameters.slotName }}
+                packageForLinux: '$(Pipeline.Workspace)/web'
+                enableCustomDeployment: true
+                DeploymentType: 'webDeploy'
+                ExcludeFilesFromAppDataFlag: false
