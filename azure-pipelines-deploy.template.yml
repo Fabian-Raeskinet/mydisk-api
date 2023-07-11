@@ -32,7 +32,7 @@ jobs:
               displayName: 'Deploy webapp & webjobs'
               inputs:
                 ConnectionType: 'AzureRM'
-                azureSubscription: ${{ parameters.azureSubscription }}
+                azureSubscription: 'Abonnement Visual Studio Professional'
                 appType: 'apiApp'
                 WebAppName: ${{ parameters.webAppName }}
                 deployToSlotOrASE: false
