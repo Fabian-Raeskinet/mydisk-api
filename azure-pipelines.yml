@@ -15,6 +15,3 @@ stages:
           resourceGroupName: 'MyDisk'
           webAppName: 'my-disks'
           slotName: 'production'
-#          dataBaseConnectionString: $(stakeholder-store-connection-string-int)
-#          dataBaseUser: StakeholderRepositoryUser
-          
