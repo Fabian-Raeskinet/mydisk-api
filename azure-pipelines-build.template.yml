@@ -40,3 +40,13 @@ jobs:
           projects: 'out/tests/*.Tests.dll'
           publishTestResults: false
           testRunTitle: 'Unit tests'
+          
+      - task: DotNetCoreCLI@2
+        displayName: 'Publish web app'
+        inputs:
+          command: 'publish'
+          publishWebProjects: false
+          projects: 'MyDisk.Api/*.csproj'
+          arguments: '--no-build --configuration $(buildConfiguration) --output out/webapp'
+          modifyOutputPath: false
+          zipAfterPublish: false
