@@ -26,12 +26,12 @@ jobs:
 #      packagePath: './out'
 #      artifactName: 'packages'
     
-  Deploy:
-    needs: Build
-    uses: ./.github/workflows/deploy.yml
-    with:
-      appName: 'my-disks'
-      packagePath: './out'
-      artifactName: 'packages'
-    secrets:
-      AZURE_PUBLISH_PROFILE: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+#    Deploy:
+#      needs: Build
+#      uses: ./.github/workflows/deploy.yml
+#      with:
+#        appName: 'my-disks'
+#        packagePath: './out'
+#        artifactName: 'packages'
+#      secrets:
+#        AZURE_PUBLISH_PROFILE: ${{ secrets.AZURE_PUBLISH_PROFILE }}
