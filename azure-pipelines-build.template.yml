@@ -46,7 +46,7 @@ jobs:
         inputs:
           command: 'publish'
           publishWebProjects: false
-          projects: '**/*.Api.csproj'
-          arguments: '--no-build --configuration $(buildConfiguration) --output out/webapp'
+          projects: 'MyDisk.Api.csproj'
+          arguments: '--no-build --configuration ${{ parameters.buildConfiguration }} --output out/webapp'
           modifyOutputPath: false
           zipAfterPublish: false
