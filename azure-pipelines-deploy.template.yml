@@ -38,6 +38,7 @@ jobs:
                 deployToSlotOrASE: false
                 ResourceGroupName: ${{ parameters.resourceGroupName }}
                 SlotName: ${{ parameters.slotName }}
+                packageForLinux: '$(Pipeline.Workspace)/web'
                 enableCustomDeployment: true
                 DeploymentType: 'webDeploy'
                 ExcludeFilesFromAppDataFlag: false
