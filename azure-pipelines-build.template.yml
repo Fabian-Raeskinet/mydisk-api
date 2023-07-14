@@ -50,3 +50,10 @@ jobs:
           arguments: '--no-build --configuration ${{ parameters.buildConfiguration }} --output out/webapp'
           modifyOutputPath: false
           zipAfterPublish: false
+          
+      - task: PublishPipelineArtifact@1
+        displayName: 'Publish webapp artifact'
+        inputs:
+          targetPath: 'out/webapp'
+          artifact: 'web'
+          publishLocation: 'pipeline'

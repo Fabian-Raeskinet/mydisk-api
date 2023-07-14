@@ -26,7 +26,7 @@ jobs:
           steps:
             - download: current
               displayName: 'Download WebApp artifact'
-              artifact: 'out/webapp'
+              artifact: 'web'
 
             - task: AzureRmWebAppDeployment@4
               displayName: 'Deploy webapp & webjobs'
@@ -38,7 +38,6 @@ jobs:
                 deployToSlotOrASE: false
                 ResourceGroupName: ${{ parameters.resourceGroupName }}
                 SlotName: ${{ parameters.slotName }}
-                packageForLinux: '$(Pipeline.Workspace)/web'
                 enableCustomDeployment: true
                 DeploymentType: 'webDeploy'
                 ExcludeFilesFromAppDataFlag: false
