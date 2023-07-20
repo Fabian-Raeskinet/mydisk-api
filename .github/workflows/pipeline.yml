@@ -5,41 +5,33 @@ on:
     branches:
       - master
       - develop
-      - features/pipeline
-      
+      - features/*
+
 env:
-  AZURE_WEBAPP_NAME: my-disks
-  AZURE_WEBAPP_PACKAGE_PATH: "./publish"
+  PROJECTS_TO_TESTS: "['./MyDisk.Services.Tests.csproj',  './MyDisk.Api.Tests.csproj']"
 
 jobs:
-  publish:
-    runs-on: windows-latest
+  Build:
+    uses: ./.github/workflows/build-and-test.yml
+    with:
+      dotnetVersion: '7.x'
+      packagePath: './out'
+      artifactName: 'packages'
+      projectToTests: "['./MyDisk.Services.Tests.csproj',  './MyDisk.Api.Tests.csproj']"
+#  UnitTest:
+#    needs: UnitTest
+#    uses: ./.github/workflows/unit-test.yml
+#    with:
+#      dotnetVersion: '7.x'
+#      packagePath: './out'
+#      artifactName: 'packages'
     
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '7.0.x'
-
-      - name: Restore
-        run: dotnet restore ./mydisk-api.sln
-
-      - name: Build
-        run: dotnet build ./mydisk-api.sln --configuration Release --no-restore
-
-      - name: Test
-        run: dotnet test --no-restore
-
-      - name: Publish
-        run: dotnet publish ./mydisk-api.sln --configuration Release --no-build --output '${{ env.AZURE_WEBAPP_PACKAGE_PATH }}'
-
-      - name: Test
-        run: dotnet test --no-restore
-        
-      - name: Deployment
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ env.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
-          package: "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+#    Deploy:
+#      needs: Build
+#      uses: ./.github/workflows/deploy.yml
+#      with:
+#        appName: 'my-disks'
+#        packagePath: './out'
+#        artifactName: 'packages'
+#      secrets:
+#        AZURE_PUBLISH_PROFILE: ${{ secrets.AZURE_PUBLISH_PROFILE }}

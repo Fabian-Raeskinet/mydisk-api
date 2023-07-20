@@ -1,0 +1,75 @@
+name: Build ⚙️
+on:
+  workflow_call:
+    inputs:
+      dotnetVersion:
+        description: 'value of the .NET version'
+        required: true
+        type: string
+      vmImage:
+        description: 'image of the vm'
+        required: false
+        default: ubuntu-latest
+        type: string
+      packagePath:
+        required: true
+        type: string
+      artifactName:
+        required: true
+        type: string
+      projectToTests:
+        required: true
+        type: string
+
+jobs:
+  Build:
+    runs-on: ${{ inputs.vmImage }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ inputs.dotnetVersion }}
+
+      - name: Restore
+        run: dotnet restore ./mydisk-api.sln
+
+      - name: Build
+        run: dotnet build ./mydisk-api.sln --configuration Release --no-restore
+        
+      - name: Test
+        run: dotnet test
+
+      - name: Publish Web App
+        run: dotnet publish --configuration Release --output ${{ inputs.packagePath }}/webapp
+
+      - name: Publish Web App Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ inputs.artifactName }}
+          path: ${{ inputs.packagePath }}/webapp
+          
+          
+
+#      - name: Publish Unit Test Artifacts
+#        run: |
+#          find . -name "*.Tests.csproj" -type f -print0 | while IFS= read -r -d $'\0' file; do
+#          echo "$file"
+#          dotnet publish "$file" --configuration Release --output ./out/unittest
+#          done
+#          
+#      - name: Publish unit test Artifact
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: ${{ inputs.artifactName }}
+#          path: ${{ inputs.packagePath }}/unittest
+#          
+#      - name: Check Artifact Contents
+#        run: |
+#          if [[ $(find ./out/unittest -type f | grep -E "\.Tests\.csproj$" | wc -l) -eq $(find ./out/unittest -type f | wc -l) ]]; then
+#            echo "L'artefact contient uniquement les projets de tests."
+#          else
+#            echo "L'artefact contient d'autres fichiers en plus des projets de tests."
+#            exit 1
+#          fi
+#          
