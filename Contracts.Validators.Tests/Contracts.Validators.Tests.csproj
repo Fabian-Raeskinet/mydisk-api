@@ -6,6 +6,10 @@
         <Nullable>enable</Nullable>
 
         <IsPackable>false</IsPackable>
+
+        <AssemblyName>MyDisks.Contracts.Validators.Tests</AssemblyName>
+
+        <RootNamespace>MyDisks.Contracts.Validators.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -26,8 +30,8 @@
     <ItemGroup>
         <ProjectReference Include="..\Contracts.Validators\Contracts.Validators.csproj" />
         <ProjectReference Include="..\Contracts\Contracts.csproj" />
-        <ProjectReference Include="..\MyDisk.Services\MyDisk.Services.csproj" />
-        <ProjectReference Include="..\MyDisk.Tests.Services\MyDisk.Tests.Services.csproj" />
+        <ProjectReference Include="..\Services\Services.csproj" />
+        <ProjectReference Include="..\Tests.Services\Tests.Services.csproj" />
     </ItemGroup>
 
 </Project>

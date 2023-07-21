@@ -1,6 +1,6 @@
 using FluentAssertions;
 using MyDisk.Domain.Entities;
-using MyDisk.Infrastructure.Repositories;
+using MyDisks.Data;
 using MyDisk.Tests.Domain;
 
 namespace MyDisk.Data.IntegrationTests;
