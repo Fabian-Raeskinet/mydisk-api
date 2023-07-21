@@ -4,6 +4,8 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>MyDisk.Tests.Api</RootNamespace>
+        <AssemblyName>MyDisk.Tests.Api</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
@@ -12,7 +14,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MyDisk.Api\MyDisk.Api.csproj" />
+      <ProjectReference Include="..\Api\Api.csproj" />
     </ItemGroup>
 
 </Project>

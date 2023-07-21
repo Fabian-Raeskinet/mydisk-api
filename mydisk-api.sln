@@ -3,17 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyDisk.Api", "MyDisk.Api\MyDisk.Api.csproj", "{72E993AC-7BD6-41D0-922F-EC66A0EF9F46}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Api\Api.csproj", "{72E993AC-7BD6-41D0-922F-EC66A0EF9F46}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{93CEA3DD-C019-483B-A716-CBB8457F60A9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{02A63BAA-E5DC-47FC-B347-9C03D0CA224C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Api.Tests", "MyDisk.Api.Tests\MyDisk.Api.Tests.csproj", "{E45B1D9B-0B44-4A09-BD16-CEFC11F039BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Tests", "Api.Tests\Api.Tests.csproj", "{E45B1D9B-0B44-4A09-BD16-CEFC11F039BF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Tests", "Domain.Tests\Domain.Tests.csproj", "{870C1525-192B-446A-9663-5217966790C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Services.Tests", "MyDisk.Services.Tests\MyDisk.Services.Tests.csproj", "{B84FE21A-BCBA-4790-BE06-90D448E7C6CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Tests", "Services.Tests\Services.Tests.csproj", "{B84FE21A-BCBA-4790-BE06-90D448E7C6CA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{AF2E4B42-8CEE-4C43-9C5D-D984B42FEA3C}"
 EndProject
@@ -27,15 +27,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interfaces", "Interfaces", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8A4D5B92-342B-4ADD-BDF0-214FC709E4A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Tests.Domain", "MyDisk.Tests.Domain\MyDisk.Tests.Domain.csproj", "{9B5FBDF7-7427-4AF5-B10E-FC86A9651643}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Domain", "Tests.Domain\Tests.Domain.csproj", "{9B5FBDF7-7427-4AF5-B10E-FC86A9651643}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Tests.Services", "MyDisk.Tests.Services\MyDisk.Tests.Services.csproj", "{7020AE84-13F2-4E67-BDED-E5DFDBCF6CEF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Services", "Tests.Services\Tests.Services.csproj", "{7020AE84-13F2-4E67-BDED-E5DFDBCF6CEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Tests.Api", "MyDisk.Tests.Api\MyDisk.Tests.Api.csproj", "{BFC565D4-99FA-425E-9E90-D1F48C492C6C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Api", "Tests.Api\Tests.Api.csproj", "{BFC565D4-99FA-425E-9E90-D1F48C492C6C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetryService", "RetryService\RetryService.csproj", "{C6ED47B2-101D-4C6D-A331-129BD35F9E60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Tests.Utils", "MyDisk.Tests.Utils\MyDisk.Tests.Utils.csproj", "{1678E160-8C60-423C-8304-9CB33549F130}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Utils", "Tests.Utils\Tests.Utils.csproj", "{1678E160-8C60-423C-8304-9CB33549F130}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "Contracts\Contracts.csproj", "{86B7A267-E805-4C18-AA4C-13423DED6D4C}"
 EndProject
@@ -43,7 +43,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts.Validators", "Con
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts.Validators.Tests", "Contracts.Validators.Tests\Contracts.Validators.Tests.csproj", "{CB04FCA7-92E0-4290-9445-FE334A078FDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.RetryService.Tests", "MyDisk.RetryService.Tests\MyDisk.RetryService.Tests.csproj", "{9ED360F7-3372-4619-A78A-9AB4A54F0181}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetryService.Tests", "RetryService.Tests\RetryService.Tests.csproj", "{9ED360F7-3372-4619-A78A-9AB4A54F0181}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipelines", "Pipelines", "{9A09C49C-CCCF-4C26-AA04-267E632CFA56}"
 	ProjectSection(SolutionItems) = preProject

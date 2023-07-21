@@ -6,6 +6,10 @@
         <Nullable>enable</Nullable>
 
         <IsPackable>false</IsPackable>
+
+        <RootNamespace>MyDisk.RetryService.Tests</RootNamespace>
+
+        <AssemblyName>MyDisk.RetryService.Tests</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
@@ -23,8 +27,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\RetryService\RetryService.csproj" />
-      <ProjectReference Include="..\MyDisk.Tests.Services\MyDisk.Tests.Services.csproj" />
-      <ProjectReference Include="..\MyDisk.Tests.Utils\MyDisk.Tests.Utils.csproj" />
+      <ProjectReference Include="..\Tests.Services\Tests.Services.csproj" />
+      <ProjectReference Include="..\Tests.Utils\Tests.Utils.csproj" />
     </ItemGroup>
 
 </Project>

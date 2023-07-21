@@ -4,6 +4,8 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>MyDisk.Api</RootNamespace>
+        <AssemblyName>MyDisk.Api</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
