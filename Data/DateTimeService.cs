@@ -1,6 +1,6 @@
 ﻿using MyDisk.Domain;
 
-namespace MyDisk.Infrastructure.Services;
+namespace MyDisks.Data;
 
 public class DateTimeService : IDateTime
 {

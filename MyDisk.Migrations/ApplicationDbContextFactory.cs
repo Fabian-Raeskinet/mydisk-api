@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using MyDisk.Infrastructure.Persistence;
+using MyDisks.Data;
 
 namespace MyDisk.Migrations;
 

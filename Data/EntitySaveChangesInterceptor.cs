@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using MyDisk.Domain;
 using MyDisk.Domain.Entities;
 
-namespace MyDisk.Infrastructure.Persistence.Interceptors;
+namespace MyDisks.Data;
 
 public class EntitySaveChangesInterceptor : SaveChangesInterceptor
 {

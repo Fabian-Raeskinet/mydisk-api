@@ -28,7 +28,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MyDisk.Infrastructure\MyDisk.Infrastructure.csproj" />
+      <ProjectReference Include="..\Data\Data.csproj" />
       <ProjectReference Include="..\MyDisk.Tests.Domain\MyDisk.Tests.Domain.csproj" />
       <ProjectReference Include="..\MyDisk.Tests.Utils\MyDisk.Tests.Utils.csproj" />
     </ItemGroup>

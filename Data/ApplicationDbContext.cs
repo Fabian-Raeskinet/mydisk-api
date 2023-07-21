@@ -1,10 +1,8 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using MyDisk.Domain.Entities;
-using MyDisk.Infrastructure.Interfaces;
-using MyDisk.Infrastructure.Persistence.Interceptors;
 
-namespace MyDisk.Infrastructure.Persistence;
+namespace MyDisks.Data;
 
 public class ApplicationDbContext : DbContext, IApplicationDbContext
 {

@@ -2,9 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using MyDisk.Domain;
 using MyDisk.Domain.Entities;
-using MyDisk.Infrastructure.Interfaces;
 
-namespace MyDisk.Infrastructure.Repositories;
+namespace MyDisks.Data;
 
 public class AuthorRepository : IAuthorRepository
 {

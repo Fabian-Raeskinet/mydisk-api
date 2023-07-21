@@ -2,13 +2,9 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyDisk.Domain;
-using MyDisk.Infrastructure.Interfaces;
-using MyDisk.Infrastructure.Persistence;
-using MyDisk.Infrastructure.Persistence.Interceptors;
 using MyDisk.Infrastructure.Repositories;
-using MyDisk.Infrastructure.Services;
 
-namespace MyDisk.Infrastructure;
+namespace MyDisks.Data;
 
 public static class DependencyInjection
 {

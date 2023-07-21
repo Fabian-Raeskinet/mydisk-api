@@ -14,7 +14,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Contracts.Validators\Contracts.Validators.csproj" />
-        <ProjectReference Include="..\MyDisk.Infrastructure\MyDisk.Infrastructure.csproj" />
+        <ProjectReference Include="..\Data\Data.csproj" />
         <ProjectReference Include="..\MyDisk.RetryService\MyDisk.RetryService.csproj" />
         <ProjectReference Include="..\MyDisk.Services\MyDisk.Services.csproj" />
     </ItemGroup>

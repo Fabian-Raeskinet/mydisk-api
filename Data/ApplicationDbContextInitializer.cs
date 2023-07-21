@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 using MyDisk.Domain.Entities;
 
-namespace MyDisk.Infrastructure.Persistence;
+namespace MyDisks.Data;
 
 public class ApplicationDbContextInitializer
 {

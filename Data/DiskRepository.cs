@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MyDisk.Domain;
 using MyDisk.Domain.Entities;
-using MyDisk.Infrastructure.Interfaces;
+using MyDisks.Data;
 
 namespace MyDisk.Infrastructure.Repositories;
 
