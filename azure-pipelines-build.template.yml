@@ -46,7 +46,7 @@ jobs:
         inputs:
           command: 'publish'
           publishWebProjects: false
-          projects: '**/Data.IntegrationTests.csproj'
+          projects: '**/MyDisk.Data.IntegrationTests.csproj'
           arguments: '--no-build --configuration ${{ parameters.buildConfiguration }} --output out/data-integration-tests'
           zipAfterPublish: false
           modifyOutputPath: false
