@@ -4,8 +4,8 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <AssemblyName>MyDisk.Contracts.Validators</AssemblyName>
-        <RootNamespace>MyDisk.Contracts.Validators</RootNamespace>
+        <AssemblyName>MyDisks.Contracts.Validators</AssemblyName>
+        <RootNamespace>MyDisks.Contracts.Validators</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

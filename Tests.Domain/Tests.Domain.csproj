@@ -4,7 +4,8 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>MyDisk.Tests.Domain</RootNamespace>
+        <RootNamespace>MyDisks.Tests.Domain</RootNamespace>
+        <AssemblyName>MyDisksTests.Domain</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>

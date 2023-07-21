@@ -7,9 +7,9 @@
 
         <IsPackable>false</IsPackable>
 
-        <RootNamespace>MyDisk.RetryService.Tests</RootNamespace>
+        <RootNamespace>MyDisks.RetryService.Tests</RootNamespace>
 
-        <AssemblyName>MyDisk.RetryService.Tests</AssemblyName>
+        <AssemblyName>MyDisks.RetryService.Tests</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>

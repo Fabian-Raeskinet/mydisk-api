@@ -7,9 +7,9 @@
 
         <IsPackable>false</IsPackable>
 
-        <AssemblyName>MyDisk.Data.IntegrationTests</AssemblyName>
+        <AssemblyName>MyDisks.Data.IntegrationTests</AssemblyName>
 
-        <RootNamespace>MyDisk.Data.IntegrationTests</RootNamespace>
+        <RootNamespace>MyDisks.Data.IntegrationTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

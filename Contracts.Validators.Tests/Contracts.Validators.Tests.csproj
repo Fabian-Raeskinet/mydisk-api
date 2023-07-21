@@ -7,9 +7,9 @@
 
         <IsPackable>false</IsPackable>
 
-        <AssemblyName>MyDisk.Contracts.Validators.Tests</AssemblyName>
+        <AssemblyName>MyDisks.Contracts.Validators.Tests</AssemblyName>
 
-        <RootNamespace>MyDisk.Contracts.Validators.Tests</RootNamespace>
+        <RootNamespace>MyDisks.Contracts.Validators.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

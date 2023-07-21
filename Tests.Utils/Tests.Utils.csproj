@@ -4,7 +4,8 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>MyDisk.Tests.Utils</RootNamespace>
+        <RootNamespace>MyDisks.Tests.Utils</RootNamespace>
+        <AssemblyName>MyDisksTests.Utils</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>

@@ -5,8 +5,8 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <BaseOutputPath>..\MyDisk\bin\</BaseOutputPath>
-        <RootNamespace>MyDisk.Data.Migrations</RootNamespace>
-        <AssemblyName>MyDisk.Data.Migrations</AssemblyName>
+        <RootNamespace>MyDisks.Data.Migrations</RootNamespace>
+        <AssemblyName>MyDisks.Data.Migrations</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>

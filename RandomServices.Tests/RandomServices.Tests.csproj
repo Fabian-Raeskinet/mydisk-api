@@ -7,9 +7,9 @@
 
         <IsPackable>false</IsPackable>
 
-        <AssemblyName>MyDisk.RandomServices.Tests</AssemblyName>
+        <AssemblyName>MyDisks.RandomServices.Tests</AssemblyName>
 
-        <RootNamespace>MyDisk.RandomServices.Tests</RootNamespace>
+        <RootNamespace>MyDisks.RandomServices.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

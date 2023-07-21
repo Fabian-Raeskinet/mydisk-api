@@ -4,8 +4,8 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <RootNamespace>MyDisk.Tests.Api</RootNamespace>
-        <AssemblyName>MyDisk.Tests.Api</AssemblyName>
+        <RootNamespace>MyDisks.Tests.Api</RootNamespace>
+        <AssemblyName>MyDisks.Tests.Api</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>

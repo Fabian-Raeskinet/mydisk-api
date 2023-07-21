@@ -4,8 +4,8 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <AssemblyName>MyDisk.RandomServices</AssemblyName>
-        <RootNamespace>MyDisk.RandomServices</RootNamespace>
+        <AssemblyName>MyDisks.RandomServices</AssemblyName>
+        <RootNamespace>MyDisks.RandomServices</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
