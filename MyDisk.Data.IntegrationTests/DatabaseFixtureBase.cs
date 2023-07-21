@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using MyDisk.Infrastructure.Persistence;
@@ -15,14 +14,11 @@ public class DatabaseFixtureBase : IDisposable
         optionsBuilder.UseSqlServer(JsonSettings.XUnit.GetConnectionString("SqlServerConnection"));
         DbContext = CreateApplicationDbContext(optionsBuilder);
 
-        Database = DbContext.Database;
-
         DbContext.Database.OpenConnection();
         DbContextTransaction = DbContext.Database.BeginTransaction();
     }
 
     protected ApplicationDbContext DbContext { get; }
-    private DatabaseFacade Database { get; }
     private IDbContextTransaction DbContextTransaction { get; }
     private ServiceProvider ServiceProvider { get; set; }
 
