@@ -1,0 +1,41 @@
+name: Deploy 🚀
+on:
+  workflow_call:
+    inputs:
+      appName:
+        description: 'name of the app'
+        required: true
+        type: string
+      vmImage:
+        description: 'image of the vm'
+        required: false
+        default: ubuntu-latest
+        type: string
+      packagePath:
+        required: true
+        type: string
+      artifactName:
+        required: true
+        type: string
+    secrets:
+      AZURE_PUBLISH_PROFILE:
+        required: true
+        description: 'publish profile'
+
+jobs:
+  Deploy:
+    runs-on: ${{ inputs.vmImage }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Download Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ inputs.artifactName }}
+          path: ${{ inputs.packagePath }}/webapp
+        
+      - name: Deployment
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ inputs.appName }}
+          publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}
+          package: ${{ inputs.packagePath }}/webapp
