@@ -40,6 +40,16 @@ jobs:
           projects: 'out/tests/*.Tests.dll'
           publishTestResults: false
           testRunTitle: 'Unit tests'
+
+      - task: DotNetCoreCLI@2
+        displayName: 'Publish data integration tests'
+        inputs:
+          command: 'publish'
+          publishWebProjects: false
+          projects: '**/Data.IntegrationTests.csproj'
+          arguments: '--no-build --configuration ${{ parameters.buildConfiguration }} --output out/data-integration-tests'
+          zipAfterPublish: false
+          modifyOutputPath: false
           
       - task: DotNetCoreCLI@2
         displayName: 'Publish web app'
@@ -56,4 +66,11 @@ jobs:
         inputs:
           targetPath: 'out/webapp'
           artifact: 'web'
+          publishLocation: 'pipeline'
+          
+      - task: PublishPipelineArtifact@1
+        displayName: 'Publish data integration tests artifact'
+        inputs:
+          targetPath: 'out/data-integration-tests'
+          artifact: 'data-integration-tests'
           publishLocation: 'pipeline'

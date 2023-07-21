@@ -1,11 +1,11 @@
 trigger:
   - features/*
-  
+
 stages:
   - stage: Commit
     jobs:
       - template: azure-pipelines-build.template.yml
-        
+
   - stage: Deploy_Integration
     jobs:
       - template: azure-pipelines-deploy.template.yml
@@ -15,3 +15,13 @@ stages:
           resourceGroupName: 'MyDisk'
           webAppName: 'my-disks'
           slotName: 'production'
+          
+  - stage: Run_Data_Integration_Test
+    jobs:
+      - template: azure-pipelines-test.template.yml
+        parameters:
+          env: 'Integration'
+          testAssemblyName: '*.IntegrationTests.dll'
+          artifact: 'data-integration-tests'
+          azureSubscription: 'MyDisk'
+          dataBaseConnectionString: $(MyDisksDatabaseConnectionString)
