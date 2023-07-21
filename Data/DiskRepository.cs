@@ -2,9 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using MyDisk.Domain;
 using MyDisk.Domain.Entities;
-using MyDisks.Data;
 
-namespace MyDisk.Infrastructure.Repositories;
+namespace MyDisks.Data;
 
 public class DiskRepository : IDiskRepository
 {

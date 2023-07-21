@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyDisk.Domain;
-using MyDisk.Infrastructure.Repositories;
 
 namespace MyDisks.Data;
 
