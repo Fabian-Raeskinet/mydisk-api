@@ -24,9 +24,9 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Contracts.Validators\Contracts.Validators.csproj" />
-        <ProjectReference Include="..\MyDisk.Domain.Tests\MyDisk.Domain.Tests.csproj" />
-        <ProjectReference Include="..\MyDisk.Domain\MyDisk.Domain.csproj" />
-        <ProjectReference Include="..\MyDisk.Services\MyDisk.Services.csproj" />
+        <ProjectReference Include="..\Domain.Tests\Domain.Tests.csproj" />
+        <ProjectReference Include="..\Domain\Domain.csproj" />
+        <ProjectReference Include="..\Services\Services.csproj" />
         <ProjectReference Include="..\MyDisk.Tests.Services\MyDisk.Tests.Services.csproj" />
         <ProjectReference Include="..\MyDisk.Tests.Utils\MyDisk.Tests.Utils.csproj" />
     </ItemGroup>

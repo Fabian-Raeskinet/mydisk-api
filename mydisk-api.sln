@@ -5,19 +5,19 @@ VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyDisk.Api", "MyDisk.Api\MyDisk.Api.csproj", "{72E993AC-7BD6-41D0-922F-EC66A0EF9F46}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyDisk.Domain", "MyDisk.Domain\MyDisk.Domain.csproj", "{93CEA3DD-C019-483B-A716-CBB8457F60A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{93CEA3DD-C019-483B-A716-CBB8457F60A9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyDisk.Services", "MyDisk.Services\MyDisk.Services.csproj", "{02A63BAA-E5DC-47FC-B347-9C03D0CA224C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{02A63BAA-E5DC-47FC-B347-9C03D0CA224C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Api.Tests", "MyDisk.Api.Tests\MyDisk.Api.Tests.csproj", "{E45B1D9B-0B44-4A09-BD16-CEFC11F039BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Domain.Tests", "MyDisk.Domain.Tests\MyDisk.Domain.Tests.csproj", "{870C1525-192B-446A-9663-5217966790C0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Tests", "Domain.Tests\Domain.Tests.csproj", "{870C1525-192B-446A-9663-5217966790C0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Services.Tests", "MyDisk.Services.Tests\MyDisk.Services.Tests.csproj", "{B84FE21A-BCBA-4790-BE06-90D448E7C6CA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{AF2E4B42-8CEE-4C43-9C5D-D984B42FEA3C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Migrations", "MyDisk.Migrations\MyDisk.Migrations.csproj", "{1D663875-0D7C-4194-BB8F-C2CBC48DF380}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.Migrations", "Data.Migrations\Data.Migrations.csproj", "{1D663875-0D7C-4194-BB8F-C2CBC48DF380}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Business", "Business", "{935DC1B5-FE87-4665-B03B-0CBADAF40DCD}"
 EndProject
@@ -33,7 +33,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Tests.Services", "My
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Tests.Api", "MyDisk.Tests.Api\MyDisk.Tests.Api.csproj", "{BFC565D4-99FA-425E-9E90-D1F48C492C6C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.RetryService", "MyDisk.RetryService\MyDisk.RetryService.csproj", "{C6ED47B2-101D-4C6D-A331-129BD35F9E60}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetryService", "RetryService\RetryService.csproj", "{C6ED47B2-101D-4C6D-A331-129BD35F9E60}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Tests.Utils", "MyDisk.Tests.Utils\MyDisk.Tests.Utils.csproj", "{1678E160-8C60-423C-8304-9CB33549F130}"
 EndProject

@@ -6,6 +6,10 @@
         <Nullable>enable</Nullable>
 
         <IsPackable>false</IsPackable>
+
+        <AssemblyName>MyDisk.RandomServices.Tests</AssemblyName>
+
+        <RootNamespace>MyDisk.RandomServices.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

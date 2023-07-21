@@ -4,6 +4,8 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>MyDisk.Services</RootNamespace>
+        <AssemblyName>MyDisk.Services</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
@@ -16,8 +18,8 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Contracts\Contracts.csproj" />
-        <ProjectReference Include="..\MyDisk.Domain\MyDisk.Domain.csproj" />
-        <ProjectReference Include="..\MyDisk.RetryService\MyDisk.RetryService.csproj" />
+        <ProjectReference Include="..\Domain\Domain.csproj" />
+        <ProjectReference Include="..\RetryService\RetryService.csproj" />
         <ProjectReference Include="..\RandomServices\RandomServices.csproj" />
     </ItemGroup>
 

@@ -22,7 +22,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MyDisk.RetryService\MyDisk.RetryService.csproj" />
+      <ProjectReference Include="..\RetryService\RetryService.csproj" />
       <ProjectReference Include="..\MyDisk.Tests.Services\MyDisk.Tests.Services.csproj" />
       <ProjectReference Include="..\MyDisk.Tests.Utils\MyDisk.Tests.Utils.csproj" />
     </ItemGroup>
