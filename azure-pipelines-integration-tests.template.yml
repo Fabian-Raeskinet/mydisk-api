@@ -1,0 +1,46 @@
+parameters:
+  - name: testAssemblyName
+    type: string
+  - name: artifact
+    type: string
+  - name: azureSubscription
+    type: string
+  - name: dataBaseConnectionString
+    type: string
+  - name: env
+    type: string
+
+jobs:
+  - deployment: Test
+    displayName: 'Test in ${{ parameters.env }}'
+    environment: ${{ parameters.env }}
+    pool:
+      vmImage: 'windows-latest'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - download: current
+              displayName: 'Download ${{ parameters.artifact }} artifact'
+              artifact: ${{ parameters.artifact }}
+
+            - task: AzurePowerShell@5
+              displayName: 'Set xunit connection string'
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscription }}
+                ScriptType: 'InlineScript'
+                Inline: |
+                  $json = Get-Content xunit.json | ConvertFrom-json
+                  $json.ConnectionStrings.SqlServerConnection = '${{ parameters.dataBaseConnectionString }}'
+                  $json | ConvertTo-Json | Set-Content xunit.json
+                azurePowerShellVersion: 'LatestVersion'
+                workingDirectory: '$(Pipeline.Workspace)/${{ parameters.artifact }}/'
+
+            - task: DotNetCoreCLI@2
+              displayName: 'Run ${{ parameters.artifact }} tests'
+              inputs:
+                command: 'test'
+                projects: '$(Pipeline.Workspace)/${{ parameters.artifact }}/${{ parameters.testAssemblyName }}'
+                arguments: '--logger trx --results-directory out/test-results/${{ parameters.artifact }}'
+                publishTestResults: false
+                testRunTitle: 'Integration tests'
