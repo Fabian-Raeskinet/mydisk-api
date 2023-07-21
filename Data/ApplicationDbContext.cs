@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Data.Configurations.Disks;
 using Microsoft.EntityFrameworkCore;
 using MyDisk.Domain.Entities;
 
@@ -32,7 +33,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
-        builder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        builder.ApplyConfigurationsFromAssembly(Assembly.GetAssembly(typeof(DiskConfiguration))!);
 
         base.OnModelCreating(builder);
     }

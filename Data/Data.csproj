@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Data.Configurations\Data.Configurations.csproj" />
       <ProjectReference Include="..\MyDisk.Domain\MyDisk.Domain.csproj" />
     </ItemGroup>
 
