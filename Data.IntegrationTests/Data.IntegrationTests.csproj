@@ -6,6 +6,10 @@
         <Nullable>enable</Nullable>
 
         <IsPackable>false</IsPackable>
+
+        <AssemblyName>MyDisk.Data.IntegrationTests</AssemblyName>
+
+        <RootNamespace>MyDisk.Data.IntegrationTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

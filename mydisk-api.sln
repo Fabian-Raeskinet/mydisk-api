@@ -64,7 +64,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{E4839A6B-F
 		Nuget.config = Nuget.config
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Data.IntegrationTests", "MyDisk.Data.IntegrationTests\MyDisk.Data.IntegrationTests.csproj", "{FBD5AC61-06AD-4D20-BB1C-565F6DA378D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.IntegrationTests", "Data.IntegrationTests\Data.IntegrationTests.csproj", "{FBD5AC61-06AD-4D20-BB1C-565F6DA378D2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
