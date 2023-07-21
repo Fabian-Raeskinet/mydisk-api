@@ -18,7 +18,7 @@ stages:
           
   - stage: Run_Data_Integration_Test
     jobs:
-      - template: azure-pipelines-test.template.yml
+      - template: azure-pipelines-integration-tests.template.yml
         parameters:
           env: 'Integration'
           testAssemblyName: '*.IntegrationTests.dll'
