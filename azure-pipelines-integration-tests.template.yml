@@ -33,6 +33,7 @@ jobs:
                   $json = Get-Content xunit.json | ConvertFrom-json
                   $json.ConnectionStrings.SqlServerConnection = '${{ parameters.dataBaseConnectionString }}'
                   $json | ConvertTo-Json | Set-Content xunit.json
+                  echo ${{ parameters.dataBaseConnectionString }}
                 azurePowerShellVersion: 'LatestVersion'
                 workingDirectory: '$(Pipeline.Workspace)/${{ parameters.artifact }}/'
 
