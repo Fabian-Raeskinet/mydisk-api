@@ -2,7 +2,7 @@ using AutoFixture;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace MyDisk.Tests.Api.Customizations;
+namespace MyDisks.Tests.Api.Customizations;
 
 public class ExceptionContextCustomization : ICustomization
 {

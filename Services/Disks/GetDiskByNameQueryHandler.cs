@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using MediatR;
-using MyDisk.Contracts.Disks;
-using MyDisk.Domain;
-using MyDisk.Domain.Exceptions;
+using MyDisks.Contracts.Disks;
+using MyDisks.Domain;
+using MyDisks.Domain.Exceptions;
 
-namespace MyDisk.Services.Disks;
+namespace MyDisks.Services.Disks;
 
 public class GetDiskByNameQueryHandler : IRequestHandler<GetDiskByNameQueryRequest, DiskResult>
 {

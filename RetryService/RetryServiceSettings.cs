@@ -1,4 +1,4 @@
-﻿namespace MyDisk.RetryService;
+﻿namespace MyDisks.RetryService;
 
 public sealed class RetryServiceSettings
 {

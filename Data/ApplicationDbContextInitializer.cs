@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using MyDisk.Domain.Entities;
+using MyDisks.Domain.Entities;
 
 namespace MyDisks.Data;
 

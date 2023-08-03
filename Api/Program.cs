@@ -1,6 +1,6 @@
-using Contracts.Validators;
-using MyDisk.Api;
-using MyDisk.Services;
+using MyDisks.Contracts.Validators;
+using MyDisks.Api;
+using MyDisks.Services;
 using MyDisks.Data;
 
 var builder = WebApplication.CreateBuilder(args);

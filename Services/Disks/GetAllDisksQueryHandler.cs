@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using MediatR;
-using MyDisk.Contracts.Disks;
-using MyDisk.Domain;
+using MyDisks.Contracts.Disks;
+using MyDisks.Domain;
 
-namespace MyDisk.Services.Disks;
+namespace MyDisks.Services.Disks;
 
 public class GetAllDisksQueryHandler : IRequestHandler<GetAllDisksQueryRequest, IEnumerable<DiskResult>>
 {

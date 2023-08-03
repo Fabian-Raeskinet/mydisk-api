@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MyDisk.RetryService;
+namespace MyDisks.RetryService;
 
 public static class DependencyInjection
 {

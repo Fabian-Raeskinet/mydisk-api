@@ -1,7 +1,7 @@
 using MediatR;
-using MyDisk.Contracts.Disks;
+using MyDisks.Contracts.Disks;
 
-namespace MyDisk.Services.Disks;
+namespace MyDisks.Services.Disks;
 
 public class DeleteDiskCommandRequest : DeleteDiskCommand, IRequest<Unit>
 {

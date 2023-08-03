@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Polly;
 
-namespace MyDisk.RetryService;
+namespace MyDisks.RetryService;
 
 public class PollyRetryService : IRetryService
 {

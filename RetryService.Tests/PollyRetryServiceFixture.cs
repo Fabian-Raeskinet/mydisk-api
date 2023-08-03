@@ -1,8 +1,8 @@
 using FluentAssertions;
-using MyDisk.Tests.Services;
-using MyDisk.Tests.Utils;
+using MyDisks.Tests.Services;
+using MyDisks.Tests.Utils;
 
-namespace MyDisk.RetryService.Tests;
+namespace MyDisks.RetryService.Tests;
 
 public class PollyRetryServiceFixture
 {

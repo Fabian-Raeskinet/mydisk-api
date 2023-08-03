@@ -1,9 +1,9 @@
 using FluentAssertions;
-using MyDisk.Domain.Entities;
-using MyDisk.Tests.Domain;
+using MyDisks.Domain.Entities;
+using MyDisks.Tests.Domain;
 using MyDisks.Data;
 
-namespace MyDisk.Data.IntegrationTests;
+namespace MyDisks.Data.IntegrationTests;
 
 public class DiskRepositoryFixture : DatabaseFixtureBase
 {

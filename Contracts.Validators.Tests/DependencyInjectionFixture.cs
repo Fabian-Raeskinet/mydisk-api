@@ -1,10 +1,10 @@
 using FluentAssertions;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using MyDisk.RetryService;
-using MyDisk.Services.Disks;
+using MyDisks.RetryService;
+using MyDisks.Services.Disks;
 
-namespace Contracts.Validators.Tests;
+namespace MyDisks.Contracts.Validators.Tests;
 
 public class DependencyInjectionFixture
 {

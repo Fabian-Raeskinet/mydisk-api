@@ -1,11 +1,11 @@
 ﻿using FluentValidation.AspNetCore;
-using MyDisk.Api.Filters;
-using MyDisk.Api.Resiliences;
-using MyDisk.RetryService;
+using MyDisks.Api.Resiliences;
+using MyDisks.RetryService;
+using MyDisks.Api.Filters;
 using Newtonsoft.Json.Converters;
 using Polly.Registry;
 
-namespace MyDisk.Api;
+namespace MyDisks.Api;
 
 public static class DependencyInjection
 {

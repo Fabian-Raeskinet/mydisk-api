@@ -2,7 +2,7 @@ using MassTransit;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
 
-namespace Data.Configurations;
+namespace MyDisks.Data.Configurations;
 
 public class NewIdGenerator : ValueGenerator<Guid>
 {

@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MyDisk.RandomServices;
+namespace MyDisks.RandomServices;
 
 public static class DependencyInjection
 {

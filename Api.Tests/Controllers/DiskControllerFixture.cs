@@ -1,9 +1,9 @@
-﻿using MyDisk.Contracts.Disks;
-using MyDisk.Services.Disks;
-using MyDisk.Tests.Api;
-using MyDisk.Tests.Utils;
+﻿using MyDisks.Contracts.Disks;
+using MyDisks.Services.Disks;
+using MyDisks.Tests.Api;
+using MyDisks.Tests.Utils;
 
-namespace MyDisk.Api.Tests.Controllers;
+namespace MyDisks.Api.Tests.Controllers;
 
 public class DiskControllerFixture
 {

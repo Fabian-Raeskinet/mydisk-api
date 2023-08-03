@@ -1,9 +1,9 @@
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
-using MyDisk.Tests.Api.Customizations;
+using MyDisks.Tests.Api.Customizations;
 
-namespace MyDisk.Tests.Api;
+namespace MyDisks.Tests.Api;
 
 public class AutoApiDataAttribute : AutoDataAttribute
 {
