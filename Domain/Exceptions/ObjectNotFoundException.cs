@@ -1,4 +1,4 @@
-﻿namespace MyDisk.Domain.Exceptions;
+﻿namespace MyDisks.Domain.Exceptions;
 
 public class ObjectNotFoundException : Exception
 {

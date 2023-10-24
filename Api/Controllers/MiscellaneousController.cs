@@ -1,8 +1,8 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using MyDisk.Services.Miscellaneous;
+using MyDisks.Services.Miscellaneous;
 
-namespace MyDisk.Api.Controllers;
+namespace MyDisks.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]

@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyDisk.Domain.Entities;
+using MyDisks.Domain.Entities;
 
-namespace Data.Configurations.Disks;
+namespace MyDisks.Data.Configurations.Disks;
 
 public class DiskConfiguration : IEntityTypeConfiguration<Disk>
 {

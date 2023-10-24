@@ -1,12 +1,11 @@
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc.Filters;
-using MyDisk.Api.Filters;
-using MyDisk.Domain.Exceptions;
-using MyDisk.Tests.Api;
-using MyDisk.Tests.Utils;
+using MyDisks.Api.Filters;
+using MyDisks.Domain.Exceptions;
+using MyDisks.Tests.Api;
 
-namespace MyDisk.Api.Tests.Filters;
+namespace MyDisks.Api.Tests.Filters;
 
 public class DummyException : Exception
 {

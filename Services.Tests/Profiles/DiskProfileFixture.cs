@@ -1,11 +1,11 @@
 using AutoMapper;
 using FluentAssertions;
-using MyDisk.Contracts.Disks;
-using MyDisk.Domain.Entities;
-using MyDisk.Services.Disks;
-using MyDisk.Tests.Services;
+using MyDisks.Contracts.Disks;
+using MyDisks.Domain.Entities;
+using MyDisks.Services.Disks;
+using MyDisks.Tests.Services;
 
-namespace MyDisk.Services.Tests.Profiles;
+namespace MyDisks.Services.Tests.Profiles;
 
 public class DiskProfileFixture
 {

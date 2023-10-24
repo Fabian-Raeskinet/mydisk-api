@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using MyDisk.Contracts.Disks;
-using MyDisk.Domain.Entities;
+using MyDisks.Contracts.Disks;
+using MyDisks.Domain.Entities;
 
-namespace MyDisk.Services.Authors;
+namespace MyDisks.Services.Authors;
 
 public class MapperProfiles : Profile
 {

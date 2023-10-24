@@ -1,7 +1,7 @@
 using FluentValidation;
-using MyDisk.Services.Disks;
+using MyDisks.Services.Disks;
 
-namespace Contracts.Validators.Disks;
+namespace MyDisks.Contracts.Validators.Disks;
 
 public class GetDiskByNameQueryValidator : AbstractValidator<GetDiskByNameQueryRequest>
 {

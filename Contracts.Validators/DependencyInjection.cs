@@ -1,8 +1,8 @@
-using Contracts.Validators.Disks;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
+using MyDisks.Contracts.Validators.Disks;
 
-namespace Contracts.Validators;
+namespace MyDisks.Contracts.Validators;
 
 public static class DependencyInjection
 {

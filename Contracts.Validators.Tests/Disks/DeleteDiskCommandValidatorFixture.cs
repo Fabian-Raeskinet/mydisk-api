@@ -1,10 +1,10 @@
-using Contracts.Validators.Disks;
 using FluentAssertions;
-using MyDisk.Contracts.Disks;
-using MyDisk.Services.Disks;
-using MyDisk.Tests.Services;
+using MyDisks.Contracts.Disks;
+using MyDisks.Contracts.Validators.Disks;
+using MyDisks.Services.Disks;
+using MyDisks.Tests.Services;
 
-namespace Contracts.Validators.Tests.Disks;
+namespace MyDisks.Contracts.Validators.Tests.Disks;
 
 public class DeleteDiskCommandValidatorFixture
 {

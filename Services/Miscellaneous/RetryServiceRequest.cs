@@ -1,6 +1,6 @@
 using MediatR;
 
-namespace MyDisk.Services.Miscellaneous;
+namespace MyDisks.Services.Miscellaneous;
 
 public class RetryServiceRequest : IRequest<Unit>
 {

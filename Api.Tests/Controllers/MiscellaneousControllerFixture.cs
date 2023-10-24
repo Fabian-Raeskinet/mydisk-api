@@ -1,8 +1,9 @@
-using MyDisk.Services.Miscellaneous;
-using MyDisk.Tests.Api;
-using MyDisk.Tests.Utils;
+using MyDisks.Api.Controllers;
+using MyDisks.Services.Miscellaneous;
+using MyDisks.Tests.Api;
+using MyDisks.Tests.Utils;
 
-namespace MyDisk.Api.Tests.Controllers;
+namespace MyDisks.Api.Tests.Controllers;
 
 public class MiscellaneousControllerFixture
 {

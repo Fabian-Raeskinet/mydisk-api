@@ -1,10 +1,10 @@
 using System.Globalization;
-using Contracts.Validators.Disks;
 using FluentAssertions;
-using MyDisk.Services.Disks;
-using MyDisk.Tests.Services;
+using MyDisks.Contracts.Validators.Disks;
+using MyDisks.Services.Disks;
+using MyDisks.Tests.Services;
 
-namespace Contracts.Validators.Tests.Disks;
+namespace MyDisks.Contracts.Validators.Tests.Disks;
 
 public class CreateDiskCommandValidatorFixture
 {

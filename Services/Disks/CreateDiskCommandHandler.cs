@@ -1,8 +1,8 @@
 ﻿using MediatR;
-using MyDisk.Domain;
-using MyDisk.Domain.Entities;
+using MyDisks.Domain;
+using MyDisks.Domain.Entities;
 
-namespace MyDisk.Services.Disks;
+namespace MyDisks.Services.Disks;
 
 public class CreateDiskCommandHandler : IRequestHandler<CreateDiskCommandRequest, Unit>
 {

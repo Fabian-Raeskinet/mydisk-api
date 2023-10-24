@@ -1,6 +1,6 @@
 using Polly;
 
-namespace MyDisk.Api.Resiliences;
+namespace MyDisks.Api.Resiliences;
 
 public static class RetryPolicy
 {

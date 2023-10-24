@@ -3,9 +3,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using MyDisks.Data;
 
-namespace MyDisk.Migrations;
+namespace MyDisks.Data.Migrations;
 
 public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext>
 {

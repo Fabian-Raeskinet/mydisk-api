@@ -1,4 +1,4 @@
-﻿namespace MyDisk.Contracts.Disks;
+﻿namespace MyDisks.Contracts.Disks;
 
 public class DeleteDiskCommand
 {

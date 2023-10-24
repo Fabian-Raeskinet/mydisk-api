@@ -2,12 +2,12 @@
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using MyDisk.RandomServices;
-using MyDisk.RetryService;
-using MyDisk.Services.Behaviors;
-using MyDisk.Services.Disks;
+using MyDisks.RandomServices;
+using MyDisks.RetryService;
+using MyDisks.Services.Behaviors;
+using MyDisks.Services.Disks;
 
-namespace MyDisk.Services;
+namespace MyDisks.Services;
 
 public static class DependencyInjection
 {

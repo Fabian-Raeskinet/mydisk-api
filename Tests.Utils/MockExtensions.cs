@@ -1,6 +1,6 @@
 using Moq;
 
-namespace MyDisk.Tests.Utils;
+namespace MyDisks.Tests.Utils;
 
 public static class MockExtensions
 {

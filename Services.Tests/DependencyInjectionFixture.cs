@@ -4,12 +4,12 @@ using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Moq;
-using MyDisk.Contracts.Disks;
-using MyDisk.RetryService;
-using MyDisk.Services.Behaviors;
-using MyDisk.Services.Disks;
+using MyDisks.Contracts.Disks;
+using MyDisks.RetryService;
+using MyDisks.Services.Behaviors;
+using MyDisks.Services.Disks;
 
-namespace MyDisk.Services.Tests;
+namespace MyDisks.Services.Tests;
 
 public class DependencyInjectionFixture
 {

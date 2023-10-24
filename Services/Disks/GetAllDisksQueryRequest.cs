@@ -1,6 +1,6 @@
 using MediatR;
-using MyDisk.Contracts.Disks;
+using MyDisks.Contracts.Disks;
 
-namespace MyDisk.Services.Disks;
+namespace MyDisks.Services.Disks;
 
 public class GetAllDisksQueryRequest : GetAllDisksQuery, IRequest<IEnumerable<DiskResult>> { }
