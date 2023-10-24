@@ -7,37 +7,28 @@
 
         <IsPackable>false</IsPackable>
 
-        <AssemblyName>MyDisks.Data.IntegrationTests</AssemblyName>
+        <RootNamespace>MyDisks.RetryService.Tests</RootNamespace>
 
-        <RootNamespace>MyDisks.Data.IntegrationTests</RootNamespace>
+        <AssemblyName>MyDisks.RetryService.Tests</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentAssertions" Version="6.11.0" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="7.0.9" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.2" />
         <PackageReference Include="xunit" Version="2.4.2" />
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="coverlet.collector" Version="3.1.2">
+        <PackageReference Include="coverlet.collector" Version="6.0.0">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Data\Data.csproj" />
-      <ProjectReference Include="..\Tests.Domain\Tests.Domain.csproj" />
+      <ProjectReference Include="..\RetryService\RetryService.csproj" />
+      <ProjectReference Include="..\Tests.Services\Tests.Services.csproj" />
       <ProjectReference Include="..\Tests.Utils\Tests.Utils.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="xunit.json" />
-      <Content Include="xunit.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
     </ItemGroup>
 
 </Project>

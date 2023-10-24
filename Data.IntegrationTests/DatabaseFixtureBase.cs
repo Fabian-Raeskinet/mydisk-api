@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
-using MyDisk.Infrastructure.Persistence;
 using MyDisk.Tests.Utils;
+using MyDisks.Data;
 
 namespace MyDisk.Data.IntegrationTests;
 

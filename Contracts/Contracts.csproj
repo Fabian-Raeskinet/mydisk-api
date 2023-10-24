@@ -4,8 +4,8 @@
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
-        <AssemblyName>MyDisk.Contracts</AssemblyName>
-        <RootNamespace>MyDisk.Contracts</RootNamespace>
+        <AssemblyName>MyDisks.Contracts</AssemblyName>
+        <RootNamespace>MyDisks.Contracts</RootNamespace>
     </PropertyGroup>
 
 </Project>

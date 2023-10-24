@@ -3,23 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32922.545
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyDisk.Api", "MyDisk.Api\MyDisk.Api.csproj", "{72E993AC-7BD6-41D0-922F-EC66A0EF9F46}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Api\Api.csproj", "{72E993AC-7BD6-41D0-922F-EC66A0EF9F46}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyDisk.Domain", "MyDisk.Domain\MyDisk.Domain.csproj", "{93CEA3DD-C019-483B-A716-CBB8457F60A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{93CEA3DD-C019-483B-A716-CBB8457F60A9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyDisk.Infrastructure", "MyDisk.Infrastructure\MyDisk.Infrastructure.csproj", "{4072E9AF-8C96-4200-8237-157D2F93DC9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Services", "Services\Services.csproj", "{02A63BAA-E5DC-47FC-B347-9C03D0CA224C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MyDisk.Services", "MyDisk.Services\MyDisk.Services.csproj", "{02A63BAA-E5DC-47FC-B347-9C03D0CA224C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.Tests", "Api.Tests\Api.Tests.csproj", "{E45B1D9B-0B44-4A09-BD16-CEFC11F039BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Api.Tests", "MyDisk.Api.Tests\MyDisk.Api.Tests.csproj", "{E45B1D9B-0B44-4A09-BD16-CEFC11F039BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Tests", "Domain.Tests\Domain.Tests.csproj", "{870C1525-192B-446A-9663-5217966790C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Domain.Tests", "MyDisk.Domain.Tests\MyDisk.Domain.Tests.csproj", "{870C1525-192B-446A-9663-5217966790C0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Services.Tests", "MyDisk.Services.Tests\MyDisk.Services.Tests.csproj", "{B84FE21A-BCBA-4790-BE06-90D448E7C6CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.Tests", "Services.Tests\Services.Tests.csproj", "{B84FE21A-BCBA-4790-BE06-90D448E7C6CA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{AF2E4B42-8CEE-4C43-9C5D-D984B42FEA3C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Migrations", "MyDisk.Migrations\MyDisk.Migrations.csproj", "{1D663875-0D7C-4194-BB8F-C2CBC48DF380}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.Migrations", "Data.Migrations\Data.Migrations.csproj", "{1D663875-0D7C-4194-BB8F-C2CBC48DF380}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Business", "Business", "{935DC1B5-FE87-4665-B03B-0CBADAF40DCD}"
 EndProject
@@ -29,15 +27,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Interfaces", "Interfaces", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{8A4D5B92-342B-4ADD-BDF0-214FC709E4A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Tests.Domain", "MyDisk.Tests.Domain\MyDisk.Tests.Domain.csproj", "{9B5FBDF7-7427-4AF5-B10E-FC86A9651643}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Domain", "Tests.Domain\Tests.Domain.csproj", "{9B5FBDF7-7427-4AF5-B10E-FC86A9651643}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Tests.Services", "MyDisk.Tests.Services\MyDisk.Tests.Services.csproj", "{7020AE84-13F2-4E67-BDED-E5DFDBCF6CEF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Services", "Tests.Services\Tests.Services.csproj", "{7020AE84-13F2-4E67-BDED-E5DFDBCF6CEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Tests.Api", "MyDisk.Tests.Api\MyDisk.Tests.Api.csproj", "{BFC565D4-99FA-425E-9E90-D1F48C492C6C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Api", "Tests.Api\Tests.Api.csproj", "{BFC565D4-99FA-425E-9E90-D1F48C492C6C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.RetryService", "MyDisk.RetryService\MyDisk.RetryService.csproj", "{C6ED47B2-101D-4C6D-A331-129BD35F9E60}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetryService", "RetryService\RetryService.csproj", "{C6ED47B2-101D-4C6D-A331-129BD35F9E60}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Tests.Utils", "MyDisk.Tests.Utils\MyDisk.Tests.Utils.csproj", "{1678E160-8C60-423C-8304-9CB33549F130}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Utils", "Tests.Utils\Tests.Utils.csproj", "{1678E160-8C60-423C-8304-9CB33549F130}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "Contracts\Contracts.csproj", "{86B7A267-E805-4C18-AA4C-13423DED6D4C}"
 EndProject
@@ -45,7 +43,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts.Validators", "Con
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts.Validators.Tests", "Contracts.Validators.Tests\Contracts.Validators.Tests.csproj", "{CB04FCA7-92E0-4290-9445-FE334A078FDA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.RetryService.Tests", "MyDisk.RetryService.Tests\MyDisk.RetryService.Tests.csproj", "{9ED360F7-3372-4619-A78A-9AB4A54F0181}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetryService.Tests", "RetryService.Tests\RetryService.Tests.csproj", "{9ED360F7-3372-4619-A78A-9AB4A54F0181}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Pipelines", "Pipelines", "{9A09C49C-CCCF-4C26-AA04-267E632CFA56}"
 	ProjectSection(SolutionItems) = preProject
@@ -66,6 +64,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "misc", "misc", "{E4839A6B-F
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.IntegrationTests", "Data.IntegrationTests\Data.IntegrationTests.csproj", "{FBD5AC61-06AD-4D20-BB1C-565F6DA378D2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{6953672E-0174-41AD-9D12-DE01A46BEB8A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.Configurations", "Data.Configurations\Data.Configurations.csproj", "{77A8229D-E490-453F-BA6F-9F45F3D6BC2A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -80,10 +82,6 @@ Global
 		{93CEA3DD-C019-483B-A716-CBB8457F60A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{93CEA3DD-C019-483B-A716-CBB8457F60A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{93CEA3DD-C019-483B-A716-CBB8457F60A9}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4072E9AF-8C96-4200-8237-157D2F93DC9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4072E9AF-8C96-4200-8237-157D2F93DC9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4072E9AF-8C96-4200-8237-157D2F93DC9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4072E9AF-8C96-4200-8237-157D2F93DC9C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{02A63BAA-E5DC-47FC-B347-9C03D0CA224C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{02A63BAA-E5DC-47FC-B347-9C03D0CA224C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02A63BAA-E5DC-47FC-B347-9C03D0CA224C}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -152,12 +150,19 @@ Global
 		{FBD5AC61-06AD-4D20-BB1C-565F6DA378D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FBD5AC61-06AD-4D20-BB1C-565F6DA378D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FBD5AC61-06AD-4D20-BB1C-565F6DA378D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6953672E-0174-41AD-9D12-DE01A46BEB8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6953672E-0174-41AD-9D12-DE01A46BEB8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6953672E-0174-41AD-9D12-DE01A46BEB8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6953672E-0174-41AD-9D12-DE01A46BEB8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77A8229D-E490-453F-BA6F-9F45F3D6BC2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77A8229D-E490-453F-BA6F-9F45F3D6BC2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77A8229D-E490-453F-BA6F-9F45F3D6BC2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77A8229D-E490-453F-BA6F-9F45F3D6BC2A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{4072E9AF-8C96-4200-8237-157D2F93DC9C} = {AF2E4B42-8CEE-4C43-9C5D-D984B42FEA3C}
 		{1D663875-0D7C-4194-BB8F-C2CBC48DF380} = {AF2E4B42-8CEE-4C43-9C5D-D984B42FEA3C}
 		{93CEA3DD-C019-483B-A716-CBB8457F60A9} = {935DC1B5-FE87-4665-B03B-0CBADAF40DCD}
 		{02A63BAA-E5DC-47FC-B347-9C03D0CA224C} = {BA736A1A-0672-4774-A13C-475B23638DB8}
@@ -177,6 +182,8 @@ Global
 		{83C8843C-1ED4-494C-8AD0-16106CD6D635} = {BA736A1A-0672-4774-A13C-475B23638DB8}
 		{9528AABA-0AD8-495C-91F6-B66383B71D90} = {BA736A1A-0672-4774-A13C-475B23638DB8}
 		{FBD5AC61-06AD-4D20-BB1C-565F6DA378D2} = {AF2E4B42-8CEE-4C43-9C5D-D984B42FEA3C}
+		{6953672E-0174-41AD-9D12-DE01A46BEB8A} = {AF2E4B42-8CEE-4C43-9C5D-D984B42FEA3C}
+		{77A8229D-E490-453F-BA6F-9F45F3D6BC2A} = {AF2E4B42-8CEE-4C43-9C5D-D984B42FEA3C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CDEBD79A-8B81-483D-9476-808386234780}
