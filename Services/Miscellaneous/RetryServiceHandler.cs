@@ -1,8 +1,8 @@
 using MediatR;
-using MyDisk.RandomServices;
-using MyDisk.RetryService;
+using MyDisks.RandomServices;
+using MyDisks.RetryService;
 
-namespace MyDisk.Services.Miscellaneous;
+namespace MyDisks.Services.Miscellaneous;
 
 public class RetryServiceHandler : IRequestHandler<RetryServiceRequest, Unit>
 {

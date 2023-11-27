@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using MediatR;
-using MyDisk.Domain;
-using MyDisk.Domain.Exceptions;
+using MyDisks.Domain;
+using MyDisks.Domain.Exceptions;
 
-namespace MyDisk.Services.Disks;
+namespace MyDisks.Services.Disks;
 
 public class AttachAuthorCommandHandler : IRequestHandler<AttachAuthorCommandRequest, Unit>
 {

@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace MyDisk.Migrations.Migrations
+namespace MyDisks.Migrations.Migrations
 {
     /// <inheritdoc />
     public partial class InitialMigration : Migration

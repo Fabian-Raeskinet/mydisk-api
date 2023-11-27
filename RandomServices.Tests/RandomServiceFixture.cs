@@ -1,6 +1,6 @@
 using FluentAssertions;
-using MyDisk.RandomServices;
-using MyDisk.Tests.Services;
+using MyDisks.RandomServices;
+using MyDisks.Tests.Services;
 
 namespace RandomServices.Tests;
 

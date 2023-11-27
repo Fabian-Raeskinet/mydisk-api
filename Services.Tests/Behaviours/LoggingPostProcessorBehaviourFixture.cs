@@ -1,12 +1,12 @@
 using Microsoft.Extensions.Logging;
 using Moq;
-using MyDisk.Contracts.Disks;
-using MyDisk.Services.Behaviors;
-using MyDisk.Services.Disks;
-using MyDisk.Tests.Services;
-using MyDisk.Tests.Utils;
+using MyDisks.Contracts.Disks;
+using MyDisks.Services.Behaviors;
+using MyDisks.Services.Disks;
+using MyDisks.Tests.Services;
+using MyDisks.Tests.Utils;
 
-namespace MyDisk.Services.Tests.Behaviours;
+namespace MyDisks.Services.Tests.Behaviours;
 
 public class LoggingPostProcessorBehaviourFixture
 {

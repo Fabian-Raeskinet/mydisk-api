@@ -1,4 +1,4 @@
-namespace MyDisk.RandomServices;
+namespace MyDisks.RandomServices;
 
 public interface IRandomService
 {

@@ -2,7 +2,7 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
 
-namespace MyDisk.Tests.Services;
+namespace MyDisks.Tests.Services;
 
 public class AutoServiceDataAttribute : AutoDataAttribute
 {

@@ -1,10 +1,10 @@
 using FluentAssertions;
 using Moq;
-using MyDisk.Services.Miscellaneous;
-using MyDisk.Tests.Services;
-using MyDisk.Tests.Utils;
+using MyDisks.Services.Miscellaneous;
+using MyDisks.Tests.Services;
+using MyDisks.Tests.Utils;
 
-namespace MyDisk.Services.Tests.Miscellaneous;
+namespace MyDisks.Services.Tests.Miscellaneous;
 
 public class RetryServiceHandlerFixture
 {

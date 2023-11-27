@@ -1,9 +1,9 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using MyDisk.Domain.Exceptions;
+using MyDisks.Domain.Exceptions;
 
-namespace MyDisk.Api.Filters;
+namespace MyDisks.Api.Filters;
 
 public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 {

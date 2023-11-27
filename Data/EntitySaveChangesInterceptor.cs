@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using MyDisk.Domain;
-using MyDisk.Domain.Entities;
+using MyDisks.Domain;
+using MyDisks.Domain.Entities;
 
 namespace MyDisks.Data;
 

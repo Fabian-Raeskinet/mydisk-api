@@ -1,14 +1,14 @@
-using Contracts.Validators.Disks;
+using MyDisks.Contracts.Validators.Disks;
 using FluentAssertions;
 using FluentValidation;
 using MediatR;
 using Moq;
-using MyDisk.Contracts.Disks;
-using MyDisk.Services.Behaviors;
-using MyDisk.Services.Disks;
-using MyDisk.Tests.Services;
+using MyDisks.Contracts.Disks;
+using MyDisks.Services.Behaviors;
+using MyDisks.Services.Disks;
+using MyDisks.Tests.Services;
 
-namespace MyDisk.Services.Tests.Behaviours;
+namespace MyDisks.Services.Tests.Behaviours;
 
 public class ValidationBehaviourFixture
 {

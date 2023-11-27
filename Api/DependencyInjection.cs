@@ -1,11 +1,12 @@
 ﻿using FluentValidation.AspNetCore;
-using MyDisk.Api.Filters;
-using MyDisk.Api.Resiliences;
-using MyDisk.RetryService;
+using MyDisks.Api.Filters;
+using MyDisks.Api.Maintenance;
+using MyDisks.Api.Resiliences;
+using MyDisks.RetryService;
 using Newtonsoft.Json.Converters;
 using Polly.Registry;
 
-namespace MyDisk.Api;
+namespace MyDisks.Api;
 
 public static class DependencyInjection
 {
@@ -22,7 +23,11 @@ public static class DependencyInjection
     private static void AddMvcConfiguration(this IServiceCollection services)
     {
         services
-            .AddMvc(options => { options.Filters.Add<ApiExceptionFilterAttribute>(); })
+            .AddMvc(options =>
+            {
+                options.Filters.Add<ApiExceptionFilterAttribute>();
+                options.Filters.Add<MaintenanceFilterAttribute>();
+            })
             .AddFluentValidation(x => x.AutomaticValidationEnabled = false);
     }
 
@@ -42,6 +47,7 @@ public static class DependencyInjection
     private static void AddOptionSettings(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<RetryServiceSettings>(configuration.GetSection(nameof(RetryServiceSettings)));
+        services.Configure<MaintenanceSettings>(configuration.GetSection(nameof(MaintenanceSettings)));
     }
 
     private static void AddPolicyRegistry(this IServiceCollection services)

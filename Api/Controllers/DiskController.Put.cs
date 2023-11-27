@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MyDisk.Contracts.Disks;
-using MyDisk.Services.Disks;
+using MyDisks.Contracts.Disks;
+using MyDisks.Services.Disks;
 
-namespace MyDisk.Api.Controllers;
+namespace MyDisks.Api.Controllers;
 
 public partial class DiskController
 {

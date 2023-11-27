@@ -2,13 +2,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using MyDisk.RetryService;
-using MyDisk.Tests.Api;
+using MyDisks.RetryService;
+using MyDisks.Tests.Api;
 using Polly;
 using Polly.Registry;
 using Swashbuckle.AspNetCore.Swagger;
 
-namespace MyDisk.Api.Tests;
+namespace MyDisks.Api.Tests;
 
 public class DependencyInjectionFixture
 {

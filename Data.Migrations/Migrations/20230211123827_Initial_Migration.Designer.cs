@@ -9,7 +9,7 @@ using MyDisks.Data;
 
 #nullable disable
 
-namespace MyDisk.Migrations.Migrations
+namespace MyDisks.Migrations.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("20230211123827_Initial_Migration")]

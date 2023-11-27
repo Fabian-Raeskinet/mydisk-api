@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyDisk.Domain.Entities;
+using MyDisks.Domain.Entities;
 
-namespace Data.Configurations.Authors;
+namespace MyDisks.Data.Configurations.Authors;
 
 public class AuthorConfiguration : IEntityTypeConfiguration<Author>
 {

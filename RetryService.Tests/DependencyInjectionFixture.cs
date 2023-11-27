@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
 
-namespace MyDisk.RetryService.Tests;
+namespace MyDisks.RetryService.Tests;
 
 public class DependencyInjectionFixture
 {

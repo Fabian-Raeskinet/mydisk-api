@@ -1,7 +1,7 @@
 ﻿using MediatR.Pipeline;
 using Microsoft.Extensions.Logging;
 
-namespace MyDisk.Services.Behaviors;
+namespace MyDisks.Services.Behaviors;
 
 public class LoggingPreProcessorBehaviour<TRequest> : IRequestPreProcessor<TRequest> where TRequest : notnull
 {

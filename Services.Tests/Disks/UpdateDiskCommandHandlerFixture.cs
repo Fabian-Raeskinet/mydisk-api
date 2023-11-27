@@ -1,12 +1,12 @@
 ﻿using FluentAssertions;
 using Moq;
-using MyDisk.Domain.Entities;
-using MyDisk.Domain.Exceptions;
-using MyDisk.Services.Disks;
-using MyDisk.Tests.Services;
-using MyDisk.Tests.Utils;
+using MyDisks.Domain.Entities;
+using MyDisks.Domain.Exceptions;
+using MyDisks.Services.Disks;
+using MyDisks.Tests.Services;
+using MyDisks.Tests.Utils;
 
-namespace MyDisk.Services.Tests.Disks;
+namespace MyDisks.Services.Tests.Disks;
 
 public class UpdateDiskCommandHandlerFixture
 {

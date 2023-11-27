@@ -1,4 +1,4 @@
-﻿using MyDisk.Domain;
+﻿using MyDisks.Domain;
 
 namespace MyDisks.Data;
 

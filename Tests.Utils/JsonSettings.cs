@@ -1,7 +1,7 @@
 using System.Reflection;
 using Microsoft.Extensions.Configuration;
 
-namespace MyDisk.Tests.Utils;
+namespace MyDisks.Tests.Utils;
 
 public class JsonSettings
 {

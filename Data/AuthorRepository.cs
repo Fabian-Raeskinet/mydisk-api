@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
-using MyDisk.Domain;
-using MyDisk.Domain.Entities;
+using MyDisks.Domain;
+using MyDisks.Domain.Entities;
 
 namespace MyDisks.Data;
 

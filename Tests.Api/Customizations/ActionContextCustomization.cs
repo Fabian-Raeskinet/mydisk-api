@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Routing;
 
-namespace MyDisk.Tests.Api.Customizations;
+namespace MyDisks.Tests.Api.Customizations;
 
 public class ActionContextCustomization : ICustomization
 {
