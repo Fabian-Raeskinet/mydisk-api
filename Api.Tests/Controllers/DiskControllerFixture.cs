@@ -1,5 +1,4 @@
-﻿using MyDisks.Api.Controllers;
-using MyDisks.Contracts.Disks;
+﻿using MyDisks.Contracts.Disks;
 using MyDisks.Services.Disks;
 using MyDisks.Tests.Api;
 using MyDisks.Tests.Utils;

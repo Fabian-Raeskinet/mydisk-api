@@ -1,6 +1,7 @@
 using FluentAssertions;
 using MyDisks.Domain.Entities;
 using MyDisks.Tests.Domain;
+using MyDisks.Data;
 
 namespace MyDisks.Data.IntegrationTests;
 

@@ -8,8 +8,4 @@
         <AssemblyName>MyDisks.Domain</AssemblyName>
     </PropertyGroup>
 
-    <ItemGroup>
-        <Folder Include="Interfaces\IRepositories" />
-    </ItemGroup>
-
 </Project>

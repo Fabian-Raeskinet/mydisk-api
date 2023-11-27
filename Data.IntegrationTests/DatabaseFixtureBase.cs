@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using MyDisks.Tests.Utils;
+using MyDisks.Data;
 
 namespace MyDisks.Data.IntegrationTests;
 

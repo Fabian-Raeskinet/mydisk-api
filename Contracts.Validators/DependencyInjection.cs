@@ -1,6 +1,6 @@
+using MyDisks.Contracts.Validators.Disks;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
-using MyDisks.Contracts.Validators.Disks;
 
 namespace MyDisks.Contracts.Validators;
 
