@@ -1,8 +1,7 @@
 using FluentAssertions;
-using MyDisks.RandomServices;
 using MyDisks.Tests.Services;
 
-namespace RandomServices.Tests;
+namespace MyDisks.RandomServices.Tests;
 
 public class RandomServiceFixture
 {

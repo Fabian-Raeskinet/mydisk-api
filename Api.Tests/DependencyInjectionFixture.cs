@@ -1,10 +1,8 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using MyDisks.RetryService;
 using MyDisks.Tests.Api;
-using Polly;
 using Polly.Registry;
 using Swashbuckle.AspNetCore.Swagger;
 

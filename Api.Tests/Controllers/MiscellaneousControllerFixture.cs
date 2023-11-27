@@ -1,3 +1,4 @@
+using MyDisks.Api.Controllers;
 using MyDisks.Services.Miscellaneous;
 using MyDisks.Tests.Api;
 using MyDisks.Tests.Utils;

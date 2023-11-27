@@ -1,10 +1,9 @@
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc.Filters;
+using MyDisks.Api.Filters;
 using MyDisks.Domain.Exceptions;
 using MyDisks.Tests.Api;
-using MyDisks.Tests.Utils;
-using MyDisks.Api.Filters;
 
 namespace MyDisks.Api.Tests.Filters;
 
