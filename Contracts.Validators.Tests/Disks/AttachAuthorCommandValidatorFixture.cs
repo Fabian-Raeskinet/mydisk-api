@@ -1,6 +1,5 @@
-using MyDisks.Contracts.Validators.Disks;
 using FluentAssertions;
-using MyDisks.Contracts.Disks;
+using MyDisks.Contracts.Validators.Disks;
 using MyDisks.Services.Disks;
 using MyDisks.Tests.Services;
 
@@ -12,7 +11,7 @@ public class AttachAuthorCommandValidatorFixture
     public async Task ShouldThrowValidationException()
     {
         // Arrange
-        var request = new AttachAuthorCommandRequest { AuthorId = Guid.Empty, DiskId =  Guid.Empty };
+        var request = new AttachAuthorCommandRequest { AuthorId = Guid.Empty, DiskId = Guid.Empty };
 
         // Act
         var act = await new AttachAuthorCommandValidator().ValidateAsync(request);

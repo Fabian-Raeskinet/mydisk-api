@@ -19,6 +19,6 @@ public class AuthorConfiguration : IEntityTypeConfiguration<Author>
             .IsRequired();
 
         builder.Property(x => x.UpdatedAt)
-            .IsRequired(true);
+            .IsRequired();
     }
 }

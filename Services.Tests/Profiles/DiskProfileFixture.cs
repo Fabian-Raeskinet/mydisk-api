@@ -22,7 +22,7 @@ public class DiskProfileFixture
             Id = disk.Id,
             Name = disk.Name,
             ReleaseDate = disk.ReleaseDate,
-            Author = new AuthorResult()
+            Author = new AuthorResult
             {
                 Id = disk.Author.Id,
                 Pseudonyme = disk.Author.Pseudonyme

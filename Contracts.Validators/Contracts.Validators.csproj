@@ -9,13 +9,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FluentValidation" Version="11.5.2" />
-        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2" />
+        <PackageReference Include="FluentValidation" Version="11.5.2"/>
+        <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.5.2"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Contracts\Contracts.csproj" />
-        <ProjectReference Include="..\Services\Services.csproj" />
+        <ProjectReference Include="..\Contracts\Contracts.csproj"/>
+        <ProjectReference Include="..\Services\Services.csproj"/>
     </ItemGroup>
 
 </Project>

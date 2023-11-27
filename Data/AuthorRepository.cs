@@ -7,12 +7,12 @@ namespace MyDisks.Data;
 
 public class AuthorRepository : IAuthorRepository
 {
-    public IApplicationDbContext DbContext { get; }
-
     public AuthorRepository(IApplicationDbContext context)
     {
         DbContext = context;
     }
+
+    public IApplicationDbContext DbContext { get; }
 
     public async Task<Author?> GetAuthorByFilterAsync(Expression<Func<Author, bool>> predicate)
     {

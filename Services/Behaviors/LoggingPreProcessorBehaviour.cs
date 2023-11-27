@@ -5,12 +5,12 @@ namespace MyDisks.Services.Behaviors;
 
 public class LoggingPreProcessorBehaviour<TRequest> : IRequestPreProcessor<TRequest> where TRequest : notnull
 {
-    public ILogger<TRequest> Logger { get; }
-
     public LoggingPreProcessorBehaviour(ILogger<TRequest> logger)
     {
         Logger = logger;
     }
+
+    public ILogger<TRequest> Logger { get; }
 
     public async Task Process(TRequest request, CancellationToken cancellationToken)
     {

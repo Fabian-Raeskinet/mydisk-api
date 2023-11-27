@@ -8,16 +8,16 @@ public class NewIdGenerator : ValueGenerator<Guid>
 {
     #region Base Class Member Overrides
 
-    public override Guid Next(EntityEntry entry)
-    {
-        return NewId.NextGuid();
-    }
+    public override bool GeneratesTemporaryValues { get; }
 
     #endregion
 
     #region Base Class Member Overrides
 
-    public override bool GeneratesTemporaryValues { get; }
+    public override Guid Next(EntityEntry entry)
+    {
+        return NewId.NextGuid();
+    }
 
     #endregion
 }

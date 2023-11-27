@@ -7,8 +7,6 @@ namespace MyDisks.Api.Filters;
 
 public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 {
-    public IDictionary<Type, Action<ExceptionContext>?> ExceptionHandlers { get; }
-
     public ApiExceptionFilterAttribute()
     {
         ExceptionHandlers = new Dictionary<Type, Action<ExceptionContext>?>
@@ -18,6 +16,8 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
             { typeof(FormatException), HandleFormatException }
         };
     }
+
+    public IDictionary<Type, Action<ExceptionContext>?> ExceptionHandlers { get; }
 
     public override void OnException(ExceptionContext context)
     {

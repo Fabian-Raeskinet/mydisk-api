@@ -7,12 +7,12 @@ namespace MyDisks.Services.Behaviors;
 public class LoggingPostProcessorBehaviour<TRequest, TResponse> : IRequestPostProcessor<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
-    public ILogger<TRequest> Logger { get; set; }
-
     public LoggingPostProcessorBehaviour(ILogger<TRequest> logger)
     {
         Logger = logger;
     }
+
+    public ILogger<TRequest> Logger { get; set; }
 
     public Task Process(TRequest request, TResponse response, CancellationToken cancellationToken)
     {

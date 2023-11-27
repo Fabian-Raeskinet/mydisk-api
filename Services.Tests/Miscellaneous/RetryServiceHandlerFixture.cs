@@ -85,12 +85,12 @@ public class RetryServiceHandlerFixture
         {
             // Act
             var act = await sut.RetryWithInvalidOperationFunc();
-            
+
             // Assert
             sut.RandomService.AsMock()
                 .Verify(_ => _.GetRandomValue(1, 3));
         }
-        
+
         [Theory]
         [AutoServiceData]
         public async Task Should_Returns_Valid_Numbers(int returnedInt, RetryServiceHandler sut)
@@ -99,14 +99,14 @@ public class RetryServiceHandlerFixture
             sut.RandomService.AsMock()
                 .Setup(_ => _.GetRandomValue(1, 3))
                 .Returns(returnedInt);
-            
+
             // Act
             var act = await sut.RetryWithInvalidOperationFunc();
-            
+
             // Assert
             act.Should().Be(returnedInt);
         }
-        
+
         [Theory]
         [AutoServiceData]
         public async Task Should_Throws_InvalidOperationException(RetryServiceHandler sut)
@@ -115,14 +115,15 @@ public class RetryServiceHandlerFixture
             sut.RandomService.AsMock()
                 .Setup(_ => _.GetRandomValue(1, 3))
                 .Returns(1);
-            
+
             // Act
             var act = async () => await sut.RetryWithInvalidOperationFunc();
-            
+
             // Assert
             await act.Should().ThrowAsync<InvalidOperationException>();
         }
     }
+
     public class RetryWithPredicateFuncFixture
     {
         [Theory]
@@ -131,12 +132,12 @@ public class RetryServiceHandlerFixture
         {
             // Act
             var act = await sut.RetryWithPredicateFunc();
-            
+
             // Assert
             sut.RandomService.AsMock()
                 .Verify(_ => _.GetRandomValue(1, 3));
         }
-        
+
         [Theory]
         [AutoServiceData]
         public async Task Should_Returns_Valid_Numbers(int returnedInt, RetryServiceHandler sut)
@@ -145,10 +146,10 @@ public class RetryServiceHandlerFixture
             sut.RandomService.AsMock()
                 .Setup(_ => _.GetRandomValue(1, 3))
                 .Returns(returnedInt);
-            
+
             // Act
             var act = await sut.RetryWithPredicateFunc();
-            
+
             // Assert
             act.Should().Be(returnedInt);
         }

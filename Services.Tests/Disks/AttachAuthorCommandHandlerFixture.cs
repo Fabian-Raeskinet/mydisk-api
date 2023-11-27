@@ -26,7 +26,7 @@ public class AttachAuthorCommandHandlerFixture
         sut.AuthorRepository.AsMock()
             .Verify(_ => _.GetAuthorByFilterAsync(author => author.Id == request.AuthorId));
     }
-    
+
     [Theory]
     [AutoServiceData]
     public async Task Should_Get_Disk
@@ -104,7 +104,7 @@ public class AttachAuthorCommandHandlerFixture
             .ThrowAsync<ObjectNotFoundException>()
             .WithMessage("no matches found");
     }
-    
+
     [Theory]
     [AutoServiceData]
     public async Task AttachAuthorToDisk

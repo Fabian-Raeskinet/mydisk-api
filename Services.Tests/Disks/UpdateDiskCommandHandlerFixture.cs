@@ -69,7 +69,7 @@ public class UpdateDiskCommandHandlerFixture
                 d.Name == request.Name
                 && d.ReleaseDate == request.ReleaseDate)));
     }
-    
+
     [Theory]
     [AutoServiceData]
     public async Task Should_Not_Update_Name
@@ -81,7 +81,7 @@ public class UpdateDiskCommandHandlerFixture
     {
         // Arrange
         request.Name = null;
-        
+
         sut.DiskRepository.AsMock()
             .Setup(_ => _.GetDiskByFilterAsync(d => d.Id == request.Id))
             .ReturnsAsync(disk);
@@ -94,7 +94,7 @@ public class UpdateDiskCommandHandlerFixture
             .Verify(_ => _.UpdateDiskAsync(It.Is<Disk>(d =>
                 d.Name == disk.Name)));
     }
-    
+
     [Theory]
     [AutoServiceData]
     public async Task Should_Not_Update_ReleaseDate
@@ -106,7 +106,7 @@ public class UpdateDiskCommandHandlerFixture
     {
         // Arrange
         request.Name = null;
-        
+
         sut.DiskRepository.AsMock()
             .Setup(_ => _.GetDiskByFilterAsync(d => d.Id == request.Id))
             .ReturnsAsync(disk);
@@ -119,7 +119,7 @@ public class UpdateDiskCommandHandlerFixture
             .Verify(_ => _.UpdateDiskAsync(It.Is<Disk>(d =>
                 d.ReleaseDate == disk.ReleaseDate)));
     }
-    
+
     [Theory]
     [AutoServiceData]
     public async Task Should_Not_Update_Other_Properties

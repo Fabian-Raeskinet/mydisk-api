@@ -16,7 +16,7 @@ public class AuthorProfileFixture
         // Arrange
         var config = new MapperConfiguration(cfg => { cfg.AddMaps(typeof(MapperProfiles)); });
         config.AssertConfigurationIsValid();
-        var expected = new AuthorResult()
+        var expected = new AuthorResult
         {
             Id = author.Id,
             Pseudonyme = author.Pseudonyme

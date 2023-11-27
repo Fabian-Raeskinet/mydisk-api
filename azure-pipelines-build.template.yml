@@ -50,7 +50,7 @@ jobs:
           arguments: '--no-build --configuration ${{ parameters.buildConfiguration }} --output out/data-integration-tests'
           zipAfterPublish: false
           modifyOutputPath: false
-          
+
       - task: DotNetCoreCLI@2
         displayName: 'Publish web app'
         inputs:
@@ -60,14 +60,14 @@ jobs:
           arguments: '--no-build --configuration ${{ parameters.buildConfiguration }} --output out/webapp'
           modifyOutputPath: false
           zipAfterPublish: false
-          
+
       - task: PublishPipelineArtifact@1
         displayName: 'Publish webapp artifact'
         inputs:
           targetPath: 'out/webapp'
           artifact: 'web'
           publishLocation: 'pipeline'
-          
+
       - task: PublishPipelineArtifact@1
         displayName: 'Publish data integration tests artifact'
         inputs:

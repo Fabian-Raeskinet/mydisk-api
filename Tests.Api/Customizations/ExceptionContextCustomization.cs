@@ -6,7 +6,9 @@ namespace MyDisks.Tests.Api.Customizations;
 
 public class ExceptionContextCustomization : ICustomization
 {
-    public void Customize(IFixture fixture) =>
+    public void Customize(IFixture fixture)
+    {
         fixture.Customize<ExceptionContext>(c =>
             c.FromFactory(() => new ExceptionContext(fixture.Create<ActionContext>(), new List<IFilterMetadata>())));
+    }
 }
