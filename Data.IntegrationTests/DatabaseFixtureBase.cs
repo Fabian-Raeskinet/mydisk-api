@@ -11,6 +11,7 @@ public class DatabaseFixtureBase : IDisposable
     {
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         optionsBuilder.UseSqlServer(JsonSettings.XUnit.GetConnectionString("SqlServerConnection"));
+
         DbContext = CreateApplicationDbContext(optionsBuilder);
 
         DbContext.Database.OpenConnection();
