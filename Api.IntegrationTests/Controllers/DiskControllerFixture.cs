@@ -1,15 +1,13 @@
 using System.Linq.Expressions;
 using System.Net;
 using System.Net.Http.Json;
-using System.Text;
 using FluentAssertions;
 using Moq;
 using MyDisks.Contracts.Disks;
 using MyDisks.Domain.Entities;
 using MyDisks.IntegrationTests.Api;
-using Newtonsoft.Json;
 
-namespace Api.IntegrationTests.Controllers;
+namespace MyDisks.Api.IntegrationTests.Controllers;
 
 public sealed class DiskControllerFixture
 {
