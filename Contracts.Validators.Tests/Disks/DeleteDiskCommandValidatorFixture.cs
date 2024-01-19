@@ -8,13 +8,11 @@ namespace MyDisks.Contracts.Validators.Tests.Disks;
 
 public class DeleteDiskCommandValidatorFixture
 {
-    [Theory]
-    [InlineAutoServiceData(null, "value")]
-    [InlineAutoServiceData(null, null)]
-    public async Task ShouldThrowValidationException(DeleteDiskByProperty property, string value)
+    [Fact]
+    public async Task ShouldThrowValidationException()
     {
         // Arrange
-        var request = new DeleteDiskCommandRequest { Property = property, Value = value };
+        var request = new DeleteDiskCommandRequest { DiskId = Guid.Empty};
 
         // Act
         var act = await new DeleteDiskCommandValidator().ValidateAsync(request);

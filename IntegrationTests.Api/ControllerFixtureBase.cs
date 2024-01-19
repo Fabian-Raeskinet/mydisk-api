@@ -1,4 +1,4 @@
-namespace IntegrationTests.Api;
+namespace MyDisks.IntegrationTests.Api;
 
 public class ControllerFixtureBase : IDisposable
 {

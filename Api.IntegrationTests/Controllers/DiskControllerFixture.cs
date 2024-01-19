@@ -3,10 +3,10 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text;
 using FluentAssertions;
-using IntegrationTests.Api;
 using Moq;
 using MyDisks.Contracts.Disks;
 using MyDisks.Domain.Entities;
+using MyDisks.IntegrationTests.Api;
 using Newtonsoft.Json;
 
 namespace Api.IntegrationTests.Controllers;
@@ -109,6 +109,147 @@ public sealed class DiskControllerFixture
             var act = await _client.PostAsync("/api/disk/create-disk", content);
             // Assert
             act.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+    }
+
+    public class AttachAuthorCommandFixture : ControllerFixtureBase
+    {
+        [Theory]
+        [AutoApiData]
+        public async Task Should_HttpStatusCode_Be_NoContent(AttachAuthorCommand command, Disk disk, Author author)
+        {
+            // Arrange
+            var content = JsonContent.Create(command);
+
+            _factory.DiskRepositoryMock
+                .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
+                .ReturnsAsync(disk);
+
+            _factory.AuthorRepositoryMock
+                .Setup(x => x.GetAuthorByFilterAsync(It.IsAny<Expression<Func<Author, bool>>>()))
+                .ReturnsAsync(author);
+
+            // Act
+            var act = await _client.PostAsync($"/api/disk/attach-author", content);
+
+            // Assert
+            act.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        }
+
+        [Theory]
+        [AutoApiData]
+        public async Task Should_HttpStatusCode_Be_BadRequest(AttachAuthorCommand command)
+        {
+            // Arrange
+            command.DiskId = Guid.Empty;
+            var content = JsonContent.Create(command);
+
+            _factory.DiskRepositoryMock
+                .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
+                .ReturnsAsync((Disk)null!);
+
+            // Act
+            var act = await _client.PostAsync($"/api/disk/attach-author", content);
+
+            // Assert
+            act.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+    }
+
+    public class DeleteDiskCommandFixture : ControllerFixtureBase
+    {
+        [Theory]
+        [AutoApiData]
+        public async Task Should_HttpStatusCode_Be_NoContent(Disk disk)
+        {
+            // Arrange
+            _factory.DiskRepositoryMock
+                .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
+                .ReturnsAsync(disk);
+
+            // Act
+            var act = await _client.DeleteAsync($"/api/disk/delete-disk?diskId={disk.Id}");
+
+            // Assert
+            act.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        }
+
+        [Theory]
+        [AutoApiData]
+        public async Task Should_HttpStatusCode_Be_NotFound(Guid diskId)
+        {
+            // Arrange
+            _factory.DiskRepositoryMock
+                .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
+                .ReturnsAsync((Disk)null);
+
+            // Act
+            var act = await _client.DeleteAsync($"/api/disk/delete-disk?diskId={diskId}");
+
+            // Assert
+            act.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        }
+
+        [Fact]
+        public async Task Should_HttpStatusCode_Be_BadRequest()
+        {
+            // Act
+            var act = await _client.DeleteAsync("/api/disk/delete-disk?diskId=");
+
+            // Assert
+            act.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+    }
+
+    public class UpdateDiskCommandFixture : ControllerFixtureBase
+    {
+        [Theory]
+        [AutoApiData]
+        public async Task Should_HttpStatusCode_Be_NoContent(UpdateDiskCommand command, Disk disk)
+        {
+            // Arrange
+            var content = JsonContent.Create(command);
+            _factory.DiskRepositoryMock
+                .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
+                .ReturnsAsync(disk);
+
+            // Act
+            var act = await _client.PutAsync($"/api/disk/update-disk", content);
+
+            // Assert
+            act.StatusCode.Should().Be(HttpStatusCode.NoContent);
+        }
+
+        [Theory]
+        [AutoApiData]
+        public async Task Should_HttpStatusCode_Be_BadRequest(UpdateDiskCommand command)
+        {
+            // Arrange
+            command.Id = Guid.Empty;
+            var content = JsonContent.Create(command);
+
+            // Act
+            var act = await _client.PutAsync($"/api/disk/update-disk", content);
+
+            // Assert
+            act.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+        }
+
+        [Theory]
+        [AutoApiData]
+        public async Task Should_HttpStatusCode_Be_NotFound(UpdateDiskCommand command)
+        {
+            // Arrange
+            var content = JsonContent.Create(command);
+            _factory.DiskRepositoryMock
+                .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
+                .ReturnsAsync((Disk)null!);
+
+            // Act
+            var act = await _client.PutAsync($"/api/disk/update-disk", content);
+
+            // Assert
+            act.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
     }
 }

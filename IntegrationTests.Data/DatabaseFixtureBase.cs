@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
+using MyDisks.Data;
 using MyDisks.Tests.Utils;
 
-namespace MyDisks.Data.IntegrationTests;
+namespace MyDisks.IntegrationTests.Data;
 
 public class DatabaseFixtureBase : IDisposable
 {

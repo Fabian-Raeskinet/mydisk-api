@@ -2,6 +2,5 @@
 
 public class DeleteDiskCommand
 {
-    public DeleteDiskByProperty Property { get; set; }
-    public string Value { get; set; }
+    public Guid DiskId { get; set; }
 }

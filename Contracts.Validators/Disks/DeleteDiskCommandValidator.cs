@@ -7,7 +7,6 @@ public class DeleteDiskCommandValidator : AbstractValidator<DeleteDiskCommandReq
 {
     public DeleteDiskCommandValidator()
     {
-        RuleFor(x => x.Value).NotEmpty().NotNull();
-        RuleFor(x => x.Property).NotEmpty().NotNull().IsInEnum();
+        RuleFor(x => x.DiskId).NotEmpty().NotNull();
     }
 }

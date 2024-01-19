@@ -29,6 +29,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Data\Data.csproj"/>
+        <ProjectReference Include="..\IntegrationTests.Data\IntegrationTests.Data.csproj" />
         <ProjectReference Include="..\Tests.Domain\Tests.Domain.csproj"/>
         <ProjectReference Include="..\Tests.Utils\Tests.Utils.csproj"/>
     </ItemGroup>

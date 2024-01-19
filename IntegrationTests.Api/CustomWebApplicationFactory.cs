@@ -1,17 +1,17 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using MyDisks.Api;
 using MyDisks.Domain;
 
-namespace IntegrationTests.Api;
+namespace MyDisks.IntegrationTests.Api;
 
 public class CustomWebApplicationFactory : WebApplicationFactory<Program>
 {
     public CustomWebApplicationFactory()
     {
+        AuthorRepositoryMock = new Mock<IAuthorRepository>();
         DiskRepositoryMock = new Mock<IDiskRepository>();
     }
 
@@ -19,8 +19,13 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
     {
         base.ConfigureWebHost(builder);
         builder.ConfigureServices(
-            services => { services.AddSingleton(DiskRepositoryMock.Object); });
+            services =>
+            {
+                services.AddSingleton(DiskRepositoryMock.Object);
+                services.AddSingleton(AuthorRepositoryMock.Object);
+            });
     }
 
     public Mock<IDiskRepository> DiskRepositoryMock { get; }
+    public Mock<IAuthorRepository> AuthorRepositoryMock { get; }
 }

@@ -2,7 +2,7 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
 
-namespace IntegrationTests.Api;
+namespace MyDisks.IntegrationTests.Api;
 
 public class AutoApiDataAttribute : AutoDataAttribute
 {
