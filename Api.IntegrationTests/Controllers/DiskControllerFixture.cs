@@ -4,7 +4,8 @@ using System.Net.Http.Json;
 using FluentAssertions;
 using Moq;
 using MyDisks.Contracts.Disks;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Authors;
+using MyDisks.Domain.Disks;
 using MyDisks.IntegrationTests.Api;
 
 namespace MyDisks.Api.IntegrationTests.Controllers;

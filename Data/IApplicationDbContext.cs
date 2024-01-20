@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Authors;
+using MyDisks.Domain.Disks;
 
 namespace MyDisks.Data;
 

@@ -1,4 +1,6 @@
-﻿namespace MyDisks.Domain.Entities;
+﻿using MyDisks.Domain.Authors;
+
+namespace MyDisks.Domain.Disks;
 
 public class Disk : BaseEntity
 {

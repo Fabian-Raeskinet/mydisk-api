@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using MediatR;
 using Moq;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Disks;
 using MyDisks.Services.Disks;
 using MyDisks.Tests.Services;
 using MyDisks.Tests.Utils;

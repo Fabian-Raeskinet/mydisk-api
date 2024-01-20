@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
 using MyDisks.Contracts.Disks;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Disks;
 using MyDisks.Domain.Exceptions;
 using MyDisks.Services.Disks;
 using MyDisks.Tests.Services;

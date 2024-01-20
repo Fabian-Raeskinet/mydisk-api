@@ -1,5 +1,5 @@
 ﻿using System.Linq.Expressions;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Authors;
 
 namespace MyDisks.Domain;
 

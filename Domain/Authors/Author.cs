@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MyDisks.Domain.Entities;
+namespace MyDisks.Domain.Authors;
 
 public class Author : BaseEntity
 {

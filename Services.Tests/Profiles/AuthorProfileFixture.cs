@@ -1,7 +1,7 @@
 using AutoMapper;
 using FluentAssertions;
 using MyDisks.Contracts.Disks;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Authors;
 using MyDisks.Services.Disks;
 using MyDisks.Tests.Services;
 

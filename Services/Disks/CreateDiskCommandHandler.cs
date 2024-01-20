@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using MyDisks.Domain;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Disks;
 
 namespace MyDisks.Services.Disks;
 
@@ -15,14 +15,16 @@ public class CreateDiskCommandHandler : IRequestHandler<CreateDiskCommandRequest
 
     public async Task<Unit> Handle(CreateDiskCommandRequest request, CancellationToken cancellationToken)
     {
-        var entity = new Disk
+        var disk = new Disk
         {
             Id = Guid.NewGuid(),
             Name = request.Name,
             ReleaseDate = request.ReleaseDate
         };
+        
+        disk.AddDomainEvent(new NewDiskDomainEvent(disk));
 
-        await DiskRepository.CreateDiskAsync(entity);
+        await DiskRepository.CreateDiskAsync(disk);
 
         return Unit.Value;
     }

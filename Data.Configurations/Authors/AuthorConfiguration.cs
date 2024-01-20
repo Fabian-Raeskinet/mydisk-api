@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Authors;
 
 namespace MyDisks.Data.Configurations.Authors;
 
