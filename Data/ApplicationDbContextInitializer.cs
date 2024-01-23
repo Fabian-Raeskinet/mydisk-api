@@ -58,13 +58,13 @@ public class ApplicationDbContextInitializer
         {
             _context.Disks.Add(new Disk
             {
-                Name = "Jeannine", Id = Guid.NewGuid(), ReleaseDate = new DateTime(2018, 8, 29),
+                Name = "Jeannine", ReleaseDate = new DateTime(2018, 8, 29),
                 Author = new Author { Pseudonyme = "Lomepal" }
             });
             _context.Disks.Add(
                 new Disk
                 {
-                    Name = "Chocolat", Id = Guid.NewGuid(), ReleaseDate = new DateTime(2016, 2, 14),
+                    Name = "Chocolat", ReleaseDate = new DateTime(2016, 2, 14),
                     Author = new Author { Pseudonyme = "Roméo Elvis" }
                 }
             );

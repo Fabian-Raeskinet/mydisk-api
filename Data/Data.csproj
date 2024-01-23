@@ -10,7 +10,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Data.Configurations\Data.Configurations.csproj"/>
-        <ProjectReference Include="..\Domain\Domain.csproj"/>
+        <ProjectReference Include="..\Services\Services.csproj" />
     </ItemGroup>
 
     <ItemGroup>

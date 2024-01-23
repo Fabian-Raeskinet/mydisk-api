@@ -11,7 +11,7 @@ public class NewDiskDomainEventHandler : INotificationHandler<NewDiskDomainEvent
         Logger = logger;
     }
 
-    public ILogger<NewDiskDomainEventHandler> Logger { get; set; }
+    public ILogger<NewDiskDomainEventHandler> Logger { get; }
     
     public Task Handle(NewDiskDomainEvent notification, CancellationToken cancellationToken)
     {

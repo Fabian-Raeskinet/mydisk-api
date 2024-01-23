@@ -17,7 +17,6 @@ public class CreateDiskCommandHandler : IRequestHandler<CreateDiskCommandRequest
     {
         var disk = new Disk
         {
-            Id = Guid.NewGuid(),
             Name = request.Name,
             ReleaseDate = request.ReleaseDate
         };

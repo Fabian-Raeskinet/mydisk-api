@@ -1,8 +1,6 @@
-using MediatR;
-
 namespace MyDisks.Domain.Disks;
 
-public class NewDiskDomainEvent : DomainEvent, INotification
+public class NewDiskDomainEvent : DomainEvent
 {
     public NewDiskDomainEvent(Disk disk)
     {

@@ -1,4 +1,6 @@
-﻿namespace MyDisks.Domain;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MyDisks.Domain;
 
 public abstract class BaseEntity
 {
@@ -7,6 +9,7 @@ public abstract class BaseEntity
 
     private readonly List<DomainEvent> _domainEvents = new();
 
+    [NotMapped]
     public IReadOnlyCollection<DomainEvent> DomainEvents => _domainEvents.AsReadOnly();
 
     public void AddDomainEvent(DomainEvent domainEvent)
