@@ -6,12 +6,14 @@ namespace MyDisks.Services.Disks;
 
 public class CreateDiskCommandHandler : IRequestHandler<CreateDiskCommandRequest, Unit>
 {
-    public CreateDiskCommandHandler(IDiskRepository repository)
+    public CreateDiskCommandHandler(IDiskRepository repository, IDomainEventDispatcher dispatcher)
     {
         DiskRepository = repository;
+        Dispatcher = dispatcher;
     }
 
     public IDiskRepository DiskRepository { get; }
+    public IDomainEventDispatcher Dispatcher { get; set; }
 
     public async Task<Unit> Handle(CreateDiskCommandRequest request, CancellationToken cancellationToken)
     {
@@ -20,8 +22,10 @@ public class CreateDiskCommandHandler : IRequestHandler<CreateDiskCommandRequest
             Name = request.Name,
             ReleaseDate = request.ReleaseDate
         };
-        
-        disk.AddDomainEvent(new NewDiskDomainEvent(disk));
+
+        var newDiskEvent = new NewDiskDomainEvent(disk);
+
+        await Dispatcher.Dispatch(newDiskEvent);
 
         await DiskRepository.CreateDiskAsync(disk);
 

@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using MyDisks.Domain;
 using MyDisks.RandomServices;
 using MyDisks.RetryService;
 using MyDisks.Services.Behaviors;
@@ -30,6 +31,7 @@ public static class DependencyInjection
     {
         services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+        services.AddScoped<IDomainEventDispatcher, MediatRDomainEventDispatcher>();
 
         return services;
     }

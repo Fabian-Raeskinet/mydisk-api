@@ -36,7 +36,6 @@ public static class DependencyInjection
         services.AddScoped<ApplicationDbContextInitializer>();
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<EntitySaveChangesInterceptor>();
-        services.AddScoped<ISaveChangesInterceptor, DispatchDomainEventInterceptor>();
 
         return services;
     }

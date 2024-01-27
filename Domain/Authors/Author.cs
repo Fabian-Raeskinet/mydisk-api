@@ -3,10 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyDisks.Domain.Authors;
 
-public class Author : BaseEntity
+// public class Author : AggregateRoot<Guid>
+public class Author
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
 
     public string? Pseudonyme { get; set; }
