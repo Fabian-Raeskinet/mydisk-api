@@ -4,7 +4,7 @@ using MyDisks.Domain.Disks;
 
 namespace MyDisks.Services.Disks;
 
-public class CreateDiskCommandHandler : IRequestHandler<CreateDiskCommandRequest, Unit>
+public sealed class CreateDiskCommandHandler : ICommandHandler<CreateDiskCommandRequest>
 {
     public CreateDiskCommandHandler(IDiskRepository repository, IDomainEventDispatcher dispatcher)
     {
@@ -15,7 +15,7 @@ public class CreateDiskCommandHandler : IRequestHandler<CreateDiskCommandRequest
     public IDiskRepository DiskRepository { get; }
     public IDomainEventDispatcher Dispatcher { get; set; }
 
-    public async Task<Unit> Handle(CreateDiskCommandRequest request, CancellationToken cancellationToken)
+    public async Task Handle(CreateDiskCommandRequest request, CancellationToken cancellationToken)
     {
         var disk = new Disk
         {
@@ -23,12 +23,10 @@ public class CreateDiskCommandHandler : IRequestHandler<CreateDiskCommandRequest
             ReleaseDate = request.ReleaseDate
         };
 
-        var newDiskEvent = new NewDiskDomainEvent(disk);
+        var newDiskEvent = new NewDiskCreatedDomainEvent(disk);
 
         await Dispatcher.Dispatch(newDiskEvent);
 
         await DiskRepository.CreateDiskAsync(disk);
-
-        return Unit.Value;
     }
 }

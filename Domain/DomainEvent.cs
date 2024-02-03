@@ -1,8 +1,5 @@
-using MediatR;
-
 namespace MyDisks.Domain;
 
-public abstract class DomainEvent : INotification
+public abstract class DomainEvent
 {
-    
 }

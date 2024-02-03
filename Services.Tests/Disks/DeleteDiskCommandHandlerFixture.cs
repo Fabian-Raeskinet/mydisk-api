@@ -21,12 +21,12 @@ public class DeleteDiskCommandHandlerFixture
     {
         // Act
         await sut.Handle(request, CancellationToken.None);
-    
+
         // Assert
         sut.DiskRepository.AsMock()
             .Verify(_ => _.GetDiskByFilterAsync(disk => disk.Id == request.DiskId));
     }
-    
+
     [Theory]
     [AutoServiceData]
     public async Task Should_Throws_ObjectNotFoundException
@@ -39,14 +39,14 @@ public class DeleteDiskCommandHandlerFixture
         sut.DiskRepository.AsMock()
             .Setup(_ => _.GetDiskByFilterAsync(disk => disk.Id == request.DiskId))
             .ReturnsAsync((Disk?)null);
-    
+
         // Act
         var act = async () => await sut.Handle(request, CancellationToken.None);
-    
+
         // Assert
         await act.Should().ThrowAsync<ObjectNotFoundException>();
     }
-    
+
     [Theory]
     [AutoServiceData]
     public async Task Should_DeleteDiskAsync
@@ -60,33 +60,12 @@ public class DeleteDiskCommandHandlerFixture
         sut.DiskRepository.AsMock()
             .Setup(_ => _.GetDiskByFilterAsync(d => d.Id == request.DiskId))
             .ReturnsAsync(disk);
-    
+
         // Act
         await sut.Handle(request, CancellationToken.None);
-    
+
         // Assert
         sut.DiskRepository.AsMock()
             .Verify(x => x.DeleteDiskAsync(disk));
-    }
-    
-    [Theory]
-    [AutoServiceData]
-    public async Task Should_Returns_Unit_Object
-    (
-        DeleteDiskCommandRequest request,
-        Disk returnedDisk,
-        DeleteDiskCommandHandler sut
-    )
-    {
-        // Arrange
-        sut.DiskRepository.AsMock()
-            .Setup(_ => _.GetDiskByFilterAsync(disk => disk.Id == request.DiskId))
-            .ReturnsAsync(returnedDisk);
-    
-        // Act
-        var act = await sut.Handle(request, CancellationToken.None);
-    
-        // Assert
-        act.Should().BeOfType<Unit>();
     }
 }

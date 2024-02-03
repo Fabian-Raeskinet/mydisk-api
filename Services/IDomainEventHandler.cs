@@ -1,8 +1,9 @@
 using MediatR;
+using MyDisks.Domain;
 
 namespace MyDisks.Services;
 
-public interface IDomainEventHandler<T> : INotificationHandler<T> where T : INotification
+public interface IDomainEventHandler<in T> : INotificationHandler<T> where T : IDomainEvent
 {
-    Task Handle(T domainEvent);
+    new Task Handle(T domainEvent, CancellationToken cancellationToken);
 }

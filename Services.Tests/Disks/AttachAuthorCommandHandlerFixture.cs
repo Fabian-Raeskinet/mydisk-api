@@ -21,7 +21,7 @@ public class AttachAuthorCommandHandlerFixture
     )
     {
         // Act
-        var act = await sut.Handle(request, CancellationToken.None);
+        await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.AuthorRepository.AsMock()
@@ -37,7 +37,7 @@ public class AttachAuthorCommandHandlerFixture
     )
     {
         // Act
-        var act = await sut.Handle(request, CancellationToken.None);
+        await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()
@@ -104,20 +104,5 @@ public class AttachAuthorCommandHandlerFixture
         await act.Should()
             .ThrowAsync<ObjectNotFoundException>()
             .WithMessage("no matches found");
-    }
-
-    [Theory]
-    [AutoServiceData]
-    public async Task AttachAuthorToDisk
-    (
-        AttachAuthorCommandRequest request,
-        AttachAuthorCommandHandler sut
-    )
-    {
-        // Act
-        var act = await sut.Handle(request, CancellationToken.None);
-
-        // Assert
-        act.Should().BeOfType<Unit>();
     }
 }

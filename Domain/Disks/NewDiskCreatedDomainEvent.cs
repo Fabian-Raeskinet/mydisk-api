@@ -1,8 +1,8 @@
 namespace MyDisks.Domain.Disks;
 
-public class NewDiskDomainEvent : IDomainEvent
+public class NewDiskCreatedDomainEvent : IDomainEvent
 {
-    public NewDiskDomainEvent(Disk disk)
+    public NewDiskCreatedDomainEvent(Disk disk)
     {
         Disk = disk;
     }

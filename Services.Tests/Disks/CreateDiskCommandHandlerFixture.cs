@@ -19,27 +19,12 @@ public class CreateDiskCommandHandlerFixture
     )
     {
         // Act
-        var act = await sut.Handle(request, CancellationToken.None);
+       await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()
             .Verify(x => x.CreateDiskAsync(It.Is<Disk>(disk =>
                 disk.Name == request.Name
                 && disk.ReleaseDate == request.ReleaseDate)));
-    }
-
-    [Theory]
-    [AutoServiceData]
-    public async Task Should_Returns_Unit_Object
-    (
-        CreateDiskCommandRequest request,
-        CreateDiskCommandHandler sut
-    )
-    {
-        // Act
-        var act = await sut.Handle(request, CancellationToken.None);
-
-        // Assert
-        act.Should().BeOfType<Unit>();
     }
 }

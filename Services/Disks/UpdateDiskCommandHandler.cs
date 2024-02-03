@@ -5,7 +5,7 @@ using MyDisks.Domain.Exceptions;
 
 namespace MyDisks.Services.Disks;
 
-public class UpdateDiskCommandHandler : IRequestHandler<UpdateDiskCommandRequest, Unit>
+public class UpdateDiskCommandHandler : ICommandHandler<UpdateDiskCommandRequest>
 {
     public UpdateDiskCommandHandler(IDiskRepository repository, IMapper mapper)
     {
@@ -16,7 +16,7 @@ public class UpdateDiskCommandHandler : IRequestHandler<UpdateDiskCommandRequest
     public IDiskRepository DiskRepository { get; }
     public IMapper Mapper { get; }
 
-    public async Task<Unit> Handle(UpdateDiskCommandRequest request, CancellationToken cancellationToken)
+    public async Task Handle(UpdateDiskCommandRequest request, CancellationToken cancellationToken)
     {
         var disk = await DiskRepository.GetDiskByFilterAsync(x => x.Id == request.Id);
 
@@ -27,6 +27,5 @@ public class UpdateDiskCommandHandler : IRequestHandler<UpdateDiskCommandRequest
         if (request.ReleaseDate is not null) disk.ReleaseDate = request.ReleaseDate;
 
         await DiskRepository.UpdateDiskAsync(disk);
-        return Unit.Value;
     }
 }

@@ -19,7 +19,7 @@ public class UpdateDiskCommandHandlerFixture
     )
     {
         // Act
-        var act = await sut.Handle(request, CancellationToken.None);
+        await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()
@@ -61,7 +61,7 @@ public class UpdateDiskCommandHandlerFixture
             .ReturnsAsync(disk);
 
         // Act
-        var act = await sut.Handle(request, CancellationToken.None);
+        await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()
@@ -87,7 +87,7 @@ public class UpdateDiskCommandHandlerFixture
             .ReturnsAsync(disk);
 
         // Act
-        var act = await sut.Handle(request, CancellationToken.None);
+        await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()
@@ -112,7 +112,7 @@ public class UpdateDiskCommandHandlerFixture
             .ReturnsAsync(disk);
 
         // Act
-        var act = await sut.Handle(request, CancellationToken.None);
+        await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()
@@ -135,7 +135,7 @@ public class UpdateDiskCommandHandlerFixture
             .ReturnsAsync(disk);
 
         // Act
-        var act = await sut.Handle(request, CancellationToken.None);
+        await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()

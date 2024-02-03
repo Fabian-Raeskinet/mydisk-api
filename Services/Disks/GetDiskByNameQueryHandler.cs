@@ -6,7 +6,7 @@ using MyDisks.Domain.Exceptions;
 
 namespace MyDisks.Services.Disks;
 
-public class GetDiskByNameQueryHandler : IRequestHandler<GetDiskByNameQueryRequest, DiskResult>
+public class GetDiskByNameQueryHandler : IQueryHandler<GetDiskByNameQueryRequest, DiskResult>
 {
     public GetDiskByNameQueryHandler(IMapper mapper, IDiskRepository repository)
     {
