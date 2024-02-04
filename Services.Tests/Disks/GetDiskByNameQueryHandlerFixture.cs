@@ -16,9 +16,15 @@ public class GetDiskByNameQueryHandlerFixture
     public async Task Should_Get_Disk_By_Name
     (
         GetDiskByNameQueryRequest request,
+        Disk disk,
         GetDiskByNameQueryHandler sut
     )
     {
+        // Arrange
+        sut.DiskRepository.AsMock()
+            .Setup(x => x.GetDiskByFilterAsync(disk => disk.Name == request.Name))
+            .ReturnsAsync(disk);
+        
         // Act
         var act = await sut.Handle(request, CancellationToken.None);
 

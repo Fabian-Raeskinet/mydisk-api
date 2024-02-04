@@ -15,9 +15,15 @@ public class UpdateDiskCommandHandlerFixture
     public async Task Should_Get_Disk_By_Id
     (
         UpdateDiskCommandRequest request,
+        Disk disk,
         UpdateDiskCommandHandler sut
     )
     {
+        // Arrange
+        sut.DiskRepository.AsMock()
+            .Setup(x => x.GetDiskByFilterAsync(disk => disk.Id == request.Id))
+            .ReturnsAsync(disk);
+        
         // Act
         await sut.Handle(request, CancellationToken.None);
 

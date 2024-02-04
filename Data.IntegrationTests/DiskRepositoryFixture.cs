@@ -55,7 +55,7 @@ public class DiskRepositoryFixture : DatabaseFixtureBase
         {
             // Arrange
             await Sut.CreateDiskAsync(disk);
-            disk.Name = diskName;
+            disk.Name = diskName.Substring(30);
 
             // Act
             await Sut.UpdateDiskAsync(disk);

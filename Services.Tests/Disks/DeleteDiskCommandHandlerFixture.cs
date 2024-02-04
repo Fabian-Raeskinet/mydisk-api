@@ -16,9 +16,15 @@ public class DeleteDiskCommandHandlerFixture
     public async Task Should_Get_Disk_By_Id
     (
         DeleteDiskCommandRequest request,
+        Disk disk,
         DeleteDiskCommandHandler sut
     )
     {
+        // Arrange
+        sut.DiskRepository.AsMock()
+            .Setup(x => x.GetDiskByFilterAsync(disk => disk.Id == request.DiskId))
+            .ReturnsAsync(disk);
+        
         // Act
         await sut.Handle(request, CancellationToken.None);
 

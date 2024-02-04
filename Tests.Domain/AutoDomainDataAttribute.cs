@@ -1,6 +1,7 @@
 ﻿using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
+using MyDisks.Tests.Domain.Customizations;
 
 namespace MyDisks.Tests.Domain;
 
@@ -21,7 +22,10 @@ public class InlineAutoDomainDataAttribute : InlineAutoDataAttribute
 internal class DomainCustomization : CompositeCustomization
 {
     public DomainCustomization()
-        : base(new CommonCustomization(), new AutoMoqCustomization())
+        : base(
+            new CommonCustomization(),
+            new AutoMoqCustomization(),
+            new DiskCustomization())
     {
     }
 }

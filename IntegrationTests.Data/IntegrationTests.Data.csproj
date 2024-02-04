@@ -13,4 +13,8 @@
       <ProjectReference Include="..\Tests.Utils\Tests.Utils.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="AutoFixture" Version="4.18.0" />
+    </ItemGroup>
+
 </Project>

@@ -17,9 +17,20 @@ public class AttachAuthorCommandHandlerFixture
     public async Task Should_Get_Author
     (
         AttachAuthorCommandRequest request,
+        Author author,
+        Disk disk,
         AttachAuthorCommandHandler sut
     )
     {
+        // Arrange
+        sut.AuthorRepository.AsMock()
+            .Setup(x => x.GetAuthorByFilterAsync(author => author.Id == request.AuthorId))
+            .ReturnsAsync(author);
+
+        sut.DiskRepository.AsMock()
+            .Setup(x => x.GetDiskByFilterAsync(disk => disk.Id == request.DiskId))
+            .ReturnsAsync(disk);
+        
         // Act
         await sut.Handle(request, CancellationToken.None);
 
@@ -33,9 +44,15 @@ public class AttachAuthorCommandHandlerFixture
     public async Task Should_Get_Disk
     (
         AttachAuthorCommandRequest request,
+        Disk disk,
         AttachAuthorCommandHandler sut
     )
     {
+        // Arrange
+        sut.DiskRepository.AsMock()
+            .Setup(x => x.GetDiskByFilterAsync(disk => disk.Id == request.DiskId))
+            .ReturnsAsync(disk);
+        
         // Act
         await sut.Handle(request, CancellationToken.None);
 
