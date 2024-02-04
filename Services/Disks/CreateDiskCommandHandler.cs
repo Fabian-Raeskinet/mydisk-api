@@ -19,7 +19,7 @@ public sealed class CreateDiskCommandHandler : ICommandHandler<CreateDiskCommand
     {
         var disk = new Disk
         {
-            Name = request.Name,
+            Name = new Name(request.Name),
             ReleaseDate = request.ReleaseDate
         };
 

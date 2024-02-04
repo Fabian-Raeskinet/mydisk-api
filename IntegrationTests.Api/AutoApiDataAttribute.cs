@@ -1,6 +1,7 @@
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
+using MyDisks.Tests.Domain.Customizations;
 
 namespace MyDisks.IntegrationTests.Api;
 
@@ -22,7 +23,8 @@ internal class ApiCustomization : CompositeCustomization
 {
     public ApiCustomization()
         : base(
-            new AutoMoqCustomization()
+            new AutoMoqCustomization(),
+            new DiskCustomization()
         )
     {
     }

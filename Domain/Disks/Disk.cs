@@ -7,7 +7,7 @@ namespace MyDisks.Domain.Disks;
 public sealed class Disk
 {
     public Guid Id { get; set; }
-    public string? Name { get; set; }
+    public Name Name { get; set; }
     public DateTime? ReleaseDate { get; set; }
     public string? ImageUrl { get; set; }
     public Guid? AuthorId { get; set; }

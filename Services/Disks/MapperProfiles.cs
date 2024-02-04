@@ -8,6 +8,7 @@ public class MapperProfiles : Profile
 {
     public MapperProfiles()
     {
+        CreateMap<Name, string>().ConstructUsing(name => name.Value);
         CreateMap<Disk, DiskResult>();
     }
 }

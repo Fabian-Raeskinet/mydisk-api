@@ -80,9 +80,15 @@ public sealed class DiskControllerFixture
     {
         [Theory]
         [AutoApiData]
-        public async Task Should_HttpStatusCode_Be_NoContent(CreateDiskCommand command, Guid diskId)
+        public async Task Should_HttpStatusCode_Be_NoContent(Name diskName, DateTime releaseDate, Guid diskId)
         {
             // Arrange
+            var command = new CreateDiskCommand
+            {
+                Name = diskName,
+                ReleaseDate = releaseDate
+            };
+
             var content = JsonContent.Create(command);
 
             _factory.DiskRepositoryMock
@@ -204,9 +210,14 @@ public sealed class DiskControllerFixture
     {
         [Theory]
         [AutoApiData]
-        public async Task Should_HttpStatusCode_Be_NoContent(UpdateDiskCommand command, Disk disk)
+        public async Task Should_HttpStatusCode_Be_NoContent(Guid diskId, Name diskName, Disk disk)
         {
             // Arrange
+            var command = new UpdateDiskCommand
+            {
+                Id = diskId,
+                Name = diskName
+            };
             var content = JsonContent.Create(command);
             _factory.DiskRepositoryMock
                 .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
@@ -219,12 +230,11 @@ public sealed class DiskControllerFixture
             act.StatusCode.Should().Be(HttpStatusCode.NoContent);
         }
 
-        [Theory]
-        [AutoApiData]
-        public async Task Should_HttpStatusCode_Be_BadRequest(UpdateDiskCommand command)
+        [Fact]
+        public async Task Should_HttpStatusCode_Be_BadRequest()
         {
             // Arrange
-            command.Id = Guid.Empty;
+            var command = new UpdateDiskCommand { Id = Guid.Empty };
             var content = JsonContent.Create(command);
 
             // Act

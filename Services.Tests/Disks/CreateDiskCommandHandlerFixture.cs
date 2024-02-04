@@ -14,12 +14,20 @@ public class CreateDiskCommandHandlerFixture
     [AutoServiceData]
     public async Task Should_CreateDiskAsync
     (
-        CreateDiskCommandRequest request,
+        Name diskName,
+        DateTime releaseDate,
         CreateDiskCommandHandler sut
     )
     {
+        // Arrange
+        var request = new CreateDiskCommandRequest
+        {
+            Name = diskName,
+            ReleaseDate = releaseDate
+        };
+
         // Act
-       await sut.Handle(request, CancellationToken.None);
+        await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()

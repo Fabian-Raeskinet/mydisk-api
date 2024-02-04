@@ -14,16 +14,21 @@ public class UpdateDiskCommandHandlerFixture
     [AutoServiceData]
     public async Task Should_Get_Disk_By_Id
     (
-        UpdateDiskCommandRequest request,
+        Guid diskId,
         Disk disk,
         UpdateDiskCommandHandler sut
     )
     {
         // Arrange
+        var request = new UpdateDiskCommandRequest
+        {
+            Id = diskId
+        };
+
         sut.DiskRepository.AsMock()
             .Setup(x => x.GetDiskByFilterAsync(disk => disk.Id == request.Id))
             .ReturnsAsync(disk);
-        
+
         // Act
         await sut.Handle(request, CancellationToken.None);
 
@@ -57,11 +62,20 @@ public class UpdateDiskCommandHandlerFixture
     public async Task Should_UpdateDiskAsync
     (
         Disk disk,
-        UpdateDiskCommandRequest request,
+        Guid diskId,
+        DateTime releaseDate,
+        Name diskName,
         UpdateDiskCommandHandler sut
     )
     {
         // Arrange
+        var request = new UpdateDiskCommandRequest
+        {
+            Id = diskId,
+            ReleaseDate = releaseDate,
+            Name = diskName
+        };
+        
         sut.DiskRepository.AsMock()
             .Setup(_ => _.GetDiskByFilterAsync(d => d.Id == request.Id))
             .ReturnsAsync(disk);
@@ -81,12 +95,19 @@ public class UpdateDiskCommandHandlerFixture
     public async Task Should_Not_Update_Name
     (
         Disk disk,
-        UpdateDiskCommandRequest request,
+        Guid id,
+        Name diskName,
+        DateTime releaseDate,
         UpdateDiskCommandHandler sut
     )
     {
         // Arrange
-        request.Name = null;
+        var request = new UpdateDiskCommandRequest
+        {
+            Name = diskName,
+            ReleaseDate = releaseDate,
+            Id = id
+        };
 
         sut.DiskRepository.AsMock()
             .Setup(_ => _.GetDiskByFilterAsync(d => d.Id == request.Id))
@@ -106,12 +127,19 @@ public class UpdateDiskCommandHandlerFixture
     public async Task Should_Not_Update_ReleaseDate
     (
         Disk disk,
-        UpdateDiskCommandRequest request,
+        Guid id,
+        Name diskName,
+        DateTime releaseDate,
         UpdateDiskCommandHandler sut
     )
     {
         // Arrange
-        request.Name = null;
+        var request = new UpdateDiskCommandRequest
+        {
+            Id = id,
+            Name = null,
+            ReleaseDate = releaseDate
+        };
 
         sut.DiskRepository.AsMock()
             .Setup(_ => _.GetDiskByFilterAsync(d => d.Id == request.Id))
@@ -131,11 +159,16 @@ public class UpdateDiskCommandHandlerFixture
     public async Task Should_Not_Update_Other_Properties
     (
         Disk disk,
-        UpdateDiskCommandRequest request,
+        Guid diskId,
         UpdateDiskCommandHandler sut
     )
     {
         // Arrange
+        var request = new UpdateDiskCommandRequest
+        {
+            Id = diskId
+        };
+        
         sut.DiskRepository.AsMock()
             .Setup(_ => _.GetDiskByFilterAsync(d => d.Id == request.Id))
             .ReturnsAsync(disk);

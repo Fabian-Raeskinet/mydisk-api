@@ -13,6 +13,9 @@ public class DiskConfiguration : IEntityTypeConfiguration<Disk>
             .HasValueGenerator<NewIdGenerator>();
 
         builder.Property(x => x.Name)
+            .HasConversion(
+                v => v.Value,
+                v => new Name(v))
             .HasMaxLength(30)
             .IsRequired();
 
