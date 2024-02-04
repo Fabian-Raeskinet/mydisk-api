@@ -25,7 +25,7 @@ public sealed class CreateDiskCommandHandler : ICommandHandler<CreateDiskCommand
 
         var newDiskEvent = new NewDiskCreatedDomainEvent(disk);
 
-        await Dispatcher.Dispatch(newDiskEvent);
+        await Dispatcher.Dispatch(newDiskEvent, cancellationToken);
 
         await DiskRepository.CreateDiskAsync(disk);
     }

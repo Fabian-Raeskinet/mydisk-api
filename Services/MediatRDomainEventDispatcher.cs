@@ -5,15 +5,15 @@ namespace MyDisks.Services;
 
 public class MediatRDomainEventDispatcher : IDomainEventDispatcher
 {
-    private readonly IMediator _mediator;
+    public IMediator Mediator { get; }
 
     public MediatRDomainEventDispatcher(IMediator mediator)
     {
-        _mediator = mediator;
+        Mediator = mediator;
     }
 
-    public async Task Dispatch(IDomainEvent domainEvent)
+    public async Task Dispatch(IDomainEvent domainEvent, CancellationToken cancellationToken)
     {
-        await _mediator.Publish(domainEvent);
+        await Mediator.Publish(domainEvent, cancellationToken);
     }
 }
