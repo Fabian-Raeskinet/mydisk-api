@@ -1,6 +1,6 @@
 using FluentAssertions;
-using MyDisks.Domain.Entities;
-using MyDisks.Data;
+using MyDisks.Domain.Disks;
+using MyDisks.IntegrationTests.Data;
 using MyDisks.Tests.Domain;
 
 namespace MyDisks.Data.IntegrationTests;
@@ -23,7 +23,7 @@ public class AuthorRepositoryFixture : DatabaseFixtureBase
             // Arrange
             var diskRepository = new DiskRepository(DbContext);
             await diskRepository.CreateDiskAsync(disk);
-            
+
             // Act
             var act = await Sut.GetAuthorByFilterAsync(x => x.Id == disk.AuthorId);
 

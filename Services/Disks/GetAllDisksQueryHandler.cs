@@ -5,7 +5,7 @@ using MyDisks.Domain;
 
 namespace MyDisks.Services.Disks;
 
-public class GetAllDisksQueryHandler : IRequestHandler<GetAllDisksQueryRequest, IEnumerable<DiskResult>>
+public class GetAllDisksQueryHandler : IQueryHandler<GetAllDisksQueryRequest, IEnumerable<DiskResult>>
 {
     public GetAllDisksQueryHandler(IMapper mapper, IDiskRepository repository)
     {

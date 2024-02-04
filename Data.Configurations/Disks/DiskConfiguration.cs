@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Disks;
 
 namespace MyDisks.Data.Configurations.Disks;
 
@@ -21,12 +21,6 @@ public class DiskConfiguration : IEntityTypeConfiguration<Disk>
 
         builder.Property(x => x.ImageUrl)
             .IsRequired(false);
-
-        builder.Property(x => x.CreatedAt)
-            .IsRequired();
-
-        builder.Property(x => x.UpdatedAt)
-            .IsRequired();
 
         builder.Property(x => x.AuthorId);
     }

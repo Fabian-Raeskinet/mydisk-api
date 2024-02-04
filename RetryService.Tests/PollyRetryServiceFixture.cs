@@ -18,7 +18,7 @@ public class PollyRetryServiceFixture
                 .Returns(new RetryServiceSettings { RetryCount = 3, TimeRetryMilliSeconds = 1 });
 
             var retryCount = 0;
-            
+
             // Act
             var act = await sut.ExecuteAsync<InvalidOperationException, int>(() =>
             {
@@ -41,7 +41,7 @@ public class PollyRetryServiceFixture
                 .Returns(new RetryServiceSettings { RetryCount = 3, TimeRetryMilliSeconds = 1 });
 
             var retryCount = 0;
-            
+
             // Act
             await sut.ExecuteAsync<InvalidOperationException, int>(() =>
             {

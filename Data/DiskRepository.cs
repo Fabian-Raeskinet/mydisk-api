@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using MyDisks.Domain;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Disks;
 
 namespace MyDisks.Data;
 
@@ -27,20 +27,25 @@ public class DiskRepository : IDiskRepository
     public async Task<Guid> CreateDiskAsync(Disk disk)
     {
         var result = await _context.Disks.AddAsync(disk);
-        await _context.SaveChangesAsync();
+        await SaveChanges();
         return result.Entity.Id;
     }
 
     public async Task<bool> DeleteDiskAsync(Disk disk)
     {
         _context.Disks.Remove(disk);
-        await _context.SaveChangesAsync();
+        await SaveChanges();
         return true;
     }
 
     public async Task UpdateDiskAsync(Disk disk)
     {
         _context.Disks.Update(disk);
+        await SaveChanges();
+    }
+
+    private async Task SaveChanges()
+    {
         await _context.SaveChangesAsync();
     }
 }

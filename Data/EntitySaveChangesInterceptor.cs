@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using MyDisks.Domain;
-using MyDisks.Domain.Entities;
 
 namespace MyDisks.Data;
 
@@ -33,15 +32,15 @@ public class EntitySaveChangesInterceptor : SaveChangesInterceptor
     {
         if (context == null) return;
 
-        foreach (var entry in context.ChangeTracker.Entries<BaseEntity>())
-        {
-            if (entry.State == EntityState.Added)
-            {
-                entry.Entity.CreatedAt = DateTimeOffset.Now;
-                entry.Entity.UpdatedAt = DateTimeOffset.Now;
-            }
-
-            if (entry.State is EntityState.Added or EntityState.Modified) entry.Entity.UpdatedAt = DateTimeOffset.Now;
-        }
+        // foreach (var entry in context.ChangeTracker.Entries<Entity>())
+        // {
+        //     if (entry.State == EntityState.Added)
+        //     {
+        //         entry.Entity.CreatedAt = DateTimeOffset.Now;
+        //         entry.Entity.UpdatedAt = DateTimeOffset.Now;
+        //     }
+        //
+        //     if (entry.State is EntityState.Added or EntityState.Modified) entry.Entity.UpdatedAt = DateTimeOffset.Now;
+        // }
     }
 }

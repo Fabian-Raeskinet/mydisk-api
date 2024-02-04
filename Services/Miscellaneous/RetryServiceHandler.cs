@@ -4,7 +4,7 @@ using MyDisks.RetryService;
 
 namespace MyDisks.Services.Miscellaneous;
 
-public class RetryServiceHandler : IRequestHandler<RetryServiceRequest, Unit>
+public class RetryServiceHandler : ICommandHandler<RetryServiceRequest>
 {
     public RetryServiceHandler(IRetryService retryService, IRandomService randomService)
     {
@@ -15,12 +15,10 @@ public class RetryServiceHandler : IRequestHandler<RetryServiceRequest, Unit>
     public IRetryService RetryService { get; }
     public IRandomService RandomService { get; }
 
-    public async Task<Unit> Handle(RetryServiceRequest request, CancellationToken cancellationToken)
+    public async Task Handle(RetryServiceRequest request, CancellationToken cancellationToken)
     {
         await RetryService.ExecuteAsync(r => r == 1, RetryWithPredicateFunc);
         await RetryService.ExecuteAsync<InvalidOperationException, int>(RetryWithInvalidOperationFunc);
-
-        return Unit.Value;
     }
 
     public Task<int> RetryWithPredicateFunc()

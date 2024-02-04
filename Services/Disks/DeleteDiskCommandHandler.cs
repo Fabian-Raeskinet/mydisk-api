@@ -5,7 +5,7 @@ using MyDisks.Domain.Exceptions;
 
 namespace MyDisks.Services.Disks;
 
-public class DeleteDiskCommandHandler : IRequestHandler<DeleteDiskCommandRequest, Unit>
+public class DeleteDiskCommandHandler : ICommandHandler<DeleteDiskCommandRequest>
 {
     public DeleteDiskCommandHandler(IDiskRepository repository)
     {
@@ -14,24 +14,13 @@ public class DeleteDiskCommandHandler : IRequestHandler<DeleteDiskCommandRequest
 
     public IDiskRepository DiskRepository { get; }
 
-    public async Task<Unit> Handle(DeleteDiskCommandRequest request, CancellationToken cancellationToken)
+    public async Task Handle(DeleteDiskCommandRequest command, CancellationToken cancellationToken)
     {
-        if (request.Value == null)
-            throw new InvalidOperationException();
-
-        var disk = request.Property switch
-        {
-            DeleteDiskByProperty.Id => await DiskRepository.GetDiskByFilterAsync(x =>
-                x.Id == new Guid(request.Value)),
-            DeleteDiskByProperty.Name => await DiskRepository.GetDiskByFilterAsync(x => x.Name == request.Value),
-            _ => throw new InvalidOperationException()
-        };
+        var disk = await DiskRepository.GetDiskByFilterAsync(x => x.Id == command.DiskId);
 
         if (disk == null)
             throw new ObjectNotFoundException();
 
         await DiskRepository.DeleteDiskAsync(disk);
-
-        return Unit.Value;
     }
 }

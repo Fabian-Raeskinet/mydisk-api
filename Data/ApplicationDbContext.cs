@@ -1,7 +1,8 @@
 ﻿using System.Reflection;
-using MyDisks.Data.Configurations.Disks;
 using Microsoft.EntityFrameworkCore;
-using MyDisks.Domain.Entities;
+using MyDisks.Data.Configurations.Disks;
+using MyDisks.Domain.Authors;
+using MyDisks.Domain.Disks;
 
 namespace MyDisks.Data;
 

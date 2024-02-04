@@ -1,4 +1,3 @@
-using MyDisks.Api.Controllers;
 using MyDisks.Services.Miscellaneous;
 using MyDisks.Tests.Api;
 using MyDisks.Tests.Utils;
@@ -20,7 +19,7 @@ public class MiscellaneousControllerFixture
             sut.Mediator.AsMock()
                 .Verify(x => x.Send(It.IsAny<RetryServiceRequest>(), It.IsAny<CancellationToken>()), Times.Once);
         }
-        
+
         [Theory]
         [AutoApiData]
         public async void Should_Returns_NoContentResult([NoAutoProperties] MiscellaneousController sut)

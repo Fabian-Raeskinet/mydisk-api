@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Authors;
 
 namespace MyDisks.Data.Configurations.Authors;
 
@@ -14,11 +14,5 @@ public class AuthorConfiguration : IEntityTypeConfiguration<Author>
 
         builder.Property(x => x.Pseudonyme)
             .IsRequired(false);
-
-        builder.Property(x => x.CreatedAt)
-            .IsRequired();
-
-        builder.Property(x => x.UpdatedAt)
-            .IsRequired(true);
     }
 }

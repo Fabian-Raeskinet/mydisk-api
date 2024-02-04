@@ -7,10 +7,10 @@ parameters:
     type: string
   - name: slotName
     type: string
-#  - name: dataBaseConnectionString
-#    type: string
-#  - name: dataBaseUser
-#    type: string
+  #  - name: dataBaseConnectionString
+  #    type: string
+  #  - name: dataBaseUser
+  #    type: string
   - name: env
     type: string
 

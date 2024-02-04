@@ -1,10 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
-using MyDisks.Tests.Utils;
 using MyDisks.Data;
+using MyDisks.Tests.Utils;
 
-namespace MyDisks.Data.IntegrationTests;
+namespace MyDisks.IntegrationTests.Data;
 
 public class DatabaseFixtureBase : IDisposable
 {
@@ -12,6 +12,7 @@ public class DatabaseFixtureBase : IDisposable
     {
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
         optionsBuilder.UseSqlServer(JsonSettings.XUnit.GetConnectionString("SqlServerConnection"));
+
         DbContext = CreateApplicationDbContext(optionsBuilder);
 
         DbContext.Database.OpenConnection();

@@ -5,7 +5,7 @@ stages:
   - stage: Commit
     jobs:
       - template: azure-pipelines-build.template.yml
-        
+
   - stage: Run_Data_Integration_Test
     variables:
       - group: mydisks-int

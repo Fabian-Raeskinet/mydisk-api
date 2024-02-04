@@ -1,29 +1,32 @@
 ﻿using MediatR;
 using MyDisks.Domain;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Disks;
 
 namespace MyDisks.Services.Disks;
 
-public class CreateDiskCommandHandler : IRequestHandler<CreateDiskCommandRequest, Unit>
+public sealed class CreateDiskCommandHandler : ICommandHandler<CreateDiskCommandRequest>
 {
-    public CreateDiskCommandHandler(IDiskRepository repository)
+    public CreateDiskCommandHandler(IDiskRepository repository, IDomainEventDispatcher dispatcher)
     {
         DiskRepository = repository;
+        Dispatcher = dispatcher;
     }
 
     public IDiskRepository DiskRepository { get; }
+    public IDomainEventDispatcher Dispatcher { get; set; }
 
-    public async Task<Unit> Handle(CreateDiskCommandRequest request, CancellationToken cancellationToken)
+    public async Task Handle(CreateDiskCommandRequest request, CancellationToken cancellationToken)
     {
-        var entity = new Disk
+        var disk = new Disk
         {
-            Id = Guid.NewGuid(),
             Name = request.Name,
             ReleaseDate = request.ReleaseDate
         };
 
-        await DiskRepository.CreateDiskAsync(entity);
+        var newDiskEvent = new NewDiskCreatedDomainEvent(disk);
 
-        return Unit.Value;
+        await Dispatcher.Dispatch(newDiskEvent, cancellationToken);
+
+        await DiskRepository.CreateDiskAsync(disk);
     }
 }

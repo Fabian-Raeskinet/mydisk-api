@@ -62,19 +62,19 @@ public class ApiExceptionFilterAttributeFixture
             //
             // // Assert
             // invokingCount.Should().Be(0);
-            
+
             // Arrange
             var invokingCount = 0;
             context.Exception = new DummyException();
             sut.ExceptionHandlers[typeof(ObjectNotFoundException)] = _ => invokingCount++;
-            
+
             // Act
             sut.HandleException(context);
-            
+
             // Assert
             invokingCount.Should().Be(0);
         }
-        
+
         [Theory]
         [AutoApiData]
         public void Should_Find_Action
@@ -87,10 +87,10 @@ public class ApiExceptionFilterAttributeFixture
             var invokingCount = 0;
             context.Exception = new ObjectNotFoundException();
             sut.ExceptionHandlers[typeof(ObjectNotFoundException)] = _ => invokingCount++;
-            
+
             // Act
             sut.HandleException(context);
-            
+
             // Assert
             invokingCount.Should().Be(1);
         }

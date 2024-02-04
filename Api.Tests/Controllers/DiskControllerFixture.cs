@@ -301,114 +301,8 @@ public class DiskControllerFixture
 
             // Assert
             sut.Mediator.AsMock()
-                .Verify(_ => _.Send(It.Is<DeleteDiskCommandRequest>(request =>
-                        request.Value == diskId.ToString() && request.Property == DeleteDiskByProperty.Id),
+                .Verify(_ => _.Send(It.Is<DeleteDiskCommandRequest>(request => request.DiskId == diskId),
                     CancellationToken.None));
-        }
-    }
-
-    public class DeleteDiskByNameFixture
-    {
-        [Theory]
-        [AutoApiData]
-        public async Task Should_Use_Mediator
-        (
-            string diskName,
-            [NoAutoProperties] DiskController sut
-        )
-        {
-            // Act
-            var act = await sut.DeleteDiskByName(diskName);
-
-            // Assert
-            sut.Mediator.AsMock()
-                .Verify(x => x.Send(It.IsAny<DeleteDiskCommandRequest>(), CancellationToken.None),
-                    Times.Once);
-        }
-
-        [Theory]
-        [AutoApiData]
-        public async Task Should_Returns_NoContentResult
-        (
-            string diskName,
-            [NoAutoProperties] DiskController sut
-        )
-        {
-            // Act
-            var act = await sut.DeleteDiskByName(diskName);
-
-            // Assert
-            act.Should().BeOfType<NoContentResult>();
-        }
-
-        [Theory]
-        [AutoApiData]
-        public async Task Should_Map_Request
-        (
-            string diskName,
-            [NoAutoProperties] DiskController sut
-        )
-        {
-            // Act
-            var act = await sut.DeleteDiskByName(diskName);
-
-            // Assert
-            sut.Mediator.AsMock()
-                .Verify(_ => _.Send(It.Is<DeleteDiskCommandRequest>(request =>
-                        request.Value == diskName && request.Property == DeleteDiskByProperty.Name),
-                    CancellationToken.None));
-        }
-    }
-
-    public class DeleteDiskByPropertyFixture
-    {
-        [Theory]
-        [AutoApiData]
-        public async Task Should_Use_Mediator
-        (
-            DeleteDiskCommand command,
-            [NoAutoProperties] DiskController sut
-        )
-        {
-            // Act
-            var act = await sut.DeleteDiskByProperty(command);
-
-            // Assert
-            sut.Mediator.AsMock()
-                .Verify(x => x.Send(It.IsAny<DeleteDiskCommandRequest>(), CancellationToken.None),
-                    Times.Once);
-        }
-
-        [Theory]
-        [AutoApiData]
-        public async Task Should_Returns_NoContentResult
-        (
-            DeleteDiskCommand command,
-            [NoAutoProperties] DiskController sut
-        )
-        {
-            // Act
-            var act = await sut.DeleteDiskByProperty(command);
-
-            // Assert
-            act.Should().BeOfType<NoContentResult>();
-        }
-
-        [Theory]
-        [AutoApiData]
-        public async Task Should_Map_Request
-        (
-            DeleteDiskCommand command,
-            [NoAutoProperties] DiskController sut
-        )
-        {
-            // Act
-            var act = await sut.DeleteDiskByProperty(command);
-
-            // Assert
-            sut.Mediator.AsMock()
-                .Verify(_ => _.Send(It.Is<DeleteDiskCommandRequest>(request =>
-                    request.Value == command.Value && request.Property == command.Property), CancellationToken.None));
         }
     }
 
@@ -443,7 +337,7 @@ public class DiskControllerFixture
             var act = await sut.UpdateDisk(command);
 
             // Assert
-            act.Should().BeOfType<OkObjectResult>();
+            act.Should().BeOfType<NoContentResult>();
         }
 
         [Theory]

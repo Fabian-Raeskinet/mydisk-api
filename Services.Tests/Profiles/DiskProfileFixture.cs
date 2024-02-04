@@ -1,7 +1,7 @@
 using AutoMapper;
 using FluentAssertions;
 using MyDisks.Contracts.Disks;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Disks;
 using MyDisks.Services.Disks;
 using MyDisks.Tests.Services;
 
@@ -22,7 +22,7 @@ public class DiskProfileFixture
             Id = disk.Id,
             Name = disk.Name,
             ReleaseDate = disk.ReleaseDate,
-            Author = new AuthorResult()
+            Author = new AuthorResult
             {
                 Id = disk.Author.Id,
                 Pseudonyme = disk.Author.Pseudonyme

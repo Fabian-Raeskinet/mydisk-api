@@ -1,12 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace MyDisks.Domain.Entities;
+namespace MyDisks.Domain.Authors;
 
-public class Author : BaseEntity
+// public class Author : AggregateRoot<Guid>
+public class Author
 {
-    [Key]
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public Guid Id { get; set; }
 
     public string? Pseudonyme { get; set; }

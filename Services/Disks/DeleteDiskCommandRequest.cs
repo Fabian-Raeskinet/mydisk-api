@@ -3,6 +3,6 @@ using MyDisks.Contracts.Disks;
 
 namespace MyDisks.Services.Disks;
 
-public class DeleteDiskCommandRequest : DeleteDiskCommand, IRequest<Unit>
+public class DeleteDiskCommandRequest : DeleteDiskCommand, ICommand
 {
 }

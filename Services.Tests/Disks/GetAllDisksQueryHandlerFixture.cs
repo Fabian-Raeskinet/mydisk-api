@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
 using MyDisks.Contracts.Disks;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Disks;
 using MyDisks.Services.Disks;
 using MyDisks.Tests.Services;
 using MyDisks.Tests.Utils;
@@ -25,7 +25,7 @@ public class GetAllDisksQueryHandlerFixture
         sut.DiskRepository.AsMock()
             .Verify(_ => _.GetDisksAsync());
     }
-    
+
     [Theory]
     [AutoServiceData]
     public async Task Should_Map_Disk
@@ -39,7 +39,7 @@ public class GetAllDisksQueryHandlerFixture
         sut.DiskRepository.AsMock()
             .Setup(_ => _.GetDisksAsync())
             .ReturnsAsync(disks.ToList());
-        
+
         // Act
         var act = await sut.Handle(request, CancellationToken.None);
 
@@ -61,7 +61,7 @@ public class GetAllDisksQueryHandlerFixture
         sut.DiskRepository.AsMock()
             .Setup(_ => _.GetDisksAsync())
             .ReturnsAsync(disks);
-        
+
         sut.Mapper.AsMock()
             .Setup(_ => _.Map<IEnumerable<DiskResult>>(disks))
             .Returns(diskResults);
@@ -85,7 +85,7 @@ public class GetAllDisksQueryHandlerFixture
         sut.DiskRepository.AsMock()
             .Setup(_ => _.GetDisksAsync())
             .ReturnsAsync(disks);
-        
+
         sut.Mapper.AsMock()
             .Setup(_ => _.Map<IEnumerable<DiskResult>>(disks))
             .Returns(Array.Empty<DiskResult>());

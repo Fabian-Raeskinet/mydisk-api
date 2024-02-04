@@ -1,7 +1,7 @@
 using FluentAssertions;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Disks;
+using MyDisks.IntegrationTests.Data;
 using MyDisks.Tests.Domain;
-using MyDisks.Data;
 
 namespace MyDisks.Data.IntegrationTests;
 
@@ -30,7 +30,7 @@ public class DiskRepositoryFixture : DatabaseFixtureBase
             act.Should().NotBeEmpty();
         }
     }
-    
+
     public class CreateDiskAsyncFixture : DiskRepositoryFixture
     {
         [Theory]
@@ -46,7 +46,7 @@ public class DiskRepositoryFixture : DatabaseFixtureBase
                 .Be(disk);
         }
     }
-    
+
     public class UpdateDiskAsyncFixture : DiskRepositoryFixture
     {
         [Theory]
@@ -55,18 +55,18 @@ public class DiskRepositoryFixture : DatabaseFixtureBase
         {
             // Arrange
             await Sut.CreateDiskAsync(disk);
-            disk.Name = diskName;
-            
+            disk.Name = diskName.Substring(30);
+
             // Act
             await Sut.UpdateDiskAsync(disk);
-            
+
             // Assert
             var expected = await Sut.GetDiskByFilterAsync(x => x.Id == disk.Id);
             expected.Should()
                 .Be(disk);
         }
     }
-    
+
     public class DeleteDiskAsyncFixture : DiskRepositoryFixture
     {
         [Theory]
@@ -76,10 +76,10 @@ public class DiskRepositoryFixture : DatabaseFixtureBase
             // Arrange
             await Sut.CreateDiskAsync(disk);
             disk.Name = diskName;
-            
+
             // Act
             await Sut.DeleteDiskAsync(disk);
-            
+
             // Assert
             var expected = await Sut.GetDiskByFilterAsync(x => x.Id == disk.Id);
             expected.Should().BeNull();

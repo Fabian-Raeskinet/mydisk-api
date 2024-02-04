@@ -1,7 +1,7 @@
 ﻿using FluentAssertions;
 using Moq;
 using MyDisks.Contracts.Disks;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Disks;
 using MyDisks.Domain.Exceptions;
 using MyDisks.Services.Disks;
 using MyDisks.Tests.Services;
@@ -16,9 +16,15 @@ public class GetDiskByNameQueryHandlerFixture
     public async Task Should_Get_Disk_By_Name
     (
         GetDiskByNameQueryRequest request,
+        Disk disk,
         GetDiskByNameQueryHandler sut
     )
     {
+        // Arrange
+        sut.DiskRepository.AsMock()
+            .Setup(x => x.GetDiskByFilterAsync(disk => disk.Name == request.Name))
+            .ReturnsAsync(disk);
+        
         // Act
         var act = await sut.Handle(request, CancellationToken.None);
 

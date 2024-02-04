@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 using Moq;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Disks;
 using MyDisks.Domain.Exceptions;
 using MyDisks.Services.Disks;
 using MyDisks.Tests.Services;
@@ -15,11 +15,17 @@ public class UpdateDiskCommandHandlerFixture
     public async Task Should_Get_Disk_By_Id
     (
         UpdateDiskCommandRequest request,
+        Disk disk,
         UpdateDiskCommandHandler sut
     )
     {
+        // Arrange
+        sut.DiskRepository.AsMock()
+            .Setup(x => x.GetDiskByFilterAsync(disk => disk.Id == request.Id))
+            .ReturnsAsync(disk);
+        
         // Act
-        var act = await sut.Handle(request, CancellationToken.None);
+        await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()
@@ -61,7 +67,7 @@ public class UpdateDiskCommandHandlerFixture
             .ReturnsAsync(disk);
 
         // Act
-        var act = await sut.Handle(request, CancellationToken.None);
+        await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()
@@ -69,7 +75,7 @@ public class UpdateDiskCommandHandlerFixture
                 d.Name == request.Name
                 && d.ReleaseDate == request.ReleaseDate)));
     }
-    
+
     [Theory]
     [AutoServiceData]
     public async Task Should_Not_Update_Name
@@ -81,20 +87,20 @@ public class UpdateDiskCommandHandlerFixture
     {
         // Arrange
         request.Name = null;
-        
+
         sut.DiskRepository.AsMock()
             .Setup(_ => _.GetDiskByFilterAsync(d => d.Id == request.Id))
             .ReturnsAsync(disk);
 
         // Act
-        var act = await sut.Handle(request, CancellationToken.None);
+        await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()
             .Verify(_ => _.UpdateDiskAsync(It.Is<Disk>(d =>
                 d.Name == disk.Name)));
     }
-    
+
     [Theory]
     [AutoServiceData]
     public async Task Should_Not_Update_ReleaseDate
@@ -106,20 +112,20 @@ public class UpdateDiskCommandHandlerFixture
     {
         // Arrange
         request.Name = null;
-        
+
         sut.DiskRepository.AsMock()
             .Setup(_ => _.GetDiskByFilterAsync(d => d.Id == request.Id))
             .ReturnsAsync(disk);
 
         // Act
-        var act = await sut.Handle(request, CancellationToken.None);
+        await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()
             .Verify(_ => _.UpdateDiskAsync(It.Is<Disk>(d =>
                 d.ReleaseDate == disk.ReleaseDate)));
     }
-    
+
     [Theory]
     [AutoServiceData]
     public async Task Should_Not_Update_Other_Properties
@@ -135,7 +141,7 @@ public class UpdateDiskCommandHandlerFixture
             .ReturnsAsync(disk);
 
         // Act
-        var act = await sut.Handle(request, CancellationToken.None);
+        await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()

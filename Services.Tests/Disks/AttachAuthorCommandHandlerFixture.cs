@@ -1,7 +1,8 @@
 ﻿using FluentAssertions;
 using MediatR;
 using Moq;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Authors;
+using MyDisks.Domain.Disks;
 using MyDisks.Domain.Exceptions;
 using MyDisks.Services.Disks;
 using MyDisks.Tests.Services;
@@ -16,27 +17,44 @@ public class AttachAuthorCommandHandlerFixture
     public async Task Should_Get_Author
     (
         AttachAuthorCommandRequest request,
+        Author author,
+        Disk disk,
         AttachAuthorCommandHandler sut
     )
     {
+        // Arrange
+        sut.AuthorRepository.AsMock()
+            .Setup(x => x.GetAuthorByFilterAsync(author => author.Id == request.AuthorId))
+            .ReturnsAsync(author);
+
+        sut.DiskRepository.AsMock()
+            .Setup(x => x.GetDiskByFilterAsync(disk => disk.Id == request.DiskId))
+            .ReturnsAsync(disk);
+        
         // Act
-        var act = await sut.Handle(request, CancellationToken.None);
+        await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.AuthorRepository.AsMock()
             .Verify(_ => _.GetAuthorByFilterAsync(author => author.Id == request.AuthorId));
     }
-    
+
     [Theory]
     [AutoServiceData]
     public async Task Should_Get_Disk
     (
         AttachAuthorCommandRequest request,
+        Disk disk,
         AttachAuthorCommandHandler sut
     )
     {
+        // Arrange
+        sut.DiskRepository.AsMock()
+            .Setup(x => x.GetDiskByFilterAsync(disk => disk.Id == request.DiskId))
+            .ReturnsAsync(disk);
+        
         // Act
-        var act = await sut.Handle(request, CancellationToken.None);
+        await sut.Handle(request, CancellationToken.None);
 
         // Assert
         sut.DiskRepository.AsMock()
@@ -103,20 +121,5 @@ public class AttachAuthorCommandHandlerFixture
         await act.Should()
             .ThrowAsync<ObjectNotFoundException>()
             .WithMessage("no matches found");
-    }
-    
-    [Theory]
-    [AutoServiceData]
-    public async Task AttachAuthorToDisk
-    (
-        AttachAuthorCommandRequest request,
-        AttachAuthorCommandHandler sut
-    )
-    {
-        // Act
-        var act = await sut.Handle(request, CancellationToken.None);
-
-        // Assert
-        act.Should().BeOfType<Unit>();
     }
 }

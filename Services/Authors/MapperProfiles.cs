@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using MyDisks.Contracts.Disks;
-using MyDisks.Domain.Entities;
+using MyDisks.Domain.Authors;
 
 namespace MyDisks.Services.Authors;
 

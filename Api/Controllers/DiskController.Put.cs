@@ -14,6 +14,9 @@ public partial class DiskController
     {
         var request = new UpdateDiskCommandRequest
             { Id = command.Id, Name = command.Name, ReleaseDate = command.ReleaseDate };
-        return Ok(await Mediator.Send(request));
+
+        await Mediator.Send(request);
+
+        return NoContent();
     }
 }

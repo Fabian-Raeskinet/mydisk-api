@@ -3,6 +3,6 @@ using MyDisks.Contracts.Disks;
 
 namespace MyDisks.Services.Disks;
 
-public class AttachAuthorCommandRequest : AttachAuthorCommand, IRequest<Unit>
+public class AttachAuthorCommandRequest : AttachAuthorCommand, ICommand
 {
 }
