@@ -14,11 +14,5 @@ public class AuthorConfiguration : IEntityTypeConfiguration<Author>
 
         builder.Property(x => x.Pseudonyme)
             .IsRequired(false);
-
-        // builder.Property(x => x.CreatedAt)
-        //     .IsRequired();
-        //
-        // builder.Property(x => x.UpdatedAt)
-        //     .IsRequired();
     }
 }

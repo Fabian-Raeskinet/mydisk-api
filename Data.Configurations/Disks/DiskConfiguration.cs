@@ -22,12 +22,6 @@ public class DiskConfiguration : IEntityTypeConfiguration<Disk>
         builder.Property(x => x.ImageUrl)
             .IsRequired(false);
 
-        // builder.Property(x => x.CreatedAt)
-        //     .IsRequired();
-        //
-        // builder.Property(x => x.UpdatedAt)
-        //     .IsRequired();
-
         builder.Property(x => x.AuthorId);
     }
 }

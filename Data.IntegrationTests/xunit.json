@@ -1,7 +1,5 @@
 {
   "ConnectionStrings": {
-    "SqlServerConnection": "Server=tcp:my-disks.database.windows.net,1433;Initial Catalog=MyDisk;Persist Security Info=False;User ID=MyDisk;Password='didisk123.';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;"
+    "SqlServerConnection": "Server=(LocalDB)\\MSSQLLocalDB;Database=MyDisks;"
   }
 }
-
-//    "SqlServerConnection": "Server=tcp:my-disks.database.windows.net,1433;Initial Catalog=MyDisk;Persist Security Info=False;User ID=MyDisk;Password='didisk123.';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Connection Timeout=30;"

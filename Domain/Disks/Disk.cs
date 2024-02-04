@@ -12,5 +12,5 @@ public sealed class Disk
     public string? ImageUrl { get; set; }
     public Guid? AuthorId { get; set; }
     public Author? Author { get; set; }
-    public List<Review> Reviews { get; set; }
+    // public List<Review> Reviews { get; set; }
 }

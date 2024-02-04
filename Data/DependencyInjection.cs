@@ -27,11 +27,11 @@ public static class DependencyInjection
     private static IServiceCollection AddDatabaseConfiguration(this IServiceCollection services,
         IConfiguration configuration)
     {
-        // services.AddDbContext<ApplicationDbContext>(options =>
-        //     options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseInMemoryDatabase("DbTest"));
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+
+        // services.AddDbContext<ApplicationDbContext>(options =>
+        //     options.UseInMemoryDatabase("DbTest"));
 
         services.AddScoped<ApplicationDbContextInitializer>();
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
