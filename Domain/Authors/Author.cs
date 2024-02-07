@@ -8,5 +8,5 @@ public class Author
 {
     public Guid Id { get; set; }
 
-    public string? Pseudonyme { get; set; }
+    public Pseudonym Pseudonym { get; set; }
 }

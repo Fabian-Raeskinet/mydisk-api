@@ -25,7 +25,7 @@ public class DiskProfileFixture
             Author = new AuthorResult
             {
                 Id = disk.Author.Id,
-                Pseudonyme = disk.Author.Pseudonyme
+                Pseudonyme = disk.Author.Pseudonym
             },
             ImageUrl = disk.ImageUrl
         };

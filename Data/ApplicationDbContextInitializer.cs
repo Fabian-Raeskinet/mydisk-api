@@ -52,9 +52,9 @@ public class ApplicationDbContextInitializer
             // var author = new Author(new Guid());
             // author.Pseudonyme = "Orelsan";
             // _context.Authors.Add(author);
-            
-            
-            _context.Authors.Add(new Author { Pseudonyme = "Orelsan"});
+
+
+            _context.Authors.Add(new Author { Pseudonym = new Pseudonym("Orelsan") });
 
             await _context.SaveChangesAsync();
         }
@@ -68,18 +68,18 @@ public class ApplicationDbContextInitializer
             // var author2 = new Author(new Guid(), "Roméo Elvis");
             // var disk2 = new Disk(new Guid(), "Chocolat", new DateTime(2016, 2, 14), author2);
             // _context.Disks.Add(disk2);
-            
+
             _context.Disks.Add(new Disk
             {
                 Id = new Guid(),
                 Name = new Name("Jeannine"), ReleaseDate = new DateTime(2018, 8, 29),
-                Author = new Author { Pseudonyme = "Lomepal" }
+                Author = new Author { Pseudonym = new Pseudonym("Lomepal") }
             });
             _context.Disks.Add(
                 new Disk
                 {
                     Name = new Name("Chocolat"), ReleaseDate = new DateTime(2016, 2, 14),
-                    Author = new Author { Pseudonyme = "Roméo Elvis" }
+                    Author = new Author { Pseudonym = new Pseudonym("Roméo Elvis") }
                 }
             );
 
