@@ -56,7 +56,7 @@ public sealed class DiskControllerFixture
             // Arrange
             _factory.DiskRepositoryMock
                 .Setup(x => x.GetDiskByFilterAsync(d => d.Name == name))
-                .ReturnsAsync((Disk)null);
+                .ReturnsAsync((Disk)null!);
 
             // Act
             var act = await _client.GetAsync($"/api/disk/disk-by-name?name={name}");
@@ -185,7 +185,7 @@ public sealed class DiskControllerFixture
             // Arrange
             _factory.DiskRepositoryMock
                 .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
-                .ReturnsAsync((Disk)null);
+                .ReturnsAsync((Disk)null!);
 
             // Act
             var act = await _client.DeleteAsync($"/api/disk/delete-disk?diskId={diskId}");
