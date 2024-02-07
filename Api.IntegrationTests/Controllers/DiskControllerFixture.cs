@@ -141,12 +141,11 @@ public sealed class DiskControllerFixture
             act.StatusCode.Should().Be(HttpStatusCode.NoContent);
         }
 
-        [Theory]
-        [AutoApiData]
-        public async Task Should_HttpStatusCode_Be_BadRequest(AttachAuthorCommand command)
+        [Fact]
+        public async Task Should_HttpStatusCode_Be_BadRequest()
         {
             // Arrange
-            command.DiskId = Guid.Empty;
+            var command = new AttachAuthorCommand { DiskId = Guid.Empty };
             var content = JsonContent.Create(command);
 
             _factory.DiskRepositoryMock

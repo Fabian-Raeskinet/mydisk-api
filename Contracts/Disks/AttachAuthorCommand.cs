@@ -2,6 +2,6 @@
 
 public class AttachAuthorCommand
 {
-    public Guid AuthorId { get; set; }
-    public Guid DiskId { get; set; }
+    public Guid AuthorId { get; init; }
+    public Guid DiskId { get; init; }
 }
