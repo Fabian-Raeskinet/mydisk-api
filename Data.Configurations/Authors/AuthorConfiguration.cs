@@ -16,6 +16,6 @@ public class AuthorConfiguration : IEntityTypeConfiguration<Author>
             .HasConversion(
                 v => v.Value,
                 v => new Pseudonym(v))
-            .IsRequired(false);
+            .IsRequired(true);
     }
 }

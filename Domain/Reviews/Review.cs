@@ -9,7 +9,6 @@ public class Review : AggregateRoot<Guid>
         Id = id;
     }
 
-    public Guid Id { get; set; }
     private string? _title { get; set; }
     private string? _content;
     public double Note { get; set; }
@@ -37,7 +36,14 @@ public class Review : AggregateRoot<Guid>
         init
         {
             if (string.IsNullOrEmpty(value))
-                throw new ArgumentNullException();
+                throw new ArgumentNullException($"Title cannot be empty");
+
+            if (Status is ReviewStatus.Archived)
+                throw new InvalidOperationException(
+                    $"Cannot set Title of Review {Id} because archived");
+
+            if (value.Length > 30)
+                throw new ArgumentException("Title cannot exceed 30 characters");
 
             _title = value;
         }
