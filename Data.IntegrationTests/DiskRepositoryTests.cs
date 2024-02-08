@@ -10,7 +10,7 @@ public class DiskRepositoryTests
     [Fact]
     public async Task Should()
     {
-        var context = new Mock<ApplicationDbContext>();
+        var context = new Mock<IApplicationDbContext>();
         var disk = new Disk
         {
             Id = Guid.NewGuid(),
@@ -19,7 +19,9 @@ public class DiskRepositoryTests
         
         IList<Disk> disks = new List<Disk> { disk };
 
-        context.Setup(x => x.Disks).ReturnsDbSet(disks);
+        context
+            .SetupGet(x => x.Disks)
+            .ReturnsDbSet(disks);
         
         var sut = new DiskRepository(context.Object);
 

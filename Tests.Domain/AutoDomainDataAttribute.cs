@@ -25,7 +25,9 @@ internal class DomainCustomization : CompositeCustomization
         : base(
             new CommonCustomization(),
             new AutoMoqCustomization(),
-            new DiskCustomization())
+            new DiskCustomization(),
+            new PseudonymCustomization(),
+            new ReviewCustomization())
     {
     }
 }
