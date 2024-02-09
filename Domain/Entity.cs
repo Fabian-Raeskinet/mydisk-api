@@ -4,7 +4,7 @@ namespace MyDisks.Domain;
 
 public abstract class Entity<TId> : IEquatable<Entity<TId>> where TId : notnull
 {
-    public TId Id { get; set; }
+    public TId? Id { get; set; }
 
     public bool Equals(Entity<TId>? other)
     {
