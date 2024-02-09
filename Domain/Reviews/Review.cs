@@ -33,7 +33,7 @@ public class Review : AggregateRoot<Guid>
     public string? Title
     {
         get => _title;
-        init
+        set
         {
             if (string.IsNullOrEmpty(value))
                 throw new ArgumentNullException($"Title cannot be empty");
