@@ -72,7 +72,6 @@ public class ApplicationDbContextInitializer
 
             _context.Disks.Add(new Disk
             {
-                Id = new Guid(),
                 Name = new Name("Jeannine"), ReleaseDate = new DateTime(2018, 8, 29),
                 Author = new Author { Pseudonym = new Pseudonym("Lomepal") }
             });

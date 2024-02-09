@@ -4,7 +4,7 @@ public struct Name : IEquatable<Name>
 {
     public string Value { get; }
 
-    public Name(string value)
+    public  Name(string value)
     {
         if (value.Length > 30)
         {

@@ -4,11 +4,6 @@ namespace MyDisks.Domain.Reviews;
 
 public class Review : AggregateRoot<Guid>
 {
-    public Review(Guid id) : base(id)
-    {
-        Id = id;
-    }
-
     private string? _title { get; set; }
     private string? _content;
     public double Note { get; set; }

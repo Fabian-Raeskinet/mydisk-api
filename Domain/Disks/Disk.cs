@@ -3,10 +3,11 @@ using MyDisks.Domain.Reviews;
 
 namespace MyDisks.Domain.Disks;
 
-// public sealed class Disk : AggregateRoot<Guid>
-public sealed class Disk
+public sealed class Disk : AggregateRoot<Guid>
+// public sealed class Disk
 {
-    public Guid Id { get; set; }
+
+    // public Guid Id { get; set; }
     public Name Name { get; set; }
     public DateTime? ReleaseDate { get; set; }
     public string? ImageUrl { get; set; }
@@ -14,11 +15,16 @@ public sealed class Disk
     public Author? Author { get; set; }
     public List<Review> Reviews { get; set; }
 
-    public void Add(Review review)
+    public void AddReview(Review review)
     {
         if (ReleaseDate > DateTime.Now)
             throw new InvalidOperationException("cannot add a review for a futur disk release date");
 
         Reviews.Add(review);
     }
+
+    // public Disk(Guid id) : base(id)
+    // {
+    //     Reviews = new List<Review>();
+    // }
 }
