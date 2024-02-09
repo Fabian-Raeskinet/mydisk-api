@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
-using MyDisks.Domain.Disks;
 
-namespace MyDisks.Domain;
+namespace MyDisks.Domain.Disks;
 
 public interface IDiskRepository
 {

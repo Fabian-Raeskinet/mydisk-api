@@ -1,7 +1,6 @@
 ﻿using System.Linq.Expressions;
-using MyDisks.Domain.Authors;
 
-namespace MyDisks.Domain;
+namespace MyDisks.Domain.Authors;
 
 public interface IAuthorRepository
 {

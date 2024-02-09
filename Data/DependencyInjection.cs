@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyDisks.Domain;
+using MyDisks.Domain.Authors;
+using MyDisks.Domain.Disks;
 
 namespace MyDisks.Data;
 

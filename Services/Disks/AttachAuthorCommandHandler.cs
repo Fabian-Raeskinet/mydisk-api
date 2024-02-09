@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using MediatR;
 using MyDisks.Domain;
+using MyDisks.Domain.Authors;
+using MyDisks.Domain.Disks;
 using MyDisks.Domain.Exceptions;
 
 namespace MyDisks.Services.Disks;
