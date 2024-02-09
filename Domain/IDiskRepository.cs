@@ -29,7 +29,7 @@ public interface IDiskRepository
     /// </summary>
     /// <param name="disk">The disk to create.</param>
     /// <returns>A task that represents the asynchronous operation. The task result contains the unique identifier of the created disk.</returns>
-    public Task<Guid> CreateDiskAsync(Disk disk);
+    public Task CreateDiskAsync(Disk disk);
 
     /// <summary>
     /// Deletes a disk asynchronously.
@@ -40,7 +40,7 @@ public interface IDiskRepository
     /// <returns>
     /// A task representing the asynchronous operation. The task will return true if the disk is successfully deleted; otherwise, it will return false.
     /// </returns>
-    public Task<bool> DeleteDiskAsync(Disk disk);
+    public Task DeleteDiskAsync(Disk disk);
 
     /// <summary>
     /// Updates the disk asynchronously.

@@ -91,10 +91,10 @@ public sealed class DiskControllerFixture
 
             var content = JsonContent.Create(command);
 
-            _factory.DiskRepositoryMock
-                .Setup(x => x.CreateDiskAsync(It.Is<Disk>(disk =>
-                    disk.Name == command.Name && disk.ReleaseDate == command.ReleaseDate)))
-                .ReturnsAsync(diskId);
+            // _factory.DiskRepositoryMock
+            //     .Setup(x => x.CreateDiskAsync(It.Is<Disk>(disk =>
+            //         disk.Name == command.Name && disk.ReleaseDate == command.ReleaseDate)))
+            //     .ReturnsAsync(Task.FromResult(true));
 
             // Act
             var act = await _client.PostAsync("/api/disk/create-disk", content);
