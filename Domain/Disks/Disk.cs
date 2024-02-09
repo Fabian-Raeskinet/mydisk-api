@@ -4,10 +4,7 @@ using MyDisks.Domain.Reviews;
 namespace MyDisks.Domain.Disks;
 
 public sealed class Disk : AggregateRoot<Guid>
-// public sealed class Disk
 {
-
-    // public Guid Id { get; set; }
     public Name Name { get; set; }
     public DateTime? ReleaseDate { get; set; }
     public string? ImageUrl { get; set; }
@@ -22,9 +19,4 @@ public sealed class Disk : AggregateRoot<Guid>
 
         Reviews.Add(review);
     }
-
-    // public Disk(Guid id) : base(id)
-    // {
-    //     Reviews = new List<Review>();
-    // }
 }

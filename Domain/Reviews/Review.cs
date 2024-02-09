@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
 namespace MyDisks.Domain.Reviews;
 
 public class Review : AggregateRoot<Guid>
