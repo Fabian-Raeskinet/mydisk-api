@@ -23,7 +23,6 @@ internal class DomainCustomization : CompositeCustomization
 {
     public DomainCustomization()
         : base(
-            new CommonCustomization(),
             new AutoMoqCustomization(),
             new DiskCustomization(),
             new PseudonymCustomization(),

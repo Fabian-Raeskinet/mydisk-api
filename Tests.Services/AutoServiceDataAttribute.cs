@@ -22,8 +22,11 @@ public class InlineAutoServiceDataAttribute : InlineAutoDataAttribute
 internal class ServiceCustomization : CompositeCustomization
 {
     public ServiceCustomization()
-        : base(new AutoMoqCustomization(),
-            new DiskCustomization())
+        : base(
+            new AutoMoqCustomization(),
+            new DiskCustomization(),
+            new PseudonymCustomization(),
+            new ReviewCustomization())
     {
     }
 }

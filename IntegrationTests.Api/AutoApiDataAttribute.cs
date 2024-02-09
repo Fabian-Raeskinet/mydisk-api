@@ -24,7 +24,9 @@ internal class ApiCustomization : CompositeCustomization
     public ApiCustomization()
         : base(
             new AutoMoqCustomization(),
-            new DiskCustomization()
+            new DiskCustomization(),
+            new PseudonymCustomization(),
+            new ReviewCustomization()
         )
     {
     }
