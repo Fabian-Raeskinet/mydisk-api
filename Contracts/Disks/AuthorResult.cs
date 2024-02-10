@@ -1,7 +1,7 @@
 ﻿namespace MyDisks.Contracts.Disks;
 
-public class AuthorResult
+public record AuthorResult
 {
-    public Guid Id { get; set; }
-    public string? Pseudonyme { get; set; }
+    public Guid Id { get; init; }
+    public string Pseudonym { get; init; }
 }

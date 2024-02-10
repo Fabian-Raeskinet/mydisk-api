@@ -3,6 +3,8 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyDisks.Domain;
+using MyDisks.Domain.Authors;
+using MyDisks.Domain.Disks;
 
 namespace MyDisks.Data;
 
@@ -28,10 +30,10 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+           options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
         // services.AddDbContext<ApplicationDbContext>(options =>
-        //     options.UseInMemoryDatabase("DbTest"));
+        //      options.UseInMemoryDatabase("DbTest"));
 
         services.AddScoped<ApplicationDbContextInitializer>();
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());

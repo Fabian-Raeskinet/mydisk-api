@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using MyDisks.Contracts.Disks;
 using MyDisks.Domain;
+using MyDisks.Domain.Disks;
 using MyDisks.Domain.Exceptions;
 
 namespace MyDisks.Services.Disks;

@@ -25,7 +25,12 @@ internal class ApiCustomization : CompositeCustomization
         : base(
             new AutoMoqCustomization(),
             new ActionContextCustomization(),
-            new ExceptionContextCustomization()
+            new ExceptionContextCustomization(),
+            new BindingInfoCustomization(),
+            new HttpContextCustomization(),
+            new MethodInfoCustomization(),
+            new ControllerActionDescriptorCustomization(),
+            new ResourceExecutingContextCustomization()
         )
     {
     }

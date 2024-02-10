@@ -7,6 +7,6 @@ public class DiskCustomization : ICustomization
 {
     public void Customize(IFixture fixture)
     {
-        fixture.Customize<Disk>(composer => composer.With(x => x.Name, fixture.Create<string>().Substring((29))));
+        fixture.Customize<Name>(composer => composer.FromFactory((string value) => new Name(value.Substring(30))));
     }
 }

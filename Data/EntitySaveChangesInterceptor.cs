@@ -7,25 +7,48 @@ namespace MyDisks.Data;
 public class EntitySaveChangesInterceptor : SaveChangesInterceptor
 {
     private readonly IDateTime _dateTime;
+    private readonly IDomainEventDispatcher _dispatcher;
 
-    public EntitySaveChangesInterceptor(IDateTime dateTime)
+    public EntitySaveChangesInterceptor(IDateTime dateTime, IDomainEventDispatcher dispatcher)
     {
         _dateTime = dateTime;
+        _dispatcher = dispatcher;
     }
 
     public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
     {
-        UpdateEntities(eventData.Context);
+        // UpdateEntities(eventData.Context);
+        DispatchDomainEvents(eventData.Context).GetAwaiter().GetResult();
 
         return base.SavingChanges(eventData, result);
     }
 
-    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData,
+    public override async ValueTask<InterceptionResult<int>> SavingChangesAsync(DbContextEventData eventData,
         InterceptionResult<int> result, CancellationToken cancellationToken = default)
     {
-        UpdateEntities(eventData.Context);
+        // UpdateEntities(eventData.Context);
+        await DispatchDomainEvents(eventData.Context);
 
-        return base.SavingChangesAsync(eventData, result, cancellationToken);
+        return await base.SavingChangesAsync(eventData, result, cancellationToken);
+    }
+    
+    public async Task DispatchDomainEvents(DbContext? context)
+    {
+        if (context == null) return;
+
+        var entities = context.ChangeTracker
+            .Entries<Entity<Guid>>()
+            .Where(e => e.Entity.DomainEvents.Any())
+            .Select(e => e.Entity);
+
+        var domainEvents = entities
+            .SelectMany(e => e.DomainEvents)
+            .ToList();
+
+        entities.ToList().ForEach(e => e.ClearDomainEvents());
+
+        foreach (var domainEvent in domainEvents)
+            await _dispatcher.Dispatch(domainEvent, CancellationToken.None);
     }
 
     private void UpdateEntities(DbContext? context)

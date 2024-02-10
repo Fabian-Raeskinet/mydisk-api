@@ -24,7 +24,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     {
     }
 
-    public DbSet<Disk> Disks => Set<Disk>();
+    public virtual DbSet<Disk> Disks => Set<Disk>();
     public DbSet<Author> Authors => Set<Author>();
 
     public async Task<int> SaveChangesAsync()

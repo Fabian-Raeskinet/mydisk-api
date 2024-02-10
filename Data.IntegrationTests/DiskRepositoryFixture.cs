@@ -51,11 +51,11 @@ public class DiskRepositoryFixture : DatabaseFixtureBase
     {
         [Theory]
         [AutoDomainData]
-        public async Task Should_Persist_Updated_Disk(Disk disk, string diskName)
+        public async Task Should_Persist_Updated_Disk(Disk disk, Name diskName)
         {
             // Arrange
             await Sut.CreateDiskAsync(disk);
-            disk.Name = diskName.Substring(30);
+            disk.Name = diskName;
 
             // Act
             await Sut.UpdateDiskAsync(disk);
@@ -71,7 +71,7 @@ public class DiskRepositoryFixture : DatabaseFixtureBase
     {
         [Theory]
         [AutoDomainData]
-        public async Task Should_Delete_Disk(Disk disk, string diskName)
+        public async Task Should_Delete_Disk(Disk disk, Name diskName)
         {
             // Arrange
             await Sut.CreateDiskAsync(disk);

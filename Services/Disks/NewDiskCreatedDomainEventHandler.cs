@@ -15,7 +15,7 @@ public class NewDiskCreatedDomainEventHandler : IDomainEventHandler<NewDiskCreat
     
     public Task Handle(NewDiskCreatedDomainEvent notification, CancellationToken cancellationToken)
     {
-        Logger.LogInformation("New Disk Domain Event");
+        Logger.LogInformation($"New Disk Domain Event {notification.Disk.Id}");
         
         return Task.CompletedTask;
     }

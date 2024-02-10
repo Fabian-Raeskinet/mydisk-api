@@ -9,9 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoFixture.AutoMoq" Version="4.18.0" />
-        <PackageReference Include="AutoFixture.Xunit2" Version="4.18.0" />
-        <PackageReference Include="FluentAssertions" Version="6.11.0" />
+        <ProjectReference Include="..\Tests.Domain\Tests.Domain.csproj" />
+        <ProjectReference Include="..\Tests\Tests.csproj" />
     </ItemGroup>
 
 </Project>

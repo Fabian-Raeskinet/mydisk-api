@@ -19,7 +19,7 @@ public class AuthorProfileFixture
         var expected = new AuthorResult
         {
             Id = author.Id,
-            Pseudonyme = author.Pseudonyme
+            Pseudonym = author.Pseudonym
         };
 
         // Act

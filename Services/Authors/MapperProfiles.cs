@@ -8,6 +8,7 @@ public class MapperProfiles : Profile
 {
     public MapperProfiles()
     {
+        CreateMap<Pseudonym, string>().ConstructUsing(pseudonym => pseudonym.Value);
         CreateMap<Author, AuthorResult>();
     }
 }

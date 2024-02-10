@@ -12,7 +12,10 @@ public class AuthorConfiguration : IEntityTypeConfiguration<Author>
         builder.Property(x => x.Id)
             .HasValueGenerator<NewIdGenerator>();
 
-        builder.Property(x => x.Pseudonyme)
-            .IsRequired(false);
+        builder.Property(x => x.Pseudonym)
+            .HasConversion(
+                v => v.Value,
+                v => new Pseudonym(v))
+            .IsRequired(true);
     }
 }

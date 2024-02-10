@@ -4,6 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using MyDisks.Api;
 using MyDisks.Domain;
+using MyDisks.Domain.Authors;
+using MyDisks.Domain.Disks;
 
 namespace MyDisks.IntegrationTests.Api;
 

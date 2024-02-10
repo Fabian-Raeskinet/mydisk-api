@@ -1,5 +1,4 @@
-﻿using MediatR;
-using MyDisks.Domain;
+﻿using MyDisks.Domain;
 using MyDisks.Domain.Disks;
 
 namespace MyDisks.Services.Disks;
@@ -19,14 +18,14 @@ public sealed class CreateDiskCommandHandler : ICommandHandler<CreateDiskCommand
     {
         var disk = new Disk
         {
-            Name = request.Name,
+            Name = new Name(request.Name),
             ReleaseDate = request.ReleaseDate
         };
 
         var newDiskEvent = new NewDiskCreatedDomainEvent(disk);
 
-        await Dispatcher.Dispatch(newDiskEvent, cancellationToken);
-
+        // await Dispatcher.Dispatch(newDiskEvent, cancellationToken);
+        disk.AddDomainEvent(newDiskEvent);
         await DiskRepository.CreateDiskAsync(disk);
     }
 }
