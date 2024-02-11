@@ -5,6 +5,11 @@ namespace MyDisks.Domain.Disks;
 
 public sealed class Disk : AggregateRoot<Guid>
 {
+    public Disk()
+    {
+        Reviews = new List<Review>();
+    }
+
     public Name Name { get; set; }
     public DateTime? ReleaseDate { get; set; }
     public string? ImageUrl { get; set; }
@@ -14,9 +19,20 @@ public sealed class Disk : AggregateRoot<Guid>
 
     public void AddReview(Review review)
     {
-        if (ReleaseDate > DateTime.Now)
-            throw new InvalidOperationException("cannot add a review for a futur disk release date");
-
+        ValidateReviewIsNotDuplicated(review);
+        ValidateReleaseDate();
         Reviews.Add(review);
+    }
+
+    private void ValidateReviewIsNotDuplicated(Review review)
+    {
+        if (Reviews.Contains(review))
+            throw new InvalidOperationException("Cannot add an existing review");
+    }
+
+    private void ValidateReleaseDate()
+    {
+        if (ReleaseDate > DateTime.Now)
+            throw new InvalidOperationException("Cannot add a review for a future disk release date");
     }
 }
