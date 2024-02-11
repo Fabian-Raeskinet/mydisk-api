@@ -2,8 +2,7 @@ namespace MyDisks.Domain.Authors;
 
 public class Pseudonym : ValueObject
 {
-    private string Value { get; }
-
+    public string Value { get; }
     private const int MaxLength = 30;
 
     public Pseudonym(string value)

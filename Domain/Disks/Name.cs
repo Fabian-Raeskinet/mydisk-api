@@ -3,14 +3,15 @@ namespace MyDisks.Domain.Disks;
 public class Name : ValueObject
 {
     public string Value { get; }
-    public const int MaxLength = 30;
+    private const int MaxLength = 30;
 
     public Name(string value)
     {
-        if (value.Length > MaxLength)
-        {
+        if (IsValueEmpty(value))
+            throw new ArgumentNullException(nameof(value));
+
+        if (!IsLengthValid(value))
             throw new ArgumentException($"Name cannot exceed {MaxLength} characters");
-        }
 
         Value = value;
     }
@@ -28,5 +29,15 @@ public class Name : ValueObject
     public override IEnumerable<object> GetEqualityComponents()
     {
         yield return Value;
+    }
+
+    private bool IsLengthValid(string value)
+    {
+        return value.Length <= MaxLength;
+    }
+
+    private bool IsValueEmpty(string value)
+    {
+        return string.IsNullOrEmpty(value);
     }
 }
