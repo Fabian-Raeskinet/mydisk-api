@@ -10,7 +10,7 @@ public sealed class Disk : AggregateRoot<Guid>
         Reviews = new List<Review>();
     }
 
-    public Name Name { get; set; }
+    public required Name Name { get; set; }
     public DateTime? ReleaseDate { get; set; }
     public string? ImageUrl { get; set; }
     public Guid? AuthorId { get; set; }
