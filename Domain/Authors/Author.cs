@@ -2,5 +2,5 @@
 
 public class Author : AggregateRoot<Guid>
 {
-    public Pseudonym Pseudonym { get; set; }
+    public required Pseudonym Pseudonym { get; set; }
 }
