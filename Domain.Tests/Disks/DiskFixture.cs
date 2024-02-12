@@ -10,21 +10,23 @@ public class DiskFixture
 {
     public class CtorFixture
     {
-        [Fact]
-        public void Should_Initialize_Empty_Reviews_List()
+        [Theory]
+        [AutoDomainData]
+        public void Should_Initialize_Empty_Reviews_List(Name name)
         {
             // Act
-            var sut = new Disk();
+            var sut = new Disk { Name = name };
 
             // Assert
             sut.Reviews.Should().NotBeNull();
         }
 
-        [Fact]
-        public void Should_Reviews_List_Be_Empty()
+        [Theory]
+        [AutoDomainData]
+        public void Should_Reviews_List_Be_Empty(Name name)
         {
             // Act
-            var sut = new Disk();
+            var sut = new Disk { Name = name };
 
             // Assert
             sut.Reviews.Should().BeEmpty();

@@ -7,7 +7,7 @@ public class Name : ValueObject
 
     public Name(string value)
     {
-        if (IsValueEmpty(value))
+        if (string.IsNullOrEmpty(value))
             throw new ArgumentNullException(nameof(value));
 
         if (!IsLengthValid(value))
@@ -34,10 +34,5 @@ public class Name : ValueObject
     private bool IsLengthValid(string value)
     {
         return value.Length <= MaxLength;
-    }
-
-    private bool IsValueEmpty(string value)
-    {
-        return string.IsNullOrEmpty(value);
     }
 }
