@@ -2,11 +2,11 @@ namespace MyDisks.Domain.Reviews;
 
 public class Review : AggregateRoot<Guid>
 {
-
     public Review()
     {
         Status = ReviewStatus.New;
     }
+
     public DateTimeOffset PublishedDate { get; init; }
     public ReviewStatus Status { get; private set; }
 
