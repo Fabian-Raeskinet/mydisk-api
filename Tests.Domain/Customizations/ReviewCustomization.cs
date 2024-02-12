@@ -10,6 +10,6 @@ public class ReviewCustomization: ICustomization
     {
         fixture.Customize<Review>(r => r
             .With(x => x.Title, Guid.NewGuid().ToString().Substring(30))
-            .With(x => x.Status, ReviewStatus.Pending));
+            .With(x => x.Note, 2.5));
     }
 }

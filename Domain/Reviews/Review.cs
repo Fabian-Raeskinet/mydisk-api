@@ -2,8 +2,13 @@ namespace MyDisks.Domain.Reviews;
 
 public class Review : AggregateRoot<Guid>
 {
+
+    public Review()
+    {
+        Status = ReviewStatus.New;
+    }
     public DateTimeOffset PublishedDate { get; init; }
-    public ReviewStatus Status { get; set; }
+    public ReviewStatus Status { get; private set; }
 
     public string? Content
     {
@@ -12,11 +17,12 @@ public class Review : AggregateRoot<Guid>
         {
             EnsureNotArchived(nameof(Content));
             EnsureNotNullOrEmpty(value, nameof(Content));
+
             _content = value;
         }
     }
 
-    public required string Title
+    public string Title
     {
         get => _title!;
         set
@@ -25,6 +31,7 @@ public class Review : AggregateRoot<Guid>
             EnsureNotArchived(nameof(Title));
             if (value.Length > TitleMaxLength)
                 throw new ArgumentException("Title cannot exceed 30 characters");
+
             _title = value;
         }
     }
@@ -38,6 +45,7 @@ public class Review : AggregateRoot<Guid>
 
             if (value is < MinNote or > MaxNote)
                 throw new ArgumentOutOfRangeException($"Note must be between ${MinNote} and ${MaxNote}");
+
             _note = value;
         }
     }

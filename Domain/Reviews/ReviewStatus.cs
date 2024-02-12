@@ -2,7 +2,8 @@ namespace MyDisks.Domain.Reviews;
 
 public enum ReviewStatus
 {
-    Pending = 1,
-    Published = 2,
-    Archived = 3
+    New = 1,
+    Pending = 2,
+    Published = 3,
+    Archived = 4
 }

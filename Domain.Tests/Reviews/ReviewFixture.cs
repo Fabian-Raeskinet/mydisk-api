@@ -28,7 +28,7 @@ public class ReviewFixture
         public void Should_Throws_InvalidOperationException_When_Archived_Review(Review sut, string content)
         {
             // Arrange
-            sut.Status = ReviewStatus.Archived;
+            sut.Archive();
             
             // Act
             var act = () => sut.Content = content;
@@ -42,7 +42,7 @@ public class ReviewFixture
         public void Should_Set_Content(Review sut, string content)
         {
             // Arrange
-            sut.Status = ReviewStatus.Pending;
+            // sut.Status = ReviewStatus.Pending;
             
             // Act
             sut.Content = content;
@@ -64,12 +64,13 @@ public class ReviewFixture
                 // Assert
                 act.Should().Throw<ArgumentNullException>();
             }
+            
             [Theory]
             [AutoDomainData]
             public void Should_Throws_InvalidOperationException_When_Archived_Review(Review sut, string title)
             {
                 // Arrange
-                sut.Status = ReviewStatus.Archived;
+                sut.Archive();
                 
                 // Act
                 var act = () => sut.Title = title;
@@ -98,7 +99,7 @@ public class ReviewFixture
             {
                 // Arrange
                 var title = new string('a', 30);
-                sut.Status = ReviewStatus.Pending;
+                // sut.Status = ReviewStatus.Pending;
                 
                 // Act
                 sut.Title = title;
@@ -115,7 +116,7 @@ public class ReviewFixture
             public void Should_Set_Review_Status_To_Archived(Review sut)
             {
                 // Arrange
-                sut.Status = ReviewStatus.Pending;
+                // sut.Status = ReviewStatus.Pending;
                 
                 // Act
                 sut.Archive();
