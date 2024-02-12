@@ -30,5 +30,5 @@ public class Pseudonym : ValueObject
         yield return Value;
     }
 
-    private bool IsLengthValid(string value) => value.Length <= MaxLength;
+    private static bool IsLengthValid(string value) => value.Length <= MaxLength;
 }

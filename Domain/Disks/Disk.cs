@@ -15,16 +15,16 @@ public sealed class Disk : AggregateRoot<Guid>
     public string? ImageUrl { get; set; }
     public Guid? AuthorId { get; set; }
     public Author? Author { get; set; }
-    public List<Review> Reviews { get; set; }
+    public List<Review> Reviews { get; }
 
     public void AddReview(Review review)
     {
-        ValidateReviewIsNotDuplicated(review);
+        EnsureReviewIsNotDuplicated(review);
         ValidateReleaseDate();
         Reviews.Add(review);
     }
 
-    private void ValidateReviewIsNotDuplicated(Review review)
+    private void EnsureReviewIsNotDuplicated(Review review)
     {
         if (Reviews.Contains(review))
             throw new InvalidOperationException("Cannot add an existing review");
