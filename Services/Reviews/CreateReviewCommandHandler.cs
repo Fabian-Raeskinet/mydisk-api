@@ -1,9 +1,8 @@
 using MyDisks.Domain.Disks;
 using MyDisks.Domain.Exceptions;
 using MyDisks.Domain.Reviews;
-using MyDisks.Services.Reviews;
 
-namespace MyDisks.Services.Disks;
+namespace MyDisks.Services.Reviews;
 
 public class CreateReviewCommandHandler : ICommandHandler<CreateReviewCommandRequest>
 {
