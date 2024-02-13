@@ -10,6 +10,6 @@ public class CreateReviewCommandValidator : AbstractValidator<CreateReviewComman
         RuleFor(x => x.DiskId).NotEmpty();
         RuleFor(x => x.Title).NotEmpty();
         RuleFor(x => x.Content).NotEmpty();
-        RuleFor(x => x.Note).GreaterThan(0).LessThan(5);
+        RuleFor(x => x.Note).GreaterThanOrEqualTo(0).LessThanOrEqualTo(5);
     }
 }

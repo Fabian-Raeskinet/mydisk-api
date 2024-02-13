@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using MyDisks.Domain;
 using MyDisks.Domain.Authors;
 using MyDisks.Domain.Disks;
+using MyDisks.Domain.Reviews;
 
 namespace MyDisks.Data;
 
@@ -23,17 +24,19 @@ public static class DependencyInjection
     {
         services.AddScoped<IAuthorRepository, AuthorRepository>();
         services.AddScoped<IDiskRepository, DiskRepository>();
+        services.AddScoped<IReviewRepository, ReviewRepository>();
+
         return services;
     }
 
     private static IServiceCollection AddDatabaseConfiguration(this IServiceCollection services,
         IConfiguration configuration)
     {
-       services.AddDbContext<ApplicationDbContext>(options =>
-          options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-         // services.AddDbContext<ApplicationDbContext>(options =>
-         //      options.UseInMemoryDatabase("DbTest"));
+        // services.AddDbContext<ApplicationDbContext>(options =>
+        //      options.UseInMemoryDatabase("DbTest"));
 
         services.AddScoped<ApplicationDbContextInitializer>();
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());

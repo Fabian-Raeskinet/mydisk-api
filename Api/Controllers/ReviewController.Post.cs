@@ -21,4 +21,17 @@ public partial class ReviewController
         await Mediator.Send(request);
         return NoContent();
     }
+
+    [HttpPost("Archive")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> ArchiveReview(ArchiveReviewCommand command)
+    {
+        var request = new ArchiveReviewCommandRequest()
+        {
+            ReviewId = command.ReviewId
+        };
+        
+        await Mediator.Send(request);
+        return NoContent();
+    }
 }

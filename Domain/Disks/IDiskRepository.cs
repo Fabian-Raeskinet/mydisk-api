@@ -12,7 +12,7 @@ public interface IDiskRepository
     /// an <see cref="IEnumerable{Disk}"/> that represents the list of disks retrieved.
     /// </returns>
     public Task<IEnumerable<Disk>?> GetDisksAsync();
-
+    
     /// <summary>
     /// Retrieves a disk that matches the given filter asynchronously.
     /// </summary>

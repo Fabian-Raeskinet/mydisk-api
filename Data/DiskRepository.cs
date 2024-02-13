@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MyDisks.Domain;
 using MyDisks.Domain.Disks;
+using MyDisks.Domain.Reviews;
 
 namespace MyDisks.Data;
 
@@ -18,7 +19,7 @@ public class DiskRepository : IDiskRepository
     {
         return await Context.Disks
             .Include(x => x.Author)
-            .Include(x => x.Reviews)
+            .Include(x => x.Reviews.Where(r => r.Status != ReviewStatus.Archived))
             .ToListAsync();
     }
 
