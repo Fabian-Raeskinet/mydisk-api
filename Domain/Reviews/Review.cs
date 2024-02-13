@@ -1,3 +1,5 @@
+using MyDisks.Domain.Disks;
+
 namespace MyDisks.Domain.Reviews;
 
 public class Review : AggregateRoot<Guid>
@@ -9,11 +11,13 @@ public class Review : AggregateRoot<Guid>
 
     public DateTimeOffset PublishedDate { get; init; }
     public ReviewStatus Status { get; private set; }
+    public Guid DiskId { get; set; }
+    public virtual Disk Disk { get; set; }
 
     public string? Content
     {
         get => _content;
-        set
+        init
         {
             EnsureNotArchived(nameof(Content));
             EnsureNotNullOrEmpty(value, nameof(Content));
@@ -25,7 +29,7 @@ public class Review : AggregateRoot<Guid>
     public string Title
     {
         get => _title!;
-        set
+        init
         {
             EnsureNotNullOrEmpty(value, nameof(Title));
             EnsureNotArchived(nameof(Title));

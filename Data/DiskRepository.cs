@@ -16,12 +16,18 @@ public class DiskRepository : IDiskRepository
 
     public async Task<IEnumerable<Disk>?> GetDisksAsync()
     {
-        return await Context.Disks.Include(x => x.Author).ToListAsync();
+        return await Context.Disks
+            .Include(x => x.Author)
+            .Include(x => x.Reviews)
+            .ToListAsync();
     }
 
     public async Task<Disk?> GetDiskByFilterAsync(Expression<Func<Disk, bool>> predicate)
     {
-        return await Context.Disks.Include(x => x.Author).FirstOrDefaultAsync(predicate);
+        return await Context.Disks
+            .Include(x => x.Author)
+            .Include(x => x.Reviews)
+            .FirstOrDefaultAsync(predicate);
     }
 
     public async Task CreateDiskAsync(Disk disk)

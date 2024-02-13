@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using MyDisks.Domain.Disks;
+using MyDisks.Domain.Reviews;
 
 namespace MyDisks.Data.Configurations.Disks;
 
@@ -26,5 +27,10 @@ public class DiskConfiguration : IEntityTypeConfiguration<Disk>
             .IsRequired(false);
 
         builder.Property(x => x.AuthorId);
+        builder.HasOne(x => x.Author)
+            .WithMany()
+            .HasForeignKey(x => x.AuthorId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

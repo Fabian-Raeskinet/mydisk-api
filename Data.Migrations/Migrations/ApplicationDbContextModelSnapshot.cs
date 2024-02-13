@@ -75,7 +75,7 @@ namespace MyDisks.Data.Migrations.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid?>("DiskId")
+                    b.Property<Guid>("DiskId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("Note")
@@ -88,6 +88,7 @@ namespace MyDisks.Data.Migrations.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
+                        .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
@@ -102,16 +103,21 @@ namespace MyDisks.Data.Migrations.Migrations
                 {
                     b.HasOne("MyDisks.Domain.Authors.Author", "Author")
                         .WithMany()
-                        .HasForeignKey("AuthorId");
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Author");
                 });
 
             modelBuilder.Entity("MyDisks.Domain.Reviews.Review", b =>
                 {
-                    b.HasOne("MyDisks.Domain.Disks.Disk", null)
+                    b.HasOne("MyDisks.Domain.Disks.Disk", "Disk")
                         .WithMany("Reviews")
-                        .HasForeignKey("DiskId");
+                        .HasForeignKey("DiskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Disk");
                 });
 
             modelBuilder.Entity("MyDisks.Domain.Disks.Disk", b =>

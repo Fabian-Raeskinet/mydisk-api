@@ -15,10 +15,9 @@ public class ReviewConfiguration : IEntityTypeConfiguration<Review>
         builder.Property(x => x.Title)
             .HasMaxLength(30);
 
-        builder.Property(x => x.Content);
-
-        builder.Property(x => x.Note);
-        builder.Property(x => x.PublishedDate);
-        builder.Property(x => x.Status);
+        builder.HasOne(x => x.Disk)
+            .WithMany(x => x.Reviews)
+            .HasForeignKey(x => x.DiskId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
