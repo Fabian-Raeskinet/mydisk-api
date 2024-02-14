@@ -34,4 +34,11 @@
         <Folder Include="Migrations"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Migrations\ApplicationDbContextModelSnapshot.cs" />
+      <Compile Remove="Migrations\20240213154220_InitialCreate.Designer.cs" />
+      <Compile Remove="Migrations\20240213154447_InitialCreate.Designer.cs" />
+      <Compile Remove="Migrations\20240213154731_InitialCreate.Designer.cs" />
+    </ItemGroup>
+
 </Project>

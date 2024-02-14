@@ -1,17 +1,18 @@
 namespace MyDisks.Domain.Authors;
 
-public struct Pseudonym
+public class Pseudonym : ValueObject
 {
-    public string Value { get; set; }
+    public string Value { get; }
+    private const int MaxLength = 30;
 
     public Pseudonym(string value)
     {
-        if (value.Length > 30)
+        if (!IsLengthValid(value))
         {
-            throw new ArgumentException("Pseudonym cannot exceed 30 Characters");
+            throw new ArgumentException($"Pseudonym cannot exceed {MaxLength} Characters");
         }
 
-        Value = value;
+        this.Value = value;
     }
 
     public static explicit operator Pseudonym(string pseudonym)
@@ -23,4 +24,11 @@ public struct Pseudonym
     {
         return pseudonym.Value;
     }
+
+    public override IEnumerable<object> GetEqualityComponents()
+    {
+        yield return Value;
+    }
+
+    private static bool IsLengthValid(string value) => value.Length <= MaxLength;
 }

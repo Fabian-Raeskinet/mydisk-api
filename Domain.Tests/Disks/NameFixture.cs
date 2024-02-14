@@ -9,6 +9,26 @@ public class NameFixture
     public class CtorFixture
     {
         [Fact]
+        public void Should_Throws_ArgumentException_When_Empty()
+        {
+            // Act
+            var act = () => new Name(string.Empty);
+
+            // Assert
+            act.Should().Throw<ArgumentException>();
+        }
+        
+        [Fact]
+        public void Should_Throws_ArgumentException_When_Null()
+        {
+            // Act
+            var act = () => new Name(null);
+
+            // Assert
+            act.Should().Throw<ArgumentException>();
+        }
+        
+        [Fact]
         public void Should_Throws_ArgumentException_When_More_Than_30_Characters()
         {
             // Arrange

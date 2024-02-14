@@ -75,10 +75,7 @@ namespace MyDisks.Data.Migrations.Migrations
                     b.Property<string>("Content")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<Guid?>("DiskId")
+                    b.Property<Guid>("DiskId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<double>("Note")
@@ -91,32 +88,36 @@ namespace MyDisks.Data.Migrations.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset?>("UpdatedAt")
-                        .HasColumnType("datetimeoffset");
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("DiskId");
 
-                    b.ToTable("Review");
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("MyDisks.Domain.Disks.Disk", b =>
                 {
                     b.HasOne("MyDisks.Domain.Authors.Author", "Author")
                         .WithMany()
-                        .HasForeignKey("AuthorId");
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Author");
                 });
 
             modelBuilder.Entity("MyDisks.Domain.Reviews.Review", b =>
                 {
-                    b.HasOne("MyDisks.Domain.Disks.Disk", null)
+                    b.HasOne("MyDisks.Domain.Disks.Disk", "Disk")
                         .WithMany("Reviews")
-                        .HasForeignKey("DiskId");
+                        .HasForeignKey("DiskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Disk");
                 });
 
             modelBuilder.Entity("MyDisks.Domain.Disks.Disk", b =>

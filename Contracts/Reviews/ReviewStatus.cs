@@ -1,4 +1,4 @@
-namespace MyDisks.Domain.Reviews;
+namespace MyDisks.Contracts.Reviews;
 
 public enum ReviewStatus
 {

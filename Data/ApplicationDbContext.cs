@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using MyDisks.Data.Configurations.Disks;
 using MyDisks.Domain.Authors;
 using MyDisks.Domain.Disks;
+using MyDisks.Domain.Reviews;
 
 namespace MyDisks.Data;
 
@@ -26,6 +27,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public virtual DbSet<Disk> Disks => Set<Disk>();
     public DbSet<Author> Authors => Set<Author>();
+    public DbSet<Review> Reviews => Set<Review>();
 
     public async Task<int> SaveChangesAsync()
     {

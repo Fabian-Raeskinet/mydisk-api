@@ -2,6 +2,7 @@ using AutoFixture;
 using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
 using MyDisks.Tests.Domain.Customizations;
+using MyDisks.Tests.Services.Customizations;
 
 namespace MyDisks.Tests.Services;
 
@@ -26,7 +27,8 @@ internal class ServiceCustomization : CompositeCustomization
             new AutoMoqCustomization(),
             new DiskCustomization(),
             new PseudonymCustomization(),
-            new ReviewCustomization())
+            new ReviewCustomization(),
+            new CreateReviewCommandRequestCustomization())
     {
     }
 }

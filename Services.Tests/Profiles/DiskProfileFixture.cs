@@ -1,6 +1,7 @@
 using AutoMapper;
 using FluentAssertions;
 using MyDisks.Contracts.Disks;
+using MyDisks.Contracts.Reviews;
 using MyDisks.Domain.Disks;
 using MyDisks.Services.Disks;
 using MyDisks.Tests.Services;
@@ -27,7 +28,8 @@ public class DiskProfileFixture
                 Id = disk.Author.Id,
                 Pseudonym = disk.Author.Pseudonym
             },
-            ImageUrl = disk.ImageUrl
+            ImageUrl = disk.ImageUrl,
+            Reviews = new List<ReviewResult>()
         };
 
         // Act

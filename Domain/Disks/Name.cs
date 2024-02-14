@@ -1,15 +1,18 @@
 namespace MyDisks.Domain.Disks;
 
-public struct Name : IEquatable<Name>
+public class Name : ValueObject
 {
     public string Value { get; }
+    private const int MaxLength = 30;
 
-    public  Name(string value)
+    public Name(string value)
     {
-        if (value.Length > 30)
-        {
-            throw new ArgumentException("Name cannot exceed 30 characters");
-        }
+        if (string.IsNullOrEmpty(value))
+            throw new ArgumentNullException(nameof(value));
+
+        if (!IsLengthValid(value))
+            throw new ArgumentException($"Name cannot exceed {MaxLength} characters");
+
         Value = value;
     }
 
@@ -23,18 +26,13 @@ public struct Name : IEquatable<Name>
         return name.Value;
     }
 
-    public bool Equals(Name other)
+    public override IEnumerable<object> GetEqualityComponents()
     {
-        return Value == other.Value;
+        yield return Value;
     }
 
-    public override bool Equals(object? obj)
+    private bool IsLengthValid(string value)
     {
-        return obj is Name other && Equals(other);
-    }
-
-    public override int GetHashCode()
-    {
-        return Value.GetHashCode();
+        return value.Length <= MaxLength;
     }
 }

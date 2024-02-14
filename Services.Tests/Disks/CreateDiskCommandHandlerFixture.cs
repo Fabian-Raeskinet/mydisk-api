@@ -1,6 +1,4 @@
-﻿using FluentAssertions;
-using MediatR;
-using Moq;
+﻿using Moq;
 using MyDisks.Domain.Disks;
 using MyDisks.Services.Disks;
 using MyDisks.Tests.Services;

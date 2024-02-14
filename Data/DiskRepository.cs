@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using MyDisks.Domain;
 using MyDisks.Domain.Disks;
+using MyDisks.Domain.Reviews;
 
 namespace MyDisks.Data;
 
@@ -16,12 +17,18 @@ public class DiskRepository : IDiskRepository
 
     public async Task<IEnumerable<Disk>?> GetDisksAsync()
     {
-        return await Context.Disks.Include(x => x.Author).ToListAsync();
+        return await Context.Disks
+            .Include(x => x.Author)
+            .Include(x => x.Reviews.Where(r => r.Status != ReviewStatus.Archived))
+            .ToListAsync();
     }
 
     public async Task<Disk?> GetDiskByFilterAsync(Expression<Func<Disk, bool>> predicate)
     {
-        return await Context.Disks.Include(x => x.Author).FirstOrDefaultAsync(predicate);
+        return await Context.Disks
+            .Include(x => x.Author)
+            .Include(x => x.Reviews)
+            .FirstOrDefaultAsync(predicate);
     }
 
     public async Task CreateDiskAsync(Disk disk)
