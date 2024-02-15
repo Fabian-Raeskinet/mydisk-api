@@ -1,13 +1,12 @@
 using FluentAssertions;
-using IntegrationTests.Services;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using MyDisks.Contracts.Disks;
-using MyDisks.Services;
+using MyDisks.IntegrationTests.Services;
 using MyDisks.Services.Disks;
 using MyDisks.Tests.Services;
 
-namespace Services.IntegrationTests;
+namespace MyDisks.Services.IntegrationTests;
 
 public class GetAllDisksQueryHandlerFixture : ServiceFixtureBase
 {

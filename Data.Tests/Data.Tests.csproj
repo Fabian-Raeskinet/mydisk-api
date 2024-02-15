@@ -7,6 +7,8 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
+        <AssemblyName>MyDisks.Data.Tests</AssemblyName>
+        <RootNamespace>MyDisks.Data.Tests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

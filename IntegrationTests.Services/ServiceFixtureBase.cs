@@ -3,12 +3,10 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
 using MyDisks.Data;
-using MyDisks.Domain.Disks;
 using MyDisks.Services;
 
-namespace IntegrationTests.Services;
+namespace MyDisks.IntegrationTests.Services;
 
 public class ServiceFixtureBase : IDisposable
 {

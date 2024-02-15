@@ -5,7 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>MyDisks.Tests.Domain</RootNamespace>
-        <AssemblyName>MyDisksTests.Domain</AssemblyName>
+        <AssemblyName>MyDisks.Tests.Domain</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>

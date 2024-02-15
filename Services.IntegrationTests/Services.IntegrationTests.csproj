@@ -7,6 +7,8 @@
 
         <IsPackable>false</IsPackable>
         <IsTestProject>true</IsTestProject>
+        <AssemblyName>MyDisks.Services.IntegrationTests</AssemblyName>
+        <RootNamespace>MyDisks.Services.IntegrationTests</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>

@@ -2,7 +2,7 @@ using FluentAssertions;
 using MyDisks.Domain.Disks;
 using Xunit;
 
-namespace MyDisk.Domain.Tests.Disks;
+namespace MyDisks.Domain.Tests.Disks;
 
 public class NameFixture
 {

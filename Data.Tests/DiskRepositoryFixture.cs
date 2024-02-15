@@ -1,14 +1,12 @@
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 using Moq;
 using Moq.EntityFrameworkCore;
-using MyDisks.Data;
 using MyDisks.Domain.Disks;
+using MyDisks.Tests.Data;
 using MyDisks.Tests.Utils;
-using Tests.Data;
 
-namespace Data.Tests;
+namespace MyDisks.Data.Tests;
 
 public class DiskRepositoryFixture
 {

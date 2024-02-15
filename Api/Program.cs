@@ -1,5 +1,6 @@
 using MyDisks.Contracts.Validators;
 using MyDisks.Data;
+using MyDisks.DependencyInjection.Configurations;
 using MyDisks.RandomServices;
 using MyDisks.RetryService;
 using MyDisks.Services;
@@ -13,11 +14,7 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
 
         builder.Services.AddApiServices(builder.Configuration);
-        builder.Services.AddInfrastructureServices(builder.Configuration);
-        builder.Services.AddApplicationServices();
-        builder.Services.AddContractValidators();
-        builder.Services.AddRetryService();
-        builder.Services.AddRandomServices();
+        builder.Services.RegisterApplicationServices(builder.Configuration);
 
         var app = builder.Build();
 

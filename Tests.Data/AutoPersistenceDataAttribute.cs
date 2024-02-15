@@ -3,7 +3,7 @@ using AutoFixture.AutoMoq;
 using AutoFixture.Xunit2;
 using MyDisks.Tests.Domain.Customizations;
 
-namespace Tests.Data;
+namespace MyDisks.Tests.Data;
 
 public class AutoPersistenceDataAttribute : AutoDataAttribute
 {
