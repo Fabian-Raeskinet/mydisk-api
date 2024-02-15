@@ -1,3 +1,6 @@
+using System.Data;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -11,24 +14,39 @@ public class ServiceFixtureBase : IDisposable
 {
     protected ServiceProvider ServiceProvider { get; }
 
-    public ServiceFixtureBase()
+    protected ServiceFixtureBase()
     {
         var services = new ServiceCollection();
 
-        // services.AddScoped((s) => new Mock<IDiskRepository>().Object);
         var configuration = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false)
+            .AddJsonFile("appsettings.json", false)
             .Build();
-        
+
         services.AddApplicationServices();
         services.AddInfrastructureServices(configuration);
 
         ServiceProvider = services.BuildServiceProvider();
     }
 
+    private SqlConnection SqlConnection
+    {
+        get
+        {
+            var dbContext = ServiceProvider.GetService<ApplicationDbContext>();
+            var sqlConnection = dbContext?.Database.GetDbConnection() as SqlConnection;
+            if (sqlConnection is { State: ConnectionState.Closed })
+                sqlConnection.Open();
+            return sqlConnection!;
+        }
+    }
+
     public void Dispose()
     {
+        if (SqlConnection.State == ConnectionState.Open)
+            SqlConnection.Close();
+
+        SqlConnection.Dispose();
         ServiceProvider.Dispose();
     }
 }

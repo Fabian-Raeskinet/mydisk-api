@@ -1,5 +1,7 @@
 using MyDisks.Contracts.Validators;
 using MyDisks.Data;
+using MyDisks.RandomServices;
+using MyDisks.RetryService;
 using MyDisks.Services;
 
 namespace MyDisks.Api;
@@ -14,6 +16,8 @@ public class Program
         builder.Services.AddInfrastructureServices(builder.Configuration);
         builder.Services.AddApplicationServices();
         builder.Services.AddContractValidators();
+        builder.Services.AddRetryService();
+        builder.Services.AddRandomServices();
 
         var app = builder.Build();
 

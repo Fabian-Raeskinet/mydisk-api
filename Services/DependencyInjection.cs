@@ -17,9 +17,7 @@ public static class DependencyInjection
         services
             .AddMediatRServices()
             .AddAutoMapperServices()
-            .ConfigureILoggerServices()
-            .AddRetryService()
-            .AddRandomServices();
+            .ConfigureILoggerServices();
     }
 
     private static IServiceCollection AddAutoMapperServices(this IServiceCollection services)
