@@ -12,7 +12,7 @@ public class MaintenanceController : ControllerBase
         MaintenanceSettings = maintenanceSettings;
     }
 
-    private IOptions<MaintenanceSettings> MaintenanceSettings { get; }
+    public IOptions<MaintenanceSettings> MaintenanceSettings { get; }
 
     [HttpGet("maintenance")]
     [ProducesResponseType(typeof(MaintenanceStatusResult), StatusCodes.Status200OK)]

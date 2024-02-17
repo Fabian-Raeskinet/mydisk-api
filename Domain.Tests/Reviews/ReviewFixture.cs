@@ -4,7 +4,7 @@ using MyDisks.Domain.Reviews;
 using MyDisks.Tests.Domain;
 using Xunit;
 
-namespace MyDisk.Domain.Tests.Reviews;
+namespace MyDisks.Domain.Tests.Reviews;
 
 public class ReviewFixture
 {

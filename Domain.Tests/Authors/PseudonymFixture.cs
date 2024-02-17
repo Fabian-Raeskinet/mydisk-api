@@ -3,7 +3,7 @@ using MyDisks.Domain.Authors;
 using MyDisks.Tests.Domain;
 using Xunit;
 
-namespace MyDisk.Domain.Tests.Authors;
+namespace MyDisks.Domain.Tests.Authors;
 
 public class PseudonymFixture
 {

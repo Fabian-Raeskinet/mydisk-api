@@ -6,7 +6,7 @@ using MyDisks.Domain.Disks;
 using MyDisks.Services.Disks;
 using MyDisks.Tests.Services;
 
-namespace MyDisks.Services.Tests.Profiles;
+namespace MyDisks.Services.Tests.Disks;
 
 public class DiskProfileFixture
 {

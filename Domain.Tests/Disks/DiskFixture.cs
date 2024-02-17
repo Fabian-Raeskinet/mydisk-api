@@ -4,7 +4,7 @@ using MyDisks.Domain.Reviews;
 using MyDisks.Tests.Domain;
 using Xunit;
 
-namespace MyDisk.Domain.Tests.Disks;
+namespace MyDisks.Domain.Tests.Disks;
 
 public class DiskFixture
 {
