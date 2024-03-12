@@ -82,7 +82,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests.Services", "IntegrationTests.Services\IntegrationTests.Services.csproj", "{1F3E8EC0-7795-4167-B70B-8531792CEC91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "IntegrationTests\IntegrationTests.csproj", "{41E9BCEE-C74B-444A-AE63-D1DD10D329CF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.IntegrationTests", "Services.IntegrationTests\Services.IntegrationTests.csproj", "{41E9BCEE-C74B-444A-AE63-D1DD10D329CF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection.Configurations", "DependencyInjection.Configurations\DependencyInjection.Configurations.csproj", "{E9118D7A-9D66-43AE-80C8-5F098F09DF78}"
 EndProject
