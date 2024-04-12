@@ -15,7 +15,7 @@ stages:
           env: 'Integration'
           testAssemblyName: '*.IntegrationTests.dll'
           artifact: 'data-integration-tests'
-          azureSubscription: 'MyDisk'
+          azureSubscription: 'Azure subscription 1'
           dataBaseConnectionString: $(MyDisksDatabaseConnectionString)
 
   - stage: Deploy_Integration
@@ -23,7 +23,7 @@ stages:
       - template: azure-pipelines-deploy.template.yml
         parameters:
           env: 'Integration'
-          azureSubscription: 'MyDisk'
-          resourceGroupName: 'MyDisk'
-          webAppName: 'my-disks'
+          azureSubscription: 'Azure subscription 1'
+          resourceGroupName: 'MyDisks'
+          webAppName: 'my-disks-int'
           slotName: 'production'
