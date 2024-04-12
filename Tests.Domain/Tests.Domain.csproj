@@ -10,7 +10,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Domain\Domain.csproj" />
-      <ProjectReference Include="..\Tests\Tests.csproj" />
+      <ProjectReference Include="..\TestConfigurations\TestConfigurations.csproj" />
     </ItemGroup>
 
 </Project>

@@ -14,7 +14,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Tests.Domain\Tests.Domain.csproj" />
-      <ProjectReference Include="..\Tests\Tests.csproj" />
+      <ProjectReference Include="..\TestConfigurations\TestConfigurations.csproj" />
     </ItemGroup>
 
 </Project>

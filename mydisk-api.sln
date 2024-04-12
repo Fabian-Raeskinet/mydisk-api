@@ -78,7 +78,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data.Tests", "Data.Tests\Da
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests.Data", "Tests.Data\Tests.Data.csproj", "{DC404E3F-7B50-4E64-BAE5-E45BE991EF3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{E6D3D3E0-0EC4-411D-BF10-1AFFE7BB4027}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestConfigurations", "TestConfigurations\TestConfigurations.csproj", "{E6D3D3E0-0EC4-411D-BF10-1AFFE7BB4027}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests.Services", "IntegrationTests.Services\IntegrationTests.Services.csproj", "{1F3E8EC0-7795-4167-B70B-8531792CEC91}"
 EndProject
