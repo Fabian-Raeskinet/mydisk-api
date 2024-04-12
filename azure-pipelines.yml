@@ -25,5 +25,5 @@ stages:
           env: 'Integration'
           azureSubscription: 'Azure subscription 1'
           resourceGroupName: 'MyDisks'
-          webAppName: 'my-disks-int'
+          webAppName: 'mydisks-int'
           slotName: 'production'
