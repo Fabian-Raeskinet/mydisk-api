@@ -50,6 +50,16 @@ jobs:
           arguments: '--no-build --configuration ${{ parameters.buildConfiguration }} --output out/data-integration-tests'
           zipAfterPublish: false
           modifyOutputPath: false
+          
+      - task: DotNetCoreCLI@2
+        displayName: 'Publish services integration tests'
+        inputs:
+          command: 'publish'
+          publishWebProjects: false
+          projects: '**/Services.IntegrationTests.csproj'
+          arguments: '--no-build --configuration ${{ parameters.buildConfiguration }} --output out/services-integration-tests'
+          zipAfterPublish: false
+          modifyOutputPath: false
 
       - task: DotNetCoreCLI@2
         displayName: 'Publish web app'
