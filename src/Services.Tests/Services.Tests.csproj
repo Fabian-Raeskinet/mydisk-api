@@ -7,9 +7,9 @@
 
         <IsPackable>false</IsPackable>
 
-        <RootNamespace>MyDisks.Domain.Tests</RootNamespace>
+        <RootNamespace>MyDisks.Services.Tests</RootNamespace>
 
-        <AssemblyName>MyDisks.Domain.Tests</AssemblyName>
+        <AssemblyName>MyDisks.Services.Tests</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
@@ -26,7 +26,14 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Tests.Domain\Tests.Domain.csproj" />
+        <ProjectReference Include="..\Contracts.Validators\Contracts.Validators.csproj"/>
+        <ProjectReference Include="..\Domain.Tests\Domain.Tests.csproj"/>
+        <ProjectReference Include="..\Domain\Domain.csproj"/>
+        <ProjectReference Include="..\RandomServices\RandomServices.csproj" />
+        <ProjectReference Include="..\RetryService\RetryService.csproj" />
+        <ProjectReference Include="..\Services\Services.csproj"/>
+        <ProjectReference Include="..\Tests.Services\Tests.Services.csproj"/>
+        <ProjectReference Include="..\Tests.Utils\Tests.Utils.csproj"/>
     </ItemGroup>
 
 </Project>

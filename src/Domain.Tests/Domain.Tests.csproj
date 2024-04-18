@@ -6,13 +6,14 @@
         <Nullable>enable</Nullable>
 
         <IsPackable>false</IsPackable>
-        <IsTestProject>true</IsTestProject>
-        <AssemblyName>MyDisks.Data.Tests</AssemblyName>
-        <RootNamespace>MyDisks.Data.Tests</RootNamespace>
+
+        <RootNamespace>MyDisks.Domain.Tests</RootNamespace>
+
+        <AssemblyName>MyDisks.Domain.Tests</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.2"/>
         <PackageReference Include="xunit" Version="2.4.2"/>
         <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -25,14 +26,9 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Data\Data.csproj" />
+      <ProjectReference Include="..\..\Tests.Domain\Tests.Domain.csproj" />
       <ProjectReference Include="..\Domain\Domain.csproj" />
-      <ProjectReference Include="..\Tests.Data\Tests.Data.csproj" />
-      <ProjectReference Include="..\Tests.Utils\Tests.Utils.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\Tests.Data\Tests.Data.csproj" />
+      <ProjectReference Include="..\Tests.Domain\Tests.Domain.csproj" />
     </ItemGroup>
 
 </Project>

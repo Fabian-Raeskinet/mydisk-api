@@ -26,6 +26,8 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\IntegrationTests.Api\IntegrationTests.Api.csproj" />
+        <ProjectReference Include="..\..\Tests.Utils\Tests.Utils.csproj" />
         <ProjectReference Include="..\Contracts\Contracts.csproj"/>
         <ProjectReference Include="..\Api\Api.csproj"/>
         <ProjectReference Include="..\Domain.Tests\Domain.Tests.csproj"/>
