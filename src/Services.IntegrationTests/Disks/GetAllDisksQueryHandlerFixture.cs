@@ -6,7 +6,7 @@ using MyDisks.IntegrationTests.Services;
 using MyDisks.Services.Disks;
 using MyDisks.Tests.Services;
 
-namespace MyDisks.Services.IntegrationTests;
+namespace MyDisks.Services.IntegrationTests.Disks;
 
 public class GetAllDisksQueryHandlerFixture : ServiceFixtureBase
 {

@@ -3,8 +3,11 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Moq;
 using MyDisks.Data;
 using MyDisks.Services;
+using MyDisks.Services.Disks;
 
 namespace MyDisks.IntegrationTests.Services;
 
@@ -22,6 +25,7 @@ public class ServiceFixtureBase : IDisposable
             .Build();
 
         services.AddApplicationServices();
+        services.AddScoped((s) => new Mock<ILogger<NewDiskCreatedDomainEventHandler>>().Object);
         services.AddInfrastructureServices(configuration);
 
         ServiceProvider = services.BuildServiceProvider();
