@@ -20,9 +20,8 @@ public class JsonSettings
     private static string? GetExecutingAssemblyDirectory()
     {
         var location = Assembly.GetCallingAssembly().Location;
-        var uri = new UriBuilder(location);
-        var path = Uri.UnescapeDataString(uri.Path);
-        return Path.GetDirectoryName(path);
+        var uri = new Uri(location);
+        return Path.GetDirectoryName(uri.LocalPath);
     }
 
     public string? GetConnectionString(string connectionString)
