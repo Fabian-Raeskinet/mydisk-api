@@ -18,4 +18,15 @@ public class AuthorRepository : IAuthorRepository
     {
         return await DbContext.Authors.FirstOrDefaultAsync(predicate);
     }
+
+    public async Task AddAsync(Author author)
+    {
+        await DbContext.Authors.AddAsync(author);
+        await SaveChanges();
+    }
+    
+    private async Task SaveChanges()
+    {
+        await DbContext.SaveChangesAsync();
+    }
 }

@@ -13,4 +13,6 @@ public interface IAuthorRepository
     /// of <see cref="Author"/> if a match is found; otherwise, <c>null</c>.
     /// </returns>
     public Task<Author?> GetAuthorByFilterAsync(Expression<Func<Author, bool>> predicate);
+
+    Task AddAsync(Author author);
 }
