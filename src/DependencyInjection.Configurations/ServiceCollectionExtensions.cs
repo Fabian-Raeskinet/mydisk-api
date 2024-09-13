@@ -8,7 +8,7 @@ using MyDisks.Services;
 
 namespace MyDisks.DependencyInjection.Configurations;
 
-public static class ServiceCollectionExtensions
+public static class sServiceCollectionExtensions
 {
     public static void RegisterApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
