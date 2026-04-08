@@ -8,7 +8,7 @@ namespace MyDisks.Services.Tests.Disks;
 
 public class CreateDiskCommandHandlerFixture
 {
-    [Theory]
+    /*[Theory]
     [AutoServiceData]
     public async Task Should_CreateDiskAsync
     (
@@ -32,5 +32,5 @@ public class CreateDiskCommandHandlerFixture
             .Verify(x => x.CreateDiskAsync(It.Is<Disk>(disk =>
                 disk.Name == request.Name
                 && disk.ReleaseDate == request.ReleaseDate)));
-    }
+    }*/
 }

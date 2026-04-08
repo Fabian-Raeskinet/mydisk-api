@@ -6,6 +6,7 @@
         <Nullable>enable</Nullable>
         <AssemblyName>MyDisks.Data</AssemblyName>
         <RootNamespace>MyDisks.Data</RootNamespace>
+        <LangVersion>11</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>

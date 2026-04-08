@@ -9,26 +9,25 @@ namespace MyDisks.Services.Disks;
 
 public class AttachAuthorCommandHandler : ICommandHandler<AttachAuthorCommandRequest>
 {
-    public AttachAuthorCommandHandler(IMapper mapper, IAuthorRepository authorRepository,
-        IDiskRepository diskRepository)
+    public AttachAuthorCommandHandler(IMapper mapper, IUnitOfWork unitOfWork)
     {
         Mapper = mapper;
-        AuthorRepository = authorRepository;
-        DiskRepository = diskRepository;
+        UnitOfWork = unitOfWork;
     }
 
     public IMapper Mapper { get; }
-    public IAuthorRepository AuthorRepository { get; }
-    public IDiskRepository DiskRepository { get; }
+    private IUnitOfWork UnitOfWork { get; }
 
     public async Task Handle(AttachAuthorCommandRequest request, CancellationToken cancellationToken)
     {
-        var author = await AuthorRepository.GetAuthorByFilterAsync(x => x.Id == request.AuthorId);
-        var disk = await DiskRepository.GetDiskByFilterAsync(x => x.Id == request.DiskId);
+        
+        var author = await UnitOfWork.AuthorRepository.GetAuthorByFilterAsync(x => x.Id == request.AuthorId);
+        var disk = await UnitOfWork.DiskRepository.GetDiskByFilterAsync(x => x.Id == request.DiskId);
 
         if (author == null || disk == null)
             throw new ObjectNotFoundException("no matches found");
 
-        disk.Author = author;
+        disk.AttachAuthor(author);
+        await UnitOfWork.CommitAsync();
     }
 }

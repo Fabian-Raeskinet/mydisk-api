@@ -8,20 +8,20 @@ namespace MyDisks.Services.Disks;
 
 public class GetAllDisksQueryHandler : IQueryHandler<GetAllDisksQueryRequest, IEnumerable<DiskResult>>
 {
-    public GetAllDisksQueryHandler(IMapper mapper, IDiskRepository repository)
+    public GetAllDisksQueryHandler(IMapper mapper, IUnitOfWork unitOfWork)
     {
         Mapper = mapper;
-        DiskRepository = repository;
+        UnitOfWork = unitOfWork;
     }
 
     public IMapper Mapper { get; }
-    public IDiskRepository DiskRepository { get; }
+    public IUnitOfWork UnitOfWork { get; }
 
     public async Task<IEnumerable<DiskResult>> Handle(GetAllDisksQueryRequest request,
         CancellationToken cancellationToken)
     {
         //await Task.Delay(5000);
-        var result = await DiskRepository.GetDisksAsync();
+        var result = await UnitOfWork.DiskRepository.GetDisksAsync();
         return Mapper.Map<IEnumerable<DiskResult>>(result);
     }
 }

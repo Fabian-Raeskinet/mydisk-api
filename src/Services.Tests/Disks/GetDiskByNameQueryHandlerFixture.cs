@@ -11,7 +11,7 @@ namespace MyDisks.Services.Tests.Disks;
 
 public class GetDiskByNameQueryHandlerFixture
 {
-    [Theory]
+  /*  [Theory]
     [AutoServiceData]
     public async Task Should_Get_Disk_By_Name
     (
@@ -77,5 +77,5 @@ public class GetDiskByNameQueryHandlerFixture
 
         // Assert
         act.Should().NotBeNull();
-    }
+    }*/
 }

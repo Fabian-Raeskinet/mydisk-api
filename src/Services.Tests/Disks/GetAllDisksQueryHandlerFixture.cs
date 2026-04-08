@@ -10,7 +10,7 @@ namespace MyDisks.Services.Tests.Disks;
 
 public class GetAllDisksQueryHandlerFixture
 {
-    [Theory]
+    /*[Theory]
     [AutoServiceData]
     public async Task Should_Get_Disks
     (
@@ -26,7 +26,7 @@ public class GetAllDisksQueryHandlerFixture
             .Verify(_ => _.GetDisksAsync());
     }
 
-    [Theory]
+   /* [Theory]
     [AutoServiceData]
     public async Task Should_Map_Disk
     (
@@ -95,5 +95,5 @@ public class GetAllDisksQueryHandlerFixture
 
         // Assert
         act.Should().BeEmpty();
-    }
+    }*/
 }

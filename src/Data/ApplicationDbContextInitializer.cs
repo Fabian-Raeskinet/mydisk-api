@@ -50,11 +50,6 @@ public class ApplicationDbContextInitializer
         // Seed, if necessary
         if (!_context.Authors.Any())
         {
-            // var author = new Author(new Guid());
-            // author.Pseudonyme = "Orelsan";
-            // _context.Authors.Add(author);
-
-
             _context.Authors.Add(new Author { Pseudonym = new Pseudonym("Orelsan") });
 
             await _context.SaveChangesAsync();
@@ -62,26 +57,16 @@ public class ApplicationDbContextInitializer
 
         if (!_context.Disks.Any())
         {
-            // var author1 = new Author(new Guid(), "Lomepal");
-            // var disk1 = new Disk(new Guid(), "Jeannine", new DateTime(2018, 8, 29), author1);
-            // _context.Disks.Add(disk1);
-            //
-            // var author2 = new Author(new Guid(), "Roméo Elvis");
-            // var disk2 = new Disk(new Guid(), "Chocolat", new DateTime(2016, 2, 14), author2);
-            // _context.Disks.Add(disk2);
+            var lomepal = new Author { Pseudonym = new Pseudonym("Lomepal") };
+            var jeannine = new Disk { Name = new Name("Jeannine"), ReleaseDate = new DateTime(2018, 8, 29) };
+            jeannine.AttachAuthor(lomepal);
 
-            _context.Disks.Add(new Disk
-            {
-                Name = new Name("Jeannine"), ReleaseDate = new DateTime(2018, 8, 29),
-                Author = new Author { Pseudonym = new Pseudonym("Lomepal") }
-            });
-            _context.Disks.Add(
-                new Disk
-                {
-                    Name = new Name("Chocolat"), ReleaseDate = new DateTime(2016, 2, 14),
-                    Author = new Author { Pseudonym = new Pseudonym("Roméo Elvis") }
-                }
-            );
+            _context.Disks.Add(jeannine);
+
+            var author = new Author { Pseudonym = new Pseudonym("Roméo Elvis") };
+            var disk = new Disk { Name = new Name("Chocolat"), ReleaseDate = new DateTime(2016, 2, 14), };
+            disk.AttachAuthor(author);
+            _context.Disks.Add(disk);
 
             await _context.SaveChangesAsync();
         }

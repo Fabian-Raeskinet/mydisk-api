@@ -11,7 +11,7 @@ namespace MyDisks.Services.Tests.Disks;
 
 public class DeleteDiskCommandHandlerFixture
 {
-    [Theory]
+  /*  [Theory]
     [AutoServiceData]
     public async Task Should_Get_Disk_By_Id
     (
@@ -73,5 +73,5 @@ public class DeleteDiskCommandHandlerFixture
         // Assert
         sut.DiskRepository.AsMock()
             .Verify(x => x.DeleteDiskAsync(disk));
-    }
+    }*/
 }

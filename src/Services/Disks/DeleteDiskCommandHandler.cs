@@ -8,20 +8,21 @@ namespace MyDisks.Services.Disks;
 
 public class DeleteDiskCommandHandler : ICommandHandler<DeleteDiskCommandRequest>
 {
-    public DeleteDiskCommandHandler(IDiskRepository repository)
+    public DeleteDiskCommandHandler(IUnitOfWork unitOfWork)
     {
-        DiskRepository = repository;
+        UnitOfWork = unitOfWork;
     }
 
-    public IDiskRepository DiskRepository { get; }
+    public IUnitOfWork UnitOfWork { get; }
 
     public async Task Handle(DeleteDiskCommandRequest command, CancellationToken cancellationToken)
     {
-        var disk = await DiskRepository.GetDiskByFilterAsync(x => x.Id == command.DiskId);
+        var disk = await UnitOfWork.DiskRepository.GetDiskByFilterAsync(x => x.Id == command.DiskId);
 
         if (disk == null)
             throw new ObjectNotFoundException();
 
-        await DiskRepository.DeleteDiskAsync(disk);
+        await UnitOfWork.DiskRepository.DeleteDiskAsync(disk);
+        await UnitOfWork.CommitAsync();
     }
 }

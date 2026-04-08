@@ -9,19 +9,19 @@ namespace MyDisks.Services.Disks;
 
 public class GetDiskByNameQueryHandler : IQueryHandler<GetDiskByNameQueryRequest, DiskResult>
 {
-    public GetDiskByNameQueryHandler(IMapper mapper, IDiskRepository repository)
+    public GetDiskByNameQueryHandler(IMapper mapper, IUnitOfWork unitOfWork)
     {
         Mapper = mapper;
-        DiskRepository = repository;
+        UnitOfWork = unitOfWork;
     }
 
     public IMapper Mapper { get; }
-    public IDiskRepository DiskRepository { get; }
+    public IUnitOfWork UnitOfWork { get; }
 
     public async Task<DiskResult> Handle(GetDiskByNameQueryRequest request,
         CancellationToken cancellationToken)
     {
-        var data = await DiskRepository.GetDiskByFilterAsync(d => d.Name == request.Name);
+        var data = await UnitOfWork.DiskRepository.GetDiskByFilterAsync(d => d.Name == request.Name);
 
         if (data == null)
             throw new ObjectNotFoundException();

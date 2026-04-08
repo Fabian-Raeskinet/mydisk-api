@@ -14,7 +14,7 @@ public sealed class Disk : AggregateRoot<Guid>
     public DateTime? ReleaseDate { get; set; }
     public string? ImageUrl { get; set; }
     public Guid? AuthorId { get; set; }
-    public Author? Author { get; set; }
+    public Author? Author { get; private set; }
     public List<Review> Reviews { get; }
 
     public void AddReview(Review review)
@@ -22,6 +22,16 @@ public sealed class Disk : AggregateRoot<Guid>
         EnsureReviewIsNotDuplicated(review);
         ValidateReleaseDate();
         Reviews.Add(review);
+    }
+
+    public void AttachAuthor(Author author)
+    {
+        if (author.Birthdate >= ReleaseDate)
+        {
+            throw new InvalidOperationException("The author's birthdate must be earlier than the disk's release date.");
+        }
+        
+        Author = author;
     }
 
     private void EnsureReviewIsNotDuplicated(Review review)

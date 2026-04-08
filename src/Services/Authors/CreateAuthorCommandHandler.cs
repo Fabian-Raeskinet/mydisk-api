@@ -4,16 +4,17 @@ namespace MyDisks.Services.Authors;
 
 public class CreateAuthorCommandHandler : ICommandHandler<CreateAuthorCommandRequest>
 {
-    public CreateAuthorCommandHandler(IAuthorRepository authorRepository)
+    public CreateAuthorCommandHandler(IUnitOfWork unitOfWork)
     {
-        AuthorRepository = authorRepository;
+        UnitOfWork = unitOfWork;
     }
 
-    public IAuthorRepository AuthorRepository { get; set; }
+    private IUnitOfWork UnitOfWork { get; }
 
     public Task Handle(CreateAuthorCommandRequest request, CancellationToken cancellationToken)
     {
         var author = new Author { Pseudonym = new Pseudonym(request.Pseudonym), Birthdate = request.Birthdate };
-        return AuthorRepository.AddAsync(author);
+        UnitOfWork.AuthorRepository.AddAsync(author);
+        return UnitOfWork.CommitAsync();
     }
 }

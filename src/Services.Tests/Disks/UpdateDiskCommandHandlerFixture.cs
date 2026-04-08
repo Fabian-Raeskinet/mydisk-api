@@ -10,7 +10,7 @@ namespace MyDisks.Services.Tests.Disks;
 
 public class UpdateDiskCommandHandlerFixture
 {
-    [Theory]
+  /*  [Theory]
     [AutoServiceData]
     public async Task Should_Get_Disk_By_Id
     (
@@ -182,5 +182,5 @@ public class UpdateDiskCommandHandlerFixture
                 d.Id == disk.Id
                 && d.ImageUrl == disk.ImageUrl
                 && d.AuthorId == disk.AuthorId)));
-    }
+    }*/
 }

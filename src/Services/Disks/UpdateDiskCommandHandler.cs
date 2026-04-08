@@ -8,18 +8,18 @@ namespace MyDisks.Services.Disks;
 
 public class UpdateDiskCommandHandler : ICommandHandler<UpdateDiskCommandRequest>
 {
-    public UpdateDiskCommandHandler(IDiskRepository repository, IMapper mapper)
+    public UpdateDiskCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
     {
-        DiskRepository = repository;
+        UnitOfWork = unitOfWork;
         Mapper = mapper;
     }
 
-    public IDiskRepository DiskRepository { get; }
+    public IUnitOfWork UnitOfWork { get; }
     public IMapper Mapper { get; }
 
     public async Task Handle(UpdateDiskCommandRequest request, CancellationToken cancellationToken)
     {
-        var disk = await DiskRepository.GetDiskByFilterAsync(x => x.Id == request.Id);
+        var disk = await UnitOfWork.DiskRepository.GetDiskByFilterAsync(x => x.Id == request.Id);
 
         if (disk == null)
             throw new ObjectNotFoundException();
@@ -27,6 +27,7 @@ public class UpdateDiskCommandHandler : ICommandHandler<UpdateDiskCommandRequest
         if (request.Name is not null) disk.Name = new Name(request.Name);
         if (request.ReleaseDate is not null) disk.ReleaseDate = request.ReleaseDate;
 
-        await DiskRepository.UpdateDiskAsync(disk);
+        await UnitOfWork.DiskRepository.UpdateDiskAsync(disk);
+        await UnitOfWork.CommitAsync();
     }
 }
