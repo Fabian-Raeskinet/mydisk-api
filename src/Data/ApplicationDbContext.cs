@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using MyDisks.Data.Configurations.Disks;
 using MyDisks.Domain.Authors;
 using MyDisks.Domain.Disks;
@@ -32,6 +33,11 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public async Task<int> SaveChangesAsync()
     {
         return await base.SaveChangesAsync();
+    }
+
+    public async Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default)
+    {
+        return await Database.BeginTransactionAsync(cancellationToken);
     }
 
     protected override void OnModelCreating(ModelBuilder builder)

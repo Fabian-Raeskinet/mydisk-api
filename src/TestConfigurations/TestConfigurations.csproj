@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AssemblyName>MyDisks.TestConfiguration</AssemblyName>
@@ -9,11 +9,11 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoFixture" Version="5.0.0-preview0007" />
-      <PackageReference Include="AutoFixture.AutoMoq" Version="5.0.0-preview0007" />
-      <PackageReference Include="AutoFixture.Xunit2" Version="5.0.0-preview0007" />
-      <PackageReference Include="FluentAssertions" Version="7.0.0-alpha.3" />
-      <PackageReference Include="Moq" Version="4.20.70" />
+      <PackageReference Include="AutoFixture" Version="5.0.0-preview0012" />
+      <PackageReference Include="AutoFixture.AutoMoq" Version="5.0.0-preview0012" />
+      <PackageReference Include="AutoFixture.Xunit2" Version="5.0.0-preview0012" />
+      <PackageReference Include="FluentAssertions" Version="8.9.0" />
+      <PackageReference Include="Moq" Version="4.20.72" />
     </ItemGroup>
 
 </Project>

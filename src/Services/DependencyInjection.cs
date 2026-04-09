@@ -16,8 +16,7 @@ public static class DependencyInjection
     {
         services
             .AddMediatRServices()
-            .AddAutoMapperServices()
-            .ConfigureILoggerServices();
+            .AddAutoMapperServices();
     }
 
     private static IServiceCollection AddAutoMapperServices(this IServiceCollection services)
@@ -29,6 +28,7 @@ public static class DependencyInjection
     {
         services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
         services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(TransactionBehavior<,>));
         services.AddScoped<IDomainEventDispatcher, MediatRDomainEventDispatcher>();
 
         return services;

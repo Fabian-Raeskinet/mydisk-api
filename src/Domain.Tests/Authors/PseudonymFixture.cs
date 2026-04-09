@@ -35,9 +35,9 @@ public class PseudonymFixture
             act.Value.Should().Be(pseudonym);
         }
         
-        [Theory]
+        [Fact]
         [AutoDomainData]
-        public void Should_Converts_Explicitly_Pseudonym(Pseudonym sut)
+        public void Should_Converts_Explicitly_Pseudonym()
         {
             // Arrange
             var pseudonym = new string('a', 30);

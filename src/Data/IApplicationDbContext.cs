@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using MyDisks.Domain.Authors;
 using MyDisks.Domain.Disks;
 using MyDisks.Domain.Reviews;
@@ -11,4 +12,6 @@ public interface IApplicationDbContext
     DbSet<Author> Authors { get; }
     DbSet<Review> Reviews { get; }
     Task<int> SaveChangesAsync();
+    Task<IDbContextTransaction> BeginTransactionAsync(CancellationToken cancellationToken = default);
+
 }

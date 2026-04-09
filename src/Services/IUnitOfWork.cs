@@ -8,4 +8,6 @@ public interface IUnitOfWork
     IAuthorRepository AuthorRepository { get; }
     IDiskRepository DiskRepository { get; }
     Task<int> CommitAsync();
+    Task BeginTransactionAsync();
+    Task RollbackAsync();
 }

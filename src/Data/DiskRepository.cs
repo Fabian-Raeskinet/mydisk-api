@@ -34,23 +34,15 @@ public class DiskRepository : IDiskRepository
     public async Task CreateDiskAsync(Disk disk)
     {
         await Context.Disks.AddAsync(disk);
-        await SaveChanges();
     }
 
     public async Task DeleteDiskAsync(Disk disk)
     {
         Context.Disks.Remove(disk);
-        await SaveChanges();
     }
 
     public async Task UpdateDiskAsync(Disk disk)
     {
         Context.Disks.Update(disk);
-        await SaveChanges();
-    }
-
-    private async Task SaveChanges()
-    {
-        await Context.SaveChangesAsync();
     }
 }

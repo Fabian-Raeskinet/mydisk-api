@@ -6,6 +6,7 @@ using MyDisks.Domain;
 using MyDisks.Domain.Authors;
 using MyDisks.Domain.Disks;
 using MyDisks.Domain.Reviews;
+using MyDisks.Services;
 
 namespace MyDisks.Data;
 
@@ -15,6 +16,7 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         return services
+            .AddUnitOfWork()
             .AddRepositories()
             .AddDatabaseConfiguration(configuration)
             .AddDateTimeService();
@@ -32,11 +34,11 @@ public static class DependencyInjection
     private static IServiceCollection AddDatabaseConfiguration(this IServiceCollection services,
         IConfiguration configuration)
     {
-      // services.AddDbContext<ApplicationDbContext>(options =>
-    //       options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+       services.AddDbContext<ApplicationDbContext>(options =>
+         options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
-          services.AddDbContext<ApplicationDbContext>(options =>
-               options.UseInMemoryDatabase("DbTest"));
+        //  services.AddDbContext<ApplicationDbContext>(options =>
+          //     options.UseInMemoryDatabase("DbTest"));
 
         services.AddScoped<ApplicationDbContextInitializer>();
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
@@ -48,5 +50,9 @@ public static class DependencyInjection
     private static IServiceCollection AddDateTimeService(this IServiceCollection services)
     {
         return services.AddScoped<IDateTime, DateTimeService>();
+    }
+    private static IServiceCollection AddUnitOfWork(this IServiceCollection services)
+    {
+        return services.AddScoped<IUnitOfWork, UnitOfWork>();
     }
 }
