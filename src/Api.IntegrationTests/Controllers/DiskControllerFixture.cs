@@ -80,7 +80,7 @@ public sealed class DiskControllerFixture
     {
         [Theory]
         [AutoApiData]
-        public async Task Should_HttpStatusCode_Be_NoContent(Name diskName, DateTime releaseDate, Guid diskId)
+        public async Task Should_HttpStatusCode_Be_NoContent(Name diskName, DateTime releaseDate)
         {
             // Arrange
             var command = new CreateDiskCommand
@@ -107,7 +107,7 @@ public sealed class DiskControllerFixture
         public async Task Should_HttpStatusCode_Be_BadRequest(DateTime releaseDate)
         {
             // Arrange
-            var command = new CreateDiskCommand { Name = null, ReleaseDate = releaseDate };
+            var command = new CreateDiskCommand { Name = null!, ReleaseDate = releaseDate };
             var content = JsonContent.Create(command);
 
             // Act

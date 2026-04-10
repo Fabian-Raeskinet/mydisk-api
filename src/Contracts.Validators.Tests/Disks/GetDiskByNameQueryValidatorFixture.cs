@@ -8,9 +8,9 @@ namespace MyDisks.Contracts.Validators.Tests.Disks;
 public class GetDiskByNameQueryValidatorFixture
 {
     [Theory]
-    [InlineAutoServiceData("")]
-    [InlineAutoServiceData(null)]
-    public async Task ShouldThrowValidationException(string name)
+    [InlineData("")]
+    [InlineData(null)]
+    public async Task ShouldThrowValidationException(string? name)
     {
         // Arrange
         var request = new GetDiskByNameQueryRequest

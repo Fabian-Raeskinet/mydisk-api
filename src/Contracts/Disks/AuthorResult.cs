@@ -3,5 +3,5 @@
 public record AuthorResult
 {
     public Guid Id { get; init; }
-    public string Pseudonym { get; init; }
+    public required string Pseudonym { get; init; }
 }

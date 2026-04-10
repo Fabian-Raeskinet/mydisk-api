@@ -14,7 +14,7 @@ public class AuthorProfileFixture
     public void TestDiskResponseMapping(Author author)
     {
         // Arrange
-        var config = new MapperConfiguration(cfg => { cfg.AddMaps(typeof(MapperProfiles)); });
+        var config = new MapperConfiguration(cfg => { cfg.AddMaps(typeof(MapperProfiles)); }, null);
         config.AssertConfigurationIsValid();
         var expected = new AuthorResult
         {

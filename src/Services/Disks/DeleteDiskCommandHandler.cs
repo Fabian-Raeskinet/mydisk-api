@@ -19,7 +19,7 @@ public class DeleteDiskCommandHandler : ICommandHandler<DeleteDiskCommandRequest
     {
         var disk = await UnitOfWork.DiskRepository.GetDiskByFilterAsync(x => x.Id == command.DiskId);
 
-        if (disk == null)
+        if (disk is null)
             throw new ObjectNotFoundException();
 
         await UnitOfWork.DiskRepository.DeleteDiskAsync(disk);

@@ -22,7 +22,7 @@ public class NameFixture
         public void Should_Throws_ArgumentException_When_Null()
         {
             // Act
-            var act = () => new Name(null);
+            var act = () => new Name(null!);
 
             // Assert
             act.Should().Throw<ArgumentException>();

@@ -4,7 +4,7 @@ namespace MyDisks.Domain;
 
 public abstract class Entity<TId> : IEquatable<Entity<TId>> where TId : notnull
 {
-    public TId? Id { get; set; }
+    public TId Id { get; set; } = default!;
 
     public bool Equals(Entity<TId>? other)
     {
@@ -13,7 +13,13 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>> where TId : notnull
 
     public override bool Equals(object? obj)
     {
-        return obj is Entity<TId> entity && Id.Equals(entity.Id);
+        if (obj is not Entity<TId> entity)
+            return false;
+
+        if (ReferenceEquals(this, entity))
+            return true;
+
+        return Id.Equals(entity.Id);
     }
 
     public override int GetHashCode()
@@ -21,12 +27,12 @@ public abstract class Entity<TId> : IEquatable<Entity<TId>> where TId : notnull
         return Id.GetHashCode();
     }
 
-    public static bool operator ==(Entity<TId> left, Entity<TId> right)
+    public static bool operator ==(Entity<TId>? left, Entity<TId>? right)
     {
         return Equals(left, right);
     }
 
-    public static bool operator !=(Entity<TId> left, Entity<TId> right)
+    public static bool operator !=(Entity<TId>? left, Entity<TId>? right)
     {
         return !Equals(left, right);
     }

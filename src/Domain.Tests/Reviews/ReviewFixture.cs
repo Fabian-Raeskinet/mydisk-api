@@ -23,10 +23,10 @@ public class ReviewFixture
             act.Should().Throw<ArgumentNullException>();
         }
 
-        [Theory]
-        [AutoDomainData]
-        public void Should_Throws_InvalidOperationException_When_Archived_Review(string content)
-        {
+        // [Theory]
+        // [AutoDomainData]
+        // public void Should_Throws_InvalidOperationException_When_Archived_Review(string content)
+        //{
             // Arrange
             // var sut = new Fixture().Build<Review>()
             //     .With(x => x.Status, ReviewStatus.Archived).Create();
@@ -37,7 +37,7 @@ public class ReviewFixture
             //
             // // Assert
             // act.Should().Throw<InvalidOperationException>();
-        }
+            //     }
 
         [Theory]
         [AutoDomainData]
@@ -65,10 +65,10 @@ public class ReviewFixture
                 act.Should().Throw<ArgumentNullException>();
             }
 
-            [Theory]
-            [AutoDomainData]
-            public void Should_Throws_InvalidOperationException_When_Archived_Review(Review sut, string title)
-            {
+            //  [Theory]
+            //  [AutoDomainData]
+            //  public void Should_Throws_InvalidOperationException_When_Archived_Review(Review sut, string title)
+            //  {
                 // // Arrange
                 // sut.Archive();
                 //
@@ -77,7 +77,7 @@ public class ReviewFixture
                 //
                 // // Assert
                 // act.Should().Throw<InvalidOperationException>();
-            }
+                //      }
 
             [Fact]
             public void Should_Throws_ArgumentException_When_Title_Exceeds_30_Characters()

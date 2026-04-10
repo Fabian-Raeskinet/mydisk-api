@@ -24,7 +24,7 @@ public class AttachAuthorCommandHandler : ICommandHandler<AttachAuthorCommandReq
         var author = await UnitOfWork.AuthorRepository.GetAuthorByFilterAsync(x => x.Id == request.AuthorId);
         var disk = await UnitOfWork.DiskRepository.GetDiskByFilterAsync(x => x.Id == request.DiskId);
 
-        if (author == null || disk == null)
+        if (author is null || disk is null)
             throw new ObjectNotFoundException("no matches found");
 
         disk.AttachAuthor(author);

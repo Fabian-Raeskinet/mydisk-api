@@ -16,7 +16,7 @@ public class ReviewProfileFixture
     public void TestDiskResultMapping(Review review)
     {
         // Arrange
-        var config = new MapperConfiguration(cfg => { cfg.AddMaps(typeof(MapperProfiles)); });
+        var config = new MapperConfiguration(cfg => { cfg.AddMaps(typeof(MapperProfiles)); }, null);
         config.AssertConfigurationIsValid();
         var expected = new ReviewResult
         {

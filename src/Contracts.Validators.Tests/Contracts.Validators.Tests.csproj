@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
@@ -10,6 +10,8 @@
         <AssemblyName>MyDisks.Contracts.Validators.Tests</AssemblyName>
 
         <RootNamespace>MyDisks.Contracts.Validators.Tests</RootNamespace>
+
+        <LangVersion>14</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>

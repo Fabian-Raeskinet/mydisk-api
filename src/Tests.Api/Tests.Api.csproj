@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <RootNamespace>MyDisks.Tests.Api</RootNamespace>
         <AssemblyName>MyDisks.Tests.Api</AssemblyName>
+        <LangVersion>14</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>

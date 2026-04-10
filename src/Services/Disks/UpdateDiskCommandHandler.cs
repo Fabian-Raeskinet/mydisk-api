@@ -21,7 +21,7 @@ public class UpdateDiskCommandHandler : ICommandHandler<UpdateDiskCommandRequest
     {
         var disk = await UnitOfWork.DiskRepository.GetDiskByFilterAsync(x => x.Id == request.Id);
 
-        if (disk == null)
+        if (disk is null)
             throw new ObjectNotFoundException();
 
         if (request.Name is not null) disk.Name = new Name(request.Name);

@@ -36,7 +36,6 @@ public class PseudonymFixture
         }
         
         [Fact]
-        [AutoDomainData]
         public void Should_Converts_Explicitly_Pseudonym()
         {
             // Arrange

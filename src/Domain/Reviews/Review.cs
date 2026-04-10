@@ -12,7 +12,7 @@ public class Review : AggregateRoot<Guid>
     public DateTimeOffset PublishedDate { get; init; }
     public ReviewStatus Status { get; private set; }
     public Guid DiskId { get; set; }
-    public virtual Disk Disk { get; set; }
+    public virtual Disk? Disk { get; set; }
 
     public string? Content
     {

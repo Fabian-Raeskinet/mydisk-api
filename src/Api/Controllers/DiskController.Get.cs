@@ -22,7 +22,7 @@ public partial class DiskController
     [ProducesResponseType(typeof(DiskResult), 200)]
     [ProducesResponseType(typeof(List<string>), 400)]
     [ProducesResponseType(404)]
-    public async Task<IActionResult> GetByName([FromQuery] string? name)
+    public async Task<IActionResult> GetByName([FromQuery] string name)
     {
         var result = await Mediator.Send(new GetDiskByNameQueryRequest { Name = name });
         return Ok(result);

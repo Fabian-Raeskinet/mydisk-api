@@ -21,7 +21,7 @@ public static class DependencyInjection
 
     private static IServiceCollection AddAutoMapperServices(this IServiceCollection services)
     {
-        return services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        return services.AddAutoMapper(cfg => { }, typeof(MapperProfiles));
     }
 
     private static IServiceCollection AddMediatRServices(this IServiceCollection services)

@@ -1,11 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <AssemblyName>MyDisks.Contracts</AssemblyName>
         <RootNamespace>MyDisks.Contracts</RootNamespace>
+        <LangVersion>14</LangVersion>
     </PropertyGroup>
 
 </Project>

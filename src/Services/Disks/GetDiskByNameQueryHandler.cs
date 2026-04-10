@@ -23,7 +23,7 @@ public class GetDiskByNameQueryHandler : IQueryHandler<GetDiskByNameQueryRequest
     {
         var data = await UnitOfWork.DiskRepository.GetDiskByFilterAsync(d => d.Name == request.Name);
 
-        if (data == null)
+        if (data is null)
             throw new ObjectNotFoundException();
 
         return Mapper.Map<DiskResult>(data);

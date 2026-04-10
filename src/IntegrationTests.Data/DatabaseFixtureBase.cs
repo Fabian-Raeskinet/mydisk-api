@@ -21,7 +21,7 @@ public class DatabaseFixtureBase : IDisposable
 
     protected ApplicationDbContext DbContext { get; }
     private IDbContextTransaction DbContextTransaction { get; }
-    private ServiceProvider ServiceProvider { get; set; }
+    private ServiceProvider ServiceProvider { get; set; } = null!;
 
     public void Dispose()
     {

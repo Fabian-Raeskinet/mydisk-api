@@ -14,6 +14,7 @@ public static class DependencyInjection
     {
         services.AddEndpointsApiExplorer();
         services.AddMvcConfiguration();
+        services.AddFluentValidationAutoValidation();
         services.AddControllerConfiguration();
         services.AddSwaggerConfiguration();
         services.AddOptionSettings(configuration);
@@ -27,9 +28,19 @@ public static class DependencyInjection
             {
                 options.Filters.Add<ApiExceptionFilterAttribute>();
                 options.Filters.Add<MaintenanceFilterAttribute>();
-            })
-            .AddFluentValidation(x => x.AutomaticValidationEnabled = false);
+            });
     }
+    
+    private static void AddFluentValidationAutoValidation(this IServiceCollection services)
+    {
+        services.AddFluentValidationAutoValidation(options =>
+        {
+            options.DisableDataAnnotationsValidation = true;
+        });
+
+        services.AddFluentValidationClientsideAdapters();
+    }
+    
 
     private static void AddControllerConfiguration(this IServiceCollection services)
     {
