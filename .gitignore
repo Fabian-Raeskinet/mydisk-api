@@ -363,5 +363,8 @@ MigrationBackup/
 FodyWeavers.xsd
 .idea
 
-# Local secrets (docker compose)
-.env
+# Local secrets (docker compose & k8s)
+*.env
+.env*
+!.env.example
+!*.env.example

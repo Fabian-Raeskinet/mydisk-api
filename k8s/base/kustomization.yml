@@ -1,0 +1,19 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - api-deployment.yml
+  - postgres-statefulset.yml
+  - postgres-service.yml
+
+# Overlays must provide Secret `postgres-credentials` with key POSTGRES_PASSWORD.
+configMapGenerator:
+  - name: db-config
+    literals:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=mydisk
+      - DB_USER=mydisk
+  - name: api-config
+    literals:
+      - ASPNETCORE_ENVIRONMENT=Production
