@@ -28,6 +28,7 @@ services:
     restart: "no"
     environment:
       ConnectionStrings__DefaultConnection: *db-connection
+      SEED_DATA: "true"
     depends_on:
       postgres:
         condition: service_healthy

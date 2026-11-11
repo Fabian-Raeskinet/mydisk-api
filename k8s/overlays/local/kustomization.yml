@@ -9,6 +9,10 @@ configMapGenerator:
     behavior: merge
     literals:
       - ASPNETCORE_ENVIRONMENT=Development
+  - name: migrations-config
+    behavior: merge
+    literals:
+      - SEED_DATA=true
 
 secretGenerator:
   - name: postgres-credentials

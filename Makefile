@@ -42,7 +42,7 @@ help:
 	@echo "  clean               Stop containers and remove volumes (WARNING: deletes DB)"
 	@echo ""
 	@echo "Kubernetes targets (default ENV=local):"
-	@echo "  k8s-up              Build image, import to k3d, prepare secrets, and apply overlay"
+	@echo "  k8s-up              Build images, import to k3d, prepare secrets, apply overlay, restart API"
 	@echo "  k8s-down            Delete Kubernetes resources for current overlay"
 	@echo "  k8s-apply           Apply overlay with Kustomize (reruns migrations Job)"
 	@echo "  k8s-delete          Delete overlay resources"
@@ -166,8 +166,8 @@ k8s-apply: k8s-init-secrets
 k8s-delete:
 	kubectl delete --ignore-not-found -k $(K8S_OVERLAY)
 
-# Full local setup: build image, import to cluster, ensure secrets, apply manifests
-k8s-up: k8s-init-secrets k8s-build cluster-load k8s-apply
+# Full local setup: build images, import to cluster, ensure secrets, apply manifests, roll out the rebuilt :dev image
+k8s-up: k8s-init-secrets k8s-build cluster-load k8s-apply k8s-restart
 
 # Alias to delete overlay resources
 k8s-down: k8s-delete

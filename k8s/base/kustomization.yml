@@ -20,3 +20,6 @@ configMapGenerator:
   - name: api-config
     literals:
       - ASPNETCORE_ENVIRONMENT=Production
+  - name: migrations-config
+    literals:
+      - SEED_DATA=false

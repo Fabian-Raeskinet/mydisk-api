@@ -25,6 +25,13 @@ public class ApplicationDbContextFactory : IDesignTimeDbContextFactory<Applicati
                 b.CommandTimeout(600);
             });
 
+        if (bool.TryParse(configuration["SEED_DATA"], out var seedData) && seedData)
+        {
+            optionsBuilder
+                .UseSeeding((context, _) => DataSeeder.SeedAsync((ApplicationDbContext)context).GetAwaiter().GetResult())
+                .UseAsyncSeeding((context, _, cancellationToken) => DataSeeder.SeedAsync((ApplicationDbContext)context, cancellationToken));
+        }
+
         var dbContext = new ApplicationDbContext(optionsBuilder.Options);
 
         return dbContext;

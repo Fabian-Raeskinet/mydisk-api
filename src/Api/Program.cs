@@ -1,5 +1,4 @@
 using MyDisks.Contracts.Validators;
-using MyDisks.Data;
 using MyDisks.DependencyInjection.Configurations;
 using MyDisks.RandomServices;
 using MyDisks.RetryService;
@@ -9,7 +8,7 @@ namespace MyDisks.Api;
 
 public class Program
 {
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
@@ -19,13 +18,7 @@ public class Program
         var app = builder.Build();
 
         if (app.Environment.IsDevelopment())
-        {
             app.UseDeveloperExceptionPage();
-
-            using var scope = app.Services.CreateScope();
-            var initializer = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitializer>();
-            await initializer.SeedAsync();
-        }
 
         app.UseSwagger();
         app.UseSwaggerUI();

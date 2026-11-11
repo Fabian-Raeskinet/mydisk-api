@@ -28,6 +28,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: db-config
+            - configMapRef:
+                name: migrations-config
           env:
             - name: DB_PASSWORD
               valueFrom:

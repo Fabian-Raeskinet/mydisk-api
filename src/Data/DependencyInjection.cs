@@ -40,7 +40,6 @@ public static class DependencyInjection
         //  services.AddDbContext<ApplicationDbContext>(options =>
           //     options.UseInMemoryDatabase("DbTest"));
 
-        services.AddScoped<ApplicationDbContextInitializer>();
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<ApplicationDbContext>());
         services.AddScoped<EntitySaveChangesInterceptor>();
 

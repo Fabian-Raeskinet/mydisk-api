@@ -9,7 +9,7 @@ The business domain is intentionally simple: the goal is to demonstrate how a .N
 - **.NET 10 / ASP.NET Core** Web API with Swagger
 - **Domain-Driven Design** building blocks: aggregates, entities, value objects, domain events
 - **CQRS-style** application layer with MediatR, FluentValidation and AutoMapper
-- **PostgreSQL** with EF Core migrations, shipped as a migration bundle and run as a dedicated Job before the API
+- **PostgreSQL** with EF Core migrations and seeding, shipped as a migration bundle and run as a dedicated Job before the API
 - **Resilience** with Polly, health checks on `/health` (including the database)
 - **Unit and integration tests** with xUnit, Moq, AutoFixture and FluentAssertions
 - **Containerized** with a multi-stage, non-root Docker image
@@ -72,14 +72,18 @@ k8s/
 
 The k3d load balancer maps `localhost:8080` to port 80 of the cluster, where Traefik (bundled with k3s) routes requests to the API `Service` through an `Ingress`. No port-forwarding is needed. The API pod only receives traffic once its readiness probe on `/health` passes.
 
-### Database migrations
+### Database migrations and seeding
 
-Schema changes are not applied by the API at startup. EF Core migrations are compiled into a self-contained **migration bundle** (`efbundle`) packaged in its own image, and run by:
+The API never writes to the database at startup. EF Core migrations are compiled into a self-contained **migration bundle** (`efbundle`) packaged in its own image, and run by:
 
 - the `mydisk-api-migrations` **Job** on Kubernetes (`make k8s-apply` recreates it so migrations rerun on every deploy),
 - the one-shot `migrations` service on Compose, which the API waits for (`service_completed_successfully`).
 
-This keeps migrations out of the request-serving process: they run once per deploy instead of once per replica, and the API itself does not need schema-altering privileges. On Kubernetes the API may restart once or twice until the Job has completed.
+This keeps migrations out of the request-serving process: they run once per deploy instead of once per replica, and the API itself does not need schema-altering privileges.
+
+- **Waiting for the database**: on Kubernetes, an init container runs `pg_isready` until PostgreSQL accepts connections; on Compose, the service waits for the Postgres healthcheck.
+- **Idempotent**: the bundle compares the migrations it contains with `__EFMigrationsHistory` and applies only pending ones, under an exclusive lock. When the schema is up to date it is a no-op.
+- **Seeding**: demo data is inserted through EF Core's `UseSeeding` / `UseAsyncSeeding`, which the bundle runs right after migrating, so ordering is guaranteed. It is enabled with `SEED_DATA=true` (`migrations-config` ConfigMap, `false` in `base`, `true` in the local overlay and Compose), and only inserts data into empty tables.
 
 ### Configuration and secrets
 
@@ -154,7 +158,7 @@ dotnet user-secrets set --project src/Api "ConnectionStrings:DefaultConnection" 
 dotnet run --project src/Api
 ```
 
-In `Development`, seed data is inserted on startup.
+The `migrations` service also inserts the demo data.
 
 ### Endpoints
 
@@ -195,7 +199,7 @@ Run `make help` for the full list. Optional variables: `ENV=local`, `CLUSTER_NAM
 |-------------------------|-----------------------------------------------------|
 | `make dev-up`           | Cluster + build + import + secrets + deploy         |
 | `make dev-down`         | Delete resources and stop the cluster               |
-| `make k8s-up`           | Build + import + secrets + deploy                   |
+| `make k8s-up`           | Build + import + secrets + deploy + restart the API |
 | `make k8s-down`         | Delete overlay resources                            |
 | `make k8s-apply`        | Apply the overlay and rerun the migrations Job      |
 | `make k8s-render`       | Render manifests without applying (prints Secret data) |
