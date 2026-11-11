@@ -31,7 +31,7 @@ jobs:
                 ScriptType: 'InlineScript'
                 Inline: |
                   $json = Get-Content xunit.json | ConvertFrom-json
-                  $json.ConnectionStrings.SqlServerConnection = '${{ parameters.dataBaseConnectionString }}'
+                  $json.ConnectionStrings.DefaultConnection = '${{ parameters.dataBaseConnectionString }}'
                   $json | ConvertTo-Json | Set-Content xunit.json
                 azurePowerShellVersion: 'LatestVersion'
                 workingDirectory: '$(Pipeline.Workspace)/${{ parameters.artifact }}/'

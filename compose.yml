@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:18
+    env_file:
+      - .env.local
+    environment:
+      POSTGRES_USER: mydisk
+      POSTGRES_DB: mydisk
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mydisk -d mydisk"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  postgres_data:

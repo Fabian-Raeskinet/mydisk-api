@@ -11,7 +11,7 @@ public class DatabaseFixtureBase : IDisposable
     protected DatabaseFixtureBase()
     {
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
-        optionsBuilder.UseSqlServer(JsonSettings.XUnit.GetConnectionString("SqlServerConnection"));
+        optionsBuilder.UseNpgsql(JsonSettings.XUnit.GetConnectionString("DefaultConnection"));
 
         DbContext = CreateApplicationDbContext(optionsBuilder);
 

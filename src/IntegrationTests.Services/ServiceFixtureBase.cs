@@ -1,5 +1,5 @@
 using System.Data;
-using Microsoft.Data.SqlClient;
+using System.Data.Common;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,24 +31,24 @@ public class ServiceFixtureBase : IDisposable
         ServiceProvider = services.BuildServiceProvider();
     }
 
-    private SqlConnection SqlConnection
+    private DbConnection DbConnection
     {
         get
         {
             var dbContext = ServiceProvider.GetService<ApplicationDbContext>();
-            var sqlConnection = dbContext?.Database.GetDbConnection() as SqlConnection;
-            if (sqlConnection is { State: ConnectionState.Closed })
-                sqlConnection.Open();
-            return sqlConnection!;
+            var dbConnection = dbContext?.Database.GetDbConnection();
+            if (dbConnection is { State: ConnectionState.Closed })
+                dbConnection.Open();
+            return dbConnection!;
         }
     }
 
     public void Dispose()
     {
-        if (SqlConnection.State == ConnectionState.Open)
-            SqlConnection.Close();
+        if (DbConnection.State == ConnectionState.Open)
+            DbConnection.Close();
 
-        SqlConnection.Dispose();
+        DbConnection.Dispose();
         ServiceProvider.Dispose();
     }
 }

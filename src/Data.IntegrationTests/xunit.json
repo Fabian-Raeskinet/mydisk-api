@@ -1,5 +1,5 @@
 {
   "ConnectionStrings": {
-    "SqlServerConnection": "Server=(LocalDB)\\MSSQLLocalDB;Database=MyDisks;"
+    "DefaultConnection": "Host=localhost;Port=5432;Database=mydisk;Username=mydisk"
   }
 }
