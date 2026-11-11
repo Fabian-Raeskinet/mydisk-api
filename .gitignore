@@ -364,4 +364,4 @@ FodyWeavers.xsd
 .idea
 
 # Local secrets (docker compose)
-.env.local
+.env

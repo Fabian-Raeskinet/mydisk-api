@@ -8,4 +8,4 @@
 .claude/
 k8s/
 infra/
-.env.local
+.env

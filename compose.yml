@@ -1,13 +1,30 @@
 services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mydisk-api:dev
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=mydisk;Username=mydisk;Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD manquant dans .env};GSS Encryption Mode=Disable"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - mydisk-network
+
   postgres:
     image: postgres:18
-    env_file:
-      - .env.local
+    restart: unless-stopped
     environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD manquant dans .env}
       POSTGRES_USER: mydisk
       POSTGRES_DB: mydisk
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql
     healthcheck:
@@ -15,6 +32,13 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+      start_period: 15s
+    networks:
+      - mydisk-network
+
+networks:
+  mydisk-network:
+    driver: bridge
 
 volumes:
   postgres_data:
