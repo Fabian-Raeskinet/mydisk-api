@@ -1,15 +1,33 @@
+x-db-connection: &db-connection "Host=postgres;Port=5432;Database=mydisk;Username=mydisk;Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD manquant dans .env};GSS Encryption Mode=Disable"
+
 services:
   api:
     build:
       context: .
       dockerfile: Dockerfile
+      target: api
     image: mydisk-api:dev
     restart: unless-stopped
     ports:
       - "8080:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
-      ConnectionStrings__DefaultConnection: "Host=postgres;Port=5432;Database=mydisk;Username=mydisk;Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD manquant dans .env};GSS Encryption Mode=Disable"
+      ConnectionStrings__DefaultConnection: *db-connection
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+    networks:
+      - mydisk-network
+
+  migrations:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrations
+    image: mydisk-api-migrations:dev
+    restart: "no"
+    environment:
+      ConnectionStrings__DefaultConnection: *db-connection
     depends_on:
       postgres:
         condition: service_healthy

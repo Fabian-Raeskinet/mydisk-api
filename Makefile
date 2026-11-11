@@ -3,13 +3,14 @@ COMPOSE = docker compose --env-file .env
 ENV ?= local
 K8S_OVERLAY = k8s/overlays/$(ENV)
 IMAGE_NAME = mydisk-api:dev
+MIGRATIONS_IMAGE_NAME = mydisk-api-migrations:dev
 CLUSTER_NAME ?= mydisk
 HTTP_PORT ?= 8080
 
 .PHONY: help up down restart logs ps build clean \
         cluster-create cluster-start cluster-stop cluster-delete cluster-reset cluster-status cluster-load \
         k8s-help k8s-init-secrets k8s-build k8s-render k8s-apply k8s-delete \
-        k8s-status k8s-restart k8s-logs k8s-logs-db k8s-forward-api k8s-forward-db k8s-up k8s-down \
+        k8s-status k8s-restart k8s-logs k8s-logs-db k8s-logs-migrations k8s-forward-api k8s-forward-db k8s-up k8s-down \
         dev-up dev-down
 
 # -----------------------------------------------------------------------------
@@ -25,7 +26,7 @@ help:
 	@echo "  cluster-delete      Delete the k3d cluster"
 	@echo "  cluster-reset       Delete and recreate a fresh k3d cluster"
 	@echo "  cluster-status      Show k3d clusters and nodes status"
-	@echo "  cluster-load        Import built Docker image into k3d cluster"
+	@echo "  cluster-load        Import built Docker images into k3d cluster"
 	@echo ""
 	@echo "Combined workflow targets:"
 	@echo "  dev-up              Ensure cluster is ready, build image, import, and deploy"
@@ -43,16 +44,17 @@ help:
 	@echo "Kubernetes targets (default ENV=local):"
 	@echo "  k8s-up              Build image, import to k3d, prepare secrets, and apply overlay"
 	@echo "  k8s-down            Delete Kubernetes resources for current overlay"
-	@echo "  k8s-apply           Apply overlay with Kustomize"
+	@echo "  k8s-apply           Apply overlay with Kustomize (reruns migrations Job)"
 	@echo "  k8s-delete          Delete overlay resources"
 	@echo "  k8s-render          Render and preview Kustomize manifests without applying"
-	@echo "  k8s-build           Build local Docker image ($(IMAGE_NAME))"
+	@echo "  k8s-build           Build local Docker images ($(IMAGE_NAME), $(MIGRATIONS_IMAGE_NAME))"
 	@echo "  k8s-init-secrets    Generate $(K8S_OVERLAY)/secrets.env (gitignored) if missing"
 	@echo "  k8s-status          Display status of pods, services, statefulsets, and PVCs"
 	@echo "  k8s-restart         Rollout restart the API deployment"
 	@echo "  k8s-logs            Stream logs from the API pods"
 	@echo "  k8s-logs-db         Stream logs from the PostgreSQL pod"
-	@echo "  k8s-forward-api     Port-forward API deployment to localhost:8080"
+	@echo "  k8s-logs-migrations Show logs from the migrations Job"
+	@echo "  k8s-forward-api     Port-forward API deployment to localhost:8081 (bypasses Ingress)"
 	@echo "  k8s-forward-db      Port-forward PostgreSQL service to localhost:5432"
 
 # -----------------------------------------------------------------------------
@@ -96,10 +98,10 @@ cluster-reset: cluster-delete cluster-create
 cluster-status:
 	@k3d cluster list
 
-# Load local Docker image into the k3d cluster nodes
+# Load local Docker images into the k3d cluster nodes
 cluster-load:
-	@echo "Importing image $(IMAGE_NAME) into cluster $(CLUSTER_NAME)..."
-	@k3d image import $(IMAGE_NAME) -c $(CLUSTER_NAME)
+	@echo "Importing images into cluster $(CLUSTER_NAME)..."
+	@k3d image import $(IMAGE_NAME) $(MIGRATIONS_IMAGE_NAME) -c $(CLUSTER_NAME)
 
 # -----------------------------------------------------------------------------
 # Docker Compose
@@ -145,17 +147,20 @@ k8s-init-secrets:
 		echo "Created $(K8S_SECRETS) (mode 600)."; \
 	fi
 
-# Build Docker image for local Kubernetes cluster
+# Build Docker images for local Kubernetes cluster
 k8s-build:
-	docker build -t $(IMAGE_NAME) .
+	docker build --target api -t $(IMAGE_NAME) .
+	docker build --target migrations -t $(MIGRATIONS_IMAGE_NAME) .
 
 # Render manifests to inspect generated YAML (prints Secret data)
 k8s-render: k8s-init-secrets
 	kubectl kustomize $(K8S_OVERLAY)
 
-# Apply Kubernetes overlay manifests
+# Apply Kubernetes overlay manifests (Jobs are immutable: recreate it to rerun migrations)
 k8s-apply: k8s-init-secrets
+	kubectl delete job mydisk-api-migrations --ignore-not-found
 	kubectl apply -k $(K8S_OVERLAY)
+	@echo "API available at http://localhost:$(HTTP_PORT)"
 
 # Delete Kubernetes overlay resources
 k8s-delete:
@@ -189,9 +194,13 @@ k8s-logs:
 k8s-logs-db:
 	kubectl logs -l app=postgres -f --tail=100
 
-# Forward local port 8080 to API deployment
+# Show logs from the migrations Job
+k8s-logs-migrations:
+	kubectl logs job/mydisk-api-migrations --tail=100
+
+# Forward local port 8081 to API deployment (8080 is taken by the k3d load balancer)
 k8s-forward-api:
-	kubectl port-forward deployment/mydisk-api 8080:8080
+	kubectl port-forward deployment/mydisk-api 8081:8080
 
 # Forward local port 5432 to PostgreSQL service
 k8s-forward-db:

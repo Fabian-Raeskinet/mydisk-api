@@ -1,0 +1,38 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: mydisk-api-migrations
+spec:
+  backoffLimit: 10
+  template:
+    metadata:
+      labels:
+        app: mydisk-api-migrations
+    spec:
+      restartPolicy: OnFailure
+      automountServiceAccountToken: false
+      initContainers:
+        - name: wait-for-postgres
+          image: postgres:18
+          envFrom:
+            - configMapRef:
+                name: db-config
+          command:
+            - sh
+            - -c
+            - until pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME"; do sleep 2; done
+      containers:
+        - name: migrations
+          image: mydisk-api-migrations:dev
+          imagePullPolicy: Never
+          envFrom:
+            - configMapRef:
+                name: db-config
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: POSTGRES_PASSWORD
+            - name: ConnectionStrings__DefaultConnection
+              value: "Host=$(DB_HOST);Port=$(DB_PORT);Database=$(DB_NAME);Username=$(DB_USER);Password=$(DB_PASSWORD);GSS Encryption Mode=Disable"

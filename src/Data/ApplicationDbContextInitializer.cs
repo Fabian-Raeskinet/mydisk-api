@@ -17,20 +17,6 @@ public class ApplicationDbContextInitializer
         _context = context;
     }
 
-    public async Task InitialiseAsync()
-    {
-        try
-        {
-            if (_context.Database.IsNpgsql())
-                await _context.Database.MigrateAsync();
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while initialising the database.");
-            throw;
-        }
-    }
-
     public async Task SeedAsync()
     {
         try

@@ -24,7 +24,6 @@ public class Program
 
             using var scope = app.Services.CreateScope();
             var initializer = scope.ServiceProvider.GetRequiredService<ApplicationDbContextInitializer>();
-            await initializer.InitialiseAsync();
             await initializer.SeedAsync();
         }
 

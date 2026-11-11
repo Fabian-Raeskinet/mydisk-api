@@ -3,6 +3,9 @@ kind: Kustomization
 
 resources:
   - api-deployment.yml
+  - api-service.yml
+  - api-ingress.yml
+  - api-migrations-job.yml
   - postgres-statefulset.yml
   - postgres-service.yml
 

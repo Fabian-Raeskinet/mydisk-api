@@ -25,6 +25,18 @@ spec:
 
           ports:
             - containerPort: 8080
+              name: http
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            periodSeconds: 5
+          livenessProbe:
+            tcpSocket:
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 10
 
           envFrom:
             - configMapRef:
