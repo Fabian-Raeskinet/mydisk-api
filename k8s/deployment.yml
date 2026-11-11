@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: mydisk-api
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: mydisk-api
+
+  template:
+    metadata:
+      labels:
+        app: mydisk-api
+
+    spec:
+      containers:
+        - name: api
+          image: mydisk-api:dev
+          imagePullPolicy: Never
+
+          ports:
+            - containerPort: 8080
+
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: Development

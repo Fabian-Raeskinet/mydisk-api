@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using MyDisks.RetryService;
 using MyDisks.Tests.Api;
@@ -59,6 +60,43 @@ public class DependencyInjectionFixture
             // Assert
             var retryServiceSettings = serviceProvider.GetRequiredService<IOptions<RetryServiceSettings>>().Value;
             retryServiceSettings.Should().NotBeNull();
+        }
+
+        [Theory]
+        [AutoApiData]
+        public void Should_Add_HealthChecks(IConfiguration configuration)
+        {
+            // Arrange
+            var services = new ServiceCollection();
+
+            // Act
+            services.AddApiServices(configuration);
+            var serviceProvider = services.BuildServiceProvider();
+
+            // Assert
+            var healthCheckService = serviceProvider.GetService<HealthCheckService>();
+            healthCheckService.Should().NotBeNull();
+        }
+
+        [Fact]
+        public void Should_Add_Postgres_HealthCheck_When_ConnectionString_Exists()
+        {
+            // Arrange
+            var configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    { "ConnectionStrings:DefaultConnection", "Host=localhost;Database=test;Username=user" }
+                })
+                .Build();
+            var services = new ServiceCollection();
+
+            // Act
+            services.AddApiServices(configuration);
+            var serviceProvider = services.BuildServiceProvider();
+
+            // Assert
+            var options = serviceProvider.GetRequiredService<IOptions<HealthCheckServiceOptions>>().Value;
+            options.Registrations.Should().Contain(r => r.Name == "npgsql");
         }
     }
 }

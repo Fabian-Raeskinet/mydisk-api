@@ -19,6 +19,7 @@ public static class DependencyInjection
         services.AddSwaggerConfiguration();
         services.AddOptionSettings(configuration);
         services.AddPolicyRegistry();
+        services.AddHealthCheckConfiguration(configuration);
     }
 
     private static void AddMvcConfiguration(this IServiceCollection services)
@@ -70,5 +71,16 @@ public static class DependencyInjection
         };
 
         services.AddSingleton<IReadOnlyPolicyRegistry<string>>(registry);
+    }
+
+    private static void AddHealthCheckConfiguration(this IServiceCollection services, IConfiguration configuration)
+    {
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        var healthChecksBuilder = services.AddHealthChecks();
+
+        if (!string.IsNullOrEmpty(connectionString))
+        {
+            healthChecksBuilder.AddNpgSql(connectionString);
+        }
     }
 }
