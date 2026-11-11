@@ -1,0 +1,10 @@
+**/bin/
+**/obj/
+**/.DS_Store
+**/*.user
+.git/
+.idea/
+.vs/
+.claude/
+k8s/
+infra/
