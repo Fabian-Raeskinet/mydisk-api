@@ -3,6 +3,8 @@ kind: Deployment
 
 metadata:
   name: mydisk-api
+  labels:
+    mydisk.io/deploy-after-migrations: "true"
 
 spec:
   replicas: 1

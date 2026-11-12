@@ -6,6 +6,7 @@ IMAGE_NAME = mydisk-api:dev
 MIGRATIONS_IMAGE_NAME = mydisk-api-migrations:dev
 CLUSTER_NAME ?= mydisk
 HTTP_PORT ?= 8080
+K8S_MIGRATIONS_TIMEOUT ?= 5m
 
 .PHONY: help up down restart logs ps build clean \
         cluster-create cluster-start cluster-stop cluster-delete cluster-reset cluster-status cluster-load \
@@ -42,9 +43,9 @@ help:
 	@echo "  clean               Stop containers and remove volumes (WARNING: deletes DB)"
 	@echo ""
 	@echo "Kubernetes targets (default ENV=local):"
-	@echo "  k8s-up              Build images, import to k3d, prepare secrets, apply overlay, restart API"
+	@echo "  k8s-up              Build images, import to k3d, prepare secrets, deploy API"
 	@echo "  k8s-down            Delete Kubernetes resources for current overlay"
-	@echo "  k8s-apply           Apply overlay with Kustomize (reruns migrations Job)"
+	@echo "  k8s-apply           Run migrations, then apply the API Deployment"
 	@echo "  k8s-delete          Delete overlay resources"
 	@echo "  k8s-render          Render and preview Kustomize manifests without applying"
 	@echo "  k8s-build           Build local Docker images ($(IMAGE_NAME), $(MIGRATIONS_IMAGE_NAME))"
@@ -159,21 +160,35 @@ k8s-render: k8s-init-secrets
 # Apply Kubernetes overlay manifests (Jobs are immutable: recreate it to rerun migrations)
 k8s-apply: k8s-init-secrets
 	kubectl delete job mydisk-api-migrations --ignore-not-found
-	kubectl apply -k $(K8S_OVERLAY)
-	@echo "API available at http://localhost:$(HTTP_PORT)"
+	kubectl apply -k $(K8S_OVERLAY) -l 'mydisk.io/deploy-after-migrations!=true'
+	@echo "Waiting for PostgreSQL migrations to complete..."
+	kubectl wait --for=condition=complete job/mydisk-api-migrations --timeout=$(K8S_MIGRATIONS_TIMEOUT)
+	@set -e; \
+	api_deployment=; \
+	if [ "$(K8S_REFRESH_API_IMAGE)" = "1" ]; then \
+		api_deployment=$$(kubectl get deployment mydisk-api --ignore-not-found -o name); \
+	fi; \
+	kubectl apply -k $(K8S_OVERLAY) -l 'mydisk.io/deploy-after-migrations=true'; \
+	if [ -n "$$api_deployment" ]; then \
+		kubectl rollout restart "$$api_deployment"; \
+	fi
+	@echo "API endpoint after rollout is http://localhost:$(HTTP_PORT)"
 
 # Delete Kubernetes overlay resources
 k8s-delete:
 	kubectl delete --ignore-not-found -k $(K8S_OVERLAY)
 
 # Full local setup: build images, import to cluster, ensure secrets, apply manifests, roll out the rebuilt :dev image
-k8s-up: k8s-init-secrets k8s-build cluster-load k8s-apply k8s-restart
+k8s-up: k8s-build
+	$(MAKE) cluster-load
+	$(MAKE) k8s-apply K8S_REFRESH_API_IMAGE=1
 
 # Alias to delete overlay resources
 k8s-down: k8s-delete
 
 # Complete local developer lifecycle: start cluster and deploy everything
-dev-up: cluster-create k8s-up
+dev-up: cluster-create
+	$(MAKE) k8s-up
 
 # Complete teardown: remove deployed resources and stop cluster
 dev-down: k8s-down cluster-stop

@@ -76,7 +76,7 @@ The k3d load balancer maps `localhost:8080` to port 80 of the cluster, where Tra
 
 The API never writes to the database at startup. EF Core migrations are compiled into a self-contained **migration bundle** (`efbundle`) packaged in its own image, and run by:
 
-- the `mydisk-api-migrations` **Job** on Kubernetes (`make k8s-apply` recreates it so migrations rerun on every deploy),
+- the `mydisk-api-migrations` **Job** on Kubernetes (`make k8s-apply` recreates the Job, then waits for it to succeed before applying the API Deployment). The wait defaults to five minutes and can be adjusted with `K8S_MIGRATIONS_TIMEOUT`. If the wait fails, the API rollout stops and existing replicas can continue serving,
 - the one-shot `migrations` service on Compose, which the API waits for (`service_completed_successfully`).
 
 This keeps migrations out of the request-serving process: they run once per deploy instead of once per replica, and the API itself does not need schema-altering privileges.
@@ -199,9 +199,9 @@ Run `make help` for the full list. Optional variables: `ENV=local`, `CLUSTER_NAM
 |-------------------------|-----------------------------------------------------|
 | `make dev-up`           | Cluster + build + import + secrets + deploy         |
 | `make dev-down`         | Delete resources and stop the cluster               |
-| `make k8s-up`           | Build + import + secrets + deploy + restart the API |
+| `make k8s-up`           | Build and import images, run migrations, and deploy the API |
 | `make k8s-down`         | Delete overlay resources                            |
-| `make k8s-apply`        | Apply the overlay and rerun the migrations Job      |
+| `make k8s-apply`        | Run migrations successfully before applying the API Deployment      |
 | `make k8s-render`       | Render manifests without applying (prints Secret data) |
 | `make k8s-init-secrets` | Generate the overlay `secrets.env` if missing       |
 | `make k8s-status`       | Pods, services, statefulsets, deployments, PVCs     |
@@ -211,6 +211,8 @@ Run `make help` for the full list. Optional variables: `ENV=local`, `CLUSTER_NAM
 | `make k8s-logs-migrations` | Show migrations Job logs                        |
 | `make k8s-forward-api`  | Port-forward the API to `localhost:8081` (bypasses the Ingress) |
 | `make k8s-forward-db`   | Port-forward PostgreSQL to `localhost:5432`         |
+
+`make k8s-up` restarts an existing API Deployment after importing the rebuilt `:dev` image. On first install, the new Deployment starts with the imported image.
 
 ## Tests
 
