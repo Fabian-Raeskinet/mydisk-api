@@ -8,17 +8,35 @@ CLUSTER_NAME ?= mydisk
 HTTP_PORT ?= 8080
 K8S_MIGRATIONS_TIMEOUT ?= 5m
 
+REGISTRY ?= ghcr.io/fabian-raeskinet
+IMAGE_TAG ?= latest
+AKS_CLUSTER_NAME ?= mydisk
+ifeq ($(ENV),local)
+K8S_CONTEXT ?= k3d-$(CLUSTER_NAME)
+K8S_NAMESPACE ?= default
+else
+K8S_CONTEXT ?= $(AKS_CLUSTER_NAME)
+K8S_NAMESPACE ?= mydisk
+endif
+KUBECTL = kubectl --context $(K8S_CONTEXT) -n $(K8S_NAMESPACE)
+
+TOFU ?= tofu
+INFRA_CLUSTER = infra/cluster/aks
+INFRA_PLATFORM = infra/platform
+INFRA_CONTEXT ?= $(AKS_CLUSTER_NAME)
+
 .PHONY: help up down restart logs ps build clean \
         cluster-create cluster-start cluster-stop cluster-delete cluster-reset cluster-status cluster-load \
         k8s-help k8s-init-secrets k8s-build k8s-render k8s-apply k8s-delete \
         k8s-status k8s-restart k8s-logs k8s-logs-db k8s-logs-migrations k8s-forward-api k8s-forward-db k8s-up k8s-down \
-        dev-up dev-down
+        k8s-push dev-up dev-down \
+        infra-cluster infra-credentials infra-platform infra-up infra-down infra-check
 
 # -----------------------------------------------------------------------------
 # Default & Help
 # -----------------------------------------------------------------------------
 help:
-	@echo "Usage: make [target] [ENV=local] [CLUSTER_NAME=mydisk] [HTTP_PORT=8080]"
+	@echo "Usage: make [target] [ENV=local|cloud] [CLUSTER_NAME=mydisk] [HTTP_PORT=8080]"
 	@echo ""
 	@echo "K3d Cluster targets:"
 	@echo "  cluster-create      Create the local k3d cluster if not existing"
@@ -42,14 +60,23 @@ help:
 	@echo "  build               Build or rebuild service images"
 	@echo "  clean               Stop containers and remove volumes (WARNING: deletes DB)"
 	@echo ""
-	@echo "Kubernetes targets (default ENV=local):"
-	@echo "  k8s-up              Build images, import to k3d, prepare secrets, deploy API"
+	@echo "Infrastructure targets (OpenTofu, requires TF_VAR_state_passphrase):"
+	@echo "  infra-up            Create the AKS cluster, fetch credentials, install the platform"
+	@echo "  infra-down          Destroy the platform, then the AKS cluster"
+	@echo "  infra-cluster       Create or update the AKS cluster ($(INFRA_CLUSTER))"
+	@echo "  infra-credentials   Merge the AKS kubeconfig into ~/.kube/config"
+	@echo "  infra-platform      Install Traefik, namespace and DB Secret on context INFRA_CONTEXT=$(INFRA_CONTEXT)"
+	@echo "  infra-check         Format check and validate both stacks"
+	@echo ""
+	@echo "Kubernetes targets (default ENV=local, ENV=cloud targets context $(AKS_CLUSTER_NAME)):"
+	@echo "  k8s-up              local: build, import to k3d, deploy | cloud: build, push to registry, deploy"
+	@echo "  k8s-push            Build linux/amd64 images and push them to $(REGISTRY) with tag $(IMAGE_TAG)"
 	@echo "  k8s-down            Delete Kubernetes resources for current overlay"
 	@echo "  k8s-apply           Run migrations, then apply the API Deployment"
 	@echo "  k8s-delete          Delete overlay resources"
 	@echo "  k8s-render          Render and preview Kustomize manifests without applying"
 	@echo "  k8s-build           Build local Docker images ($(IMAGE_NAME), $(MIGRATIONS_IMAGE_NAME))"
-	@echo "  k8s-init-secrets    Generate $(K8S_OVERLAY)/secrets.env (gitignored) if missing"
+	@echo "  k8s-init-secrets    Generate $(K8S_OVERLAY)/secrets.env (gitignored) if missing, local only"
 	@echo "  k8s-status          Display status of pods, services, statefulsets, and PVCs"
 	@echo "  k8s-restart         Rollout restart the API deployment"
 	@echo "  k8s-logs            Stream logs from the API pods"
@@ -141,7 +168,8 @@ clean:
 # Generate overlay secrets.env, adding any missing password (reuses .env password to keep existing PVC usable)
 K8S_SECRETS = $(K8S_OVERLAY)/secrets.env
 k8s-init-secrets:
-	@set -e; umask 077; touch $(K8S_SECRETS); \
+	@[ "$(ENV)" = local ] || exit 0; \
+	set -e; umask 077; touch $(K8S_SECRETS); \
 	for key in POSTGRES_PASSWORD POSTGRES_MIGRATOR_PASSWORD POSTGRES_APP_PASSWORD; do \
 		grep -q "^$$key=" $(K8S_SECRETS) && continue; \
 		pw=; \
@@ -156,35 +184,49 @@ k8s-build:
 	docker build --target api -t $(IMAGE_NAME) .
 	docker build --target migrations -t $(MIGRATIONS_IMAGE_NAME) .
 
+# Build linux/amd64 images and push them to the registry for cloud clusters
+k8s-push:
+	docker buildx build --platform linux/amd64 --target api -t $(REGISTRY)/mydisk-api:$(IMAGE_TAG) --push .
+	docker buildx build --platform linux/amd64 --target migrations -t $(REGISTRY)/mydisk-api-migrations:$(IMAGE_TAG) --push .
+
 # Render manifests to inspect generated YAML (prints Secret data)
 k8s-render: k8s-init-secrets
 	kubectl kustomize $(K8S_OVERLAY)
 
 # Apply Kubernetes overlay manifests (Jobs are immutable: recreate it to rerun migrations)
 k8s-apply: k8s-init-secrets
-	kubectl delete job mydisk-api-migrations --ignore-not-found
-	kubectl apply -k $(K8S_OVERLAY) -l 'mydisk.io/deploy-after-migrations!=true'
+	$(KUBECTL) delete job mydisk-api-migrations --ignore-not-found
+	$(KUBECTL) apply -k $(K8S_OVERLAY) -l 'mydisk.io/deploy-after-migrations!=true'
 	@echo "Waiting for PostgreSQL migrations to complete..."
-	kubectl wait --for=condition=complete job/mydisk-api-migrations --timeout=$(K8S_MIGRATIONS_TIMEOUT)
+	$(KUBECTL) wait --for=condition=complete job/mydisk-api-migrations --timeout=$(K8S_MIGRATIONS_TIMEOUT)
 	@set -e; \
 	api_deployment=; \
 	if [ "$(K8S_REFRESH_API_IMAGE)" = "1" ]; then \
-		api_deployment=$$(kubectl get deployment mydisk-api --ignore-not-found -o name); \
+		api_deployment=$$($(KUBECTL) get deployment mydisk-api --ignore-not-found -o name); \
 	fi; \
-	kubectl apply -k $(K8S_OVERLAY) -l 'mydisk.io/deploy-after-migrations=true'; \
+	$(KUBECTL) apply -k $(K8S_OVERLAY) -l 'mydisk.io/deploy-after-migrations=true'; \
 	if [ -n "$$api_deployment" ]; then \
-		kubectl rollout restart "$$api_deployment"; \
+		$(KUBECTL) rollout restart "$$api_deployment"; \
 	fi
+ifeq ($(ENV),local)
 	@echo "API endpoint after rollout is http://localhost:$(HTTP_PORT)"
+else
+	@echo "API endpoint after rollout is http://$$(kubectl --context $(K8S_CONTEXT) -n traefik get svc traefik -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
+endif
 
 # Delete Kubernetes overlay resources
 k8s-delete: k8s-init-secrets
-	kubectl delete --ignore-not-found -k $(K8S_OVERLAY)
+	$(KUBECTL) delete --ignore-not-found -k $(K8S_OVERLAY)
 
-# Full local setup: build images, import to cluster, ensure secrets, apply manifests, roll out the rebuilt :dev image
+# Full setup: build images, ship them to the cluster, apply manifests, roll out the rebuilt image
+ifeq ($(ENV),local)
 k8s-up: k8s-build
 	$(MAKE) cluster-load
 	$(MAKE) k8s-apply K8S_REFRESH_API_IMAGE=1
+else
+k8s-up: k8s-push
+	$(MAKE) k8s-apply K8S_REFRESH_API_IMAGE=1
+endif
 
 # Alias to delete overlay resources
 k8s-down: k8s-delete
@@ -199,28 +241,65 @@ dev-down: k8s-down
 
 # Display status of all deployed Kubernetes resources
 k8s-status:
-	kubectl get pods,services,statefulsets,deployments,pvc
+	$(KUBECTL) get pods,services,statefulsets,deployments,pvc
 
 # Rollout restart the API deployment
 k8s-restart:
-	kubectl rollout restart deployment/mydisk-api
+	$(KUBECTL) rollout restart deployment/mydisk-api
 
 # Stream logs from API deployment
 k8s-logs:
-	kubectl logs -l app=mydisk-api -f --tail=100
+	$(KUBECTL) logs -l app=mydisk-api -f --tail=100
 
 # Stream logs from PostgreSQL statefulset
 k8s-logs-db:
-	kubectl logs -l app=postgres -f --tail=100
+	$(KUBECTL) logs -l app=postgres -f --tail=100
 
 # Show logs from the migrations Job
 k8s-logs-migrations:
-	kubectl logs job/mydisk-api-migrations --tail=100
+	$(KUBECTL) logs job/mydisk-api-migrations --tail=100
 
 # Forward local port 8081 to API deployment (8080 is taken by the k3d load balancer)
 k8s-forward-api:
-	kubectl port-forward deployment/mydisk-api 8081:8080
+	$(KUBECTL) port-forward deployment/mydisk-api 8081:8080
 
 # Forward local port 5432 to PostgreSQL service
 k8s-forward-db:
-	kubectl port-forward svc/postgres 5432:5432
+	$(KUBECTL) port-forward svc/postgres 5432:5432
+
+# -----------------------------------------------------------------------------
+# Infrastructure (OpenTofu)
+# -----------------------------------------------------------------------------
+# Create or update the AKS cluster (the only cloud-specific stack)
+infra-cluster:
+	$(TOFU) -chdir=$(INFRA_CLUSTER) init -input=false
+	$(TOFU) -chdir=$(INFRA_CLUSTER) apply -var cluster_name=$(AKS_CLUSTER_NAME)
+
+# Merge AKS credentials into ~/.kube/config under context $(AKS_CLUSTER_NAME)
+infra-credentials:
+	az aks get-credentials --overwrite-existing \
+		--resource-group $$($(TOFU) -chdir=$(INFRA_CLUSTER) output -raw resource_group_name) \
+		--name $$($(TOFU) -chdir=$(INFRA_CLUSTER) output -raw cluster_name)
+
+# Install cloud-agnostic platform components on any cluster, selected by kubeconfig context
+infra-platform:
+	$(TOFU) -chdir=$(INFRA_PLATFORM) init -input=false
+	$(TOFU) -chdir=$(INFRA_PLATFORM) apply -var kube_context=$(INFRA_CONTEXT)
+
+# Full cloud setup, then deploy with `make k8s-up ENV=cloud`
+infra-up: infra-cluster
+	$(MAKE) infra-credentials
+	$(MAKE) infra-platform
+
+# Destroy platform first so the cloud load balancer is released, then the cluster
+infra-down:
+	$(TOFU) -chdir=$(INFRA_PLATFORM) destroy -var kube_context=$(INFRA_CONTEXT)
+	$(TOFU) -chdir=$(INFRA_CLUSTER) destroy -var cluster_name=$(AKS_CLUSTER_NAME)
+
+# Check formatting and validate both stacks without touching any backend
+infra-check:
+	$(TOFU) fmt -check -recursive infra
+	@for stack in $(INFRA_CLUSTER) $(INFRA_PLATFORM); do \
+		$(TOFU) -chdir=$$stack init -backend=false -input=false >/dev/null && \
+		$(TOFU) -chdir=$$stack validate || exit 1; \
+	done

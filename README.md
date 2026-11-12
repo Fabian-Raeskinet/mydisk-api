@@ -14,7 +14,7 @@ The business domain is intentionally simple: the goal is to demonstrate how a .N
 - **Unit and integration tests** with xUnit, Moq, AutoFixture and FluentAssertions
 - **Containerized** with a multi-stage, non-root Docker image
 - **Infrastructure evolution**: Docker Compose first, then Kubernetes with Kustomize overlays on a local k3d cluster
-- **CI/CD** with Azure Pipelines, infrastructure as code with Terraform (Azure)
+- **CI/CD** with Azure Pipelines, infrastructure as code with OpenTofu: a cloud-agnostic platform layer on top of a swappable cluster module (AKS)
 
 ## Architecture
 
@@ -61,11 +61,19 @@ k8s/
 │   ├── api-migrations-job.yml
 │   ├── postgres-statefulset.yml
 │   ├── postgres-service.yml
+│   ├── postgres-init-roles.sql   # least-privilege roles, run on first DB start
+│   ├── postgres-network-policy.yml
 │   └── kustomization.yml # db-config / api-config ConfigMaps
 └── overlays/
-    └── local/            # k3d: Development settings + locally generated secret
-        ├── kustomization.yml
-        └── secrets.env.example
+    ├── local/            # k3d: Development settings + locally generated secret
+    │   ├── kustomization.yml
+    │   └── secrets.env.example
+    └── cloud/            # any cluster: GHCR images, namespace `mydisk`, Secret from OpenTofu
+        └── kustomization.yml
+
+infra/
+├── cluster/aks/          # the only cloud-specific stack: resource group + AKS
+└── platform/             # cloud-agnostic: Traefik, namespace, database Secret
 ```
 
 ### Networking
@@ -96,7 +104,7 @@ Public and sensitive values are kept strictly separate:
 | `POSTGRES_*_PASSWORD` (superuser, migrator, app) | Secret | `postgres-credentials` Secret, from `overlays/<env>/secrets.env` (gitignored) |
 | `ConnectionStrings__DefaultConnection`   | Derived  | Built in the pod from the values above, never stored     |
 
-The base only requires each overlay to provide a `postgres-credentials` Secret with these three keys. Each pod only receives the key it needs. The local overlay generates it from a file. A cloud overlay would get it from a secret manager instead (e.g. External Secrets Operator with Azure Key Vault), with no change to the base.
+The base only requires each overlay to provide a `postgres-credentials` Secret with these three keys. Each pod only receives the key it needs. The local overlay generates it from a file. The cloud overlay expects it to exist: `infra/platform` generates the passwords and creates it, with no change to the base.
 
 #### Least-privilege database roles
 
@@ -111,6 +119,23 @@ On first start (empty volume), `postgres-init-roles.sql` runs from `/docker-entr
 `ALTER DEFAULT PRIVILEGES` grants the API access to every table the migrator creates, so new migrations need no extra grant step. The API cannot create, alter, drop or truncate tables. `CONNECT` is revoked from `PUBLIC` on the application and `postgres` databases. A NetworkPolicy only lets the API and migration pods reach PostgreSQL on port 5432.
 
 Init scripts only run on an empty volume. To apply them to an existing local cluster, delete the PVC (`kubectl delete pvc postgres-data-postgres-0`) and redeploy.
+
+## Cloud infrastructure (OpenTofu)
+
+Infrastructure is written for [OpenTofu](https://opentofu.org), the open-source fork of Terraform (same HCL, Terraform-compatible). It is split in two stacks so that only one of them depends on a cloud provider:
+
+| Stack | Providers | Creates |
+|-------|-----------|---------|
+| `infra/cluster/aks` | `azurerm` | Resource group, AKS cluster (Azure CNI overlay, Cilium data plane and NetworkPolicy enforcement) |
+| `infra/platform` | `kubernetes`, `helm`, `random` | Traefik ingress controller (Helm), namespace `mydisk` with Pod Security `baseline` enforced and `restricted` warnings, `postgres-credentials` Secret with three random passwords |
+
+`infra/platform` only needs a kubeconfig context, so it runs unchanged on AKS, EKS, GKE or k3d. Moving to another cloud means adding an `infra/cluster/<provider>` stack. Traefik is used on every cluster, the same controller k3s bundles locally, so the `Ingress` behaves identically. The application itself is not deployed by OpenTofu: `make k8s-up ENV=cloud` keeps the ordering where migrations must succeed before the API rolls out.
+
+Both states contain secrets (the cluster admin kubeconfig, the database passwords), so they are encrypted with OpenTofu state encryption (PBKDF2 + AES-GCM). The passphrase comes from `TF_VAR_state_passphrase` (16 characters minimum) and is never written to disk. State is local for now.
+
+Images are pushed to GHCR (`ghcr.io/fabian-raeskinet`), built for `linux/amd64`. The cloud overlay pulls `:latest` with `imagePullPolicy: Always`. In CI, pin an immutable tag with `kustomize edit set image`. The GHCR packages must be public, or the cluster needs an image pull secret.
+
+Every `kubectl` call in the Makefile passes `--context` and `-n` explicitly (`k3d-mydisk` / `default` locally, `mydisk` / `mydisk` in cloud), so a target never runs against whichever cluster happens to be the current context.
 
 ## Dockerfile
 
@@ -135,6 +160,8 @@ The container listens on port `8080`. `.dockerignore` keeps `.env`, `k8s/`, `inf
 | [k3d](https://k3d.io)                                   | Local Kubernetes cluster           |
 | [kubectl](https://kubernetes.io/docs/tasks/tools/)      | Kubernetes (Kustomize is built in) |
 | `make`, `openssl`                                       | Makefile targets, secret generation |
+| [OpenTofu](https://opentofu.org/docs/intro/install/)    | Cloud infrastructure (>= 1.8)      |
+| [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) | AKS only: `az login`, cluster credentials |
 
 ## Getting started
 
@@ -158,7 +185,22 @@ The API is then available at http://localhost:8080 (for instance http://localhos
 
 Tear down with `make dev-down`.
 
-### Option 3: Run the API from the IDE / CLI
+### Option 3: Kubernetes in the cloud (AKS)
+
+```bash
+az login
+export ARM_SUBSCRIPTION_ID=<subscription-id>
+export TF_VAR_state_passphrase=<at least 16 characters>
+echo <github-token> | docker login ghcr.io -u <github-user> --password-stdin
+
+make infra-up           # AKS cluster, kubeconfig context `mydisk`, Traefik, namespace, Secret
+make k8s-up ENV=cloud   # build + push images, run migrations, deploy the API
+make k8s-status ENV=cloud
+```
+
+The API is exposed on the public IP of the Traefik load balancer, printed at the end of `k8s-up`. Tear down everything with `make infra-down`, which also stops the Azure costs.
+
+### Option 4: Run the API from the IDE / CLI
 
 Start the database and apply migrations, then give the API the password through user secrets so it never goes into `appsettings`:
 
@@ -185,7 +227,7 @@ Kubernetes allows approximately 60 seconds for startup. After startup succeeds, 
 
 ## Makefile commands
 
-Run `make help` for the full list. Optional variables: `ENV=local`, `CLUSTER_NAME=mydisk`, `HTTP_PORT=8080`.
+Run `make help` for the full list. Optional variables: `ENV=local|cloud`, `CLUSTER_NAME=mydisk`, `HTTP_PORT=8080`, `AKS_CLUSTER_NAME=mydisk`, `REGISTRY=ghcr.io/fabian-raeskinet`, `IMAGE_TAG=latest`.
 
 **Docker Compose**
 
@@ -217,11 +259,12 @@ Run `make help` for the full list. Optional variables: `ENV=local`, `CLUSTER_NAM
 |-------------------------|-----------------------------------------------------|
 | `make dev-up`           | Cluster + build + import + secrets + deploy         |
 | `make dev-down`         | Delete resources and stop the cluster               |
-| `make k8s-up`           | Build and import images, run migrations, and deploy the API |
+| `make k8s-up`           | Build and import images (local) or push them (cloud), run migrations, and deploy the API |
+| `make k8s-push`         | Build `linux/amd64` images and push them to `$(REGISTRY)` |
 | `make k8s-down`         | Delete overlay resources                            |
 | `make k8s-apply`        | Run migrations successfully before applying the API Deployment      |
 | `make k8s-render`       | Render manifests without applying (prints Secret data) |
-| `make k8s-init-secrets` | Generate the overlay `secrets.env` if missing       |
+| `make k8s-init-secrets` | Generate the overlay `secrets.env` if missing (local only) |
 | `make k8s-status`       | Pods, services, statefulsets, deployments, PVCs     |
 | `make k8s-restart`      | Rollout restart the API                             |
 | `make k8s-logs`         | Stream API logs                                     |
@@ -229,6 +272,17 @@ Run `make help` for the full list. Optional variables: `ENV=local`, `CLUSTER_NAM
 | `make k8s-logs-migrations` | Show migrations Job logs                        |
 | `make k8s-forward-api`  | Port-forward the API to `localhost:8081` (bypasses the Ingress) |
 | `make k8s-forward-db`   | Port-forward PostgreSQL to `localhost:5432`         |
+
+**Infrastructure (OpenTofu)**
+
+| Command                  | Description                                              |
+|--------------------------|----------------------------------------------------------|
+| `make infra-up`          | Cluster + credentials + platform                         |
+| `make infra-down`        | Destroy the platform, then the cluster                   |
+| `make infra-cluster`     | Create or update the AKS cluster                         |
+| `make infra-credentials` | Merge the AKS kubeconfig into `~/.kube/config`           |
+| `make infra-platform`    | Install Traefik, the namespace and the database Secret   |
+| `make infra-check`       | `tofu fmt -check` and `tofu validate` on both stacks     |
 
 `make k8s-up` restarts an existing API Deployment after importing the rebuilt `:dev` image. On first install, the new Deployment starts with the imported image.
 
@@ -242,6 +296,7 @@ Integration tests require a running PostgreSQL instance (see `appsettings.json` 
 
 ## Roadmap
 
-- Cloud overlay with External Secrets Operator and Azure Key Vault
-- API `securityContext` hardening and a `NetworkPolicy` restricting database access to the API
-- TLS and a host-based rule on the Ingress for cloud overlays
+- External Secrets Operator in `infra/platform`, so passwords live in a secret manager instead of the OpenTofu state
+- `securityContext` hardening to enforce the `restricted` Pod Security level
+- TLS with cert-manager and a host-based rule on the Ingress for the cloud overlay
+- Remote, S3-compatible OpenTofu state backend and a GitHub Actions deploy job

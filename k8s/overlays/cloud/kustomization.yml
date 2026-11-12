@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: mydisk
+
+resources:
+  - ../../base
+
+# Secret `postgres-credentials` is created by infra/platform (OpenTofu).
+images:
+  - name: mydisk-api
+    newName: ghcr.io/fabian-raeskinet/mydisk-api
+    newTag: latest
+  - name: mydisk-api-migrations
+    newName: ghcr.io/fabian-raeskinet/mydisk-api-migrations
+    newTag: latest
+
+patches:
+  - target:
+      kind: Deployment
+      name: mydisk-api
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/imagePullPolicy
+        value: Always
+  - target:
+      kind: Job
+      name: mydisk-api-migrations
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/imagePullPolicy
+        value: Always
