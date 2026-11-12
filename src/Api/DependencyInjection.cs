@@ -80,7 +80,10 @@ public static class DependencyInjection
 
         if (!string.IsNullOrEmpty(connectionString))
         {
-            healthChecksBuilder.AddNpgSql(connectionString);
+            healthChecksBuilder.AddNpgSql(
+                connectionString,
+                tags: new[] { "ready" },
+                timeout: TimeSpan.FromSeconds(2));
         }
     }
 }

@@ -96,7 +96,9 @@ public class DependencyInjectionFixture
 
             // Assert
             var options = serviceProvider.GetRequiredService<IOptions<HealthCheckServiceOptions>>().Value;
-            options.Registrations.Should().Contain(r => r.Name == "npgsql");
+            var registration = options.Registrations.Single(r => r.Name == "npgsql");
+            registration.Tags.Should().Contain("ready");
+            registration.Timeout.Should().Be(TimeSpan.FromSeconds(2));
         }
     }
 }

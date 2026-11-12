@@ -70,7 +70,7 @@ k8s/
 
 ### Networking
 
-The k3d load balancer maps `localhost:8080` to port 80 of the cluster, where Traefik (bundled with k3s) routes requests to the API `Service` through an `Ingress`. No port-forwarding is needed. The API pod only receives traffic once its readiness probe on `/health` passes.
+The k3d load balancer maps `localhost:8080` to port 80 of the cluster, where Traefik (bundled with k3s) routes requests to the API `Service` through an `Ingress`. No port-forwarding is needed. The API pod only receives traffic once its readiness probe on `/health/ready` passes.
 
 ### Database migrations and seeding
 
@@ -177,7 +177,11 @@ The `migrations` service also inserts the demo data.
 ### Endpoints
 
 - Swagger UI: `/swagger`
-- Health check: `/health`
+- Liveness: `/health/live` checks that the API can respond, independently of PostgreSQL.
+- Readiness: `/health/ready` includes PostgreSQL with a two-second health check timeout.
+- Health check: `/health` retains the existing combined check.
+
+Kubernetes allows approximately 60 seconds for startup. After startup succeeds, two consecutive readiness failures remove the pod from Service traffic. Three consecutive liveness failures restart the container. A database outage affects readiness while the API can keep serving its liveness endpoint. PostgreSQL recovery allows the pod to become ready again.
 
 ## Makefile commands
 

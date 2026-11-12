@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using MyDisks.Contracts.Validators;
 using MyDisks.DependencyInjection.Configurations;
 using MyDisks.RandomServices;
@@ -36,6 +37,14 @@ public class Program
 
         app.MapControllers();
         app.MapHealthChecks("/health");
+        app.MapHealthChecks("/health/live", new HealthCheckOptions
+        {
+            Predicate = _ => false
+        });
+        app.MapHealthChecks("/health/ready", new HealthCheckOptions
+        {
+            Predicate = registration => registration.Tags.Contains("ready")
+        });
 
         app.Run();
     }
