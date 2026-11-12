@@ -20,7 +20,7 @@ spec:
           command:
             - sh
             - -c
-            - until pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_USER" -d "$DB_NAME"; do sleep 2; done
+            - until pg_isready -h "$DB_HOST" -p "$DB_PORT" -U "$DB_MIGRATOR_USER" -d "$DB_NAME"; do sleep 2; done
       containers:
         - name: migrations
           image: mydisk-api-migrations:dev
@@ -35,6 +35,6 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
-                  key: POSTGRES_PASSWORD
+                  key: POSTGRES_MIGRATOR_PASSWORD
             - name: ConnectionStrings__DefaultConnection
-              value: "Host=$(DB_HOST);Port=$(DB_PORT);Database=$(DB_NAME);Username=$(DB_USER);Password=$(DB_PASSWORD);GSS Encryption Mode=Disable"
+              value: "Host=$(DB_HOST);Port=$(DB_PORT);Database=$(DB_NAME);Username=$(DB_MIGRATOR_USER);Password=$(DB_PASSWORD);GSS Encryption Mode=Disable"

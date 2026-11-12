@@ -138,15 +138,18 @@ clean:
 # -----------------------------------------------------------------------------
 # Kubernetes (K8s)
 # -----------------------------------------------------------------------------
-# Generate overlay secrets.env if missing (reuses .env password to keep existing PVC usable)
+# Generate overlay secrets.env, adding any missing password (reuses .env password to keep existing PVC usable)
 K8S_SECRETS = $(K8S_OVERLAY)/secrets.env
 k8s-init-secrets:
-	@if [ ! -f $(K8S_SECRETS) ]; then \
-		pw=$$( [ -f .env ] && sed -n 's/^POSTGRES_PASSWORD=//p' .env ); \
-		[ -n "$$pw" ] || pw=$$(openssl rand -base64 32 | tr -d '/+=' | cut -c1-32); \
-		umask 077; printf 'POSTGRES_PASSWORD=%s\n' "$$pw" > $(K8S_SECRETS); \
-		echo "Created $(K8S_SECRETS) (mode 600)."; \
-	fi
+	@set -e; umask 077; touch $(K8S_SECRETS); \
+	for key in POSTGRES_PASSWORD POSTGRES_MIGRATOR_PASSWORD POSTGRES_APP_PASSWORD; do \
+		grep -q "^$$key=" $(K8S_SECRETS) && continue; \
+		pw=; \
+		[ "$$key" = POSTGRES_PASSWORD ] && [ -f .env ] && pw=$$(sed -n 's/^POSTGRES_PASSWORD=//p' .env); \
+		[ -n "$$pw" ] || pw=$$(openssl rand -hex 32); \
+		printf '%s=%s\n' "$$key" "$$pw" >> $(K8S_SECRETS); \
+		echo "Added $$key to $(K8S_SECRETS)."; \
+	done
 
 # Build Docker images for local Kubernetes cluster
 k8s-build:
@@ -175,7 +178,7 @@ k8s-apply: k8s-init-secrets
 	@echo "API endpoint after rollout is http://localhost:$(HTTP_PORT)"
 
 # Delete Kubernetes overlay resources
-k8s-delete:
+k8s-delete: k8s-init-secrets
 	kubectl delete --ignore-not-found -k $(K8S_OVERLAY)
 
 # Full local setup: build images, import to cluster, ensure secrets, apply manifests, roll out the rebuilt :dev image
@@ -191,7 +194,8 @@ dev-up: cluster-create
 	$(MAKE) k8s-up
 
 # Complete teardown: remove deployed resources and stop cluster
-dev-down: k8s-down cluster-stop
+dev-down: k8s-down
+	$(MAKE) cluster-stop
 
 # Display status of all deployed Kubernetes resources
 k8s-status:

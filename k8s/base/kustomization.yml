@@ -8,15 +8,22 @@ resources:
   - api-migrations-job.yml
   - postgres-statefulset.yml
   - postgres-service.yml
+  - postgres-network-policy.yml
 
-# Overlays must provide Secret `postgres-credentials` with key POSTGRES_PASSWORD.
+# Overlays must provide Secret `postgres-credentials` with keys
+# POSTGRES_PASSWORD, POSTGRES_MIGRATOR_PASSWORD and POSTGRES_APP_PASSWORD.
 configMapGenerator:
+  - name: postgres-init
+    files:
+      - postgres-init-roles.sql
   - name: db-config
     literals:
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_NAME=mydisk
       - DB_USER=mydisk
+      - DB_MIGRATOR_USER=mydisk_migrator
+      - DB_APP_USER=mydisk_api
   - name: api-config
     literals:
       - ASPNETCORE_ENVIRONMENT=Production

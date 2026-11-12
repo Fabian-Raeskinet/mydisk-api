@@ -91,12 +91,26 @@ Public and sensitive values are kept strictly separate:
 
 | Value                                    | Type     | Source                                                   |
 |------------------------------------------|----------|----------------------------------------------------------|
-| DB host, port, name, user                | Public   | `db-config` ConfigMap (`k8s/base`)                       |
+| DB host, port, name, role names          | Public   | `db-config` ConfigMap (`k8s/base`)                       |
 | `ASPNETCORE_ENVIRONMENT`                 | Public   | `api-config` ConfigMap, overridden per overlay           |
-| `POSTGRES_PASSWORD`                      | Secret   | `postgres-credentials` Secret, from `overlays/<env>/secrets.env` (gitignored) |
+| `POSTGRES_*_PASSWORD` (superuser, migrator, app) | Secret | `postgres-credentials` Secret, from `overlays/<env>/secrets.env` (gitignored) |
 | `ConnectionStrings__DefaultConnection`   | Derived  | Built in the pod from the values above, never stored     |
 
-The database password is the **only** secret. The base only requires each overlay to provide a `postgres-credentials` Secret with a `POSTGRES_PASSWORD` key. The local overlay generates it from a file. A cloud overlay would get it from a secret manager instead (e.g. External Secrets Operator with Azure Key Vault), with no change to the base.
+The base only requires each overlay to provide a `postgres-credentials` Secret with these three keys. Each pod only receives the key it needs. The local overlay generates it from a file. A cloud overlay would get it from a secret manager instead (e.g. External Secrets Operator with Azure Key Vault), with no change to the base.
+
+#### Least-privilege database roles
+
+On first start (empty volume), `postgres-init-roles.sql` runs from `/docker-entrypoint-initdb.d` and creates one role per workload:
+
+| Role              | Used by        | Privileges                                                              |
+|-------------------|----------------|-------------------------------------------------------------------------|
+| `mydisk`          | PostgreSQL only| Bootstrap superuser, its password is never given to another pod          |
+| `mydisk_migrator` | Migrations Job | `CONNECT`, `CREATE` on schema `public`, owns the tables it creates       |
+| `mydisk_api`      | API            | `CONNECT`, `SELECT/INSERT/UPDATE/DELETE` on tables, `USAGE` on sequences |
+
+`ALTER DEFAULT PRIVILEGES` grants the API access to every table the migrator creates, so new migrations need no extra grant step. The API cannot create, alter, drop or truncate tables. `CONNECT` is revoked from `PUBLIC` on the application and `postgres` databases. A NetworkPolicy only lets the API and migration pods reach PostgreSQL on port 5432.
+
+Init scripts only run on an empty volume. To apply them to an existing local cluster, delete the PVC (`kubectl delete pvc postgres-data-postgres-0`) and redeploy.
 
 ## Dockerfile
 
@@ -140,7 +154,7 @@ make k8s-status
 
 The API is then available at http://localhost:8080 (for instance http://localhost:8080/swagger).
 
-`make k8s-init-secrets` (run automatically by `dev-up`) creates `k8s/overlays/local/secrets.env` with `600` permissions. It reuses `POSTGRES_PASSWORD` from `.env` if present, otherwise it generates a random one. It never overwrites an existing file.
+`make k8s-init-secrets` (run automatically by `dev-up`) creates `k8s/overlays/local/secrets.env` with `600` permissions. It reuses `POSTGRES_PASSWORD` from `.env` if present, otherwise it generates a random one. It adds random `POSTGRES_MIGRATOR_PASSWORD` and `POSTGRES_APP_PASSWORD` entries when missing and never overwrites an existing value.
 
 Tear down with `make dev-down`.
 

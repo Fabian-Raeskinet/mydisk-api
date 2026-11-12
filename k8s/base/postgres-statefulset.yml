@@ -22,6 +22,9 @@ spec:
           ports:
             - containerPort: 5432
               name: postgres
+          envFrom:
+            - configMapRef:
+                name: db-config
           env:
             - name: POSTGRES_USER
               valueFrom:
@@ -41,6 +44,9 @@ spec:
             - name: postgres-credentials
               mountPath: /run/secrets/postgres
               readOnly: true
+            - name: postgres-init
+              mountPath: /docker-entrypoint-initdb.d
+              readOnly: true
           readinessProbe:
             exec:
               command:
@@ -54,9 +60,9 @@ spec:
           secret:
             secretName: postgres-credentials
             defaultMode: 0440
-            items:
-              - key: POSTGRES_PASSWORD
-                path: POSTGRES_PASSWORD
+        - name: postgres-init
+          configMap:
+            name: postgres-init
 
   volumeClaimTemplates:
     - metadata:
