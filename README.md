@@ -14,6 +14,7 @@ The business domain is intentionally simple: the goal is to demonstrate how a .N
 - **Unit and integration tests** with xUnit, Moq, AutoFixture and FluentAssertions
 - **Containerized** with a multi-stage, non-root Docker image
 - **Infrastructure evolution**: Docker Compose first, then Kubernetes with Kustomize overlays on a local k3d cluster
+- **Horizontal autoscaling** on CPU with a `HorizontalPodAutoscaler`, demonstrated by a k6 load test with light and heavy phases
 - **CI/CD** with Azure Pipelines, infrastructure as code with OpenTofu: a cloud-agnostic platform layer on top of a swappable cluster module (AKS)
 
 ## Architecture
@@ -45,6 +46,7 @@ The project started with **Docker Compose** (`compose.yml`), a simple way to run
 | Secrets       | `.env` file                       | `Secret` generated per overlay, mounted as a file for Postgres |
 | Environments  | One file                          | `base` + `overlays/<env>`                           |
 | Readiness     | `healthcheck`                     | `readinessProbe` / `livenessProbe`                  |
+| Scaling       | Fixed, one container per service  | `HorizontalPodAutoscaler` on CPU, 1 to 6 API pods   |
 | Migrations    | One-shot `migrations` service     | `Job` running the EF Core migration bundle          |
 | Exposure      | Published port `8080`             | Traefik `Ingress`, k3d load balancer on `8080`      |
 
@@ -56,6 +58,7 @@ Both setups are still supported: Compose for a quick start, Kubernetes for the t
 k8s/
 ├── base/                 # Environment-agnostic manifests + public configuration
 │   ├── api-deployment.yml
+│   ├── api-hpa.yml       # CPU-based autoscaling, 1 to 6 replicas
 │   ├── api-service.yml
 │   ├── api-ingress.yml
 │   ├── api-migrations-job.yml
@@ -64,6 +67,8 @@ k8s/
 │   ├── postgres-init-roles.sql   # least-privilege roles, run on first DB start
 │   ├── postgres-network-policy.yml
 │   └── kustomization.yml # db-config / api-config ConfigMaps
+├── bench/
+│   └── load-test.js      # k6 scenarios used to demonstrate scale-up and scale-down
 └── overlays/
     ├── local/            # k3d: Development settings + locally generated secret
     │   ├── kustomization.yml
@@ -120,6 +125,60 @@ On first start (empty volume), `postgres-init-roles.sql` runs from `/docker-entr
 
 Init scripts only run on an empty volume. To apply them to an existing local cluster, delete the PVC (`kubectl delete pvc postgres-data-postgres-0`) and redeploy.
 
+### Autoscaling
+
+The API Deployment does not set `replicas`: the `mydisk-api` `HorizontalPodAutoscaler` owns the replica count, between **1 and 6 pods**. It targets an average CPU utilization of **70 % of the request**. Each API pod requests `200m` CPU and `256Mi` memory, and is limited to `1000m` and `512Mi`, so the HPA adds a pod when the pods average more than about `140m`.
+
+CPU usage comes from the Metrics API. k3s bundles metrics-server and AKS installs it by default. Without it, the HPA reports `<unknown>` and never scales.
+
+The `behavior` section is tuned for a live demonstration, so that every step is visible:
+
+| Direction  | Stabilization window | Policy                 | Effect                                                    |
+|------------|----------------------|------------------------|-----------------------------------------------------------|
+| Scale up   | `0s`                 | +1 pod every 15 seconds | Reacts immediately, but climbs one pod at a time          |
+| Scale down | `10s`                | -1 pod every 15 seconds | Starts shrinking seconds after the load drops             |
+
+With the Kubernetes defaults, the HPA can double the replicas at once and waits 5 minutes before scaling down, so a load test jumps straight to the maximum and the scale-down is never seen. Production values would keep a longer scale-down window, in the order of minutes, to avoid flapping on bursty traffic.
+
+New pods only receive traffic once `/health/ready` passes, and removed pods drain through the `preStop` hook, so scaling does not drop requests.
+
+#### Load test
+
+`k8s/bench/load-test.js` is a [k6](https://k6.io) script that calls `GET /api/Disk/disks` through the Ingress. The liveness endpoint is too cheap to raise the CPU, while this endpoint runs the whole stack: MVC, MediatR pipeline behaviors, an EF Core query on PostgreSQL, AutoMapper and JSON serialization.
+
+The test lasts 3 min 30 and runs four phases. Each phase uses a `constant-arrival-rate` executor: k6 sends a fixed number of requests per second regardless of response time, so the load does not drop when the API slows down.
+
+| Phase      | Time            | Default rate | Expected effect                    |
+|------------|-----------------|--------------|------------------------------------|
+| `light`    | 0 – 30 s        | 5 req/s      | Baseline, 1 pod                    |
+| `medium`   | 30 s – 1 min 30 | 150 req/s    | Scale up to 2 or 3 pods            |
+| `heavy`    | 1 min 30 – 2 min 30 | 600 req/s | Scale up to the maximum of 6 pods |
+| `cooldown` | 2 min 30 – 3 min 30 | 5 req/s   | Scale down, one pod at a time      |
+
+Run the test and watch the cluster in two terminals:
+
+```bash
+make k8s-watch-hpa      # HPA target vs current CPU, per-pod CPU, pod list, refreshed every 3 s
+make k8s-load-test      # add ENV=cloud to target the Traefik public IP
+```
+
+The rates depend on the CPU cost of a request on your machine and can be overridden through environment variables, without editing the script:
+
+```bash
+MEDIUM_RATE=100 HEAVY_RATE=1000 make k8s-load-test
+LOAD_TEST_PATH='/api/Disk/disk-by-name?name=<name>' make k8s-load-test
+```
+
+If the `medium` phase already reaches 6 pods, lower `MEDIUM_RATE`. If the `heavy` phase does not reach the maximum, raise `HEAVY_RATE`. The endpoint returns more work when the disks table contains data, which the local overlay seeds by default.
+
+Expect each change of replicas to lag the change of phase by 15 to 30 seconds: metrics-server samples CPU every 15 seconds and the HPA evaluates every 15 seconds. New pods also need a few seconds to start and pass readiness.
+
+#### Limits of the current setup
+
+- **Node capacity**: the HPA creates pods, it does not add nodes. The default AKS node pool has a single `Standard_D2s_v5` node (2 vCPU). Six API pods request `1.2` CPU, on top of PostgreSQL, Traefik and system pods, so the last replicas can stay `Pending`. Raise `node_count` or enable the cluster autoscaler (see roadmap).
+- **Single database**: every API pod opens its own connection pool to the same PostgreSQL instance. Under heavy load, the database becomes the bottleneck before the API pods do, and more replicas mean more connections.
+- **CPU as the only signal**: CPU is a proxy for load. It does not react to I/O-bound slowness, such as a slow database, where latency grows while CPU stays low.
+
 ## Cloud infrastructure (OpenTofu)
 
 Infrastructure is written for [OpenTofu](https://opentofu.org), the open-source fork of Terraform (same HCL, Terraform-compatible). It is split in two stacks so that only one of them depends on a cloud provider:
@@ -162,6 +221,7 @@ The container listens on port `8080`. `.dockerignore` keeps `.env`, `k8s/`, `inf
 | `make`, `openssl`                                       | Makefile targets, secret generation |
 | [OpenTofu](https://opentofu.org/docs/intro/install/)    | Cloud infrastructure (>= 1.8)      |
 | [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) | AKS only: `az login`, cluster credentials |
+| [k6](https://grafana.com/docs/k6/latest/set-up/install-k6/) | Autoscaling load test only |
 
 ## Getting started
 
@@ -272,6 +332,8 @@ Run `make help` for the full list. Optional variables: `ENV=local|cloud`, `CLUST
 | `make k8s-logs-migrations` | Show migrations Job logs                        |
 | `make k8s-forward-api`  | Port-forward the API to `localhost:8081` (bypasses the Ingress) |
 | `make k8s-forward-db`   | Port-forward PostgreSQL to `localhost:5432`         |
+| `make k8s-load-test`    | Run the k6 load test through the Ingress (`LOAD_TEST_PATH`, `*_RATE` variables) |
+| `make k8s-watch-hpa`    | Watch the HPA, pod CPU and API pods during the load test |
 
 **Infrastructure (OpenTofu)**
 
@@ -295,6 +357,18 @@ dotnet test
 Integration tests require a running PostgreSQL instance (see `appsettings.json` in the integration test projects).
 
 ## Roadmap
+
+**Scaling**
+
+- Per-overlay HPA `behavior`: keep the fast demo values in `local`, use a scale-down window of a few minutes in `cloud`
+- Cluster autoscaler on the AKS node pool (`auto_scaling_enabled`, `min_count`, `max_count`), so pending API pods trigger new nodes
+- `PodDisruptionBudget` for the API, so node drains and cluster scale-down keep at least one pod serving
+- Scaling on request rate or latency instead of CPU only, with Prometheus and the Prometheus Adapter, or KEDA
+- Connection pooling with PgBouncer, and a bounded `Maximum Pool Size` per pod, so adding replicas does not exhaust PostgreSQL connections
+- Read replicas or a managed PostgreSQL (Azure Database for PostgreSQL) to scale the database tier
+- Vertical Pod Autoscaler in recommendation mode to right-size the CPU and memory requests the HPA relies on
+
+**Security and delivery**
 
 - External Secrets Operator in `infra/platform`, so passwords live in a secret manager instead of the OpenTofu state
 - `securityContext` hardening to enforce the `restricted` Pod Security level

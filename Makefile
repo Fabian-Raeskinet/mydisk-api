@@ -7,6 +7,8 @@ MIGRATIONS_IMAGE_NAME = mydisk-api-migrations:dev
 CLUSTER_NAME ?= mydisk
 HTTP_PORT ?= 8080
 K8S_MIGRATIONS_TIMEOUT ?= 5m
+LOAD_TEST_SCRIPT = k8s/bench/load-test.js
+LOAD_TEST_PATH ?= /api/Disk/disks
 
 REGISTRY ?= ghcr.io/fabian-raeskinet
 IMAGE_TAG ?= latest
@@ -29,7 +31,7 @@ INFRA_CONTEXT ?= $(AKS_CLUSTER_NAME)
         cluster-create cluster-start cluster-stop cluster-delete cluster-reset cluster-status cluster-load \
         k8s-help k8s-init-secrets k8s-build k8s-render k8s-apply k8s-delete \
         k8s-status k8s-restart k8s-logs k8s-logs-db k8s-logs-migrations k8s-forward-api k8s-forward-db k8s-up k8s-down \
-        k8s-push dev-up dev-down \
+        k8s-push k8s-load-test k8s-watch-hpa dev-up dev-down \
         infra-cluster infra-credentials infra-platform infra-up infra-down infra-check
 
 # -----------------------------------------------------------------------------
@@ -84,6 +86,8 @@ help:
 	@echo "  k8s-logs-migrations Show logs from the migrations Job"
 	@echo "  k8s-forward-api     Port-forward API deployment to localhost:8081 (bypasses Ingress)"
 	@echo "  k8s-forward-db      Port-forward PostgreSQL service to localhost:5432"
+	@echo "  k8s-load-test       Run k6 CPU load test on LOAD_TEST_PATH=$(LOAD_TEST_PATH) to trigger HPA scale-up"
+	@echo "  k8s-watch-hpa       Watch HPA and API pods while the load test runs"
 
 # -----------------------------------------------------------------------------
 # K3d Cluster Lifecycle
@@ -266,6 +270,18 @@ k8s-forward-api:
 # Forward local port 5432 to PostgreSQL service
 k8s-forward-db:
 	$(KUBECTL) port-forward svc/postgres 5432:5432
+
+# Run the k6 load test through the Ingress to push CPU above the HPA target
+k8s-load-test:
+ifeq ($(ENV),local)
+	k6 run -e BASE_URL=http://localhost:$(HTTP_PORT) -e TARGET_PATH='$(LOAD_TEST_PATH)' $(LOAD_TEST_SCRIPT)
+else
+	k6 run -e BASE_URL=http://$$(kubectl --context $(K8S_CONTEXT) -n traefik get svc traefik -o jsonpath='{.status.loadBalancer.ingress[0].ip}') -e TARGET_PATH='$(LOAD_TEST_PATH)' $(LOAD_TEST_SCRIPT)
+endif
+
+# Watch HPA decisions and API pods being created during the load test
+k8s-watch-hpa:
+	@while true; do clear; $(KUBECTL) get hpa mydisk-api; echo; $(KUBECTL) top pods -l app=mydisk-api 2>/dev/null; echo; $(KUBECTL) get pods -l app=mydisk-api; sleep 3; done
 
 # -----------------------------------------------------------------------------
 # Infrastructure (OpenTofu)

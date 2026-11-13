@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - api-deployment.yml
+  - api-hpa.yml
   - api-service.yml
   - api-ingress.yml
   - api-migrations-job.yml

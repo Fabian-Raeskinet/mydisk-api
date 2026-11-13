@@ -1,3 +1,4 @@
+
 apiVersion: apps/v1
 kind: Deployment
 
@@ -7,7 +8,6 @@ metadata:
     mydisk.io/deploy-after-migrations: "true"
 
 spec:
-  replicas: 2
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -29,6 +29,13 @@ spec:
         - name: api
           image: mydisk-api:dev
           imagePullPolicy: Never
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "512Mi"
 
           lifecycle:
             preStop:
