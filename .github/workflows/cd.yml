@@ -46,12 +46,23 @@ jobs:
       - name: Get AKS credentials
         run: az aks get-credentials --resource-group "$AKS_RESOURCE_GROUP" --name "$AKS_CLUSTER_NAME" --overwrite-existing
 
+      - name: Check HTTPS prerequisites
+        run: |
+          kubectl --context "$AKS_CLUSTER_NAME" get crd issuers.cert-manager.io
+          kubectl --context "$AKS_CLUSTER_NAME" -n cert-manager rollout status deployment/cert-manager-webhook --timeout=120s
+
       - name: Deploy
         run: |
           make k8s-deploy ENV=cloud \
             AKS_CLUSTER_NAME="$AKS_CLUSTER_NAME" \
             REGISTRY="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" \
             IMAGE_TAG="$IMAGE_TAG"
+
+      - name: Verify HTTPS
+        run: |
+          kubectl --context "$AKS_CLUSTER_NAME" -n mydisk wait --for=condition=Ready certificate/mydisk-api-tls --timeout=300s
+          curl --fail --show-error --silent --retry 6 --retry-delay 10 --retry-all-errors --connect-timeout 10 --max-time 30 \
+            https://mydisk-fabian.westeurope.cloudapp.azure.com/health/live
 
       - name: Rollout history
         if: always()

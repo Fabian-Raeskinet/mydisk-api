@@ -6,6 +6,9 @@ resource "helm_release" "traefik" {
   namespace        = "traefik"
   create_namespace = true
   wait             = true
+  values = [yamlencode({
+    service = { annotations = var.traefik_service_annotations }
+  })]
 }
 
 resource "kubernetes_namespace_v1" "app" {
@@ -32,4 +35,18 @@ resource "kubernetes_secret_v1" "postgres_credentials" {
   }
 
   data = { for key, password in random_password.postgres : key => password.result }
+}
+
+resource "helm_release" "cert_manager" {
+  name             = "cert-manager"
+  repository       = "oci://quay.io/jetstack/charts"
+  chart            = "cert-manager"
+  version          = "v1.21.3"
+  namespace        = "cert-manager"
+  create_namespace = true
+  wait             = true
+  timeout          = 300
+  values = [yamlencode({
+    crds = { enabled = true }
+  })]
 }

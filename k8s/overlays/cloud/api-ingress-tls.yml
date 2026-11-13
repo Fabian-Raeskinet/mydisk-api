@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mydisk-api
+  annotations:
+    cert-manager.io/issuer: letsencrypt
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - mydisk-fabian.westeurope.cloudapp.azure.com
+      secretName: mydisk-api-tls
+  rules:
+    - host: mydisk-fabian.westeurope.cloudapp.azure.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mydisk-api
+                port:
+                  name: http

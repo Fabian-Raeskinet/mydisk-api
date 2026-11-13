@@ -5,8 +5,9 @@ namespace: mydisk
 
 resources:
   - ../../base
+  - https.yml
 
-# Secret `postgres-credentials` is created by infra/platform (OpenTofu).
+# Secret `postgres-credentials` is created by infra/cluster (OpenTofu).
 images:
   - name: mydisk-api
     newName: ghcr.io/fabian-raeskinet/mydisk-api
@@ -16,6 +17,7 @@ images:
     newTag: latest
 
 patches:
+  - path: api-ingress-tls.yml
   - target:
       kind: Deployment
       name: mydisk-api
@@ -30,3 +32,9 @@ patches:
       - op: replace
         path: /spec/template/spec/containers/0/imagePullPolicy
         value: Always
+
+configMapGenerator:
+  - name: api-config
+    behavior: merge
+    literals:
+      - Https__TerminatedAtProxy=true

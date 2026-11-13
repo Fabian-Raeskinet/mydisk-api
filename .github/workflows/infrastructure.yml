@@ -118,13 +118,13 @@ jobs:
         if: inputs.action == 'apply'
         run: |
           set -euo pipefail
-          tofu -chdir=infra/cluster plan -out=platform.tfplan
+          tofu -chdir=infra/cluster plan -var-file=../platform/azure/ingress.tfvars -out=platform.tfplan
           tofu -chdir=infra/cluster apply platform.tfplan
       - name: Remove Kubernetes resources and Azure platform
         if: inputs.action == 'destroy'
         run: |
           set -euo pipefail
-          tofu -chdir=infra/cluster plan -destroy -out=platform.tfplan
+          tofu -chdir=infra/cluster plan -destroy -var-file=../platform/azure/ingress.tfvars -out=platform.tfplan
           tofu -chdir=infra/cluster apply platform.tfplan
           tofu -chdir=infra/platform/azure plan -destroy -out=cluster.tfplan
           tofu -chdir=infra/platform/azure apply cluster.tfplan

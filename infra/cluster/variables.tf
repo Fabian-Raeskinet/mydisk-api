@@ -28,3 +28,9 @@ variable "traefik_chart_version" {
   type    = string
   default = "42.4.0"
 }
+
+variable "traefik_service_annotations" {
+  type        = map(string)
+  default     = {}
+  description = "Optional platform annotations for the public ingress service."
+}

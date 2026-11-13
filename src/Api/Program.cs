@@ -24,7 +24,9 @@ public class Program
         app.UseSwagger();
         app.UseSwaggerUI();
 
-        app.UseHttpsRedirection();
+        // Traefik redirects external HTTP; internal health probes remain HTTP.
+        if (!app.Configuration.GetValue<bool>("Https:TerminatedAtProxy"))
+            app.UseHttpsRedirection();
         app.UseAuthorization();
 
         app.UseCors(corsPolicyBuilder =>

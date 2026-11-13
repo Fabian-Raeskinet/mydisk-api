@@ -1,0 +1,44 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: letsencrypt
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-account
+    solvers:
+      - http01:
+          ingress:
+            ingressClassName: traefik
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: https-redirect
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+---
+# The temporary ACME solver ingress has a more specific path and no redirect.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mydisk-api-http
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: web
+    traefik.ingress.kubernetes.io/router.middlewares: mydisk-https-redirect@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+    - host: mydisk-fabian.westeurope.cloudapp.azure.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: mydisk-api
+                port:
+                  name: http

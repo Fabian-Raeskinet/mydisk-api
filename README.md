@@ -87,7 +87,7 @@ infra/
 
 ### Networking
 
-The k3d load balancer maps `localhost:8080` to port 80 of the cluster, where Traefik (bundled with k3s) routes requests to the API `Service` through an `Ingress`. No port-forwarding is needed. The API pod only receives traffic once its readiness probe on `/health/ready` passes.
+The k3d load balancer maps `localhost:8443` to port 443 and `localhost:8080` to port 80. Traefik (bundled with k3s) terminates local TLS, redirects HTTP to HTTPS, and routes requests to the API `Service` through an `Ingress`. No port-forwarding is needed. The API pod only receives traffic once its readiness probe on `/health/ready` passes.
 
 ### Database migrations and seeding
 
@@ -350,6 +350,7 @@ The container listens on port `8080`. `.dockerignore` keeps `.env`, `k8s/`, `inf
 |---------------------------------------------------------|------------------------------------|
 | [.NET 10 SDK](https://dotnet.microsoft.com/download)    | Building, running and testing      |
 | [Docker](https://docs.docker.com/get-docker/)           | Compose, image builds, k3d         |
+| [mkcert](https://github.com/FiloSottile/mkcert) | Trusted local HTTPS certificates |
 | [k3d](https://k3d.io)                                   | Local Kubernetes cluster           |
 | [kubectl](https://kubernetes.io/docs/tasks/tools/)      | Kubernetes (Kustomize is built in) |
 | `make`, `openssl`                                       | Makefile targets, secret generation |
@@ -369,11 +370,12 @@ make up                 # build and start PostgreSQL, migrations and API
 ### Option 2: Kubernetes (k3d)
 
 ```bash
-make dev-up             # create/start cluster, build + import images, generate secret, deploy
+mkcert -install         # once: trust the local development CA (install mkcert first if needed)
+make dev-up             # create/start cluster, build + import images, generate secrets + TLS, deploy
 make k8s-status
 ```
 
-The API is then available at http://localhost:8080 (for instance http://localhost:8080/swagger).
+The API is then available at https://localhost:8443/swagger/index.html. HTTP on port 8080 redirects to HTTPS. On an existing running cluster, `make local-https` enables HTTPS without rebuilding images or rerunning migrations. See [HTTPS setup](infra/HTTPS.md).
 
 `make k8s-init-secrets` (run automatically by `dev-up`) creates `k8s/overlays/local/secrets.env` with `600` permissions. It reuses `POSTGRES_PASSWORD` from `.env` if present, otherwise it generates a random one. It adds random `POSTGRES_MIGRATOR_PASSWORD` and `POSTGRES_APP_PASSWORD` entries when missing and never overwrites an existing value.
 

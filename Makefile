@@ -28,9 +28,9 @@ K8S_NAMESPACE ?= mydisk
 endif
 KUBECTL = kubectl --context $(K8S_CONTEXT) -n $(K8S_NAMESPACE)
 ifeq ($(ENV),local)
-API_URL = http://localhost:$(HTTP_PORT)
+API_URL = https://localhost:8443
 else
-API_URL = http://$$(kubectl --context $(K8S_CONTEXT) -n traefik get svc traefik -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+API_URL = https://mydisk-fabian.westeurope.cloudapp.azure.com
 endif
 
 TOFU ?= tofu
@@ -39,7 +39,7 @@ INFRA_PLATFORM = infra/platform/azure
 INFRA_CONTEXT ?= $(AKS_CLUSTER_NAME)
 
 .PHONY: help up down restart logs ps build clean test-unit \
-        cluster-create cluster-start cluster-stop cluster-delete cluster-reset cluster-status cluster-load \
+        local-https k8s-init-tls cluster-https-port cluster-create cluster-start cluster-stop cluster-delete cluster-reset cluster-status cluster-load \
         k8s-help k8s-init-secrets k8s-build k8s-render k8s-apply k8s-delete \
         k8s-status k8s-restart k8s-logs k8s-logs-db k8s-logs-migrations k8s-forward-api k8s-forward-db k8s-up k8s-down \
         k8s-push k8s-load-test k8s-watch-hpa dev-up dev-down \
@@ -54,6 +54,7 @@ help:
 	@echo "Usage: make [target] [ENV=local|cloud] [CLUSTER_NAME=mydisk] [HTTP_PORT=8080]"
 	@echo ""
 	@echo "K3d Cluster targets:"
+	@echo "  local-https         Enable HTTPS on an existing local cluster (no migrations)"
 	@echo "  cluster-create      Create the local k3d cluster if not existing"
 	@echo "  cluster-start       Start the stopped k3d cluster"
 	@echo "  cluster-stop        Stop the k3d cluster to free resources"
@@ -127,8 +128,10 @@ cluster-create:
 			--servers 1 \
 			--agents 1 \
 			-p "$(HTTP_PORT):80@loadbalancer" \
+			-p "8443:443@loadbalancer" \
 			--wait; \
 	fi
+	$(MAKE) cluster-https-port
 	@kubectl config use-context k3d-$(CLUSTER_NAME)
 
 # Start stopped k3d cluster
@@ -227,11 +230,11 @@ k8s-push:
 	docker buildx build --platform linux/amd64 --target migrations -t $(REGISTRY)/mydisk-api-migrations:$(IMAGE_TAG) --push .
 
 # Render manifests to inspect generated YAML (prints Secret data)
-k8s-render: k8s-init-secrets
+k8s-render: k8s-init-secrets k8s-init-tls
 	kubectl kustomize $(K8S_OVERLAY)
 
 # Apply Kubernetes overlay manifests (Jobs are immutable: recreate it to rerun migrations)
-k8s-apply: k8s-init-secrets
+k8s-apply: k8s-init-secrets k8s-init-tls
 	$(KUBECTL) delete job mydisk-api-migrations --ignore-not-found
 	$(KUBECTL) apply -k $(K8S_OVERLAY) -l 'mydisk.io/deploy-after-migrations!=true'
 	@echo "Waiting for PostgreSQL migrations to complete..."
@@ -246,13 +249,13 @@ k8s-apply: k8s-init-secrets
 		$(KUBECTL) rollout restart "$$api_deployment"; \
 	fi
 ifeq ($(ENV),local)
-	@echo "API endpoint after rollout is http://localhost:$(HTTP_PORT)"
+	@echo "API endpoint after rollout is $(API_URL)"
 else
-	@echo "API endpoint after rollout is http://$$(kubectl --context $(K8S_CONTEXT) -n traefik get svc traefik -o jsonpath='{.status.loadBalancer.ingress[0].ip}')"
+	@echo "API endpoint after rollout is $(API_URL)"
 endif
 
 # Delete Kubernetes overlay resources
-k8s-delete: k8s-init-secrets
+k8s-delete: k8s-init-secrets k8s-init-tls
 	$(KUBECTL) delete --ignore-not-found -k $(K8S_OVERLAY)
 
 # Full setup: build images, ship them to the cluster, apply manifests, roll out the rebuilt image
@@ -419,7 +422,7 @@ infra-credentials:
 # Configure Kubernetes through its API, using the selected context.
 infra-cluster:
 	$(TOFU) -chdir=$(INFRA_CLUSTER) init -input=false
-	$(TOFU) -chdir=$(INFRA_CLUSTER) apply -var kube_context=$(INFRA_CONTEXT)
+	$(TOFU) -chdir=$(INFRA_CLUSTER) apply -var-file=../platform/azure/ingress.tfvars -var kube_context=$(INFRA_CONTEXT)
 
 infra-up: infra-platform
 	$(MAKE) infra-credentials
@@ -427,7 +430,7 @@ infra-up: infra-platform
 
 # Release Kubernetes resources before removing their hosting platform.
 infra-down:
-	$(TOFU) -chdir=$(INFRA_CLUSTER) destroy -var kube_context=$(INFRA_CONTEXT)
+	$(TOFU) -chdir=$(INFRA_CLUSTER) destroy -var-file=../platform/azure/ingress.tfvars -var kube_context=$(INFRA_CONTEXT)
 	$(TOFU) -chdir=$(INFRA_PLATFORM) destroy -var cluster_name=$(AKS_CLUSTER_NAME)
 
 # Check formatting and validate all stacks without touching any backend
@@ -437,3 +440,27 @@ infra-check:
 		$(TOFU) -chdir=$$stack init -backend=false -input=false >/dev/null && \
 		$(TOFU) -chdir=$$stack validate || exit 1; \
 	done
+
+# Local TLS only: never changes the cloud cluster or reruns database migrations.
+k8s-init-tls:
+	@if [ "$(ENV)" = local ]; then bash k8s/overlays/local/init-tls.sh; fi
+
+cluster-https-port:
+	@set -e; \
+	ports=$$(docker port k3d-$(CLUSTER_NAME)-serverlb 443/tcp 2>/dev/null || true); \
+	if [ -z "$$ports" ]; then \
+		k3d node edit k3d-$(CLUSTER_NAME)-serverlb --port-add "8443:443"; \
+	elif ! printf '%s\n' "$$ports" | grep -q ':8443$$'; then \
+		echo "Port 443 is already mapped to another host port: $$ports"; exit 1; \
+	fi
+
+local-https: cluster-https-port
+	$(MAKE) k8s-init-tls ENV=local
+	$(MAKE) k8s-init-secrets ENV=local
+	@set -e; rendered=$$(mktemp); trap 'rm -f "$$rendered"' EXIT; \
+	kubectl kustomize k8s/overlays/local > "$$rendered"; \
+	kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f "$$rendered" --dry-run=client >/dev/null
+	kubectl --context k3d-$(CLUSTER_NAME) -n default create secret tls mydisk-api-local-tls --cert=k8s/overlays/local/.tls/tls.crt --key=k8s/overlays/local/.tls/tls.key --dry-run=client -o yaml | kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f -
+	kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f k8s/overlays/local/https.yml
+	kubectl --context k3d-$(CLUSTER_NAME) -n default patch ingress mydisk-api --type=merge --patch-file=k8s/overlays/local/api-ingress-http.yml
+	@echo "Local API: https://localhost:8443/swagger/index.html"
