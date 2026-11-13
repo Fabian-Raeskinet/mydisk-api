@@ -14,6 +14,7 @@ The business domain is intentionally simple: the goal is to demonstrate how a .N
 - **Unit and integration tests** with xUnit, Moq, AutoFixture and FluentAssertions
 - **Containerized** with a multi-stage, non-root Docker image
 - **Infrastructure evolution**: Docker Compose first, then Kubernetes with Kustomize overlays on a local k3d cluster
+- **Zero-downtime rolling updates** gated by readiness, with a progress deadline and rollback, demonstrated with a deliberately broken revision
 - **Horizontal autoscaling** on CPU with a `HorizontalPodAutoscaler`, demonstrated by a k6 load test with light and heavy phases
 - **CI/CD** with Azure Pipelines, infrastructure as code with OpenTofu: a cloud-agnostic platform layer on top of a swappable cluster module (AKS)
 
@@ -46,6 +47,7 @@ The project started with **Docker Compose** (`compose.yml`), a simple way to run
 | Secrets       | `.env` file                       | `Secret` generated per overlay, mounted as a file for Postgres |
 | Environments  | One file                          | `base` + `overlays/<env>`                           |
 | Readiness     | `healthcheck`                     | `readinessProbe` / `livenessProbe`                  |
+| Updates       | Container recreated, brief outage | `RollingUpdate`, new pod Ready before the old one leaves |
 | Scaling       | Fixed, one container per service  | `HorizontalPodAutoscaler` on CPU, 1 to 6 API pods   |
 | Migrations    | One-shot `migrations` service     | `Job` running the EF Core migration bundle          |
 | Exposure      | Published port `8080`             | Traefik `Ingress`, k3d load balancer on `8080`      |
@@ -178,6 +180,56 @@ Expect each change of replicas to lag the change of phase by 15 to 30 seconds: m
 - **Node capacity**: the HPA creates pods, it does not add nodes. The default AKS node pool has a single `Standard_D2s_v5` node (2 vCPU). Six API pods request `1.2` CPU, on top of PostgreSQL, Traefik and system pods, so the last replicas can stay `Pending`. Raise `node_count` or enable the cluster autoscaler (see roadmap).
 - **Single database**: every API pod opens its own connection pool to the same PostgreSQL instance. Under heavy load, the database becomes the bottleneck before the API pods do, and more replicas mean more connections.
 - **CPU as the only signal**: CPU is a proxy for load. It does not react to I/O-bound slowness, such as a slow database, where latency grows while CPU stays low.
+
+### Rolling updates and rollback
+
+Every change to the pod template, such as a new image, configuration or probe, creates a new **revision**: a new ReplicaSet scales up while the previous one scales down. The Deployment is configured so that a bad revision can never take the API down:
+
+| Setting                   | Value | Effect                                                                        |
+|---------------------------|-------|-------------------------------------------------------------------------------|
+| `maxSurge`                | `1`   | One extra pod is created on top of the current replicas                       |
+| `maxUnavailable`          | `0`   | No old pod is removed before a new one is available                           |
+| `readinessProbe`          | `/health/ready` | A new pod only counts as available, and only receives traffic, once it passes |
+| `minReadySeconds`         | `5`   | A new pod must stay Ready for 5 seconds before the next old pod is removed     |
+| `progressDeadlineSeconds` | `60`  | Without progress for 60 seconds, the Deployment reports `ProgressDeadlineExceeded` instead of waiting the default 10 minutes |
+| `revisionHistoryLimit`    | `5`   | Keeps the last 5 ReplicaSets available for `rollout undo`                      |
+
+#### Demonstration
+
+Watch the cluster and the traffic in two terminals:
+
+```bash
+make k8s-watch-rollout   # Deployment, ReplicaSets and pods, refreshed every 2 s
+make k8s-watch-traffic   # status code of /health/ready through the Ingress, every 0.5 s
+```
+
+**Healthy rollout**: `make k8s-rollout-ok` changes an annotation of the pod template, which creates a new revision without changing the image.
+
+1. The new ReplicaSet creates a pod: the API briefly runs 2 pods for 1 replica (`maxSurge: 1`).
+2. The new pod passes its startup probe, then its readiness probe, and stays Ready for `minReadySeconds`.
+3. Only then is the old pod terminated, through the `preStop` hook so that in-flight requests drain.
+
+**Broken rollout**: `make k8s-rollout-broken` points the readiness probe of the new revision to `/health/broken`, which returns `404`.
+
+1. The new pod starts and its container runs, since the startup and liveness probes still pass, but it stays `0/1` Ready and never receives traffic.
+2. Because of `maxUnavailable: 0`, the old pod is never removed and keeps serving: `k8s-watch-traffic` keeps printing `200`.
+3. After 60 seconds without progress, the Deployment reports `ProgressDeadlineExceeded` and `rollout status` fails.
+4. The target prints the ReplicaSets, the pods and the `Readiness probe failed` events, then runs `rollout undo`: the Deployment goes back to the previous revision and the broken pod is removed.
+
+On the local cluster, 113 requests sent during a broken rollout and its rollback all returned `200`.
+
+Use `ROLLOUT_AUTO_UNDO=0 make k8s-rollout-broken` to leave the rollout stuck and inspect it with `kubectl describe`, then roll back with `make k8s-rollout-undo`. `make k8s-rollout-history` shows the revisions with their `kubernetes.io/change-cause`.
+
+#### Rollout strategy
+
+A failed rollout does not cause an outage, but it does not fix itself either: the Deployment keeps the broken ReplicaSet and the extra pod until someone acts. The strategy used here, and proposed for the deploy pipeline, is:
+
+1. **Gate on readiness**: `maxUnavailable: 0` and a readiness probe that checks real dependencies, so a broken pod never replaces a working one.
+2. **Fail fast**: a short `progressDeadlineSeconds`, so a stuck rollout is detected in about a minute.
+3. **Roll back automatically**: wait with `kubectl rollout status --timeout`, and run `kubectl rollout undo` when it fails, as `k8s-rollout-broken` does.
+4. **Fix forward from Git**: the rollback only restores the cluster, the faulty change must still be reverted or fixed in the manifests.
+
+The demo targets patch the live Deployment, so the cluster drifts from the manifests until the next `make k8s-apply`. `rollout undo` warns that it does not update the `last-applied-configuration` annotation. This is expected for a demonstration: the next `make k8s-apply` reapplies the manifests.
 
 ## Cloud infrastructure (OpenTofu)
 
@@ -334,6 +386,12 @@ Run `make help` for the full list. Optional variables: `ENV=local|cloud`, `CLUST
 | `make k8s-forward-db`   | Port-forward PostgreSQL to `localhost:5432`         |
 | `make k8s-load-test`    | Run the k6 load test through the Ingress (`LOAD_TEST_PATH`, `*_RATE` variables) |
 | `make k8s-watch-hpa`    | Watch the HPA, pod CPU and API pods during the load test |
+| `make k8s-rollout-ok`   | Roll out a healthy revision: a new pod is added, then the old one is removed |
+| `make k8s-rollout-broken` | Roll out a revision with a failing readiness probe, then roll back (`ROLLOUT_AUTO_UNDO=0` to keep it stuck) |
+| `make k8s-rollout-undo` | Roll back the API to the previous revision          |
+| `make k8s-rollout-history` | Show the API revisions and their change causes   |
+| `make k8s-watch-rollout` | Watch the Deployment, ReplicaSets and API pods     |
+| `make k8s-watch-traffic` | Print the status code of `/health/ready` through the Ingress every 0.5 s |
 
 **Infrastructure (OpenTofu)**
 
@@ -367,6 +425,12 @@ Integration tests require a running PostgreSQL instance (see `appsettings.json` 
 - Connection pooling with PgBouncer, and a bounded `Maximum Pool Size` per pod, so adding replicas does not exhaust PostgreSQL connections
 - Read replicas or a managed PostgreSQL (Azure Database for PostgreSQL) to scale the database tier
 - Vertical Pod Autoscaler in recommendation mode to right-size the CPU and memory requests the HPA relies on
+
+**Deployments**
+
+- Make `make k8s-apply` and the deploy pipeline wait on `rollout status` for the API and run `rollout undo` on failure, as `k8s-rollout-broken` does
+- Canary or blue-green releases with Argo Rollouts, promoted on metrics instead of readiness only
+- Pin an immutable image tag per deploy, so `rollout undo` restores a known image rather than `:latest`
 
 **Security and delivery**
 

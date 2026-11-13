@@ -9,6 +9,10 @@ HTTP_PORT ?= 8080
 K8S_MIGRATIONS_TIMEOUT ?= 5m
 LOAD_TEST_SCRIPT = k8s/bench/load-test.js
 LOAD_TEST_PATH ?= /api/Disk/disks
+API_DEPLOYMENT = deployment/mydisk-api
+ROLLOUT_TIMEOUT ?= 90s
+ROLLOUT_AUTO_UNDO ?= 1
+ROLLOUT_BROKEN_PATH ?= /health/broken
 
 REGISTRY ?= ghcr.io/fabian-raeskinet
 IMAGE_TAG ?= latest
@@ -21,6 +25,11 @@ K8S_CONTEXT ?= $(AKS_CLUSTER_NAME)
 K8S_NAMESPACE ?= mydisk
 endif
 KUBECTL = kubectl --context $(K8S_CONTEXT) -n $(K8S_NAMESPACE)
+ifeq ($(ENV),local)
+API_URL = http://localhost:$(HTTP_PORT)
+else
+API_URL = http://$$(kubectl --context $(K8S_CONTEXT) -n traefik get svc traefik -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+endif
 
 TOFU ?= tofu
 INFRA_CLUSTER = infra/cluster/aks
@@ -32,6 +41,7 @@ INFRA_CONTEXT ?= $(AKS_CLUSTER_NAME)
         k8s-help k8s-init-secrets k8s-build k8s-render k8s-apply k8s-delete \
         k8s-status k8s-restart k8s-logs k8s-logs-db k8s-logs-migrations k8s-forward-api k8s-forward-db k8s-up k8s-down \
         k8s-push k8s-load-test k8s-watch-hpa dev-up dev-down \
+        k8s-rollout-ok k8s-rollout-broken k8s-rollout-undo k8s-rollout-history k8s-watch-rollout k8s-watch-traffic \
         infra-cluster infra-credentials infra-platform infra-up infra-down infra-check
 
 # -----------------------------------------------------------------------------
@@ -88,6 +98,12 @@ help:
 	@echo "  k8s-forward-db      Port-forward PostgreSQL service to localhost:5432"
 	@echo "  k8s-load-test       Run k6 CPU load test on LOAD_TEST_PATH=$(LOAD_TEST_PATH) to trigger HPA scale-up"
 	@echo "  k8s-watch-hpa       Watch HPA and API pods while the load test runs"
+	@echo "  k8s-rollout-ok      Roll out a healthy revision: surge a new pod, then remove the old one"
+	@echo "  k8s-rollout-broken  Roll out a revision whose readiness never passes, then undo it (ROLLOUT_AUTO_UNDO=0 to keep it stuck)"
+	@echo "  k8s-rollout-undo    Roll back the API to the previous revision"
+	@echo "  k8s-rollout-history Show the API revision history"
+	@echo "  k8s-watch-rollout   Watch ReplicaSets and API pods during a rollout"
+	@echo "  k8s-watch-traffic   Call the API through the Ingress every 0.5s and print the status codes"
 
 # -----------------------------------------------------------------------------
 # K3d Cluster Lifecycle
@@ -273,15 +289,60 @@ k8s-forward-db:
 
 # Run the k6 load test through the Ingress to push CPU above the HPA target
 k8s-load-test:
-ifeq ($(ENV),local)
-	k6 run -e BASE_URL=http://localhost:$(HTTP_PORT) -e TARGET_PATH='$(LOAD_TEST_PATH)' $(LOAD_TEST_SCRIPT)
-else
-	k6 run -e BASE_URL=http://$$(kubectl --context $(K8S_CONTEXT) -n traefik get svc traefik -o jsonpath='{.status.loadBalancer.ingress[0].ip}') -e TARGET_PATH='$(LOAD_TEST_PATH)' $(LOAD_TEST_SCRIPT)
-endif
+	k6 run -e BASE_URL=$(API_URL) -e TARGET_PATH='$(LOAD_TEST_PATH)' $(LOAD_TEST_SCRIPT)
 
 # Watch HPA decisions and API pods being created during the load test
 k8s-watch-hpa:
 	@while true; do clear; $(KUBECTL) get hpa mydisk-api; echo; $(KUBECTL) top pods -l app=mydisk-api 2>/dev/null; echo; $(KUBECTL) get pods -l app=mydisk-api; sleep 3; done
+
+# Roll out a new healthy revision: maxSurge adds a pod, the old one leaves once the new one is Ready
+k8s-rollout-ok:
+	$(KUBECTL) patch $(API_DEPLOYMENT) --type merge -p \
+		'{"metadata":{"annotations":{"kubernetes.io/change-cause":"demo: healthy rollout"}},"spec":{"template":{"metadata":{"annotations":{"mydisk.io/rollout-demo":"'"$$(date +%s)"'"}}}}}'
+	$(KUBECTL) rollout status $(API_DEPLOYMENT) --timeout=$(ROLLOUT_TIMEOUT)
+
+# Roll out a revision whose readiness probe never passes; the old pods keep serving, then the rollout is undone
+k8s-rollout-broken:
+	$(KUBECTL) patch $(API_DEPLOYMENT) --type strategic -p \
+		'{"metadata":{"annotations":{"kubernetes.io/change-cause":"demo: broken readiness on $(ROLLOUT_BROKEN_PATH)"}},"spec":{"template":{"spec":{"containers":[{"name":"api","readinessProbe":{"httpGet":{"path":"$(ROLLOUT_BROKEN_PATH)"}}}]}}}}'
+	@if $(KUBECTL) rollout status $(API_DEPLOYMENT) --timeout=$(ROLLOUT_TIMEOUT); then \
+		echo "Rollout unexpectedly succeeded."; \
+	else \
+		echo ""; \
+		echo "Rollout did not complete: the new pod never became Ready, the previous pods kept serving traffic."; \
+		$(KUBECTL) get rs,pods -l app=mydisk-api; \
+		echo ""; \
+		$(KUBECTL) get events --field-selector reason=Unhealthy --sort-by=.lastTimestamp | tail -n 5; \
+		if [ "$(ROLLOUT_AUTO_UNDO)" = 1 ]; then \
+			echo ""; \
+			echo "Rolling back to the previous revision..."; \
+			$(KUBECTL) rollout undo $(API_DEPLOYMENT); \
+			$(KUBECTL) rollout status $(API_DEPLOYMENT) --timeout=$(ROLLOUT_TIMEOUT); \
+		else \
+			echo ""; \
+			echo "Rollout left stuck on purpose. Run 'make k8s-rollout-undo' to roll back."; \
+		fi; \
+	fi
+
+# Roll back the API to the previous revision
+k8s-rollout-undo:
+	$(KUBECTL) rollout undo $(API_DEPLOYMENT)
+	$(KUBECTL) rollout status $(API_DEPLOYMENT) --timeout=$(ROLLOUT_TIMEOUT)
+
+# Show the API revision history with change causes
+k8s-rollout-history:
+	$(KUBECTL) rollout history $(API_DEPLOYMENT)
+
+# Watch ReplicaSets and pods: the new ReplicaSet scales up while the old one scales down
+k8s-watch-rollout:
+	@while true; do clear; $(KUBECTL) get $(API_DEPLOYMENT); echo; $(KUBECTL) get rs -l app=mydisk-api; echo; $(KUBECTL) get pods -l app=mydisk-api -o wide; sleep 2; done
+
+# Call the API through the Ingress to show that a rollout never interrupts traffic
+k8s-watch-traffic:
+	@url=$(API_URL)/health/ready; while true; do \
+		printf '%s %s\n' "$$(date +%T)" "$$(curl -s -o /dev/null -w '%{http_code}' --max-time 2 $$url)"; \
+		sleep 0.5; \
+	done
 
 # -----------------------------------------------------------------------------
 # Infrastructure (OpenTofu)

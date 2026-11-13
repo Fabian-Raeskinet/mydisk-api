@@ -8,6 +8,9 @@ metadata:
     mydisk.io/deploy-after-migrations: "true"
 
 spec:
+  minReadySeconds: 5
+  progressDeadlineSeconds: 60
+  revisionHistoryLimit: 5
   strategy:
     type: RollingUpdate
     rollingUpdate:
