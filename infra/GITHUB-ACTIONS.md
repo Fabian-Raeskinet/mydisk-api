@@ -24,7 +24,7 @@ Dans GitHub, ouvrir `Settings → Environments → production`. Limiter les bran
 | `AKS_RESOURCE_GROUP` | Facultatif, défaut `rg-mydisk` |
 | `AKS_CLUSTER_NAME` | Facultatif, défaut `mydisk` |
 | `AZURE_LOCATION` | Facultatif, défaut `westeurope` |
-| `AKS_NODE_VM_SIZE` | Facultatif, défaut `Standard_D2s_v5`, à vérifier pour ta souscription |
+| `AKS_NODE_VM_SIZE` | Facultatif, défaut `Standard_D4ls_v6`, à vérifier pour ta souscription |
 
 Ajouter le secret **`TF_STATE_PASSPHRASE`**, aléatoire et long, au moins 16 caractères. Le conserver dans un gestionnaire de mots de passe. Les états et les plans OpenTofu sont chiffrés avec cette valeur. La même passphrase doit être utilisée lors des exécutions suivantes.
 

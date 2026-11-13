@@ -179,7 +179,7 @@ Expect each change of replicas to lag the change of phase by 15 to 30 seconds: m
 
 #### Limits of the current setup
 
-- **Node capacity**: the HPA creates pods, it does not add nodes. The default AKS node pool has a single `Standard_D2s_v5` node (2 vCPU). Six API pods request `1.2` CPU, on top of PostgreSQL, Traefik and system pods, so the last replicas can stay `Pending`. Raise `node_count` or enable the cluster autoscaler (see roadmap).
+- **Node capacity**: the HPA creates pods, it does not add nodes. The default AKS node pool has a single `Standard_D4ls_v6` node (4 vCPU, 8 GiB RAM). Six API pods request `1.2` CPU, on top of PostgreSQL, Traefik and system pods. Pods can stay `Pending` when their combined resource requests exceed the node capacity. Raise `node_count` or enable the cluster autoscaler (see roadmap).
 - **Single database**: every API pod opens its own connection pool to the same PostgreSQL instance. Under heavy load, the database becomes the bottleneck before the API pods do, and more replicas mean more connections.
 - **CPU as the only signal**: CPU is a proxy for load. It does not react to I/O-bound slowness, such as a slow database, where latency grows while CPU stays low.
 
