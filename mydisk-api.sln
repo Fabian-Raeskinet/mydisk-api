@@ -48,9 +48,6 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{9A09C49C-CCCF-4C26-AA04-267E632CFA56}"
 	ProjectSection(SolutionItems) = preProject
 		azure-pipelines.yml = azure-pipelines.yml
-		azure-pipelines-build.template.yml = azure-pipelines-build.template.yml
-		azure-pipelines-deploy.template.yml = azure-pipelines-deploy.template.yml
-		azure-pipelines-integration-tests.template.yml = azure-pipelines-integration-tests.template.yml
 		Dockerfile = Dockerfile
 		compose.yml = compose.yml
 		.gitignore = .gitignore

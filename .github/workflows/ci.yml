@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [master]
+  workflow_call:
+    inputs:
+      push-images:
+        type: boolean
+        default: false
+    outputs:
+      image-tag:
+        value: ${{ jobs.images.outputs.image-tag }}
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Build and unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Unit tests
+        run: make test-unit
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults/*.trx
+          if-no-files-found: ignore
+
+  infra:
+    name: OpenTofu validate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: opentofu/setup-opentofu@v1
+
+      - name: Format and validate
+        run: make infra-check
+
+  images:
+    name: Container images
+    needs: [test, infra]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      image-tag: ${{ steps.tag.outputs.value }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Compute image tag and registry
+        id: tag
+        run: |
+          echo "value=${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
+          echo "REGISTRY=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
+
+      - name: Build images
+        if: ${{ !inputs.push-images }}
+        run: make k8s-build
+
+      - name: Log in to GHCR
+        if: ${{ inputs.push-images }}
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push images
+        if: ${{ inputs.push-images }}
+        run: make k8s-push REGISTRY="$REGISTRY" IMAGE_TAG="${{ steps.tag.outputs.value }}"

@@ -1,0 +1,58 @@
+name: CD
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  ci:
+    uses: ./.github/workflows/ci.yml
+    permissions:
+      contents: read
+      packages: write
+    with:
+      push-images: true
+
+  deploy:
+    name: Deploy to AKS
+    needs: ci
+    runs-on: ubuntu-latest
+    environment: production
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      AKS_RESOURCE_GROUP: ${{ vars.AKS_RESOURCE_GROUP || 'rg-mydisk' }}
+      AKS_CLUSTER_NAME: ${{ vars.AKS_CLUSTER_NAME || 'mydisk' }}
+      IMAGE_TAG: ${{ needs.ci.outputs.image-tag }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get AKS credentials
+        run: az aks get-credentials --resource-group "$AKS_RESOURCE_GROUP" --name "$AKS_CLUSTER_NAME" --overwrite-existing
+
+      - name: Deploy
+        run: |
+          make k8s-deploy ENV=cloud \
+            AKS_CLUSTER_NAME="$AKS_CLUSTER_NAME" \
+            REGISTRY="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" \
+            IMAGE_TAG="$IMAGE_TAG"
+
+      - name: Rollout history
+        if: always()
+        run: make k8s-rollout-history ENV=cloud AKS_CLUSTER_NAME="$AKS_CLUSTER_NAME"

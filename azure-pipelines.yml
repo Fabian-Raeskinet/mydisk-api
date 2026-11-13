@@ -1,38 +1,98 @@
+trigger:
+  branches:
+    include: [master]
+
+pr:
+  branches:
+    include: [master]
+
+variables:
+  azureServiceConnection: 'mydisk-azure'
+  ghcrServiceConnection: 'ghcr'
+  registry: 'ghcr.io/fabian-raeskinet'
+  aksResourceGroup: 'rg-mydisk'
+  aksClusterName: 'mydisk'
+  imageTag: '$(Build.SourceVersion)'
+
+pool:
+  vmImage: 'ubuntu-latest'
+
 stages:
-  - stage: Commit
+  - stage: CI
     jobs:
-      - template: azure-pipelines-build.template.yml
+      - job: Test
+        displayName: 'Build and unit tests'
+        steps:
+          - task: UseDotNet@2
+            displayName: 'Install .NET 10 SDK'
+            inputs:
+              packageType: 'sdk'
+              version: '10.0.x'
 
-  - stage: Run_Data_Integration_Test
-    variables:
-      - group: mydisks-int
-    jobs:
-      - template: azure-pipelines-integration-tests.template.yml
-        parameters:
-          env: 'Integration'
-          testAssemblyName: '*.IntegrationTests.dll'
-          artifact: 'data-integration-tests'
-          azureSubscription: 'MyDisks'
-          dataBaseConnectionString: $(MyDisksDatabaseConnectionString)
-          
-  - stage: Run_Services_Integration_Test
-    variables:
-      - group: mydisks-int
-    jobs:
-      - template: azure-pipelines-integration-tests.template.yml
-        parameters:
-          env: 'Integration'
-          testAssemblyName: '*.IntegrationTests.dll'
-          artifact: 'services-integration-tests'
-          azureSubscription: 'MyDisks'
-          dataBaseConnectionString: $(MyDisksDatabaseConnectionString)
+          - script: make test-unit
+            displayName: 'Unit tests'
 
-  - stage: Deploy_Integration
-    jobs:
-      - template: azure-pipelines-deploy.template.yml
-        parameters:
-          env: 'Integration'
-          azureSubscription: 'MyDisks'
-          resourceGroupName: 'MyDisks'
-          webAppName: 'mydisks-int'
-          slotName: 'production'
+          - task: PublishTestResults@2
+            displayName: 'Publish test results'
+            condition: succeededOrFailed()
+            inputs:
+              testResultsFormat: 'VSTest'
+              testResultsFiles: 'TestResults/*.trx'
+              testRunTitle: 'Unit tests'
+
+      - job: Infra
+        displayName: 'OpenTofu validate'
+        steps:
+          - script: make infra-check TOFU="docker run --rm -v $(Build.SourcesDirectory):/w -w /w ghcr.io/opentofu/opentofu:latest"
+            displayName: 'Format and validate'
+
+      - job: Images
+        displayName: 'Container images'
+        dependsOn: [Test, Infra]
+        steps:
+          - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+            - task: Docker@2
+              displayName: 'Log in to GHCR'
+              inputs:
+                command: 'login'
+                containerRegistry: '${{ variables.ghcrServiceConnection }}'
+
+            - script: make k8s-push REGISTRY=$(registry) IMAGE_TAG=$(imageTag)
+              displayName: 'Build and push images'
+
+          - ${{ else }}:
+            - script: make k8s-build
+              displayName: 'Build images'
+
+  - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.Reason'], 'PullRequest')) }}:
+    - stage: Deploy
+      dependsOn: CI
+      jobs:
+        - deployment: AKS
+          displayName: 'Deploy to AKS'
+          environment: 'production'
+          strategy:
+            runOnce:
+              deploy:
+                steps:
+                  - checkout: self
+
+                  - task: AzureCLI@2
+                    displayName: 'Deploy'
+                    inputs:
+                      azureSubscription: '${{ variables.azureServiceConnection }}'
+                      scriptType: 'bash'
+                      scriptLocation: 'inlineScript'
+                      inlineScript: |
+                        set -e
+                        az aks get-credentials --resource-group $(aksResourceGroup) --name $(aksClusterName) --overwrite-existing
+                        make k8s-deploy ENV=cloud AKS_CLUSTER_NAME=$(aksClusterName) REGISTRY=$(registry) IMAGE_TAG=$(imageTag)
+
+                  - task: AzureCLI@2
+                    displayName: 'Rollout history'
+                    condition: succeededOrFailed()
+                    inputs:
+                      azureSubscription: '${{ variables.azureServiceConnection }}'
+                      scriptType: 'bash'
+                      scriptLocation: 'inlineScript'
+                      inlineScript: make k8s-rollout-history ENV=cloud AKS_CLUSTER_NAME=$(aksClusterName)

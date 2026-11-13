@@ -10,9 +10,11 @@ K8S_MIGRATIONS_TIMEOUT ?= 5m
 LOAD_TEST_SCRIPT = k8s/bench/load-test.js
 LOAD_TEST_PATH ?= /api/Disk/disks
 API_DEPLOYMENT = deployment/mydisk-api
-ROLLOUT_TIMEOUT ?= 90s
+ROLLOUT_TIMEOUT ?= 5m
 ROLLOUT_AUTO_UNDO ?= 1
 ROLLOUT_BROKEN_PATH ?= /health/broken
+RELEASE_OVERLAY = k8s/overlays/cloud-release
+TEST_RESULTS ?= TestResults
 
 REGISTRY ?= ghcr.io/fabian-raeskinet
 IMAGE_TAG ?= latest
@@ -36,12 +38,13 @@ INFRA_CLUSTER = infra/cluster/aks
 INFRA_PLATFORM = infra/platform
 INFRA_CONTEXT ?= $(AKS_CLUSTER_NAME)
 
-.PHONY: help up down restart logs ps build clean \
+.PHONY: help up down restart logs ps build clean test-unit \
         cluster-create cluster-start cluster-stop cluster-delete cluster-reset cluster-status cluster-load \
         k8s-help k8s-init-secrets k8s-build k8s-render k8s-apply k8s-delete \
         k8s-status k8s-restart k8s-logs k8s-logs-db k8s-logs-migrations k8s-forward-api k8s-forward-db k8s-up k8s-down \
         k8s-push k8s-load-test k8s-watch-hpa dev-up dev-down \
         k8s-rollout-ok k8s-rollout-broken k8s-rollout-undo k8s-rollout-history k8s-watch-rollout k8s-watch-traffic \
+        k8s-release-overlay k8s-deploy k8s-rollout-check \
         infra-cluster infra-credentials infra-platform infra-up infra-down infra-check
 
 # -----------------------------------------------------------------------------
@@ -72,6 +75,9 @@ help:
 	@echo "  build               Build or rebuild service images"
 	@echo "  clean               Stop containers and remove volumes (WARNING: deletes DB)"
 	@echo ""
+	@echo "Test targets:"
+	@echo "  test-unit           Run every *.Tests project, TRX results in $(TEST_RESULTS)/"
+	@echo ""
 	@echo "Infrastructure targets (OpenTofu, requires TF_VAR_state_passphrase):"
 	@echo "  infra-up            Create the AKS cluster, fetch credentials, install the platform"
 	@echo "  infra-down          Destroy the platform, then the AKS cluster"
@@ -83,6 +89,8 @@ help:
 	@echo "Kubernetes targets (default ENV=local, ENV=cloud targets context $(AKS_CLUSTER_NAME)):"
 	@echo "  k8s-up              local: build, import to k3d, deploy | cloud: build, push to registry, deploy"
 	@echo "  k8s-push            Build linux/amd64 images and push them to $(REGISTRY) with tag $(IMAGE_TAG)"
+	@echo "  k8s-deploy          CD entry point, ENV=cloud only: pin IMAGE_TAG, run migrations, deploy, roll back on failure"
+	@echo "  k8s-rollout-check   Wait for the API rollout, undo it and fail if it does not complete"
 	@echo "  k8s-down            Delete Kubernetes resources for current overlay"
 	@echo "  k8s-apply           Run migrations, then apply the API Deployment"
 	@echo "  k8s-delete          Delete overlay resources"
@@ -183,6 +191,15 @@ clean:
 	$(COMPOSE) down -v
 
 # -----------------------------------------------------------------------------
+# Tests
+# -----------------------------------------------------------------------------
+# Run every unit test project, keep going after a failure so all results are reported
+test-unit:
+	@rc=0; for project in src/*.Tests/*.Tests.csproj; do \
+		dotnet test "$$project" -c Release --logger trx --results-directory $(TEST_RESULTS) || rc=1; \
+	done; exit $$rc
+
+# -----------------------------------------------------------------------------
 # Kubernetes (K8s)
 # -----------------------------------------------------------------------------
 # Generate overlay secrets.env, adding any missing password (reuses .env password to keep existing PVC usable)
@@ -250,6 +267,47 @@ endif
 
 # Alias to delete overlay resources
 k8s-down: k8s-delete
+
+# Generate a gitignored overlay on top of the cloud overlay, pinning both images to IMAGE_TAG
+k8s-release-overlay:
+	@[ "$(ENV)" = cloud ] || { echo "k8s-release-overlay requires ENV=cloud."; exit 1; }
+	@mkdir -p $(RELEASE_OVERLAY)
+	@printf '%s\n' \
+		'apiVersion: kustomize.config.k8s.io/v1beta1' \
+		'kind: Kustomization' \
+		'resources:' \
+		'  - ../cloud' \
+		'images:' \
+		'  - name: $(REGISTRY)/mydisk-api' \
+		'    newTag: "$(IMAGE_TAG)"' \
+		'  - name: $(REGISTRY)/mydisk-api-migrations' \
+		'    newTag: "$(IMAGE_TAG)"' > $(RELEASE_OVERLAY)/kustomization.yml
+	@rendered=$$(kubectl kustomize $(RELEASE_OVERLAY)); \
+	for image in mydisk-api mydisk-api-migrations; do \
+		echo "$$rendered" | grep -q "image: $(REGISTRY)/$$image:$(IMAGE_TAG)$$" || { \
+			echo "Image $(REGISTRY)/$$image:$(IMAGE_TAG) not found in the rendered manifests: REGISTRY must match the image names of k8s/overlays/cloud."; \
+			exit 1; \
+		}; \
+	done
+	@echo "Release overlay pins images to $(REGISTRY)/*:$(IMAGE_TAG)."
+
+# CD entry point: deploy already pushed images, run migrations first, roll back the API if its rollout fails
+k8s-deploy:
+	@[ "$(ENV)" = cloud ] || { echo "k8s-deploy requires ENV=cloud, use k8s-up locally."; exit 1; }
+	$(MAKE) k8s-release-overlay
+	$(MAKE) k8s-apply K8S_OVERLAY=$(RELEASE_OVERLAY)
+	$(KUBECTL) annotate $(API_DEPLOYMENT) kubernetes.io/change-cause="deploy $(IMAGE_TAG)" --overwrite
+	$(MAKE) k8s-rollout-check
+
+# Wait for the API rollout; on failure, show the state, roll back and fail
+k8s-rollout-check:
+	@if ! $(KUBECTL) rollout status $(API_DEPLOYMENT) --timeout=$(ROLLOUT_TIMEOUT); then \
+		echo "Rollout failed, rolling back to the previous revision."; \
+		$(KUBECTL) get rs,pods -l app=mydisk-api; \
+		$(KUBECTL) get events --field-selector reason=Unhealthy --sort-by=.lastTimestamp | tail -n 5; \
+		$(KUBECTL) rollout undo $(API_DEPLOYMENT) && $(KUBECTL) rollout status $(API_DEPLOYMENT) --timeout=$(ROLLOUT_TIMEOUT); \
+		exit 1; \
+	fi
 
 # Complete local developer lifecycle: start cluster and deploy everything
 dev-up: cluster-create

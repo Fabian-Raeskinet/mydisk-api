@@ -19,7 +19,7 @@ public class DependencyInjectionFixture
         public void ShouldAddService()
         {
             // Arrange
-            var services = new ServiceCollection();
+            var services = CreateServices();
 
             // Act
             services.AddApplicationServices();
@@ -29,10 +29,8 @@ public class DependencyInjectionFixture
             var mediatr = serviceProvider.GetService<IMediator>();
             mediatr.Should().NotBeNull();
 
-            var validationBehaviour =
-                serviceProvider.GetService<IPipelineBehavior<GetDiskByNameQueryRequest, DiskResult>>();
-            validationBehaviour.Should().NotBeNull();
-            validationBehaviour.Should().BeOfType<ValidationBehaviour<GetDiskByNameQueryRequest, DiskResult>>();
+            var behaviours = serviceProvider.GetServices<IPipelineBehavior<GetDiskByNameQueryRequest, DiskResult>>();
+            behaviours.Should().ContainSingle(b => b is ValidationBehaviour<GetDiskByNameQueryRequest, DiskResult>);
         }
     }
 
@@ -42,7 +40,7 @@ public class DependencyInjectionFixture
         public void ShouldAddService()
         {
             // Arrange
-            var services = new ServiceCollection();
+            var services = CreateServices();
 
             // Act
             services.AddApplicationServices();
@@ -54,39 +52,12 @@ public class DependencyInjectionFixture
         }
     }
 
-    public class ConfigureILoggerServicesFixture
+    private static ServiceCollection CreateServices()
     {
-        [Fact]
-        public void ShouldAddService()
-        {
-            // Arrange
-            var services = new ServiceCollection();
-            var loggerMock = new Mock<ILogger<GetAllDisksQueryHandler>>();
-            services.AddSingleton(loggerMock.Object);
-
-            // Act
-            services.AddApplicationServices();
-            var serviceProvider = services.BuildServiceProvider();
-
-            // Assert
-            var logger = serviceProvider.GetService<ILogger>();
-            logger.Should().NotBeNull();
-        }
-
-        [Fact]
-        public void ShouldNotAddService()
-        {
-            // Arrange
-            var services = new ServiceCollection();
-
-            // Act
-            services.AddApplicationServices();
-            var serviceProvider = services.BuildServiceProvider();
-
-            // Assert
-            var logger = serviceProvider.GetService<ILogger>();
-            logger.Should().BeNull();
-        }
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddScoped(_ => Mock.Of<IUnitOfWork>());
+        return services;
     }
 
     // public class AddRetryServiceFixture

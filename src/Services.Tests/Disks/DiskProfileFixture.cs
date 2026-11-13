@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using AutoMapper;
 using FluentAssertions;
 using MyDisks.Contracts.Disks;
@@ -15,7 +16,7 @@ public class DiskProfileFixture
     public void TestDiskResultMapping(Disk disk)
     {
         // Arrange
-        var config = new MapperConfiguration(cfg => { cfg.AddMaps(typeof(MapperProfiles)); }, null);
+        var config = new MapperConfiguration(cfg => { cfg.AddMaps(typeof(MapperProfiles)); }, NullLoggerFactory.Instance);
         config.AssertConfigurationIsValid();
         if (disk.Author == null) return;
         var expected = new DiskResult

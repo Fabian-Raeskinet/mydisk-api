@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using AutoMapper;
 using FluentAssertions;
 using MyDisks.Contracts.Disks;
@@ -16,7 +17,7 @@ public class ReviewProfileFixture
     public void TestDiskResultMapping(Review review)
     {
         // Arrange
-        var config = new MapperConfiguration(cfg => { cfg.AddMaps(typeof(MapperProfiles)); }, null);
+        var config = new MapperConfiguration(cfg => { cfg.AddMaps(typeof(MapperProfiles)); }, NullLoggerFactory.Instance);
         config.AssertConfigurationIsValid();
         var expected = new ReviewResult
         {

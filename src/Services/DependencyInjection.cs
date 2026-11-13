@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using MyDisks.Domain;
 using MyDisks.RandomServices;
 using MyDisks.RetryService;
@@ -34,12 +33,4 @@ public static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection ConfigureILoggerServices(this IServiceCollection services)
-    {
-        var serviceProvider = services.BuildServiceProvider();
-        var logger = serviceProvider.GetService<ILogger<GetAllDisksQueryHandler>>();
-        if (logger != null) services.AddSingleton(typeof(ILogger), logger);
-
-        return services;
-    }
 }

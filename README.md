@@ -16,7 +16,8 @@ The business domain is intentionally simple: the goal is to demonstrate how a .N
 - **Infrastructure evolution**: Docker Compose first, then Kubernetes with Kustomize overlays on a local k3d cluster
 - **Zero-downtime rolling updates** gated by readiness, with a progress deadline and rollback, demonstrated with a deliberately broken revision
 - **Horizontal autoscaling** on CPU with a `HorizontalPodAutoscaler`, demonstrated by a k6 load test with light and heavy phases
-- **CI/CD** with Azure Pipelines, infrastructure as code with OpenTofu: a cloud-agnostic platform layer on top of a swappable cluster module (AKS)
+- **CI/CD** to AKS with both GitHub Actions and Azure Pipelines, sharing the same Makefile targets: unit tests, OpenTofu validation, images tagged with the commit SHA, migrations, then a rollout with automatic rollback
+- **Infrastructure as code** with OpenTofu: a cloud-agnostic platform layer on top of a swappable cluster module (AKS)
 
 ## Architecture
 
@@ -244,9 +245,89 @@ Infrastructure is written for [OpenTofu](https://opentofu.org), the open-source 
 
 Both states contain secrets (the cluster admin kubeconfig, the database passwords), so they are encrypted with OpenTofu state encryption (PBKDF2 + AES-GCM). The passphrase comes from `TF_VAR_state_passphrase` (16 characters minimum) and is never written to disk. State is local for now.
 
-Images are pushed to GHCR (`ghcr.io/fabian-raeskinet`), built for `linux/amd64`. The cloud overlay pulls `:latest` with `imagePullPolicy: Always`. In CI, pin an immutable tag with `kustomize edit set image`. The GHCR packages must be public, or the cluster needs an image pull secret.
+Images are pushed to GHCR (`ghcr.io/fabian-raeskinet`), built for `linux/amd64`. The cloud overlay pulls `:latest` with `imagePullPolicy: Always`, which `make k8s-up ENV=cloud` pushes from a workstation. The pipelines deploy an immutable tag instead, see [CI/CD](#cicd). The GHCR packages must be public, or the cluster needs an image pull secret.
 
 Every `kubectl` call in the Makefile passes `--context` and `-n` explicitly (`k3d-mydisk` / `default` locally, `mydisk` / `mydisk` in cloud), so a target never runs against whichever cluster happens to be the current context.
+
+## CI/CD
+
+Two equivalent pipelines deploy the application to the AKS cluster: GitHub Actions (`.github/workflows/`) and Azure Pipelines (`azure-pipelines.yml`). They contain no deployment logic of their own and call the same Makefile targets, so a deploy behaves the same from a pipeline or from a terminal.
+
+| Trigger             | Steps                                                                                 |
+|---------------------|---------------------------------------------------------------------------------------|
+| Pull request to `master` | Unit tests, `make infra-check`, image build without push                         |
+| Push to `master`    | Same checks, images pushed to GHCR with the commit SHA as tag, then deploy to AKS     |
+
+The infrastructure is not part of the pipelines: the OpenTofu state is local and encrypted, so `make infra-up` stays a manual step. The pipelines only need the cluster, Traefik, the namespace and the `postgres-credentials` Secret to exist.
+
+### Pipeline stages
+
+1. **Unit tests**: `make test-unit` runs every `*.Tests` project and writes TRX results, published by both pipelines. Integration tests are not run yet, as they need a PostgreSQL instance with a configurable connection string.
+2. **Infrastructure checks**: `make infra-check` runs `tofu fmt -check` and `tofu validate` on both stacks, without any backend.
+3. **Images**: `make k8s-push REGISTRY=... IMAGE_TAG=<commit SHA>` builds and pushes the API and migration images for `linux/amd64`. On pull requests, `make k8s-build` only checks that the images build.
+4. **Deploy**: after an Azure login, `az aks get-credentials` creates the `mydisk` kubeconfig context, then `make k8s-deploy ENV=cloud IMAGE_TAG=<commit SHA>`:
+   1. `k8s-release-overlay` generates `k8s/overlays/cloud-release/` (gitignored), an overlay on top of `cloud` that pins both images to the commit SHA. It fails if the rendered manifests do not contain the expected images, for instance when `REGISTRY` does not match the image names of the cloud overlay.
+   2. `k8s-apply` runs the migrations Job and waits for it to succeed before applying the API Deployment.
+   3. The Deployment is annotated with `kubernetes.io/change-cause: deploy <sha>`, so `make k8s-rollout-history` shows which commit each revision runs.
+   4. `k8s-rollout-check` waits for the rollout. If it does not complete, the Deployment reports `ProgressDeadlineExceeded` after 60 seconds without progress, and the target prints the pods and probe events, runs `rollout undo` and fails the pipeline. The previous pods keep serving throughout, see [Rolling updates and rollback](#rolling-updates-and-rollback).
+
+Each deploy uses an immutable tag, so `rollout undo` goes back to the exact image of the previous revision. A rollback only concerns the API: migrations are forward-only and stay applied. Schema changes must therefore stay compatible with the previous API version, adding columns and tables first, and removing them in a later release.
+
+Both pipelines deploy through a `production` environment, where approvals and branch restrictions can be configured. GitHub Actions serializes deploys with a `concurrency` group.
+
+### Setup on Azure
+
+Create the cluster and its platform first (`make infra-up`, see [Option 3](#option-3-kubernetes-in-the-cloud-aks)).
+
+The pipeline identity needs the **Azure Kubernetes Service Cluster User Role** on the cluster, which allows `az aks get-credentials`. The cluster uses Kubernetes local accounts, without Entra ID integration, so these credentials are cluster-admin: restrict who can run the deploy job with the `production` environment.
+
+After the first push, set the two GHCR packages, `mydisk-api` and `mydisk-api-migrations`, to public in the GitHub package settings. Otherwise AKS cannot pull them.
+
+### GitHub Actions
+
+`ci.yml` runs on pull requests, and is reused by `cd.yml`, which runs on push to `master` or manually. Authentication to Azure uses OpenID Connect: no client secret is stored in GitHub. Images are pushed with the built-in `GITHUB_TOKEN`.
+
+Create an app registration with a federated credential for the `production` environment, and grant it access to the cluster:
+
+```bash
+app_id=$(az ad app create --display-name mydisk-github --query appId -o tsv)
+az ad sp create --id "$app_id"
+az ad app federated-credential create --id "$app_id" --parameters '{
+  "name": "github-production",
+  "issuer": "https://token.actions.githubusercontent.com",
+  "subject": "repo:<owner>/<repo>:environment:production",
+  "audiences": ["api://AzureADTokenExchange"]
+}'
+az role assignment create --assignee "$app_id" \
+  --role "Azure Kubernetes Service Cluster User Role" \
+  --scope "$(az aks show -g rg-mydisk -n mydisk --query id -o tsv)"
+```
+
+Then, in the repository settings:
+
+| Setting                         | Value                                                         |
+|---------------------------------|---------------------------------------------------------------|
+| Environment                     | `production`, with required reviewers and the `master` branch only |
+| Variable `AZURE_CLIENT_ID`      | `$app_id`                                                     |
+| Variable `AZURE_TENANT_ID`      | `az account show --query tenantId -o tsv`                     |
+| Variable `AZURE_SUBSCRIPTION_ID`| `az account show --query id -o tsv`                           |
+| Variables `AKS_RESOURCE_GROUP`, `AKS_CLUSTER_NAME` | Optional, default to `rg-mydisk` and `mydisk` |
+
+The registry is derived from the repository owner, in lowercase: `ghcr.io/<owner>`.
+
+### Azure Pipelines
+
+`azure-pipelines.yml` runs the CI stage on pull requests and on `master`, and the Deploy stage on `master` only. In the Azure DevOps project, create:
+
+| Resource                                   | Name           | Configuration                                                           |
+|--------------------------------------------|----------------|-------------------------------------------------------------------------|
+| Service connection, Azure Resource Manager | `mydisk-azure` | Workload identity federation, scoped to the `rg-mydisk` resource group, or the app registration above with an Azure DevOps federated credential |
+| Service connection, Docker Registry        | `ghcr`         | Type `Others`, registry `https://ghcr.io`, a GitHub user and a token with `write:packages` |
+| Environment                                | `production`   | Add approvals and checks as needed                                      |
+
+The registry, resource group and cluster name are variables at the top of `azure-pipelines.yml`. OpenTofu runs in its official container image, so the agent only needs Docker.
+
+Both pipelines trigger on `master`. Connect only one of them to the cluster, or disable the trigger of the other, so that a single pipeline deploys each commit.
 
 ## Dockerfile
 
@@ -373,6 +454,9 @@ Run `make help` for the full list. Optional variables: `ENV=local|cloud`, `CLUST
 | `make dev-down`         | Delete resources and stop the cluster               |
 | `make k8s-up`           | Build and import images (local) or push them (cloud), run migrations, and deploy the API |
 | `make k8s-push`         | Build `linux/amd64` images and push them to `$(REGISTRY)` |
+| `make k8s-deploy`       | CD entry point, `ENV=cloud` only: pin `IMAGE_TAG`, run migrations, deploy the API, roll back on failure |
+| `make k8s-release-overlay` | Generate `k8s/overlays/cloud-release/`, pinning both images to `IMAGE_TAG` |
+| `make k8s-rollout-check` | Wait for the API rollout, undo it and fail if it does not complete |
 | `make k8s-down`         | Delete overlay resources                            |
 | `make k8s-apply`        | Run migrations successfully before applying the API Deployment      |
 | `make k8s-render`       | Render manifests without applying (prints Secret data) |
@@ -409,7 +493,8 @@ Run `make help` for the full list. Optional variables: `ENV=local|cloud`, `CLUST
 ## Tests
 
 ```bash
-dotnet test
+make test-unit    # every *.Tests project, as in CI, TRX results in TestResults/
+dotnet test       # whole solution, including integration tests
 ```
 
 Integration tests require a running PostgreSQL instance (see `appsettings.json` in the integration test projects).
@@ -428,13 +513,14 @@ Integration tests require a running PostgreSQL instance (see `appsettings.json` 
 
 **Deployments**
 
-- Make `make k8s-apply` and the deploy pipeline wait on `rollout status` for the API and run `rollout undo` on failure, as `k8s-rollout-broken` does
 - Canary or blue-green releases with Argo Rollouts, promoted on metrics instead of readiness only
-- Pin an immutable image tag per deploy, so `rollout undo` restores a known image rather than `:latest`
+- A smoke test through the Ingress after each deploy, rolling back when it fails
+- Integration tests in CI, against a PostgreSQL service container, with the connection string read from environment variables
 
 **Security and delivery**
 
 - External Secrets Operator in `infra/platform`, so passwords live in a secret manager instead of the OpenTofu state
 - `securityContext` hardening to enforce the `restricted` Pod Security level
 - TLS with cert-manager and a host-based rule on the Ingress for the cloud overlay
-- Remote, S3-compatible OpenTofu state backend and a GitHub Actions deploy job
+- Remote OpenTofu state backend, then an infrastructure pipeline running `tofu plan` on pull requests and `tofu apply` after approval
+- Entra ID integration on AKS with Kubernetes RBAC, so the pipeline identity is limited to the `mydisk` namespace instead of cluster-admin
