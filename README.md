@@ -80,8 +80,9 @@ k8s/
         └── kustomization.yml
 
 infra/
-├── cluster/aks/          # the only cloud-specific stack: resource group + AKS
-└── platform/             # cloud-agnostic: Traefik, namespace, database Secret
+├── platform/azure/       # Azure resource group + AKS
+│   └── bootstrap/        # Azure state storage and its permissions
+└── cluster/              # Kubernetes + Helm: Traefik, namespace, database Secret
 ```
 
 ### Networking
@@ -112,7 +113,7 @@ Public and sensitive values are kept strictly separate:
 | `POSTGRES_*_PASSWORD` (superuser, migrator, app) | Secret | `postgres-credentials` Secret, from `overlays/<env>/secrets.env` (gitignored) |
 | `ConnectionStrings__DefaultConnection`   | Derived  | Built in the pod from the values above, never stored     |
 
-The base only requires each overlay to provide a `postgres-credentials` Secret with these three keys. Each pod only receives the key it needs. The local overlay generates it from a file. The cloud overlay expects it to exist: `infra/platform` generates the passwords and creates it, with no change to the base.
+The base only requires each overlay to provide a `postgres-credentials` Secret with these three keys. Each pod only receives the key it needs. The local overlay generates it from a file. The cloud overlay expects it to exist: `infra/cluster` generates the passwords and creates it, with no change to the base.
 
 #### Least-privilege database roles
 
@@ -238,10 +239,10 @@ Infrastructure is written for [OpenTofu](https://opentofu.org), the open-source 
 
 | Stack | Providers | Creates |
 |-------|-----------|---------|
-| `infra/cluster/aks` | `azurerm` | Resource group, AKS cluster (Azure CNI overlay, Cilium data plane and NetworkPolicy enforcement) |
-| `infra/platform` | `kubernetes`, `helm`, `random` | Traefik ingress controller (Helm), namespace `mydisk` with Pod Security `baseline` enforced and `restricted` warnings, `postgres-credentials` Secret with three random passwords |
+| `infra/platform/azure` | `azurerm` | Resource group, AKS cluster (Azure CNI overlay, Cilium data plane and NetworkPolicy enforcement) |
+| `infra/cluster` | `kubernetes`, `helm`, `random` | Traefik ingress controller (Helm), namespace `mydisk` with Pod Security `baseline` enforced and `restricted` warnings, `postgres-credentials` Secret with three random passwords |
 
-`infra/platform` only needs a kubeconfig context, so it runs unchanged on AKS, EKS, GKE or k3d. Moving to another cloud means adding an `infra/cluster/<provider>` stack. Traefik is used on every cluster, the same controller k3s bundles locally, so the `Ingress` behaves identically. The application itself is not deployed by OpenTofu: `make k8s-up ENV=cloud` keeps the ordering where migrations must succeed before the API rolls out.
+`infra/cluster` only needs a kubeconfig context, so it runs unchanged on AKS, EKS, GKE or k3d. Moving to another cloud means adding an `infra/platform/<provider>` stack. Traefik is used on every cluster, the same controller k3s bundles locally, so the `Ingress` behaves identically. The application itself is not deployed by OpenTofu: `make k8s-up ENV=cloud` keeps the ordering where migrations must succeed before the API rolls out.
 
 Both states contain secrets (the cluster admin kubeconfig, the database passwords), so they are encrypted with OpenTofu state encryption (PBKDF2 + AES-GCM). The passphrase comes from `TF_VAR_state_passphrase` (16 characters minimum) and is never written to disk. State is local for now.
 
@@ -483,9 +484,9 @@ Run `make help` for the full list. Optional variables: `ENV=local|cloud`, `CLUST
 |--------------------------|----------------------------------------------------------|
 | `make infra-up`          | Cluster + credentials + platform                         |
 | `make infra-down`        | Destroy the platform, then the cluster                   |
-| `make infra-cluster`     | Create or update the AKS cluster                         |
+| `make infra-platform`    | Create or update the AKS cluster                         |
 | `make infra-credentials` | Merge the AKS kubeconfig into `~/.kube/config`           |
-| `make infra-platform`    | Install Traefik, the namespace and the database Secret   |
+| `make infra-cluster`     | Install Traefik, the namespace and the database Secret   |
 | `make infra-check`       | `tofu fmt -check` and `tofu validate` on both stacks     |
 
 `make k8s-up` restarts an existing API Deployment after importing the rebuilt `:dev` image. On first install, the new Deployment starts with the imported image.
@@ -519,7 +520,7 @@ Integration tests require a running PostgreSQL instance (see `appsettings.json` 
 
 **Security and delivery**
 
-- External Secrets Operator in `infra/platform`, so passwords live in a secret manager instead of the OpenTofu state
+- External Secrets Operator in `infra/cluster`, so passwords live in a secret manager instead of the OpenTofu state
 - `securityContext` hardening to enforce the `restricted` Pod Security level
 - TLS with cert-manager and a host-based rule on the Ingress for the cloud overlay
 - Remote OpenTofu state backend, then an infrastructure pipeline running `tofu plan` on pull requests and `tofu apply` after approval

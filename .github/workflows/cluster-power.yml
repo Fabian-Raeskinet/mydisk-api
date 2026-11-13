@@ -1,0 +1,40 @@
+name: AKS start or stop
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Stop reduces compute costs. Start resumes the cluster.
+        type: choice
+        options: [stop, start]
+        default: stop
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  power:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 45
+    env:
+      ACTION: ${{ inputs.action }}
+      AKS_RESOURCE_GROUP: ${{ vars.AKS_RESOURCE_GROUP || 'rg-mydisk' }}
+      AKS_CLUSTER_NAME: ${{ vars.AKS_CLUSTER_NAME || 'mydisk' }}
+    steps:
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Change cluster state
+        run: |
+          set -euo pipefail
+          az aks "$ACTION" --resource-group "$AKS_RESOURCE_GROUP" --name "$AKS_CLUSTER_NAME"
+          az aks show --resource-group "$AKS_RESOURCE_GROUP" --name "$AKS_CLUSTER_NAME" \
+            --query '{cluster:name,state:powerState.code}' --output table

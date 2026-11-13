@@ -44,6 +44,8 @@ jobs:
       - uses: actions/checkout@v5
 
       - uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: '1.10.7'
 
       - name: Format and validate
         run: make infra-check

@@ -34,8 +34,8 @@ API_URL = http://$$(kubectl --context $(K8S_CONTEXT) -n traefik get svc traefik 
 endif
 
 TOFU ?= tofu
-INFRA_CLUSTER = infra/cluster/aks
-INFRA_PLATFORM = infra/platform
+INFRA_CLUSTER = infra/cluster
+INFRA_PLATFORM = infra/platform/azure
 INFRA_CONTEXT ?= $(AKS_CLUSTER_NAME)
 
 .PHONY: help up down restart logs ps build clean test-unit \
@@ -81,9 +81,9 @@ help:
 	@echo "Infrastructure targets (OpenTofu, requires TF_VAR_state_passphrase):"
 	@echo "  infra-up            Create the AKS cluster, fetch credentials, install the platform"
 	@echo "  infra-down          Destroy the platform, then the AKS cluster"
-	@echo "  infra-cluster       Create or update the AKS cluster ($(INFRA_CLUSTER))"
+	@echo "  infra-platform      Create or update the Azure platform ($(INFRA_PLATFORM))"
 	@echo "  infra-credentials   Merge the AKS kubeconfig into ~/.kube/config"
-	@echo "  infra-platform      Install Traefik, namespace and DB Secret on context INFRA_CONTEXT=$(INFRA_CONTEXT)"
+	@echo "  infra-cluster       Install Traefik, namespace and DB Secret on context INFRA_CONTEXT=$(INFRA_CONTEXT)"
 	@echo "  infra-check         Format check and validate both stacks"
 	@echo ""
 	@echo "Kubernetes targets (default ENV=local, ENV=cloud targets context $(AKS_CLUSTER_NAME)):"
@@ -406,35 +406,34 @@ k8s-watch-traffic:
 # Infrastructure (OpenTofu)
 # -----------------------------------------------------------------------------
 # Create or update the AKS cluster (the only cloud-specific stack)
-infra-cluster:
-	$(TOFU) -chdir=$(INFRA_CLUSTER) init -input=false
-	$(TOFU) -chdir=$(INFRA_CLUSTER) apply -var cluster_name=$(AKS_CLUSTER_NAME)
-
-# Merge AKS credentials into ~/.kube/config under context $(AKS_CLUSTER_NAME)
-infra-credentials:
-	az aks get-credentials --overwrite-existing \
-		--resource-group $$($(TOFU) -chdir=$(INFRA_CLUSTER) output -raw resource_group_name) \
-		--name $$($(TOFU) -chdir=$(INFRA_CLUSTER) output -raw cluster_name)
-
-# Install cloud-agnostic platform components on any cluster, selected by kubeconfig context
 infra-platform:
 	$(TOFU) -chdir=$(INFRA_PLATFORM) init -input=false
-	$(TOFU) -chdir=$(INFRA_PLATFORM) apply -var kube_context=$(INFRA_CONTEXT)
+	$(TOFU) -chdir=$(INFRA_PLATFORM) apply -var cluster_name=$(AKS_CLUSTER_NAME)
 
-# Full cloud setup, then deploy with `make k8s-up ENV=cloud`
-infra-up: infra-cluster
+# Merge credentials from the Azure platform into the local kubeconfig.
+infra-credentials:
+	az aks get-credentials --overwrite-existing \
+		--resource-group $$($(TOFU) -chdir=$(INFRA_PLATFORM) output -raw resource_group_name) \
+		--name $$($(TOFU) -chdir=$(INFRA_PLATFORM) output -raw cluster_name)
+
+# Configure Kubernetes through its API, using the selected context.
+infra-cluster:
+	$(TOFU) -chdir=$(INFRA_CLUSTER) init -input=false
+	$(TOFU) -chdir=$(INFRA_CLUSTER) apply -var kube_context=$(INFRA_CONTEXT)
+
+infra-up: infra-platform
 	$(MAKE) infra-credentials
-	$(MAKE) infra-platform
+	$(MAKE) infra-cluster
 
-# Destroy platform first so the cloud load balancer is released, then the cluster
+# Release Kubernetes resources before removing their hosting platform.
 infra-down:
-	$(TOFU) -chdir=$(INFRA_PLATFORM) destroy -var kube_context=$(INFRA_CONTEXT)
-	$(TOFU) -chdir=$(INFRA_CLUSTER) destroy -var cluster_name=$(AKS_CLUSTER_NAME)
+	$(TOFU) -chdir=$(INFRA_CLUSTER) destroy -var kube_context=$(INFRA_CONTEXT)
+	$(TOFU) -chdir=$(INFRA_PLATFORM) destroy -var cluster_name=$(AKS_CLUSTER_NAME)
 
-# Check formatting and validate both stacks without touching any backend
+# Check formatting and validate all stacks without touching any backend
 infra-check:
 	$(TOFU) fmt -check -recursive infra
-	@for stack in $(INFRA_CLUSTER) $(INFRA_PLATFORM); do \
+	@for stack in $(INFRA_PLATFORM)/bootstrap $(INFRA_PLATFORM) $(INFRA_CLUSTER); do \
 		$(TOFU) -chdir=$$stack init -backend=false -input=false >/dev/null && \
 		$(TOFU) -chdir=$$stack validate || exit 1; \
 	done

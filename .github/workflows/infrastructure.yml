@@ -1,0 +1,130 @@
+name: Infrastructure AKS
+
+on:
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Action to perform
+        type: choice
+        options: [plan, apply, destroy]
+        default: plan
+      confirm_destroy:
+        description: For destroy, type the cluster name. This deletes application data.
+        type: string
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  infrastructure:
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 120
+    env:
+      ACTION: ${{ inputs.action }}
+      CONFIRM_DESTROY: ${{ inputs.confirm_destroy }}
+      ARM_USE_OIDC: 'true'
+      ARM_CLIENT_ID: ${{ vars.AZURE_CLIENT_ID }}
+      ARM_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
+      ARM_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      STATE_ACCOUNT: ${{ vars.TF_STATE_STORAGE_ACCOUNT }}
+      TF_VAR_state_passphrase: ${{ secrets.TF_STATE_PASSPHRASE }}
+      TF_VAR_cluster_name: ${{ vars.AKS_CLUSTER_NAME || 'mydisk' }}
+      TF_VAR_resource_group_name: ${{ vars.AKS_RESOURCE_GROUP || 'rg-mydisk' }}
+      TF_VAR_location: ${{ vars.AZURE_LOCATION || 'westeurope' }}
+      TF_VAR_node_vm_size: ${{ vars.AKS_NODE_VM_SIZE || 'Standard_D2s_v5' }}
+      TF_VAR_node_count: '1'
+      TF_IN_AUTOMATION: 'true'
+      TF_INPUT: 'false'
+    steps:
+      - uses: actions/checkout@v5
+      - uses: opentofu/setup-opentofu@v1
+        with:
+          tofu_version: '1.10.7'
+          tofu_wrapper: false
+      - name: Check settings
+        run: |
+          set -euo pipefail
+          for variable in ARM_CLIENT_ID ARM_TENANT_ID ARM_SUBSCRIPTION_ID STATE_ACCOUNT TF_VAR_state_passphrase; do
+            test -n "${!variable}" || { echo "Missing setting $variable"; exit 1; }
+          done
+          if [ "$ACTION" = destroy ] && [ "$CONFIRM_DESTROY" != "$TF_VAR_cluster_name" ]; then
+            echo 'Enter the cluster name to confirm destruction.'
+            exit 1
+          fi
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Prepare state storage
+        if: inputs.action == 'apply'
+        run: bash infra/platform/azure/bootstrap/bootstrap-state.sh
+      - name: Preserve bootstrap recovery state
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: encrypted-bootstrap-recovery
+          path: infra/platform/azure/bootstrap/terraform.tfstate*
+          if-no-files-found: ignore
+          retention-days: 7
+      - name: Initialize remote states
+        run: |
+          set -euo pipefail
+          for stack in platform/azure cluster; do
+            # Keep the existing remote keys so a folder rename does not recreate resources.
+            if [ "$stack" = platform/azure ]; then
+              key=mydisk-cluster-aks.tfstate
+            else
+              key=mydisk-platform.tfstate
+            fi
+            cat > "infra/$stack/backend.tf" <<'BACKEND'
+          terraform {
+            backend "azurerm" {
+              use_azuread_auth = true
+            }
+          }
+          BACKEND
+            tofu -chdir="infra/$stack" init -input=false \
+              -backend-config="storage_account_name=$STATE_ACCOUNT" \
+              -backend-config=container_name=tfstate \
+              -backend-config="key=$key" \
+              -backend-config=use_oidc=true
+          done
+      - name: Preview AKS
+        if: inputs.action != 'destroy'
+        run: tofu -chdir=infra/platform/azure plan -out=cluster.tfplan
+      - name: Create or update AKS
+        if: inputs.action == 'apply'
+        run: tofu -chdir=infra/platform/azure apply cluster.tfplan
+      - name: Connect to AKS
+        if: inputs.action != 'plan'
+        run: |
+          set -euo pipefail
+          group=$(tofu -chdir=infra/platform/azure output -raw resource_group_name)
+          cluster=$(tofu -chdir=infra/platform/azure output -raw cluster_name)
+          state=$(az aks show -g "$group" -n "$cluster" --query powerState.code -o tsv)
+          if [ "$state" = Stopped ]; then
+            az aks start -g "$group" -n "$cluster"
+          fi
+          az aks get-credentials -g "$group" -n "$cluster" --overwrite-existing --context mydisk-actions
+          echo 'TF_VAR_kube_context=mydisk-actions' >> "$GITHUB_ENV"
+      - name: Configure Kubernetes
+        if: inputs.action == 'apply'
+        run: |
+          set -euo pipefail
+          tofu -chdir=infra/cluster plan -out=platform.tfplan
+          tofu -chdir=infra/cluster apply platform.tfplan
+      - name: Remove Kubernetes resources and Azure platform
+        if: inputs.action == 'destroy'
+        run: |
+          set -euo pipefail
+          tofu -chdir=infra/cluster plan -destroy -out=platform.tfplan
+          tofu -chdir=infra/cluster apply platform.tfplan
+          tofu -chdir=infra/platform/azure plan -destroy -out=cluster.tfplan
+          tofu -chdir=infra/platform/azure apply cluster.tfplan
