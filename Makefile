@@ -1,5 +1,6 @@
 
 API_DIR = apps/api
+GRAFANA_DIR = apps/grafana
 API_K8S = $(API_DIR)/k8s
 LOCAL_API_OVERLAY = $(API_K8S)/overlays/local
 COMPOSE = docker compose --env-file $(API_DIR)/.env -f $(API_DIR)/compose.yml
@@ -7,12 +8,14 @@ ENV ?= local
 K8S_OVERLAY = deploy/k8s/$(ENV)
 IMAGE_NAME = mydisk-api:dev
 MIGRATIONS_IMAGE_NAME = mydisk-api-migrations:dev
+GRAFANA_IMAGE_NAME = mydisk-grafana:1.0.0
 CLUSTER_NAME ?= mydisk
 HTTP_PORT ?= 8080
 K8S_MIGRATIONS_TIMEOUT ?= 5m
 LOAD_TEST_SCRIPT = $(API_K8S)/bench/load-test.js
 LOAD_TEST_PATH ?= /api/Disk/disks
 API_DEPLOYMENT = deployment/mydisk-api
+GRAFANA_DEPLOYMENT = deployment/mydisk-grafana
 ROLLOUT_TIMEOUT ?= 5m
 ROLLOUT_AUTO_UNDO ?= 1
 ROLLOUT_BROKEN_PATH ?= /health/broken
@@ -167,7 +170,7 @@ cluster-status:
 # Load local Docker images into the k3d cluster nodes
 cluster-load:
 	@echo "Importing images into cluster $(CLUSTER_NAME)..."
-	@k3d image import $(IMAGE_NAME) $(MIGRATIONS_IMAGE_NAME) -c $(CLUSTER_NAME)
+	@k3d image import $(IMAGE_NAME) $(MIGRATIONS_IMAGE_NAME) $(GRAFANA_IMAGE_NAME) -c $(CLUSTER_NAME)
 
 # -----------------------------------------------------------------------------
 # Docker Compose
@@ -230,6 +233,7 @@ k8s-init-secrets:
 k8s-build:
 	docker build --target api -t $(IMAGE_NAME) $(API_DIR)
 	docker build --target migrations -t $(MIGRATIONS_IMAGE_NAME) $(API_DIR)
+	docker build -t $(GRAFANA_IMAGE_NAME) $(GRAFANA_DIR)
 
 # Build linux/amd64 images and push them to the registry for cloud clusters
 k8s-push:
@@ -270,6 +274,8 @@ ifeq ($(ENV),local)
 k8s-up: k8s-build
 	$(MAKE) cluster-load
 	$(MAKE) k8s-apply K8S_REFRESH_API_IMAGE=1
+	$(KUBECTL) rollout restart $(GRAFANA_DEPLOYMENT)
+	$(KUBECTL) rollout status $(GRAFANA_DEPLOYMENT) --timeout=$(ROLLOUT_TIMEOUT)
 else
 k8s-up: k8s-push
 	$(MAKE) k8s-apply K8S_REFRESH_API_IMAGE=1

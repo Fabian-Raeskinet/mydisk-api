@@ -3,3 +3,4 @@ kind: Kustomization
 
 resources:
   - ../../../apps/api/k8s/overlays/local
+  - ../../../apps/grafana/k8s/overlays/local

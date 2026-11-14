@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mydisk-grafana
+spec:
+  selector:
+    app: mydisk-grafana
+  ports:
+    - port: 80
+      targetPort: 3000

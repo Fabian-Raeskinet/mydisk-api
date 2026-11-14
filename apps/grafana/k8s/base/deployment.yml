@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mydisk-grafana
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mydisk-grafana
+  template:
+    metadata:
+      labels:
+        app: mydisk-grafana
+    spec:
+      containers:
+        - name: grafana
+          image: mydisk-grafana:1.0.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 3000
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              memory: 512Mi
