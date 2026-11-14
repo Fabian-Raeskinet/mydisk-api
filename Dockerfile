@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:11.0 AS build
 
 WORKDIR /src
 
@@ -32,7 +32,7 @@ COPY ["src/RetryService/", "src/RetryService/"]
 COPY ["src/Services/", "src/Services/"]
 
 FROM build AS bundle-migrations
-RUN dotnet tool install --tool-path /tools dotnet-ef --version 10.0.*
+RUN dotnet tool install --tool-path /tools dotnet-ef --version 11.0.*
 RUN /tools/dotnet-ef migrations bundle \
       --project src/Data.Migrations \
       --startup-project src/Data.Migrations \
@@ -42,13 +42,13 @@ RUN /tools/dotnet-ef migrations bundle \
 FROM build AS publish-api
 RUN dotnet publish src/Api/Api.csproj -c Release -o /app/publish --no-restore
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS migrations
+FROM mcr.microsoft.com/dotnet/aspnet:11.0 AS migrations
 WORKDIR /app
 COPY --from=bundle-migrations ["/app/efbundle", "."]
 USER $APP_UID
 ENTRYPOINT ["./efbundle"]
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS api
+FROM mcr.microsoft.com/dotnet/aspnet:11.0 AS api
 WORKDIR /app
 COPY --from=publish-api ["/app/publish", "."]
 USER $APP_UID
