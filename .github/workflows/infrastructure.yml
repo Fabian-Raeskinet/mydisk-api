@@ -67,7 +67,7 @@ jobs:
         run: bash infra/platform/azure/bootstrap/bootstrap-state.sh
       - name: Preserve bootstrap recovery state
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: encrypted-bootstrap-recovery
           path: infra/platform/azure/bootstrap/terraform.tfstate*
