@@ -21,7 +21,7 @@ jobs:
     name: Build and unit tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - uses: actions/setup-dotnet@v5
         with:
@@ -54,7 +54,7 @@ jobs:
     name: OpenTofu validate
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - uses: opentofu/setup-opentofu@v2
         with:
@@ -73,7 +73,7 @@ jobs:
     outputs:
       image-tag: ${{ steps.tag.outputs.value }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
       - name: Compute image tag and registry
         id: tag
