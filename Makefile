@@ -52,6 +52,10 @@ INFRA_CONTEXT ?= $(AKS_CLUSTER_NAME)
 # -----------------------------------------------------------------------------
 help:
 	@echo "Usage: make [target] [ENV=local|cloud] [CLUSTER_NAME=mydisk] [HTTP_PORT=8080]"
+	@echo "  security               Audit dependencies, build amd64 images and scan (no deployment)"
+	@echo "  security-build         Build images for the same architecture as AKS"
+	@echo "  security-dependencies  Audit all NuGet dependencies (High/Critical blocks)"
+	@echo "  security-images        Scan built images with Trivy (requires Trivy)"
 	@echo ""
 	@echo "K3d Cluster targets:"
 	@echo "  local-https         Enable HTTPS on an existing local cluster (no migrations)"
@@ -464,3 +468,47 @@ local-https: cluster-https-port
 	kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f k8s/overlays/local/https.yml
 	kubectl --context k3d-$(CLUSTER_NAME) -n default patch ingress mydisk-api --type=merge --patch-file=k8s/overlays/local/api-ingress-http.yml
 	@echo "Local API: https://localhost:8443/swagger/index.html"
+
+# Security checks: same commands locally and in GitHub Actions.
+TRIVY ?= trivy
+API_IMAGE ?= $(IMAGE_NAME)
+MIGRATIONS_IMAGE ?= $(MIGRATIONS_IMAGE_NAME)
+SECURITY_PLATFORM ?= linux/amd64
+
+.PHONY: security security-dependencies security-build security-images
+# Run sequentially even when make is invoked with -j; never publish or deploy.
+security:
+	$(MAKE) security-dependencies
+	$(MAKE) security-build
+	$(MAKE) security-images
+
+security-dependencies:
+	@mkdir -p security-reports
+	@rm -f security-reports/nuget.json
+	@status=0; \
+	dotnet restore mydisk-api.sln --force-evaluate > security-reports/nuget-restore.txt 2>&1 || status=$$?; \
+	cat security-reports/nuget-restore.txt; \
+	exit $$status
+	dotnet list mydisk-api.sln package --vulnerable --include-transitive --no-restore --format json > security-reports/nuget.json
+
+# Build once for the deployment architecture; scanning and pushing reuse these tags.
+security-build:
+	docker build --pull --platform $(SECURITY_PLATFORM) --target api -t "$(API_IMAGE)" .
+	docker build --pull --platform $(SECURITY_PLATFORM) --target migrations -t "$(MIGRATIONS_IMAGE)" .
+
+security-images:
+	@command -v "$(TRIVY)" >/dev/null || { echo 'Trivy is required. On macOS: brew install trivy'; exit 1; }
+	@mkdir -p security-reports
+	@status=0; \
+	for target in api migrations; do \
+		if [ "$$target" = api ]; then image="$(API_IMAGE)"; else image="$(MIGRATIONS_IMAGE)"; fi; \
+		rm -f "security-reports/$$target.json"; \
+		echo "Scanning $$image: full report, then blocking check"; \
+		if ! "$(TRIVY)" image --image-src docker --scanners vuln --timeout 10m \
+			--format json --output "security-reports/$$target.json" --exit-code 0 "$$image"; then \
+			status=1; continue; \
+		fi; \
+		"$(TRIVY)" image --image-src docker --scanners vuln --timeout 10m \
+			--severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 "$$image" || status=1; \
+	done; \
+	exit $$status

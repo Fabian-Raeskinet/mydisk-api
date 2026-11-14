@@ -386,3 +386,6 @@ TestResults/
 
 # Generated local development certificate and private key.
 k8s/overlays/local/.tls/
+
+# Generated security reports
+security-reports/

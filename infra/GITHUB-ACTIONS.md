@@ -1,70 +1,107 @@
-# Créer MyDisk avec GitHub Actions
+# Provision MyDisk with GitHub Actions
 
-## Première configuration
+## Initial setup
 
-La création est déclenchée dans GitHub, avec le workflow **Infrastructure AKS**, action **apply**. Elle prépare le stockage d’état, AKS puis la configuration Kubernetes.
+Provisioning is triggered in GitHub through the **Infrastructure AKS** workflow,
+using the **apply** action. It prepares state storage, AKS, and the Kubernetes configuration.
 
-L’application Azure `mydisk-github` utilise une identité fédérée pour le dépôt `Fabian-Raeskinet/mydisk-api` et l’environnement GitHub `production`. Le subject OIDC doit correspondre à celui émis par GitHub pour ce dépôt.
+The Azure application `mydisk-github` uses a federated identity for the
+`Fabian-Raeskinet/mydisk-api` repository and the `production` GitHub environment.
+The OIDC subject must match the subject issued by GitHub for this repository.
 
-Sur la souscription choisie, attribuer à cette application les deux rôles suivants une fois.
+Assign the following two roles to this application on the selected subscription
+as a one-time setup:
 
-- **Contributeur** pour créer les groupes de ressources, le stockage et AKS.
-- **Contributeur aux données Blob du stockage** pour lire et écrire les états avec Entra ID. Le périmètre souscription permet l’accès au compte dès sa création. Il autorise aussi l’accès aux autres données Blob de cette souscription. Une souscription dédiée à l’apprentissage permet de limiter ce périmètre.
+- **Contributor** to create resource groups, storage, and AKS.
+- **Storage Blob Data Contributor** to read and write state using Entra ID.
+  Subscription scope grants access to the storage account as soon as it is created.
+  It also grants access to other Blob data in that subscription. A subscription
+  dedicated to learning helps limit this scope.
 
-Le workflow utilise ces droits existants. Le rôle de gestion des attributions IAM reste à l’administrateur qui effectue cette configuration initiale.
+The workflow uses these existing permissions. Permission to manage IAM role
+assignments remains with the administrator performing the initial setup.
 
-Dans GitHub, ouvrir `Settings → Environments → production`. Limiter les branches autorisées à `master`.
+In GitHub, open `Settings → Environments → production`. Restrict allowed branches
+to `master`.
 
-| Variable d’environnement GitHub | Valeur |
+| GitHub environment variable | Value |
 |---|---|
-| `AZURE_CLIENT_ID` | ID d’application de `mydisk-github` |
-| `AZURE_TENANT_ID` | ID du tenant Entra |
-| `AZURE_SUBSCRIPTION_ID` | Souscription choisie |
-| `TF_STATE_STORAGE_ACCOUNT` | Nom unique, 3-24 lettres minuscules ou chiffres, par exemple `mydisktfstatefabian` |
-| `AKS_RESOURCE_GROUP` | Facultatif, défaut `rg-mydisk` |
-| `AKS_CLUSTER_NAME` | Facultatif, défaut `mydisk` |
-| `AZURE_LOCATION` | Facultatif, défaut `westeurope` |
-| `AKS_NODE_VM_SIZE` | Facultatif, défaut `Standard_D4ls_v6`, à vérifier pour ta souscription |
+| `AZURE_CLIENT_ID` | Application ID of `mydisk-github` |
+| `AZURE_TENANT_ID` | Entra tenant ID |
+| `AZURE_SUBSCRIPTION_ID` | Selected subscription ID |
+| `TF_STATE_STORAGE_ACCOUNT` | Globally unique name, 3–24 lowercase letters or digits, such as `mydisktfstatefabian` |
+| `AKS_RESOURCE_GROUP` | Optional; defaults to `rg-mydisk` |
+| `AKS_CLUSTER_NAME` | Optional; defaults to `mydisk` |
+| `AZURE_LOCATION` | Optional; defaults to `westeurope` |
+| `AKS_NODE_VM_SIZE` | Optional; defaults to `Standard_D4ls_v6`; verify availability for your subscription |
 
-Ajouter le secret **`TF_STATE_PASSPHRASE`**, aléatoire et long, au moins 16 caractères. Le conserver dans un gestionnaire de mots de passe. Les états et les plans OpenTofu sont chiffrés avec cette valeur. La même passphrase doit être utilisée lors des exécutions suivantes.
+Add the **`TF_STATE_PASSPHRASE`** secret using a long, random value of at least
+16 characters. Keep it in a password manager. OpenTofu states and plans are
+encrypted with this value. Subsequent runs must use the same passphrase.
 
-## Lancement
+## Run the workflows
 
-1. Pousser les fichiers sur `master` pour rendre les workflows disponibles.
-2. Ouvrir `Actions → Infrastructure AKS → Run workflow` et sélectionner `apply`.
-3. Le workflow crée le groupe `rg-mydisk-tfstate`, le compte Storage Standard LRS et son conteneur privé `tfstate`.
-4. Il déplace son état initial chiffré dans ce stockage.
-5. Il initialise les états Azure et Kubernetes, crée AKS et configure Traefik, le namespace et le Secret PostgreSQL.
-6. Lancer ensuite le workflow `CD` pour publier les images et déployer MyDisk.
+1. Push the files to `master` to make the workflows available.
+2. Open `Actions → Infrastructure AKS → Run workflow` and select `apply`.
+3. The workflow creates the `rg-mydisk-tfstate` resource group, a Standard LRS storage account, and its private `tfstate` container.
+4. It migrates its encrypted initial state into that storage.
+5. It initializes the Azure and Kubernetes states, creates AKS, and configures Traefik, the namespace, and the PostgreSQL Secret.
+6. Then run the `CD` workflow to publish the images and deploy MyDisk.
 
-L’action `apply` crée des ressources payantes. Elle affiche puis applique ses plans dans la même exécution. L’action `plan` prévisualise uniquement AKS une fois le stockage initialisé. Pour exiger une approbation avant l’exécution du job, configurer les protections de l’environnement GitHub selon les fonctionnalités disponibles pour le dépôt.
+The `apply` action creates billable resources. It displays and applies its plans
+within the same run. The `plan` action previews AKS only, after state storage has
+been initialized. To require approval before the job runs, configure GitHub
+environment protections according to the features available for the repository.
 
-Une attribution de rôle Azure peut mettre quelques minutes à devenir effective. En cas d’accès refusé juste après sa création, patienter puis relancer. Le bootstrap reprend les ressources déjà présentes dans le groupe dédié en cas d’interruption et utilise son état distant lorsqu’il existe. Si un bootstrap échoue, le workflow conserve son état local chiffré sept jours dans l’artefact `encrypted-bootstrap-recovery`, s’il a été créé.
+Azure role assignments may take a few minutes to become effective. If access is
+denied immediately after an assignment, wait and retry. After an interruption,
+bootstrap recovers resources already present in the dedicated group and uses its
+remote state when available. If bootstrap fails, the workflow retains its encrypted
+local state, if created, for seven days in the `encrypted-bootstrap-recovery` artifact.
 
-## Organisation
+## Directory structure
 
-| Dossier | Responsabilité |
+| Directory | Responsibility |
 |---|---|
-| `infra/platform/azure/bootstrap` | Groupe et stockage d’état Azure |
-| `infra/platform/azure` | Groupe applicatif et AKS |
-| `infra/cluster` | Kubernetes et Helm via un contexte kubeconfig explicite |
+| `infra/platform/azure/bootstrap` | Azure state resource group and storage |
+| `infra/platform/azure` | Application resource group and AKS |
+| `infra/cluster` | Kubernetes and Helm through an explicit kubeconfig context |
 
-Les déclarations de backend Azure sont générées dans la copie du dépôt utilisée par GitHub. La configuration Kubernetes peut donc utiliser un autre backend localement ou sur un autre cloud.
+Azure backend declarations are generated in the repository checkout used by GitHub.
+The Kubernetes configuration can therefore use a different backend locally or on
+another cloud.
 
-Le conteneur `tfstate` contient trois états, `mydisk-bootstrap.tfstate`, `mydisk-cluster-aks.tfstate` pour Azure et `mydisk-platform.tfstate` pour Kubernetes. Les deux derniers noms ont été conservés après réorganisation des dossiers pour retrouver les états existants.
+The `tfstate` container holds three states: `mydisk-bootstrap.tfstate`,
+`mydisk-cluster-aks.tfstate` for Azure, and `mydisk-platform.tfstate` for Kubernetes.
+The last two names were retained after the directory restructuring to preserve
+access to existing states.
 
-Si les ressources sont déjà gérées par un état local, migrer cet état et conserver sa passphrase avant de lancer les workflows. Le bootstrap peut adopter un groupe de stockage créé manuellement. Si ce groupe est déjà géré par un autre état OpenTofu, transférer cet état au préalable pour conserver un propriétaire unique.
+If resources are already managed by a local state, migrate that state and retain
+its passphrase before running the workflows. Bootstrap can adopt a manually
+created storage resource group. If another OpenTofu state already manages that
+group, transfer the state first to maintain a single owner.
 
-## Coûts et arrêt
+## Costs and shutdown
 
-Le défaut actuel est AKS Free avec un nœud. Vérifier l’éligibilité de la taille et son prix dans la souscription avant le premier lancement. Le plan OpenTofu ne calcule pas les prix. Les machines, disques, équilibreurs de charge et IP peuvent être facturés.
+The current default is AKS Free with one node. Verify the VM size's eligibility
+and price in the subscription before the first run. OpenTofu plans do not calculate
+prices. Virtual machines, disks, load balancers, and IP addresses may incur charges.
 
-Après chaque séance, lancer **AKS start or stop**, action **stop**. Les ressources conservées, notamment les disques et le stockage d’état, peuvent rester facturées. L’action **start** remet le cluster en marche avant une livraison CD.
+After each session, run **AKS start or stop** with the **stop** action. Retained
+resources, including disks and state storage, may still incur charges. The **start**
+action resumes the cluster before a CD deployment.
 
-Pour une longue pause, lancer **Infrastructure AKS**, action **destroy**, puis saisir le nom du cluster pour confirmer. Cette action démarre au besoin AKS pour retirer les composants Kubernetes, puis détruit le cluster. Les données applicatives de cet environnement peuvent être perdues. Le stockage d’état est conservé.
+For an extended break, run **Infrastructure AKS** with the **destroy** action and
+enter the cluster name to confirm. This action starts AKS if needed to remove
+Kubernetes components, then destroys the cluster. Application data in this
+environment may be lost. State storage is retained.
 
-## Déploiement applicatif
+## Application deployment
 
-Le CD automatique sur `master` suppose un cluster créé et démarré. Le premier push peut échouer au déploiement avant le provisionnement. Relancer CD ensuite.
+Automatic CD on `master` assumes that the cluster has been created and started.
+The first push may fail during deployment before provisioning has completed.
+Rerun CD afterward.
 
-Les images GHCR doivent être accessibles à AKS. Utiliser des packages publics pour un portfolio, ou configurer `imagePullSecrets` pour des packages privés. Le jeton utilisé pour publier les images dans GitHub Actions ne donne pas automatiquement accès aux pods.
+GHCR images must be accessible to AKS. Use public packages for a portfolio, or
+configure `imagePullSecrets` for private packages. The token used to publish images
+in GitHub Actions does not automatically grant image access to pods.

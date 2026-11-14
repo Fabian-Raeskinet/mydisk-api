@@ -12,6 +12,7 @@
     <PropertyGroup Condition=" '$(RunConfiguration)' == 'MyDisk.Api' " />
     <ItemGroup>
         <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="9.0.0" />
+        <PackageReference Include="Microsoft.OpenApi" Version="2.7.5" />
         <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
         <PackageReference Include="Swashbuckle.AspNetCore.Newtonsoft" Version="10.1.7" />

@@ -3,6 +3,7 @@ name: CI
 on:
   pull_request:
     branches: [master]
+  workflow_dispatch:
   workflow_call:
     inputs:
       push-images:
@@ -25,6 +26,18 @@ jobs:
       - uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
+
+      - name: Audit NuGet dependencies
+        run: make security-dependencies
+
+      - name: Upload dependency audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-audit
+          path: security-reports/nuget*
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Unit tests
         run: make test-unit
@@ -68,9 +81,32 @@ jobs:
           echo "value=${GITHUB_SHA}" >> "$GITHUB_OUTPUT"
           echo "REGISTRY=ghcr.io/${GITHUB_REPOSITORY_OWNER,,}" >> "$GITHUB_ENV"
 
-      - name: Build images
-        if: ${{ !inputs.push-images }}
-        run: make k8s-build
+      - name: Build images once for AKS
+        env:
+          API_IMAGE: ${{ env.REGISTRY }}/mydisk-api:${{ github.sha }}
+          MIGRATIONS_IMAGE: ${{ env.REGISTRY }}/mydisk-api-migrations:${{ github.sha }}
+        run: make security-build
+
+      - name: Install Trivy
+        uses: aquasecurity/setup-trivy@81e514348e19b6112ce2a7e3ecbafe19c1e1f567 # v0.3.1
+        with:
+          version: v0.76.2
+          cache: true
+
+      - name: Scan both images and enforce policy
+        env:
+          API_IMAGE: ${{ env.REGISTRY }}/mydisk-api:${{ github.sha }}
+          MIGRATIONS_IMAGE: ${{ env.REGISTRY }}/mydisk-api-migrations:${{ github.sha }}
+        run: make security-images
+
+      - name: Upload complete image reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: image-security-reports
+          path: security-reports/*.json
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Log in to GHCR
         if: ${{ inputs.push-images }}
@@ -80,6 +116,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push images
+      - name: Push the scanned images without rebuilding
         if: ${{ inputs.push-images }}
-        run: make k8s-push REGISTRY="$REGISTRY" IMAGE_TAG="${{ steps.tag.outputs.value }}"
+        run: |
+          docker push "$REGISTRY/mydisk-api:${GITHUB_SHA}"
+          docker push "$REGISTRY/mydisk-api-migrations:${GITHUB_SHA}"

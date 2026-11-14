@@ -11,7 +11,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="16.1.1" />
+        <PackageReference Include="AutoMapper" Version="16.3.0" />
         <PackageReference Include="Duende.IdentityServer.EntityFramework.Storage" Version="7.4.7" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.0">
             <PrivateAssets>all</PrivateAssets>
@@ -35,6 +35,12 @@
 
     <ItemGroup>
         <Folder Include="Migrations"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <!-- Patched transitive dependencies required by the security audit. -->
+        <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.23" />
+        <PackageReference Include="System.Security.Cryptography.Pkcs" Version="9.0.23" />
     </ItemGroup>
 
 </Project>

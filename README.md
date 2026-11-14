@@ -527,3 +527,16 @@ Integration tests require a running PostgreSQL instance (see `appsettings.json` 
 - TLS with cert-manager and a host-based rule on the Ingress for the cloud overlay
 - Remote OpenTofu state backend, then an infrastructure pipeline running `tofu plan` on pull requests and `tofu apply` after approval
 - Entra ID integration on AKS with Kubernetes RBAC, so the pipeline identity is limited to the `mydisk` namespace instead of cluster-admin
+
+### Security checks in CI
+
+CI audits direct/transitive NuGet dependencies and scans both final container images
+before publishing them. High/Critical NuGet findings block restore; fixable
+High/Critical image findings block publication. Full reports are retained as
+GitHub Actions artifacts. Dependabot proposes weekly updates without auto-merging.
+
+See [the DevSecOps walkthrough](docs/DEVSECOPS.md) for policies, limits and the
+actual vulnerability corrections. Install Trivy (`brew install trivy` on macOS),
+start Docker, and run `make security` to audit dependencies, build amd64 images,
+and scan them without publishing or deploying. The same Makefile targets are
+used in GitHub Actions; no custom security scripts are required.

@@ -18,4 +18,9 @@
       <ProjectReference Include="..\TestConfigurations\TestConfigurations.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+        <!-- Patched transitive dependencies required by the security audit. -->
+        <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.1" />
+    </ItemGroup>
+
 </Project>

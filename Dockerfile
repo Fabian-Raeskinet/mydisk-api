@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
 WORKDIR /src
 
-COPY ["global.json", "Nuget.config", "./"]
+COPY ["global.json", "Nuget.config", "Directory.Build.props", "./"]
 
 COPY ["src/Api/Api.csproj", "src/Api/"]
 COPY ["src/Contracts/Contracts.csproj", "src/Contracts/"]
