@@ -361,18 +361,18 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-.idea
+# Local macOS and Claude settings
+.DS_Store
+.claude/settings.local.json
 
-# Preserve the API's shared Rider settings after moving the solution.
+# Ignore Rider metadata except the API's shared project settings.
+.idea/
 !/apps/api/.idea/
-/apps/api/.idea/*
+/apps/api/.idea/**
 !/apps/api/.idea/config/
-/apps/api/.idea/config/*
 !/apps/api/.idea/config/applicationhost.config
 !/apps/api/.idea/.idea.mydisk-api/
-/apps/api/.idea/.idea.mydisk-api/*
 !/apps/api/.idea/.idea.mydisk-api/.idea/
-/apps/api/.idea/.idea.mydisk-api/.idea/*
 !/apps/api/.idea/.idea.mydisk-api/.idea/.gitignore
 !/apps/api/.idea/.idea.mydisk-api/.idea/dataSources.xml
 !/apps/api/.idea/.idea.mydisk-api/.idea/indexLayout.xml
