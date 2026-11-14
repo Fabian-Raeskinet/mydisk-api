@@ -27,7 +27,7 @@ jobs:
       AKS_RESOURCE_GROUP: ${{ vars.AKS_RESOURCE_GROUP || 'rg-mydisk' }}
       AKS_CLUSTER_NAME: ${{ vars.AKS_CLUSTER_NAME || 'mydisk' }}
     steps:
-      - uses: azure/login@v2
+      - uses: azure/login@v3
         with:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
