@@ -1,19 +1,22 @@
 
-COMPOSE = docker compose --env-file .env
+API_DIR = apps/api
+API_K8S = $(API_DIR)/k8s
+LOCAL_API_OVERLAY = $(API_K8S)/overlays/local
+COMPOSE = docker compose --env-file $(API_DIR)/.env -f $(API_DIR)/compose.yml
 ENV ?= local
-K8S_OVERLAY = k8s/overlays/$(ENV)
+K8S_OVERLAY = deploy/k8s/$(ENV)
 IMAGE_NAME = mydisk-api:dev
 MIGRATIONS_IMAGE_NAME = mydisk-api-migrations:dev
 CLUSTER_NAME ?= mydisk
 HTTP_PORT ?= 8080
 K8S_MIGRATIONS_TIMEOUT ?= 5m
-LOAD_TEST_SCRIPT = k8s/bench/load-test.js
+LOAD_TEST_SCRIPT = $(API_K8S)/bench/load-test.js
 LOAD_TEST_PATH ?= /api/Disk/disks
 API_DEPLOYMENT = deployment/mydisk-api
 ROLLOUT_TIMEOUT ?= 5m
 ROLLOUT_AUTO_UNDO ?= 1
 ROLLOUT_BROKEN_PATH ?= /health/broken
-RELEASE_OVERLAY = k8s/overlays/cloud-release
+RELEASE_OVERLAY = deploy/k8s/cloud-release
 TEST_RESULTS ?= TestResults
 
 REGISTRY ?= ghcr.io/fabian-raeskinet
@@ -101,7 +104,7 @@ help:
 	@echo "  k8s-delete          Delete overlay resources"
 	@echo "  k8s-render          Render and preview Kustomize manifests without applying"
 	@echo "  k8s-build           Build local Docker images ($(IMAGE_NAME), $(MIGRATIONS_IMAGE_NAME))"
-	@echo "  k8s-init-secrets    Generate $(K8S_OVERLAY)/secrets.env (gitignored) if missing, local only"
+	@echo "  k8s-init-secrets    Generate $(K8S_SECRETS) (gitignored) if missing, local only"
 	@echo "  k8s-status          Display status of pods, services, statefulsets, and PVCs"
 	@echo "  k8s-restart         Rollout restart the API deployment"
 	@echo "  k8s-logs            Stream logs from the API pods"
@@ -202,22 +205,22 @@ clean:
 # -----------------------------------------------------------------------------
 # Run every unit test project, keep going after a failure so all results are reported
 test-unit:
-	@rc=0; for project in src/*.Tests/*.Tests.csproj; do \
-		dotnet test "$$project" -c Release --logger trx --results-directory $(TEST_RESULTS) || rc=1; \
+	@cd $(API_DIR) || exit 1; rc=0; for project in src/*.Tests/*.Tests.csproj; do \
+		dotnet test "$$project" -c Release --logger trx --results-directory "$(abspath $(TEST_RESULTS))" || rc=1; \
 	done; exit $$rc
 
 # -----------------------------------------------------------------------------
 # Kubernetes (K8s)
 # -----------------------------------------------------------------------------
 # Generate overlay secrets.env, adding any missing password (reuses .env password to keep existing PVC usable)
-K8S_SECRETS = $(K8S_OVERLAY)/secrets.env
+K8S_SECRETS = $(LOCAL_API_OVERLAY)/secrets.env
 k8s-init-secrets:
 	@[ "$(ENV)" = local ] || exit 0; \
 	set -e; umask 077; touch $(K8S_SECRETS); \
 	for key in POSTGRES_PASSWORD POSTGRES_MIGRATOR_PASSWORD POSTGRES_APP_PASSWORD; do \
 		grep -q "^$$key=" $(K8S_SECRETS) && continue; \
 		pw=; \
-		[ "$$key" = POSTGRES_PASSWORD ] && [ -f .env ] && pw=$$(sed -n 's/^POSTGRES_PASSWORD=//p' .env); \
+		[ "$$key" = POSTGRES_PASSWORD ] && [ -f $(API_DIR)/.env ] && pw=$$(sed -n 's/^POSTGRES_PASSWORD=//p' $(API_DIR)/.env); \
 		[ -n "$$pw" ] || pw=$$(openssl rand -hex 32); \
 		printf '%s=%s\n' "$$key" "$$pw" >> $(K8S_SECRETS); \
 		echo "Added $$key to $(K8S_SECRETS)."; \
@@ -225,13 +228,13 @@ k8s-init-secrets:
 
 # Build Docker images for local Kubernetes cluster
 k8s-build:
-	docker build --target api -t $(IMAGE_NAME) .
-	docker build --target migrations -t $(MIGRATIONS_IMAGE_NAME) .
+	docker build --target api -t $(IMAGE_NAME) $(API_DIR)
+	docker build --target migrations -t $(MIGRATIONS_IMAGE_NAME) $(API_DIR)
 
 # Build linux/amd64 images and push them to the registry for cloud clusters
 k8s-push:
-	docker buildx build --platform linux/amd64 --target api -t $(REGISTRY)/mydisk-api:$(IMAGE_TAG) --push .
-	docker buildx build --platform linux/amd64 --target migrations -t $(REGISTRY)/mydisk-api-migrations:$(IMAGE_TAG) --push .
+	docker buildx build --platform linux/amd64 --target api -t $(REGISTRY)/mydisk-api:$(IMAGE_TAG) --push $(API_DIR)
+	docker buildx build --platform linux/amd64 --target migrations -t $(REGISTRY)/mydisk-api-migrations:$(IMAGE_TAG) --push $(API_DIR)
 
 # Render manifests to inspect generated YAML (prints Secret data)
 k8s-render: k8s-init-secrets k8s-init-tls
@@ -292,7 +295,7 @@ k8s-release-overlay:
 	@rendered=$$(kubectl kustomize $(RELEASE_OVERLAY)); \
 	for image in mydisk-api mydisk-api-migrations; do \
 		echo "$$rendered" | grep -q "image: $(REGISTRY)/$$image:$(IMAGE_TAG)$$" || { \
-			echo "Image $(REGISTRY)/$$image:$(IMAGE_TAG) not found in the rendered manifests: REGISTRY must match the image names of k8s/overlays/cloud."; \
+			echo "Image $(REGISTRY)/$$image:$(IMAGE_TAG) not found in the rendered manifests: REGISTRY must match the image names of $(API_K8S)/overlays/cloud."; \
 			exit 1; \
 		}; \
 	done
@@ -447,7 +450,7 @@ infra-check:
 
 # Local TLS only: never changes the cloud cluster or reruns database migrations.
 k8s-init-tls:
-	@if [ "$(ENV)" = local ]; then bash k8s/overlays/local/init-tls.sh; fi
+	@if [ "$(ENV)" = local ]; then bash $(LOCAL_API_OVERLAY)/init-tls.sh; fi
 
 cluster-https-port:
 	@set -e; \
@@ -462,11 +465,11 @@ local-https: cluster-https-port
 	$(MAKE) k8s-init-tls ENV=local
 	$(MAKE) k8s-init-secrets ENV=local
 	@set -e; rendered=$$(mktemp); trap 'rm -f "$$rendered"' EXIT; \
-	kubectl kustomize k8s/overlays/local > "$$rendered"; \
+	kubectl kustomize deploy/k8s/local > "$$rendered"; \
 	kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f "$$rendered" --dry-run=client >/dev/null
-	kubectl --context k3d-$(CLUSTER_NAME) -n default create secret tls mydisk-api-local-tls --cert=k8s/overlays/local/.tls/tls.crt --key=k8s/overlays/local/.tls/tls.key --dry-run=client -o yaml | kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f -
-	kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f k8s/overlays/local/https.yml
-	kubectl --context k3d-$(CLUSTER_NAME) -n default patch ingress mydisk-api --type=merge --patch-file=k8s/overlays/local/api-ingress-http.yml
+	kubectl --context k3d-$(CLUSTER_NAME) -n default create secret tls mydisk-api-local-tls --cert=$(LOCAL_API_OVERLAY)/.tls/tls.crt --key=$(LOCAL_API_OVERLAY)/.tls/tls.key --dry-run=client -o yaml | kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f -
+	kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f $(LOCAL_API_OVERLAY)/https.yml
+	kubectl --context k3d-$(CLUSTER_NAME) -n default patch ingress mydisk-api --type=merge --patch-file=$(LOCAL_API_OVERLAY)/api-ingress-http.yml
 	@echo "Local API: https://localhost:8443/swagger/index.html"
 
 # Security checks: same commands locally and in GitHub Actions.
@@ -486,15 +489,15 @@ security-dependencies:
 	@mkdir -p security-reports
 	@rm -f security-reports/nuget.json
 	@status=0; \
-	dotnet restore mydisk-api.sln --force-evaluate > security-reports/nuget-restore.txt 2>&1 || status=$$?; \
+	(cd $(API_DIR) && dotnet restore mydisk-api.sln --force-evaluate) > security-reports/nuget-restore.txt 2>&1 || status=$$?; \
 	cat security-reports/nuget-restore.txt; \
 	exit $$status
-	dotnet list mydisk-api.sln package --vulnerable --include-transitive --no-restore --format json > security-reports/nuget.json
+	(cd $(API_DIR) && dotnet list mydisk-api.sln package --vulnerable --include-transitive --no-restore --format json) > security-reports/nuget.json
 
 # Build once for the deployment architecture; scanning and pushing reuse these tags.
 security-build:
-	docker build --pull --platform $(SECURITY_PLATFORM) --target api -t "$(API_IMAGE)" .
-	docker build --pull --platform $(SECURITY_PLATFORM) --target migrations -t "$(MIGRATIONS_IMAGE)" .
+	docker build --pull --platform $(SECURITY_PLATFORM) --target api -t "$(API_IMAGE)" $(API_DIR)
+	docker build --pull --platform $(SECURITY_PLATFORM) --target migrations -t "$(MIGRATIONS_IMAGE)" $(API_DIR)
 
 security-images:
 	@command -v "$(TRIVY)" >/dev/null || { echo 'Trivy is required. On macOS: brew install trivy'; exit 1; }

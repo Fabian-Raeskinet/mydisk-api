@@ -6,7 +6,7 @@ CD depends on the successful completion of CI.
 
 ## 1. NuGet: audit dependencies across the solution
 
-`Directory.Build.props` applies to every .NET project in the repository. It enables
+`apps/api/Directory.Build.props` applies to every .NET project in the API module. It enables
 NuGet Audit for direct and transitive dependencies, including test dependencies.
 A transitive dependency is a library brought in by another library.
 

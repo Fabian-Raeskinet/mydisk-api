@@ -19,10 +19,29 @@ The business domain is intentionally simple: the goal is to demonstrate how a .N
 - **CI/CD** to AKS with both GitHub Actions and Azure Pipelines, sharing the same Makefile targets: unit tests, OpenTofu validation, images tagged with the commit SHA, migrations, then a rollout with automatic rollback
 - **Infrastructure as code** with OpenTofu: a cloud-agnostic platform layer on top of a swappable cluster module (AKS)
 
+## Repository layout
+
+```text
+apps/
+├── api/                 # .NET solution, Docker Compose, Dockerfile and Kubernetes module
+└── grafana/             # Reserved for the Grafana application
+platform/
+└── prometheus/          # Reserved for the Prometheus platform component
+deploy/k8s/
+├── local/               # Composes the API's local overlay
+└── cloud/               # Composes the API's cloud overlay
+infra/
+├── cluster/             # Shared Kubernetes and Helm stack
+└── platform/azure/     # AKS and OpenTofu state bootstrap
+```
+
+Run `make` commands from the repository root. Open `apps/api/mydisk-api.sln`
+in your IDE.
+
 ## Architecture
 
 ```
-src/
+apps/api/src/
 ├── Api                                 # Controllers, health checks, composition root
 ├── Contracts / Contracts.Validators    # Request/response DTOs and their validation rules
 ├── Services                            # Application layer (MediatR handlers)
@@ -38,7 +57,7 @@ Dependencies point inward: `Api → Services → Domain`, with `Data` implementi
 
 ## Infrastructure: from Compose to Kubernetes
 
-The project started with **Docker Compose** (`compose.yml`), a simple way to run the API and PostgreSQL together on a single machine. It then moved to **Kubernetes** to work with production-grade concepts:
+The project started with **Docker Compose** (`apps/api/compose.yml`), a simple way to run the API and PostgreSQL together on a single machine. It then moved to **Kubernetes** to work with production-grade concepts:
 
 | Concern       | Docker Compose                    | Kubernetes                                          |
 |---------------|-----------------------------------|-----------------------------------------------------|
@@ -58,7 +77,7 @@ Both setups are still supported: Compose for a quick start, Kubernetes for the t
 ### Kubernetes layout
 
 ```
-k8s/
+apps/api/k8s/
 ├── base/                 # Environment-agnostic manifests + public configuration
 │   ├── api-deployment.yml
 │   ├── api-hpa.yml       # CPU-based autoscaling, 1 to 6 replicas
@@ -78,12 +97,10 @@ k8s/
     │   └── secrets.env.example
     └── cloud/            # any cluster: GHCR images, namespace `mydisk`, Secret from OpenTofu
         └── kustomization.yml
-
-infra/
-├── platform/azure/       # Azure resource group + AKS
-│   └── bootstrap/        # Azure state storage and its permissions
-└── cluster/              # Kubernetes + Helm: Traefik, namespace, database Secret
 ```
+
+The parent overlays in `deploy/k8s/local` and `deploy/k8s/cloud` reference
+these API overlays. Use the parent paths to render the deployment for each environment.
 
 ### Networking
 
@@ -108,9 +125,9 @@ Public and sensitive values are kept strictly separate:
 
 | Value                                    | Type     | Source                                                   |
 |------------------------------------------|----------|----------------------------------------------------------|
-| DB host, port, name, role names          | Public   | `db-config` ConfigMap (`k8s/base`)                       |
+| DB host, port, name, role names          | Public   | `db-config` ConfigMap (`apps/api/k8s/base`)                       |
 | `ASPNETCORE_ENVIRONMENT`                 | Public   | `api-config` ConfigMap, overridden per overlay           |
-| `POSTGRES_*_PASSWORD` (superuser, migrator, app) | Secret | `postgres-credentials` Secret, from `overlays/<env>/secrets.env` (gitignored) |
+| `POSTGRES_*_PASSWORD` (superuser, migrator, app) | Secret | `postgres-credentials` Secret, from `apps/api/k8s/overlays/local/secrets.env` (gitignored) |
 | `ConnectionStrings__DefaultConnection`   | Derived  | Built in the pod from the values above, never stored     |
 
 The base only requires each overlay to provide a `postgres-credentials` Secret with these three keys. Each pod only receives the key it needs. The local overlay generates it from a file. The cloud overlay expects it to exist: `infra/cluster` generates the passwords and creates it, with no change to the base.
@@ -148,7 +165,7 @@ New pods only receive traffic once `/health/ready` passes, and removed pods drai
 
 #### Load test
 
-`k8s/bench/load-test.js` is a [k6](https://k6.io) script that calls `GET /api/Disk/disks` through the Ingress. The liveness endpoint is too cheap to raise the CPU, while this endpoint runs the whole stack: MVC, MediatR pipeline behaviors, an EF Core query on PostgreSQL, AutoMapper and JSON serialization.
+`apps/api/k8s/bench/load-test.js` is a [k6](https://k6.io) script that calls `GET /api/Disk/disks` through the Ingress. The liveness endpoint is too cheap to raise the CPU, while this endpoint runs the whole stack: MVC, MediatR pipeline behaviors, an EF Core query on PostgreSQL, AutoMapper and JSON serialization.
 
 The test lasts 3 min 30 and runs four phases. Each phase uses a `constant-arrival-rate` executor: k6 sends a fixed number of requests per second regardless of response time, so the load does not drop when the API slows down.
 
@@ -267,7 +284,7 @@ The infrastructure is not part of the pipelines: the OpenTofu state is local and
 2. **Infrastructure checks**: `make infra-check` runs `tofu fmt -check` and `tofu validate` on both stacks, without any backend.
 3. **Images**: `make k8s-push REGISTRY=... IMAGE_TAG=<commit SHA>` builds and pushes the API and migration images for `linux/amd64`. On pull requests, `make k8s-build` only checks that the images build.
 4. **Deploy**: after an Azure login, `az aks get-credentials` creates the `mydisk` kubeconfig context, then `make k8s-deploy ENV=cloud IMAGE_TAG=<commit SHA>`:
-   1. `k8s-release-overlay` generates `k8s/overlays/cloud-release/` (gitignored), an overlay on top of `cloud` that pins both images to the commit SHA. It fails if the rendered manifests do not contain the expected images, for instance when `REGISTRY` does not match the image names of the cloud overlay.
+   1. `k8s-release-overlay` generates `deploy/k8s/cloud-release/` (gitignored), an overlay on top of `deploy/k8s/cloud` that pins both images to the commit SHA. It fails if the rendered manifests do not contain the expected images, for instance when `REGISTRY` does not match the image names of the cloud overlay.
    2. `k8s-apply` runs the migrations Job and waits for it to succeed before applying the API Deployment.
    3. The Deployment is annotated with `kubernetes.io/change-cause: deploy <sha>`, so `make k8s-rollout-history` shows which commit each revision runs.
    4. `k8s-rollout-check` waits for the rollout. If it does not complete, the Deployment reports `ProgressDeadlineExceeded` after 60 seconds without progress, and the target prints the pods and probe events, runs `rollout undo` and fails the pipeline. The previous pods keep serving throughout, see [Rolling updates and rollback](#rolling-updates-and-rollback).
@@ -334,21 +351,21 @@ Both pipelines trigger on `master`. Connect only one of them to the cluster, or 
 
 Multi-stage build producing two images from a shared build stage:
 
-1. **`build`** (`dotnet/sdk:10.0`): copies only the `.csproj` files first and runs `dotnet restore`, so the NuGet restore layer stays cached until dependencies change. It then copies the sources.
+1. **`build`** (`dotnet/sdk:11.0`): copies only the `.csproj` files first and runs `dotnet restore`, so the NuGet restore layer stays cached until dependencies change. It then copies the sources.
 2. **`publish-api`**: `dotnet publish -c Release` of the API.
 3. **`bundle-migrations`**: installs `dotnet-ef` and builds the EF Core migration bundle.
-4. **`migrations`** (`dotnet/aspnet:10.0`): the bundle only, image `mydisk-api-migrations:dev`.
-5. **`api`** (`dotnet/aspnet:10.0`, default target): the published API only, image `mydisk-api:dev`.
+4. **`migrations`** (`dotnet/aspnet:11.0`): the bundle only, image `mydisk-api-migrations:dev`.
+5. **`api`** (`dotnet/aspnet:11.0`, default target): the published API only, image `mydisk-api:dev`.
 
 Runtime images contain neither the SDK nor the sources, and run as the image's built-in **non-root** user (`$APP_UID`).
 
-The container listens on port `8080`. `.dockerignore` keeps `.env`, `k8s/`, `infra/` and build artifacts out of the build context.
+The container listens on port `8080`. The build context is `apps/api/`, where `.dockerignore` excludes `.env`, `k8s/` and build artifacts.
 
 ## Prerequisites
 
 | Tool                                                    | Needed for                         |
 |---------------------------------------------------------|------------------------------------|
-| [.NET 10 SDK](https://dotnet.microsoft.com/download)    | Building, running and testing      |
+| [.NET 11 SDK](https://dotnet.microsoft.com/download)    | Building, running and testing      |
 | [Docker](https://docs.docker.com/get-docker/)           | Compose, image builds, k3d         |
 | [mkcert](https://github.com/FiloSottile/mkcert) | Trusted local HTTPS certificates |
 | [k3d](https://k3d.io)                                   | Local Kubernetes cluster           |
@@ -363,7 +380,7 @@ The container listens on port `8080`. `.dockerignore` keeps `.env`, `k8s/`, `inf
 ### Option 1: Docker Compose
 
 ```bash
-cp .env.example .env    # then set a strong POSTGRES_PASSWORD
+cp apps/api/.env.example apps/api/.env    # then set a strong POSTGRES_PASSWORD
 make up                 # build and start PostgreSQL, migrations and API
 ```
 
@@ -377,7 +394,7 @@ make k8s-status
 
 The API is then available at https://localhost:8443/swagger/index.html. HTTP on port 8080 redirects to HTTPS. On an existing running cluster, `make local-https` enables HTTPS without rebuilding images or rerunning migrations. See [HTTPS setup](infra/HTTPS.md).
 
-`make k8s-init-secrets` (run automatically by `dev-up`) creates `k8s/overlays/local/secrets.env` with `600` permissions. It reuses `POSTGRES_PASSWORD` from `.env` if present, otherwise it generates a random one. It adds random `POSTGRES_MIGRATOR_PASSWORD` and `POSTGRES_APP_PASSWORD` entries when missing and never overwrites an existing value.
+`make k8s-init-secrets` (run automatically by `dev-up`) creates `apps/api/k8s/overlays/local/secrets.env` with `600` permissions. It reuses `POSTGRES_PASSWORD` from `apps/api/.env` if present, otherwise it generates a random one. It adds random `POSTGRES_MIGRATOR_PASSWORD` and `POSTGRES_APP_PASSWORD` entries when missing and never overwrites an existing value.
 
 Tear down with `make dev-down`.
 
@@ -401,6 +418,7 @@ The API is exposed on the public IP of the Traefik load balancer, printed at the
 Start the database and apply migrations, then give the API the password through user secrets so it never goes into `appsettings`:
 
 ```bash
+cd apps/api
 docker compose --env-file .env up -d postgres migrations
 
 dotnet user-secrets init --project src/Api
@@ -458,7 +476,7 @@ Run `make help` for the full list. Optional variables: `ENV=local|cloud`, `CLUST
 | `make k8s-up`           | Build and import images (local) or push them (cloud), run migrations, and deploy the API |
 | `make k8s-push`         | Build `linux/amd64` images and push them to `$(REGISTRY)` |
 | `make k8s-deploy`       | CD entry point, `ENV=cloud` only: pin `IMAGE_TAG`, run migrations, deploy the API, roll back on failure |
-| `make k8s-release-overlay` | Generate `k8s/overlays/cloud-release/`, pinning both images to `IMAGE_TAG` |
+| `make k8s-release-overlay` | Generate `deploy/k8s/cloud-release/`, pinning both images to `IMAGE_TAG` |
 | `make k8s-rollout-check` | Wait for the API rollout, undo it and fail if it does not complete |
 | `make k8s-down`         | Delete overlay resources                            |
 | `make k8s-apply`        | Run migrations successfully before applying the API Deployment      |
