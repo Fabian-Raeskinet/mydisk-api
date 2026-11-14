@@ -42,13 +42,13 @@ RUN /tools/dotnet-ef migrations bundle \
 FROM build AS publish-api
 RUN dotnet publish src/Api/Api.csproj -c Release -o /app/publish --no-restore
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS migrations
+FROM mcr.microsoft.com/dotnet/aspnet:11.0 AS migrations
 WORKDIR /app
 COPY --from=bundle-migrations ["/app/efbundle", "."]
 USER $APP_UID
 ENTRYPOINT ["./efbundle"]
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS api
+FROM mcr.microsoft.com/dotnet/aspnet:11.0 AS api
 WORKDIR /app
 COPY --from=publish-api ["/app/publish", "."]
 USER $APP_UID
