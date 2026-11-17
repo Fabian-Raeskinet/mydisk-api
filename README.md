@@ -462,7 +462,7 @@ The container listens on port `8080`. The build context is `apps/api/`, where `.
 ### Option 1: Docker Compose
 
 ```bash
-cp apps/api/.env.example apps/api/.env    # then set a strong POSTGRES_PASSWORD
+cp apps/api/postgres.env.example apps/api/postgres.env    # then set a strong POSTGRES_PASSWORD
 make up                 # build and start PostgreSQL, migrations, API, frontend and Traefik
 ```
 
@@ -513,7 +513,7 @@ Start the database and apply migrations, then give the API the password through 
 
 ```bash
 cd apps/api
-docker compose --env-file .env up -d postgres migrations
+docker compose --env-file postgres.env up -d postgres migrations
 
 dotnet user-secrets init --project src/Api
 dotnet user-secrets set --project src/Api "ConnectionStrings:DefaultConnection" \

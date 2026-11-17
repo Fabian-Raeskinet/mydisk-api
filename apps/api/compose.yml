@@ -1,6 +1,6 @@
 name: mydisk-api
 
-x-db-connection: &db-connection "Host=postgres;Port=5432;Database=mydisk;Username=mydisk;Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD manquant dans .env};GSS Encryption Mode=Disable"
+x-db-connection: &db-connection "Host=postgres;Port=5432;Database=mydisk;Username=mydisk;Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD manquant dans postgres.env};GSS Encryption Mode=Disable"
 
 services:
   traefik:
@@ -64,7 +64,7 @@ services:
     image: postgres:18
     restart: unless-stopped
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD manquant dans .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD manquant dans postgres.env}
       POSTGRES_USER: mydisk
       POSTGRES_DB: mydisk
     ports:

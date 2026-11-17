@@ -1,0 +1,8 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - postgres-service.yml
+  - postgres-statefulset.yml
+  - keycloak-service.yml
+  - keycloak-deployment.yml
