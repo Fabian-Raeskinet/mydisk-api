@@ -1,0 +1,75 @@
+@inherits LayoutComponentBase
+@inject HttpClient Http
+
+<MudLayout Class="md-layout">
+    <MudAppBar Color="Color.Default" Elevation="0" Class="md-appbar">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                       Color="Color.Inherit"
+                       Edge="Edge.Start"
+                       OnClick="ToggleDrawer"
+                       aria-label="Ouvrir ou fermer la navigation" />
+        <MudText Typo="Typo.body2">Votre espace musique</MudText>
+        <MudSpacer />
+        <MudChip T="string" Icon="@Icons.Material.Filled.LockOpen" Variant="Variant.Outlined" Color="Color.Primary">
+            Accès libre
+        </MudChip>
+    </MudAppBar>
+
+    <MudDrawer @bind-Open="_drawerOpen"
+               Variant="DrawerVariant.Responsive"
+               Breakpoint="Breakpoint.Md"
+               ClipMode="DrawerClipMode.Never"
+               Elevation="0"
+               Class="md-sidebar">
+        <MudDrawerHeader Class="md-brand">
+            <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="1">
+                <MudIcon Icon="@Icons.Material.Outlined.Album" Class="md-logo" Size="Size.Large" />
+                <MudLink Href="/" Color="Color.Inherit" Typo="Typo.h5" Underline="Underline.None">
+                    mydisk<span class="md-logo">.</span>
+                </MudLink>
+            </MudStack>
+        </MudDrawerHeader>
+        <MudText Typo="Typo.overline" Class="px-6 mt-6 mb-3">VOTRE ESPACE MUSIQUE</MudText>
+        <MudNavMenu Color="Color.Inherit" aria-label="Navigation principale" Class="px-4">
+            <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Album">
+                Ma collection
+            </MudNavLink>
+            <MudNavLink Href="/avis" Icon="@Icons.Material.Filled.RateReview">
+                Les avis
+            </MudNavLink>
+            <MudNavLink Href="/etat-api" Icon="@Icons.Material.Filled.MonitorHeart">
+                État de l’API
+            </MudNavLink>
+            <MudDivider Class="my-2" />
+            <MudNavLink Href="@SwaggerUrl"
+                        Target="_blank"
+                        ForceLoad="true"
+                        Icon="@Icons.Material.Filled.OpenInNew">
+                Documentation API
+            </MudNavLink>
+        </MudNavMenu>
+        <MudStack Spacing="1" Class="pa-6 mt-auto md-sidebar-footer">
+            <MudIcon Icon="@Icons.Material.Outlined.Album" Class="md-logo mb-2" Size="Size.Large" />
+            <MudText Typo="Typo.body2">La musique se collectionne.</MudText>
+            <MudText Typo="Typo.caption">Les souvenirs aussi.</MudText>
+            <MudText Typo="Typo.overline" Class="mt-4">MYDISK · BLAZOR</MudText>
+        </MudStack>
+    </MudDrawer>
+
+    <MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-4 pa-md-8 md-page">
+            @Body
+            <MudDivider Class="mt-10 mb-4" />
+            <MudStack Row="true" Justify="Justify.SpaceBetween" Wrap="Wrap.Wrap" Class="mb-4" Spacing="2">
+                <MudText Typo="Typo.caption" Color="Color.Secondary">Un peu de musique. Beaucoup de souvenirs.</MudText>
+                <MudText Typo="Typo.caption">MyDisk © @DateTime.Today.Year</MudText>
+            </MudStack>
+        </MudContainer>
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    private bool _drawerOpen = true;
+    private string SwaggerUrl => new Uri(Http.BaseAddress!, "swagger").ToString();
+    private void ToggleDrawer() => _drawerOpen = !_drawerOpen;
+}

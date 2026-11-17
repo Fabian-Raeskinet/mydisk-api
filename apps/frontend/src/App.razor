@@ -1,0 +1,20 @@
+@using MyDisks.Frontend.Layout
+
+<MudThemeProvider Theme="UiTheme.Default" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<Router AppAssembly="typeof(App).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="typeof(MainLayout)">
+            <PageTitle>MyDisk — Page introuvable</PageTitle>
+            <MudAlert Severity="Severity.Warning">Cette page n’existe pas.</MudAlert>
+            <MudButton Href="/" Color="Color.Primary" Class="mt-4">Revenir à la collection</MudButton>
+        </LayoutView>
+    </NotFound>
+</Router>

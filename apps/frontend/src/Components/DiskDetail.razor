@@ -1,0 +1,253 @@
+<MudDialog @ref="_dialog"
+           Visible="true"
+           VisibleChanged="OnVisibleChangedAsync"
+           Options="DialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">@Disk.Name</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudStack Spacing="3">
+            @if (!string.IsNullOrWhiteSpace(Error))
+            {
+                <MudAlert Severity="Severity.Error">@Error</MudAlert>
+            }
+
+            @if (Loading)
+            {
+                <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
+                <MudText>Chargement du disque et de ses avis…</MudText>
+            }
+            else
+            {
+                <MudGrid Spacing="3">
+                    <MudItem xs="12" sm="4">
+                        @if (!string.IsNullOrWhiteSpace(Disk.ImageUrl))
+                        {
+                            <MudImage Src="@Disk.ImageUrl"
+                                      Alt="@($"Pochette de {Disk.Name}")"
+                                      Height="160"
+                                      ObjectFit="ObjectFit.Cover"
+                                      Fluid="true" />
+                        }
+                        else
+                        {
+                            <MudIcon Icon="@Icons.Material.Filled.Album"
+                                     Color="Color.Primary"
+                                     Size="Size.Large" />
+                        }
+                    </MudItem>
+                    <MudItem xs="12" sm="8">
+                        <MudStack Spacing="2">
+                            <MudText Typo="Typo.h5">@Disk.Name</MudText>
+                            <MudText>@(Disk.Author?.Pseudonym ?? "Artiste non associé")</MudText>
+                            <MudText Typo="Typo.body2" Color="Color.Secondary">
+                                Sortie : @(Disk.ReleaseDate?.ToString("dd MMMM yyyy", FrenchCulture) ?? "Non renseignée")
+                            </MudText>
+                            <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="2">
+                                <MudButton Variant="Variant.Outlined"
+                                           StartIcon="@Icons.Material.Filled.Edit"
+                                           Disabled="Busy"
+                                           OnClick="OnEdit">
+                                    Modifier
+                                </MudButton>
+                                <MudButton Color="Color.Error"
+                                           Variant="Variant.Text"
+                                           StartIcon="@Icons.Material.Filled.Delete"
+                                           Disabled="Busy"
+                                           OnClick="ToggleDeleteConfirmation">
+                                    Supprimer
+                                </MudButton>
+                            </MudStack>
+                        </MudStack>
+                    </MudItem>
+                </MudGrid>
+
+                @if (_confirmDelete)
+                {
+                    <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined">
+                        <MudStack Spacing="2">
+                            <MudText>
+                                Supprimer « @Disk.Name » et tous ses avis ? Cette action est définitive.
+                            </MudText>
+                            <MudStack Row="true" Justify="Justify.FlexEnd" Spacing="2">
+                                <MudButton Disabled="Busy" OnClick="ToggleDeleteConfirmation">
+                                    Conserver
+                                </MudButton>
+                                <MudButton Color="Color.Error"
+                                           Variant="Variant.Filled"
+                                           Disabled="Busy"
+                                           OnClick="OnDelete">
+                                    Supprimer le disque
+                                </MudButton>
+                            </MudStack>
+                        </MudStack>
+                    </MudAlert>
+                }
+
+                <MudTabs Rounded="true" KeepPanelsAlive="true">
+                    <MudTabPanel Text="@($"Les avis ({Disk.Reviews?.Count ?? 0})")"
+                                 Icon="@Icons.Material.Filled.RateReview">
+                        <MudStack Spacing="3" Class="py-4">
+                            @if (Disk.Reviews?.Any() != true)
+                            {
+                                <MudAlert Severity="Severity.Info">
+                                    Aucun avis sur ce disque pour le moment.
+                                </MudAlert>
+                            }
+                            else
+                            {
+                                @foreach (var review in Disk.Reviews!.OrderByDescending(r => r.PublishedDate))
+                                {
+                                    <MudPaper @key="review.Id" Outlined="true" Class="pa-4">
+                                        <MudStack Spacing="2">
+                                            <MudStack Row="true"
+                                                      AlignItems="AlignItems.Center"
+                                                      Justify="Justify.SpaceBetween"
+                                                      Wrap="Wrap.Wrap">
+                                                <MudText Typo="Typo.subtitle1">@review.Title</MudText>
+                                                <MudChip T="string"
+                                                         Icon="@Icons.Material.Filled.Star"
+                                                         Color="Color.Warning"
+                                                         Size="Size.Small">
+                                                    @review.Note.ToString("0.#", FrenchCulture) / 5
+                                                </MudChip>
+                                            </MudStack>
+                                            <MudText Typo="Typo.body2">@review.Content</MudText>
+                                            <MudStack Row="true"
+                                                      AlignItems="AlignItems.Center"
+                                                      Wrap="Wrap.Wrap"
+                                                      Spacing="2">
+                                                <MudChip T="string"
+                                                         Color="@StatusColor(review.Status)"
+                                                         Size="Size.Small">
+                                                    @StatusLabel(review.Status)
+                                                </MudChip>
+                                                @if (review.PublishedDate.Year > 1)
+                                                {
+                                                    <MudText Typo="Typo.caption">
+                                                        @review.PublishedDate.ToString("dd/MM/yyyy", FrenchCulture)
+                                                    </MudText>
+                                                }
+                                                @if (review.Status != ReviewStatus.Archived)
+                                                {
+                                                    <MudButton Size="Size.Small"
+                                                               StartIcon="@Icons.Material.Filled.Archive"
+                                                               Disabled="Busy"
+                                                               OnClick="() => OnArchive.InvokeAsync(review.Id)">
+                                                        Archiver
+                                                    </MudButton>
+                                                }
+                                            </MudStack>
+                                        </MudStack>
+                                    </MudPaper>
+                                }
+                            }
+
+                            <MudDivider />
+                            <MudText Typo="Typo.h6">Ajouter votre avis</MudText>
+
+                            @if (Disk.ReleaseDate?.Date > DateTime.Today)
+                            {
+                                <MudAlert Severity="Severity.Info">
+                                    Les avis seront disponibles après la date de sortie du disque.
+                                </MudAlert>
+                            }
+                            else
+                            {
+                                <EditForm Model="_review" OnValidSubmit="SubmitReviewAsync" FormName="create-review">
+                                    <DataAnnotationsValidator />
+                                    <MudStack Spacing="3">
+                                        <MudTextField T="string"
+                                                      InputId="review-title"
+                                                      Label="Titre de l’avis"
+                                                      @bind-Value="_review.Title"
+                                                      For="@(() => _review.Title)"
+                                                      MaxLength="30"
+                                                      Variant="Variant.Outlined"
+                                                      Disabled="Busy" />
+                                        <MudNumericField T="double"
+                                                         InputId="review-note"
+                                                         Label="Note sur 5"
+                                                         @bind-Value="_review.Note"
+                                                         For="@(() => _review.Note)"
+                                                         Min="0"
+                                                         Max="5"
+                                                         Step="0.5"
+                                                         Variant="Variant.Outlined"
+                                                         Disabled="Busy" />
+                                        <MudTextField T="string"
+                                                      InputId="review-content"
+                                                      Label="Votre avis"
+                                                      @bind-Value="_review.Content"
+                                                      For="@(() => _review.Content)"
+                                                      Lines="3"
+                                                      Variant="Variant.Outlined"
+                                                      Disabled="Busy" />
+                                        <MudText Typo="Typo.body2" Color="Color.Secondary">
+                                            Les nouveaux avis ont le statut « Nouveau ». L’API ne propose pas encore de publication.
+                                        </MudText>
+                                        <MudButton ButtonType="ButtonType.Submit"
+                                                   Color="Color.Primary"
+                                                   Variant="Variant.Filled"
+                                                   StartIcon="@Icons.Material.Filled.Add"
+                                                   Disabled="Busy">
+                                            @(Busy ? "Envoi…" : "Ajouter mon avis")
+                                        </MudButton>
+                                    </MudStack>
+                                </EditForm>
+                            }
+                        </MudStack>
+                    </MudTabPanel>
+                    <MudTabPanel Text="L’artiste" Icon="@Icons.Material.Filled.Person">
+                        <EditForm Model="_author" OnValidSubmit="AttachAuthorAsync" FormName="attach-author">
+                            <DataAnnotationsValidator />
+                            <MudStack Spacing="3" Class="py-4">
+                                <MudText Typo="Typo.h6">Associer un artiste</MudText>
+                                <MudText Typo="Typo.body2">
+                                    Choisissez un artiste de la collection ou renseignez son identifiant.
+                                </MudText>
+                                @if (Authors.Any())
+                                {
+                                    <MudSelect T="string"
+                                               Label="Artistes de la collection"
+                                               Value="@_knownAuthorId"
+                                               ValueChanged="ChooseAuthor"
+                                               Variant="Variant.Outlined"
+                                               Clearable="true"
+                                               Disabled="Busy">
+                                        @foreach (var artist in Authors.OrderBy(a => a.Pseudonym))
+                                        {
+                                            <MudSelectItem T="string" Value="@artist.Id.ToString()">
+                                                @artist.Pseudonym
+                                            </MudSelectItem>
+                                        }
+                                    </MudSelect>
+                                }
+                                <MudTextField T="string"
+                                              InputId="author-id"
+                                              Label="Identifiant de l’artiste (UUID)"
+                                              @bind-Value="_author.AuthorId"
+                                              For="@(() => _author.AuthorId)"
+                                              Variant="Variant.Outlined"
+                                              Disabled="Busy" />
+                                <MudText Typo="Typo.body2" Color="Color.Secondary">
+                                    L’API ne propose pas encore de création ni de liste complète des artistes.
+                                </MudText>
+                                <MudButton ButtonType="ButtonType.Submit"
+                                           Color="Color.Primary"
+                                           Variant="Variant.Filled"
+                                           StartIcon="@Icons.Material.Filled.PersonAdd"
+                                           Disabled="Busy">
+                                    @(Busy ? "Association…" : "Associer l’artiste")
+                                </MudButton>
+                            </MudStack>
+                        </EditForm>
+                    </MudTabPanel>
+                </MudTabs>
+            }
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Disabled="Busy" OnClick="RequestCloseAsync">Fermer</MudButton>
+    </DialogActions>
+</MudDialog>

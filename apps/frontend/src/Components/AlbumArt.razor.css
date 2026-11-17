@@ -1,0 +1,134 @@
+/* Decorative record sleeves only; interaction uses MudCard/MudButton. */
+.album-art {
+    --sleeve: #d5bc7d;
+    --sleeve-ink: #504e32;
+    --label: #b86b4d;
+    position: relative;
+    aspect-ratio: 1;
+    width: 100%;
+    overflow: hidden;
+    background: var(--sleeve);
+    color: var(--sleeve-ink);
+}
+.album-art::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(120deg, #ffffff12, transparent 38%, #0000000a);
+    box-shadow: inset 0 0 35px #00000007;
+}
+.album-art img {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+.art-1 {
+    --sleeve: #b9664e;
+    --sleeve-ink: #f9dfb7;
+    --label: #ddb76f;
+}
+.art-2 {
+    --sleeve: #729083;
+    --sleeve-ink: #f4efcf;
+    --label: #c3835d;
+}
+.art-3 {
+    --sleeve: #d9d8c0;
+    --sleeve-ink: #4b6357;
+    --label: #8c9c70;
+}
+.art-4 {
+    --sleeve: #7a8c9b;
+    --sleeve-ink: #ecedda;
+    --label: #d9b46e;
+}
+.cover-top {
+    position: absolute;
+    z-index: 2;
+    top: 8%;
+    left: 8%;
+    right: 8%;
+    display: flex;
+    justify-content: space-between;
+    font-size: clamp(5px, .48vw, 7px);
+    letter-spacing: .13em;
+    font-weight: 600;
+}
+.vinyl {
+    position: absolute;
+    width: 61%;
+    aspect-ratio: 1;
+    left: 19.5%;
+    top: 16%;
+    border-radius: 50%;
+    background: repeating-radial-gradient(circle, #24332d 0 1px, #1b2926 2px 3px);
+    box-shadow: 2px 4px 12px #0003;
+}
+.vinyl::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: conic-gradient(from 20deg, transparent 0 12%, #e3e7c621 22%, transparent 31% 62%, #e3e7c619 74%, transparent 85%);
+}
+.vinyl-label {
+    position: absolute;
+    inset: 34%;
+    background: var(--label);
+    border-radius: 50%;
+    border: 1px solid #dcb58440;
+}
+.vinyl-label::before, .vinyl-label::after {
+    content: "";
+    position: absolute;
+    width: 42%;
+    height: 1px;
+    background: #f6dfae55;
+    left: 29%;
+    top: 26%;
+}
+.vinyl-label::after {
+    top: 71%;
+}
+.vinyl-label span {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    top: calc(50% - 3px);
+    left: calc(50% - 3px);
+    border-radius: 50%;
+    background: #283b30;
+}
+.cover-bottom {
+    position: absolute;
+    z-index: 2;
+    bottom: 8%;
+    left: 8%;
+    right: 8%;
+}
+.cover-bottom strong {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin-bottom: 5px;
+    font-size: clamp(13px, 1.4vw, 23px);
+    letter-spacing: -.045em;
+    line-height: 1.1;
+    font-weight: 600;
+}
+.cover-bottom > span {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: clamp(5px, .5vw, 8px);
+    text-transform: uppercase;
+    letter-spacing: .14em;
+    opacity: .8;
+}
+

@@ -1,0 +1,23 @@
+<div class="album-art art-@Variant" aria-hidden="true">
+    @if (!string.IsNullOrWhiteSpace(Disk.ImageUrl) && !_imageFailed)
+    {
+        <img src="@Disk.ImageUrl" alt="" loading="lazy" referrerpolicy="no-referrer" @onerror="() => _imageFailed = true" />
+    }
+    else
+    {
+        <div class="cover-top"><span>MYDISK RECORDS</span><span>STEREO</span></div>
+        <div class="vinyl"><div class="vinyl-label"><span></span></div></div>
+        <div class="cover-bottom"><strong>@Disk.Name</strong><span>@(Disk.Author?.Pseudonym ?? "COLLECTION PERSONNELLE")</span></div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public DiskResult Disk { get; set; } = new();
+    private bool _imageFailed;
+    private Guid _diskId;
+    private int Variant => (int)((uint)Disk.Id.GetHashCode() % 5);
+    protected override void OnParametersSet()
+    {
+        if (_diskId != Disk.Id) { _imageFailed = false; _diskId = Disk.Id; }
+    }
+}

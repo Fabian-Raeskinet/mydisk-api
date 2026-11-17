@@ -1,0 +1,53 @@
+@implements IDisposable
+
+@if (!string.IsNullOrWhiteSpace(_notice))
+{
+    <MudAlert Severity="@(_error ? Severity.Error : Severity.Success)"
+              ShowCloseIcon="true"
+              CloseIconClicked="ClearNotice"
+              Class="mb-4">
+        @_notice
+    </MudAlert>
+}
+
+@if (ShowReviews)
+{
+    <PublishedReviewsView Disks="_disks"
+                          Loading="_loading"
+                          OnSelect="SelectDiskAsync"
+                          OnBrowse="BrowseCollection" />
+}
+else
+{
+    <CollectionView Disks="_disks"
+                    Loading="_loading"
+                    LoadFailed="_loadFailed"
+                    Busy="_busy"
+                    OnCreate="OpenCreate"
+                    OnRefresh="RefreshAsync"
+                    OnSelect="SelectDiskAsync" />
+}
+
+@if (_selected is not null)
+{
+    <DiskDetail Disk="_selected"
+                Loading="_detailLoading"
+                Busy="_busy"
+                Error="@_dialogError"
+                Authors="KnownAuthors"
+                OnClose="CloseDetail"
+                OnEdit="OpenEdit"
+                OnDelete="DeleteAsync"
+                OnAttach="AttachAsync"
+                OnReview="CreateReviewAsync"
+                OnArchive="ArchiveAsync" />
+}
+
+@if (_editorOpen)
+{
+    <DiskEditor Disk="_editing"
+                Busy="_busy"
+                Error="@_dialogError"
+                OnClose="CloseEditor"
+                OnSave="SaveDiskAsync" />
+}

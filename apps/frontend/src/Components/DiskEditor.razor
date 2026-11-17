@@ -1,0 +1,61 @@
+<MudDialog @ref="_dialog"
+           Visible="true"
+           VisibleChanged="OnVisibleChangedAsync"
+           Options="DialogOptions">
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            @(Disk is null ? "Ajouter un disque" : "Modifier le disque")
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <EditForm Model="_form" OnValidSubmit="SubmitAsync" FormName="disk-editor">
+            <DataAnnotationsValidator />
+            <MudStack Spacing="3">
+                @if (!string.IsNullOrWhiteSpace(Error))
+                {
+                    <MudAlert Severity="Severity.Error">@Error</MudAlert>
+                }
+
+                <MudTextField T="string"
+                              InputId="disk-name"
+                              Label="Titre du disque"
+                              @bind-Value="_form.Name"
+                              For="@(() => _form.Name)"
+                              MaxLength="30"
+                              Variant="Variant.Outlined"
+                              Disabled="Busy"
+                              AutoFocus="true" />
+
+                <MudDatePicker Label="Date de sortie"
+                               InputId="disk-date"
+                               @bind-Date="_form.ReleaseDate"
+                               For="@(() => _form.ReleaseDate)"
+                               Culture="FrenchCulture"
+                               DateFormat="dd/MM/yyyy"
+                               Variant="Variant.Outlined"
+                               Editable="true"
+                               Clearable="true"
+                               Disabled="Busy" />
+
+                <MudText Typo="Typo.body2" Color="Color.Secondary">
+                    Vous pourrez ensuite associer un artiste et ajouter vos avis.
+                </MudText>
+
+                <MudStack Row="true" Justify="Justify.FlexEnd" Spacing="2">
+                    <MudButton Variant="Variant.Text"
+                               Disabled="Busy"
+                               OnClick="RequestCloseAsync">
+                        Annuler
+                    </MudButton>
+                    <MudButton ButtonType="ButtonType.Submit"
+                               Color="Color.Primary"
+                               Variant="Variant.Filled"
+                               StartIcon="@Icons.Material.Filled.Save"
+                               Disabled="Busy">
+                        @(Busy ? "Enregistrement…" : "Enregistrer le disque")
+                    </MudButton>
+                </MudStack>
+            </MudStack>
+        </EditForm>
+    </DialogContent>
+</MudDialog>

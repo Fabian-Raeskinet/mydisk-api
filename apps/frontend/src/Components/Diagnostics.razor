@@ -1,0 +1,73 @@
+<MudStack Spacing="4">
+    <MudGrid Spacing="3">
+        <MudItem xs="12" sm="8">
+            <MudText Typo="Typo.h4" HtmlTag="h1">État de l’API</MudText>
+            <MudText Typo="Typo.body1" Color="Color.Secondary">
+                Vérifiez la disponibilité des services et des points d’entrée de l’API.
+            </MudText>
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Filled.Refresh"
+                       Disabled="@_checking" OnClick="CheckAsync">
+                @(_checking ? "Vérification…" : "Actualiser les sondes")
+            </MudButton>
+        </MudItem>
+    </MudGrid>
+
+    @if (_checking)
+    {
+        <MudProgressLinear Indeterminate="true" Color="Color.Primary" aria-label="Vérification des sondes" />
+    }
+
+    <MudGrid Spacing="3">
+        @foreach (var check in _checks)
+        {
+            <MudItem xs="12" sm="6" lg="3">
+                <MudCard Outlined="true">
+                    <MudCardContent>
+                        <MudStack Spacing="2">
+                            <MudIcon Icon="@check.Icon" Color="Color.Primary" Size="Size.Large" />
+                            <MudText Typo="Typo.h6">@check.Title</MudText>
+                            <MudText Typo="Typo.body2">@check.Path</MudText>
+                            <MudChip T="string" Color="@StatusColor(check)" Variant="Variant.Outlined">
+                                @StatusLabel(check)
+                            </MudChip>
+                            <MudText Typo="Typo.body2">@check.Message</MudText>
+                        </MudStack>
+                    </MudCardContent>
+                </MudCard>
+            </MudItem>
+        }
+    </MudGrid>
+
+    <MudPaper Outlined="true" Class="pa-6">
+        <MudStack Spacing="3">
+            <MudText Typo="Typo.h6">Service de retry</MudText>
+            <MudText Typo="Typo.body1">
+                Déclenche l’action de démonstration du service de reprise sur erreur.
+            </MudText>
+            <MudText Typo="Typo.body2">GET /api/Miscellaneous/disks</MudText>
+            <MudAlert Severity="Severity.Info" Variant="Variant.Text">
+                Le résultat dépend du service de démonstration. La réponse peut prendre plusieurs secondes.
+            </MudAlert>
+            <MudButton Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.PlayArrow"
+                       Disabled="@_retrying" OnClick="RetryAsync">
+                @(_retrying ? "Exécution en cours…" : "Exécuter l’action")
+            </MudButton>
+            @if (_retrying)
+            {
+                <MudProgressLinear Indeterminate="true" Color="Color.Primary" aria-label="Exécution du retry" />
+            }
+            @if (_retryResult is not null)
+            {
+                <MudAlert Severity="@(_retrySuccess ? Severity.Success : Severity.Error)" role="status">
+                    @_retryResult
+                </MudAlert>
+            }
+        </MudStack>
+    </MudPaper>
+
+    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">
+        L’application et les actions de l’API sont actuellement accessibles sans authentification.
+    </MudAlert>
+</MudStack>

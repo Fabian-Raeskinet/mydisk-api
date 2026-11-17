@@ -1,0 +1,62 @@
+<MudStack Spacing="4">
+    <MudText Typo="Typo.h4" HtmlTag="h1">Les avis</MudText>
+    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">
+        Retrouvez les avis publiés. Ouvrez un disque pour consulter tous ses avis, en ajouter ou en archiver.
+    </MudAlert>
+
+    @if (Loading)
+    {
+        <MudProgressLinear Indeterminate="true" Color="Color.Primary" aria-label="Chargement des avis" />
+    }
+    else if (!PublishedReviews.Any())
+    {
+        <MudPaper Outlined="true" Class="pa-6">
+            <MudStack AlignItems="AlignItems.Center" Spacing="3">
+                <MudIcon Icon="@Icons.Material.Outlined.RateReview" Size="Size.Large" Color="Color.Primary" />
+                <MudText Typo="Typo.h6">Aucun avis publié pour le moment</MudText>
+                <MudText Typo="Typo.body1" Align="Align.Center">
+                    Les avis apparaîtront ici une fois publiés. Les nouveaux avis restent consultables dans le détail du disque.
+                </MudText>
+                <MudButton Color="Color.Primary" Variant="Variant.Filled"
+                           EndIcon="@Icons.Material.Filled.ArrowForward" OnClick="OnBrowse">
+                    Parcourir la collection
+                </MudButton>
+            </MudStack>
+        </MudPaper>
+    }
+    else
+    {
+        <MudGrid Spacing="3">
+            @foreach (var item in PublishedReviews)
+            {
+                <MudItem xs="12" md="6" xl="4" @key="item.Review.Id">
+                    <MudCard Outlined="true">
+                        <MudCardContent>
+                            <MudStack Spacing="2">
+                                <MudText Typo="Typo.overline" Color="Color.Secondary">@item.Disk.Name</MudText>
+                                <MudText Typo="Typo.h6">@item.Review.Title</MudText>
+                                <MudChip T="string" Color="Color.Warning" Variant="Variant.Outlined" Icon="@Icons.Material.Filled.Star">
+                                    @item.Review.Note.ToString("0.#", CultureInfo.GetCultureInfo("fr-FR")) / 5
+                                </MudChip>
+                                <MudText Typo="Typo.body1">@item.Review.Content</MudText>
+                                @if (item.Review.PublishedDate.Year > 1)
+                                {
+                                    <MudText Typo="Typo.caption" Color="Color.Secondary">
+                                        Publié le @item.Review.PublishedDate.ToString("dd/MM/yyyy")
+                                    </MudText>
+                                }
+                            </MudStack>
+                        </MudCardContent>
+                        <MudCardActions>
+                            <MudButton Variant="Variant.Text" Color="Color.Primary"
+                                       EndIcon="@Icons.Material.Filled.ArrowForward"
+                                       OnClick="() => OnSelect.InvokeAsync(item.Disk)">
+                                Voir le disque
+                            </MudButton>
+                        </MudCardActions>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    }
+</MudStack>

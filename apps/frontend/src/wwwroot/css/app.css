@@ -1,0 +1,90 @@
+/* Visual skin over MudBlazor. Layout, inputs, dialogs and responsive behavior
+   are provided by MudBlazor; design tokens are in Layout/UiTheme.cs. */
+.md-appbar { border-bottom: 1px solid var(--mud-palette-divider); }
+.md-logo { color: #ddb769; }
+.md-brand .mud-link { font-weight: 750; letter-spacing: -1.5px; }
+.md-sidebar .mud-nav-link { border-radius: 8px; margin: 4px 0; }
+.md-sidebar .mud-navmenu .mud-nav-link.active:not(.mud-nav-link-disabled) {
+    background: #f5f3e9;
+    color: #153f35;
+}
+.md-sidebar .mud-navmenu .mud-nav-link.active .mud-nav-link-icon { color: inherit; }
+.md-sidebar .mud-divider { border-color: #ffffff24; }
+.md-sidebar-footer { color: #acc3b7; }
+.md-sidebar .mud-typography-overline { font-size: .65rem; letter-spacing: .14em; }
+.md-page-kicker { color: #8f8264; letter-spacing: .14em; }
+.md-page h1 { letter-spacing: -.045em; }
+.md-collection-banner {
+    position: relative;
+    overflow: hidden;
+    min-height: 194px;
+    background: linear-gradient(110deg, #153f35, #2b5141);
+    color: #faf7ec;
+}
+.md-collection-banner .mud-typography-overline { color: #c2cba6; }
+.md-collection-banner .mud-typography-body1 { color: #c0d0bf; }
+.md-banner-copy { position: relative; z-index: 1; max-width: 65%; }
+.md-banner-record {
+    position: absolute;
+    width: 245px;
+    height: 220px;
+    right: 24px;
+    top: 12px;
+    pointer-events: none;
+}
+.md-banner-record::before {
+    content: "";
+    position: absolute;
+    width: 158px;
+    height: 170px;
+    top: 24px;
+    left: 0;
+    transform: rotate(-13deg);
+    background: #c1805c;
+    border: 7px solid #cc946e;
+    box-shadow: -6px 9px 20px #071e2130;
+}
+.md-banner-record::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 7px;
+    width: 194px;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, #283b30 0 3px, #dfb760 4px 29px, #d5ac59 30px 37px, transparent 38px),
+                repeating-radial-gradient(circle, #172322 0 2px, #253230 3px 4px);
+    box-shadow: 6px 8px 17px #051b1c60;
+}
+.md-stat-card { height: 100%; }
+.md-stat-card .mud-avatar { background: #edf0e5; color: #697d59; }
+.md-stat-artists.mud-avatar { background: #f5ece4; color: #ae7b59; }
+.md-stat-reviews.mud-avatar { background: #f4f0de; color: #ad8940; }
+.md-disk-card { height: 100%; transition: transform .16s, box-shadow .16s; }
+.md-disk-card:hover { transform: translateY(-3px); box-shadow: 0 8px 22px #28392b12; }
+.md-art-wrap { padding: 0; margin: 10px; overflow: hidden; border-radius: 7px; }
+.md-disk-caption { overflow-wrap: anywhere; }
+.md-disk-card .mud-card-actions { border-top: 1px solid var(--mud-palette-divider); margin: 0 16px; padding-inline: 0; }
+.md-page-subtitle { margin-top: 8px; color: var(--mud-palette-text-secondary); }
+.md-disk-metadata { padding: 8px 16px; }
+.md-disk-year { color: var(--mud-palette-text-secondary); }
+.md-disk-rating { color: #ad8940; }
+@media (max-width: 600px) {
+    .md-banner-copy { max-width: 85%; }
+    .md-banner-record { right: -62px; top: 12px; transform: scale(.75); opacity: .4; }
+    .md-collection-banner { min-height: 180px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .md-disk-card { transition: none; }
+    .md-disk-card:hover { transform: none; }
+}
+/* Visible only if Blazor cannot bootstrap; no library is available at that point. */
+#blazor-error-ui {
+    display: none;
+    position: fixed;
+    inset: auto 0 0;
+    padding: 1rem;
+    background: #fff3cd;
+    color: #664d03;
+    z-index: 2000;
+}
