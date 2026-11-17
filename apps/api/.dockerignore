@@ -9,3 +9,4 @@
 k8s/
 infra/
 .env
+postgres.env

@@ -13,6 +13,31 @@ spec:
         app: keycloak
     spec:
       automountServiceAccountToken: false
+      initContainers:
+        - name: wait-for-db
+          image: postgres:17-alpine
+          command:
+            - sh
+            - -c
+            - until pg_isready -h keycloak-postgres -p 5432 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -t 2; do sleep 2; done
+          envFrom:
+            - secretRef:
+                name: keycloak-postgres-secret
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 70
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+            seccompProfile:
+              type: RuntimeDefault
+          resources:
+            requests:
+              cpu: 10m
+              memory: 16Mi
+            limits:
+              memory: 64Mi
       containers:
         - name: keycloak
           image: quay.io/keycloak/keycloak:26.4.0
@@ -21,7 +46,18 @@ spec:
           ports:
             - name: http
               containerPort: 8080
+            - name: management
+              containerPort: 9000
+          securityContext:
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: [ALL]
+            seccompProfile:
+              type: RuntimeDefault
           env:
+            - name: KC_HEALTH_ENABLED
+              value: "true"
             - name: KC_DB
               value: postgres
             - name: KC_DB_URL
@@ -46,6 +82,8 @@ spec:
                 secretKeyRef:
                   name: keycloak-admin-secret
                   key: ADMIN_PASSWORD
+            - name: KC_PROXY_HEADERS
+              value: xforwarded
           resources:
             requests:
               cpu: 250m
@@ -53,11 +91,18 @@ spec:
             limits:
               memory: 1Gi
           startupProbe:
-            tcpSocket:
-              port: http
+            httpGet:
+              path: /health/started
+              port: management
             periodSeconds: 5
             failureThreshold: 60
           readinessProbe:
-            tcpSocket:
-              port: http
+            httpGet:
+              path: /health/ready
+              port: management
             periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: management
+            periodSeconds: 20

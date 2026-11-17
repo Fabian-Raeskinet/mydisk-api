@@ -5,7 +5,10 @@ FRONTEND_DIR = apps/frontend
 FRONTEND_PROJECT = $(FRONTEND_DIR)/src/MyDisk.Frontend.csproj
 API_K8S = $(API_DIR)/k8s
 LOCAL_API_OVERLAY = $(API_K8S)/overlays/local
-COMPOSE = docker compose --env-file $(API_DIR)/.env -f $(API_DIR)/compose.yml
+COMPOSE_ENV_FILE = $(API_DIR)/postgres.env
+COMPOSE = docker compose --env-file $(COMPOSE_ENV_FILE) -f $(API_DIR)/compose.yml
+KEYCLOAK_OVERLAY = apps/keycloak/k8s/overlays/local
+KEYCLOAK_URL = http://auth.mydisk.localhost:$(HTTP_PORT)
 ENV ?= local
 K8S_OVERLAY = deploy/k8s/$(ENV)
 IMAGE_NAME = mydisk-api:dev
@@ -20,6 +23,7 @@ LOAD_TEST_PATH ?= /api/Disk/disks
 API_DEPLOYMENT = deployment/mydisk-api
 GRAFANA_DEPLOYMENT = deployment/mydisk-grafana
 FRONTEND_DEPLOYMENT = deployment/mydisk-frontend
+KEYCLOAK_DEPLOYMENT = deployment/keycloak
 APP_DEPLOYMENTS = $(API_DEPLOYMENT) $(FRONTEND_DEPLOYMENT)
 ROLLOUT_TIMEOUT ?= 5m
 ROLLOUT_AUTO_UNDO ?= 1
@@ -53,7 +57,7 @@ INFRA_CONTEXT ?= $(AKS_CLUSTER_NAME)
 .PHONY: help up down restart logs ps build clean test-unit frontend-restore frontend-dev frontend-check k8s-preflight k8s-smoke \
         local-https k8s-init-tls cluster-https-port cluster-create cluster-start cluster-stop cluster-delete cluster-reset cluster-status cluster-load \
         k8s-help k8s-init-secrets k8s-build k8s-render k8s-apply k8s-delete \
-        k8s-status k8s-restart k8s-logs k8s-logs-db k8s-logs-migrations k8s-forward-api k8s-forward-frontend k8s-forward-db k8s-up k8s-down \
+        k8s-status k8s-restart k8s-logs k8s-logs-db k8s-logs-migrations k8s-logs-keycloak k8s-forward-api k8s-forward-frontend k8s-forward-db k8s-smoke-keycloak k8s-up k8s-down \
         k8s-push k8s-load-test k8s-watch-hpa dev-up dev-down \
         k8s-rollout-ok k8s-rollout-broken k8s-rollout-undo k8s-rollout-history k8s-watch-rollout k8s-watch-traffic \
         k8s-release-overlay k8s-deploy k8s-rollout-check \
@@ -116,16 +120,18 @@ help:
 	@echo "  k8s-delete          Delete overlay resources"
 	@echo "  k8s-render          Render and preview Kustomize manifests without applying"
 	@echo "  k8s-build           Build local API, migrations, frontend and Grafana images"
-	@echo "  k8s-init-secrets    Generate $(K8S_SECRETS) (gitignored) if missing, local only"
+	@echo "  k8s-init-secrets    Generate $(K8S_SECRETS) and Keycloak env files (gitignored) if missing, local only"
 	@echo "  k8s-status          Display status of pods, services, statefulsets, and PVCs"
 	@echo "  k8s-smoke           Check the frontend and API through the HTTPS ingress"
 	@echo "  k8s-restart         Rollout restart the API and frontend deployments"
 	@echo "  k8s-logs            Stream logs from the API pods"
 	@echo "  k8s-logs-db         Stream logs from the PostgreSQL pod"
 	@echo "  k8s-logs-migrations Show logs from the migrations Job"
+	@echo "  k8s-logs-keycloak   Stream logs from the Keycloak pod"
 	@echo "  k8s-forward-api     Port-forward API deployment to localhost:8081 (bypasses Ingress)"
 	@echo "  k8s-forward-frontend Port-forward frontend to localhost:3000"
 	@echo "  k8s-forward-db      Port-forward PostgreSQL service to localhost:5432"
+	@echo "  k8s-smoke-keycloak  Check Keycloak through the ingress at $(KEYCLOAK_URL), local only"
 	@echo "  k8s-load-test       Run k6 CPU load test on LOAD_TEST_PATH=$(LOAD_TEST_PATH) to trigger HPA scale-up"
 	@echo "  k8s-watch-hpa       Watch HPA and API pods while the load test runs"
 	@echo "  k8s-rollout-ok      Roll out a healthy revision: surge a new pod, then remove the old one"
@@ -236,7 +242,7 @@ frontend-check:
 # -----------------------------------------------------------------------------
 # Kubernetes (K8s)
 # -----------------------------------------------------------------------------
-# Generate overlay secrets.env, adding any missing password (reuses .env password to keep existing PVC usable)
+# Generate overlay secrets.env, adding any missing password (reuses postgres.env password to keep existing PVC usable)
 K8S_SECRETS = $(LOCAL_API_OVERLAY)/secrets.env
 k8s-init-secrets:
 	@[ "$(ENV)" = local ] || exit 0; \
@@ -244,10 +250,19 @@ k8s-init-secrets:
 	for key in POSTGRES_PASSWORD POSTGRES_MIGRATOR_PASSWORD POSTGRES_APP_PASSWORD; do \
 		grep -q "^$$key=" $(K8S_SECRETS) && continue; \
 		pw=; \
-		[ "$$key" = POSTGRES_PASSWORD ] && [ -f $(API_DIR)/.env ] && pw=$$(sed -n 's/^POSTGRES_PASSWORD=//p' $(API_DIR)/.env); \
+		[ "$$key" = POSTGRES_PASSWORD ] && [ -f $(COMPOSE_ENV_FILE) ] && pw=$$(sed -n 's/^POSTGRES_PASSWORD=//p' $(COMPOSE_ENV_FILE)); \
 		[ -n "$$pw" ] || pw=$$(openssl rand -hex 32); \
 		printf '%s=%s\n' "$$key" "$$pw" >> $(K8S_SECRETS); \
 		echo "Added $$key to $(K8S_SECRETS)."; \
+	done; \
+	for entry in postgres.env:POSTGRES_USER=keycloak postgres.env:POSTGRES_PASSWORD= postgres.env:POSTGRES_DB=keycloak \
+		keycloak.env:ADMIN_USERNAME=admin keycloak.env:ADMIN_PASSWORD=; do \
+		file=$(KEYCLOAK_OVERLAY)/$${entry%%:*}; pair=$${entry#*:}; key=$${pair%%=*}; value=$${pair#*=}; \
+		touch "$$file"; \
+		grep -q "^$$key=" "$$file" && continue; \
+		[ -n "$$value" ] || value=$$(openssl rand -hex 32); \
+		printf '%s=%s\n' "$$key" "$$value" >> "$$file"; \
+		echo "Added $$key to $$file."; \
 	done
 
 # Build Docker images for local Kubernetes cluster
@@ -294,11 +309,7 @@ k8s-apply: k8s-init-secrets k8s-init-tls
 	done; \
 	$(MAKE) k8s-rollout-check K8S_ROLLBACK_REVISIONS="$$baseline"; \
 	$(KUBECTL) apply -k $(K8S_OVERLAY) -l 'mydisk.io/deploy-after-frontend=true'
-ifeq ($(ENV),local)
 	@echo "Frontend after rollout is $(API_URL); API documentation: $(API_URL)/swagger"
-else
-	@echo "Frontend after rollout is $(API_URL); API documentation: $(API_URL)/swagger"
-endif
 
 # Delete Kubernetes overlay resources
 k8s-delete: k8s-init-secrets k8s-init-tls
@@ -313,7 +324,9 @@ k8s-up: k8s-preflight
 	$(MAKE) k8s-apply K8S_REFRESH_API_IMAGE=1
 	$(KUBECTL) rollout restart $(GRAFANA_DEPLOYMENT)
 	$(KUBECTL) rollout status $(GRAFANA_DEPLOYMENT) --timeout=$(ROLLOUT_TIMEOUT)
+	$(KUBECTL) rollout status $(KEYCLOAK_DEPLOYMENT) --timeout=$(ROLLOUT_TIMEOUT)
 	$(MAKE) k8s-smoke
+	$(MAKE) k8s-smoke-keycloak
 else
 k8s-up: k8s-push
 	$(MAKE) k8s-deploy
@@ -442,6 +455,10 @@ k8s-logs-db:
 k8s-logs-migrations:
 	$(KUBECTL) logs job/mydisk-api-migrations --tail=100
 
+# Stream logs from the Keycloak deployment
+k8s-logs-keycloak:
+	$(KUBECTL) logs -l app=keycloak -f --tail=100
+
 # Forward local port 8081 to API deployment (8080 is taken by the k3d load balancer)
 k8s-forward-api:
 	$(KUBECTL) port-forward deployment/mydisk-api 8081:8080
@@ -453,6 +470,14 @@ k8s-forward-frontend:
 # Forward local port 5432 to PostgreSQL service
 k8s-forward-db:
 	$(KUBECTL) port-forward svc/postgres 5432:5432
+
+# KC_HOSTNAME pins every redirect to KEYCLOAK_URL, so a port-forward would not work.
+k8s-smoke-keycloak:
+	@set -eu; \
+	issuer=$$(curl --fail --silent --show-error --retry 10 --retry-delay 3 --retry-all-errors --connect-timeout 5 --max-time 20 \
+		"$(KEYCLOAK_URL)/realms/master/.well-known/openid-configuration" | sed -n 's/.*"issuer":"\([^"]*\)".*/\1/p'); \
+	[ "$$issuer" = "$(KEYCLOAK_URL)/realms/master" ] || { echo "Keycloak issuer is '$$issuer', expected $(KEYCLOAK_URL)/realms/master: check KC_HOSTNAME." >&2; exit 1; }; \
+	echo "Keycloak verified, admin console: $(KEYCLOAK_URL)/admin"
 
 # Run the k6 load test through the Ingress to push CPU above the HPA target
 k8s-load-test:
