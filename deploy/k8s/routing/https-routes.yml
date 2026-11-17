@@ -1,0 +1,39 @@
+- op: replace
+  path: /spec/rules/0/http/paths
+  value:
+    # Match whole segments with Traefik's default character-wise PathPrefix.
+    - path: /api
+      pathType: Exact
+      backend: &api
+        service:
+          name: mydisk-api
+          port:
+            name: http
+    - path: /api/
+      pathType: Prefix
+      backend: *api
+    - path: /health
+      pathType: Exact
+      backend: *api
+    - path: /health/
+      pathType: Prefix
+      backend: *api
+    - path: /maintenance
+      pathType: Exact
+      backend: *api
+    - path: /maintenance/
+      pathType: Prefix
+      backend: *api
+    - path: /swagger
+      pathType: Exact
+      backend: *api
+    - path: /swagger/
+      pathType: Prefix
+      backend: *api
+    - path: /
+      pathType: Prefix
+      backend:
+        service:
+          name: mydisk-frontend
+          port:
+            name: http

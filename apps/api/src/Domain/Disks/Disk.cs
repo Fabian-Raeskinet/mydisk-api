@@ -20,7 +20,6 @@ public sealed class Disk : AggregateRoot<Guid>
     public void AddReview(Review review)
     {
         EnsureReviewIsNotDuplicated(review);
-        ValidateReleaseDate();
         Reviews.Add(review);
     }
 
@@ -38,11 +37,5 @@ public sealed class Disk : AggregateRoot<Guid>
     {
         if (Reviews.Contains(review))
             throw new InvalidOperationException("Cannot add an existing review");
-    }
-
-    private void ValidateReleaseDate()
-    {
-        if (ReleaseDate > DateTime.Now)
-            throw new InvalidOperationException("Cannot add a review for a future disk release date");
     }
 }

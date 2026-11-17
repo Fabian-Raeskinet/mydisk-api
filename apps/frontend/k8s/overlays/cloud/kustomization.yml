@@ -23,6 +23,3 @@ patches:
       - op: replace
         path: /spec/template/spec/containers/0/imagePullPolicy
         value: Always
-      - op: replace
-        path: /spec/template/spec/containers/0/env/0/value
-        value: http://mydisk-api.mydisk.svc.cluster.local:80

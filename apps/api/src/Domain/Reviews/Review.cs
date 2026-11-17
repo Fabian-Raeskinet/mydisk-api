@@ -7,6 +7,7 @@ public class Review : AggregateRoot<Guid>
     public Review()
     {
         Status = ReviewStatus.New;
+        PublishedDate = DateTimeOffset.UtcNow;
     }
 
     public DateTimeOffset PublishedDate { get; init; }

@@ -1,0 +1,10 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: same-origin-api
+spec:
+  headers:
+    customResponseHeaders:
+      Access-Control-Allow-Origin: ""
+      X-Content-Type-Options: nosniff
+      Referrer-Policy: strict-origin-when-cross-origin

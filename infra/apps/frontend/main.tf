@@ -5,7 +5,6 @@ locals {
   deployment     = yamldecode(file("${local.manifests_path}/deployment.yml"))
   service        = yamldecode(file("${local.manifests_path}/service.yml"))
   container      = local.deployment.spec.template.spec.containers[0]
-  api_upstream   = var.api_upstream == null ? "http://mydisk-api.${var.namespace}.svc.cluster.local:80" : var.api_upstream
 }
 
 resource "kubernetes_manifest" "deployment" {
@@ -18,9 +17,6 @@ resource "kubernetes_manifest" "deployment" {
           containers = [merge(local.container, {
             image           = var.image
             imagePullPolicy = var.image_pull_policy
-            env = [for env in local.container.env : merge(env,
-              env.name == "API_UPSTREAM" ? { value = local.api_upstream } : {}
-            )]
           })]
         })
       })
@@ -45,16 +41,34 @@ resource "kubernetes_manifest" "ingress" {
     apiVersion = "networking.k8s.io/v1"
     kind       = "Ingress"
     metadata = {
-      name        = "mydisk-frontend"
-      namespace   = var.namespace
-      annotations = var.ingress_annotations
+      name      = "mydisk-frontend"
+      namespace = var.namespace
+      annotations = merge(var.ingress_annotations, {
+        "traefik.ingress.kubernetes.io/router.middlewares" = join(",", compact([
+          lookup(var.ingress_annotations, "traefik.ingress.kubernetes.io/router.middlewares", ""),
+          "${var.namespace}-same-origin-api@kubernetescrd",
+        ]))
+      })
     }
     spec = merge({
       ingressClassName = var.ingress_class_name
       rules = [{
         host = var.ingress_host
         http = {
-          paths = [{
+          paths = concat(flatten([
+            for prefix in ["/api", "/health", "/maintenance", "/swagger"] : [
+              for path in [{ value = prefix, type = "Exact" }, { value = "${prefix}/", type = "Prefix" }] : {
+                path     = path.value
+                pathType = path.type
+                backend = {
+                  service = {
+                    name = "mydisk-api"
+                    port = { name = "http" }
+                  }
+                }
+              }
+            ]
+            ]), [{
             path     = "/"
             pathType = "Prefix"
             backend = {
@@ -63,7 +77,7 @@ resource "kubernetes_manifest" "ingress" {
                 port = { name = "http" }
               }
             }
-          }]
+          }])
         }
       }]
       }, var.tls_secret_name == null ? {} : {

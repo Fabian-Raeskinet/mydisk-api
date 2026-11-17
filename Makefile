@@ -267,7 +267,7 @@ k8s-push:
 k8s-render: k8s-init-secrets k8s-init-tls
 	kubectl kustomize $(K8S_OVERLAY)
 
-# Keep existing ingress routes until migrations and application rollouts succeed.
+# Update existing ingress routes before replacing the frontend image.
 # Jobs are immutable: recreate the migration Job for each deployment.
 k8s-apply: k8s-init-secrets k8s-init-tls
 	@set -e; \
@@ -283,6 +283,10 @@ k8s-apply: k8s-init-secrets k8s-init-tls
 	existing_deployments=; \
 	if [ "$(K8S_REFRESH_API_IMAGE)" = "1" ]; then \
 		existing_deployments=$$($(KUBECTL) get $(APP_DEPLOYMENTS) --ignore-not-found -o name); \
+	fi; \
+	frontend=$$($(KUBECTL) get $(FRONTEND_DEPLOYMENT) --ignore-not-found -o name); \
+	if [ -n "$$frontend" ]; then \
+		$(KUBECTL) apply -k $(K8S_OVERLAY) -l 'mydisk.io/deploy-after-frontend=true'; \
 	fi; \
 	$(KUBECTL) apply -k $(K8S_OVERLAY) -l 'mydisk.io/deploy-after-migrations=true'; \
 	for deployment in $$existing_deployments; do \
@@ -410,7 +414,7 @@ k8s-preflight:
 		exit 1; \
 	fi
 
-# Readiness probes alone do not exercise nginx -> API Service routing.
+# Exercise both Traefik backends through the public application URL.
 k8s-smoke:
 	@set -eu; set --; \
 	if [ "$(ENV)" = local ]; then set -- --cacert "$$(mkcert -CAROOT)/rootCA.pem"; fi; \
@@ -442,7 +446,7 @@ k8s-logs-migrations:
 k8s-forward-api:
 	$(KUBECTL) port-forward deployment/mydisk-api 8081:8080
 
-# Access the SPA and its same-origin API proxy without the Ingress.
+# Preview the static frontend independently of Traefik.
 k8s-forward-frontend:
 	$(KUBECTL) port-forward svc/mydisk-frontend 3000:8080
 
@@ -563,13 +567,16 @@ local-https: cluster-https-port
 	kubectl kustomize deploy/k8s/local > "$$rendered"; \
 	kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f "$$rendered" --dry-run=client >/dev/null
 	kubectl --context k3d-$(CLUSTER_NAME) -n default create secret tls mydisk-api-local-tls --cert=$(LOCAL_API_OVERLAY)/.tls/tls.crt --key=$(LOCAL_API_OVERLAY)/.tls/tls.key --dry-run=client -o yaml | kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f -
-	@set -e; backend=mydisk-api; \
-	if [ -n "$$(kubectl --context k3d-$(CLUSTER_NAME) -n default get deployment mydisk-frontend --ignore-not-found -o name)" ]; then \
-		backend=mydisk-frontend; \
-	fi; \
-	sed "s/name: mydisk-api$$/name: $$backend/" $(LOCAL_API_OVERLAY)/https.yml | \
-		kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f -
-	kubectl --context k3d-$(CLUSTER_NAME) -n default patch ingress mydisk-api --type=merge --patch-file=$(LOCAL_API_OVERLAY)/api-ingress-http.yml
+	@set -e; \
+	kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f $(LOCAL_API_OVERLAY)/https-redirect.yml; \
+	frontend=$$(kubectl --context k3d-$(CLUSTER_NAME) -n default get deployment mydisk-frontend --ignore-not-found -o name); \
+	if [ -n "$$frontend" ]; then \
+		kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f $(API_DIR)/k8s/base/same-origin-api.yml; \
+		kubectl --context k3d-$(CLUSTER_NAME) -n default apply -k deploy/k8s/local -l 'mydisk.io/deploy-after-frontend=true'; \
+	else \
+		kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f $(LOCAL_API_OVERLAY)/https.yml; \
+		kubectl --context k3d-$(CLUSTER_NAME) -n default patch ingress mydisk-api --type=merge --patch-file=$(LOCAL_API_OVERLAY)/api-ingress-http.yml; \
+	fi
 	@echo "Local API: https://localhost:8443/swagger/index.html"
 
 # Security checks: same commands locally and in GitHub Actions.

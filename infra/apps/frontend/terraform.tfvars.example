@@ -3,11 +3,6 @@ namespace    = "mydisk"
 image        = "ghcr.io/fabian-raeskinet/mydisk-frontend:REPLACE_WITH_COMMIT_SHA"
 replicas     = 2
 
-# Defaults to http://mydisk-api.<namespace>.svc.cluster.local:80.
-# Override with a fully qualified origin if the API is elsewhere or the cluster
-# uses a custom DNS domain. Nginx does not apply DNS search suffixes.
-# api_upstream = "http://mydisk-api.mydisk.svc.custom.internal:80"
-
 # Optional: a dedicated host, different from the API's existing ingress host.
 # ingress_host    = "collection.example.com"
 # tls_secret_name = "collection-tls"

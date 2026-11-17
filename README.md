@@ -107,7 +107,7 @@ these API overlays. Use the parent paths to render the deployment for each envir
 
 ### Networking
 
-The k3d load balancer maps `localhost:8443` to port 443 and `localhost:8080` to port 80. Traefik (bundled with k3s) terminates local TLS, redirects HTTP to HTTPS, and routes requests through an `Ingress` to the frontend. Nginx serves the UI and proxies API requests to the API `Service`. No port-forwarding is needed. The API pod only receives traffic once its readiness probe on `/health/ready` passes. Deployment keeps existing ingress routes until migrations and both application rollouts succeed, then switches the ingress to the frontend.
+The k3d load balancer maps `localhost:8443` to port 443 and `localhost:8080` to port 80. Traefik (bundled with k3s) terminates local TLS, redirects HTTP to HTTPS, and routes requests through an `Ingress` to the API and frontend Services. NGINX serves the Blazor files. No port-forwarding is needed. The API pod only receives traffic once its readiness probe on `/health/ready` passes. On first deployment the ingress is applied after both rollouts succeed. Existing frontend installations get the direct API routes after migrations and before the frontend rollout.
 
 ### Database migrations and seeding
 
@@ -354,9 +354,9 @@ Both pipelines trigger on `master`. Connect only one of them to the cluster, or 
 
 `apps/frontend/src` contains the Blazor WebAssembly application for the API's disk, author
 association, review and operational actions. It has no authentication; Keycloak
-can be integrated later. Every write is sent to the existing API. nginx serves
-the compiled WebAssembly application and proxies `/api`, `/health`,
-`/maintenance` and `/swagger` to the API on the same origin.
+can be integrated later. Every write is sent to the existing API. NGINX serves
+the compiled WebAssembly application. Traefik routes `/api`, `/health`,
+`/maintenance` and `/swagger` directly to the API on the same origin.
 
 The interface uses **MudBlazor** for navigation, responsive grids, cards, inputs,
 date pickers, dialogs, tabs, validation feedback and alerts. Branding lives in
@@ -408,11 +408,10 @@ action. The UI offers known artists plus UUID entry, displays all review states
 in disk details, and refuses ambiguous detail results when names are duplicated.
 Release dates are sent as calendar dates without timezone offsets.
 
-Docker Compose publishes the UI on `127.0.0.1:3000`. Kubernetes uses
+Docker Compose publishes Traefik on `127.0.0.1:3000`. Kubernetes uses
 `apps/frontend/k8s/base` plus local/cloud overlays, composed by the parent
-`deploy/k8s` overlays. The existing ingress and TLS configuration serve the
-frontend and its API proxy. `make k8s-forward-frontend` provides an alternative
-on http://localhost:3000. The image defaults to
+`deploy/k8s` overlays. The existing ingress and TLS configuration serve both backends.
+`make k8s-forward-frontend` previews static assets on http://localhost:3000. The image defaults to
 `ghcr.io/fabian-raeskinet/mydisk-frontend` in the cloud; make that GHCR package
 public before the first AKS deployment, as for the API packages.
 
@@ -420,8 +419,7 @@ public before the first AKS deployment, as for the API packages.
 include the frontend. Release overlays pin API, migration and frontend images
 to the same commit tag. Deployments wait for successful database migrations;
 rollout verification checks the API and frontend and restores changed deployments
-to their recorded revisions on failure. Ingress switches to the frontend only
-after both application rollouts succeed.
+to their recorded revisions on failure.
 The frontend's `/frontend-health` probe checks nginx independently of the API.
 
 For Terraform-managed frontend resources, see
@@ -465,7 +463,7 @@ The container listens on port `8080`. The build context is `apps/api/`, where `.
 
 ```bash
 cp apps/api/.env.example apps/api/.env    # then set a strong POSTGRES_PASSWORD
-make up                 # build and start PostgreSQL, migrations, API and frontend
+make up                 # build and start PostgreSQL, migrations, API, frontend and Traefik
 ```
 
 Open the frontend at http://localhost:3000 and Swagger at http://localhost:8080/swagger.

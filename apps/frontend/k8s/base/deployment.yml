@@ -37,11 +37,6 @@ spec:
           ports:
             - containerPort: 8080
               name: http
-          env:
-            - name: API_UPSTREAM
-              value: http://mydisk-api.default.svc.cluster.local:80
-            - name: NGINX_ENVSUBST_OUTPUT_DIR
-              value: /tmp
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true

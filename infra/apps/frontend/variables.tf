@@ -39,18 +39,6 @@ variable "replicas" {
   }
 }
 
-variable "api_upstream" {
-  type        = string
-  default     = null
-  nullable    = true
-  description = "Optional fully qualified API origin. Null uses mydisk-api.<namespace>.svc.cluster.local:80. Override for a custom cluster DNS domain. No trailing slash."
-
-  validation {
-    condition     = var.api_upstream == null || can(regex("^https?://[A-Za-z0-9.-]+(:[0-9]+)?$", var.api_upstream))
-    error_message = "Use a fully qualified HTTP(S) origin such as http://mydisk-api.mydisk.svc.cluster.local:80, with no path or trailing slash, or null."
-  }
-}
-
 variable "ingress_host" {
   type        = string
   default     = null

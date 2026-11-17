@@ -24,7 +24,7 @@ public class CreateReviewCommandHandler : ICommandHandler<CreateReviewCommandReq
         {
             Title = request.Title,
             Content = request.Content,
-            Note = request.Note
+            Note = request.Note,
         };
         
         disk.AddReview(review);

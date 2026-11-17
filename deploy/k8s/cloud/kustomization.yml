@@ -5,6 +5,9 @@ resources:
   - ../../../apps/api/k8s/overlays/cloud
   - ../../../apps/frontend/k8s/overlays/cloud
 
+components:
+  - ../routing
+
 patches:
   - target:
       kind: Ingress
@@ -14,6 +17,10 @@ patches:
         path: /metadata/labels
         value:
           mydisk.io/deploy-after-frontend: "true"
-      - op: replace
-        path: /spec/rules/0/http/paths/0/backend/service/name
-        value: mydisk-frontend
+  - target:
+      kind: Ingress
+      name: mydisk-api
+    patch: |-
+      - op: add
+        path: /metadata/annotations/traefik.ingress.kubernetes.io~1router.middlewares
+        value: mydisk-same-origin-api@kubernetescrd

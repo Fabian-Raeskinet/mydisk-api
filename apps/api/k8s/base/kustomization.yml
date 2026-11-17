@@ -6,6 +6,7 @@ resources:
   - api-hpa.yml
   - api-service.yml
   - api-ingress.yml
+  - same-origin-api.yml
   - api-migrations-job.yml
   - postgres-statefulset.yml
   - postgres-service.yml
