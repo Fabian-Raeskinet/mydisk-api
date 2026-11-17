@@ -89,6 +89,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Services.IntegrationTests",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DependencyInjection.Configurations", "src\DependencyInjection.Configurations\DependencyInjection.Configurations.csproj", "{E9118D7A-9D66-43AE-80C8-5F098F09DF78}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Frontend", "Frontend", "{CE609670-85B9-0D16-FB54-ED063D5D8A6D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyDisk.Frontend", "..\frontend\src\MyDisk.Frontend.csproj", "{295D151C-39E3-480A-8FBE-469F30E12FF7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -215,6 +219,10 @@ Global
 		{E9118D7A-9D66-43AE-80C8-5F098F09DF78}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9118D7A-9D66-43AE-80C8-5F098F09DF78}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9118D7A-9D66-43AE-80C8-5F098F09DF78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{295D151C-39E3-480A-8FBE-469F30E12FF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{295D151C-39E3-480A-8FBE-469F30E12FF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{295D151C-39E3-480A-8FBE-469F30E12FF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{295D151C-39E3-480A-8FBE-469F30E12FF7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -250,6 +258,7 @@ Global
 		{1F3E8EC0-7795-4167-B70B-8531792CEC91} = {8A4D5B92-342B-4ADD-BDF0-214FC709E4A9}
 		{41E9BCEE-C74B-444A-AE63-D1DD10D329CF} = {BA736A1A-0672-4774-A13C-475B23638DB8}
 		{E9118D7A-9D66-43AE-80C8-5F098F09DF78} = {3C374A58-CF84-4E0F-85F2-B395F1741185}
+		{295D151C-39E3-480A-8FBE-469F30E12FF7} = {CE609670-85B9-0D16-FB54-ED063D5D8A6D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CDEBD79A-8B81-483D-9476-808386234780}

@@ -1,0 +1,5 @@
+**/bin/
+**/obj/
+k8s/
+**/*.user
+**/.DS_Store

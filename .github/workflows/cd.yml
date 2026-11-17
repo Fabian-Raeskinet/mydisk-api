@@ -64,6 +64,11 @@ jobs:
           curl --fail --show-error --silent --retry 6 --retry-delay 10 --retry-all-errors --connect-timeout 10 --max-time 30 \
             https://mydisk-fabian.westeurope.cloudapp.azure.com/health/live
 
+      - name: Verify frontend
+        run: |
+          curl --fail --show-error --silent --retry 6 --retry-delay 10 --retry-all-errors --connect-timeout 10 --max-time 30 \
+            https://mydisk-fabian.westeurope.cloudapp.azure.com/ | grep -q '_framework/blazor.webassembly.js'
+
       - name: Rollout history
         if: always()
         run: make k8s-rollout-history ENV=cloud AKS_CLUSTER_NAME="$AKS_CLUSTER_NAME"

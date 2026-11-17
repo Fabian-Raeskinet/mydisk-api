@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mydisk-frontend
+spec:
+  selector:
+    app: mydisk-frontend
+  ports:
+    - name: http
+      port: 8080
+      targetPort: http

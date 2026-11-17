@@ -50,6 +50,22 @@ jobs:
           path: TestResults/*.trx
           if-no-files-found: ignore
 
+  frontend:
+    name: Blazor WebAssembly build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '11.0.x'
+
+      - name: Restore frontend dependencies
+        run: make frontend-restore
+
+      - name: Build frontend
+        run: make frontend-check
+
   infra:
     name: OpenTofu validate
     runs-on: ubuntu-latest
@@ -65,7 +81,7 @@ jobs:
 
   images:
     name: Container images
-    needs: [test, infra]
+    needs: [test, frontend, infra]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -85,6 +101,7 @@ jobs:
         env:
           API_IMAGE: ${{ env.REGISTRY }}/mydisk-api:${{ github.sha }}
           MIGRATIONS_IMAGE: ${{ env.REGISTRY }}/mydisk-api-migrations:${{ github.sha }}
+          FRONTEND_IMAGE: ${{ env.REGISTRY }}/mydisk-frontend:${{ github.sha }}
         run: make security-build
 
       - name: Install Trivy
@@ -93,10 +110,11 @@ jobs:
           version: v0.76.2
           cache: true
 
-      - name: Scan both images and enforce policy
+      - name: Scan application images and enforce policy
         env:
           API_IMAGE: ${{ env.REGISTRY }}/mydisk-api:${{ github.sha }}
           MIGRATIONS_IMAGE: ${{ env.REGISTRY }}/mydisk-api-migrations:${{ github.sha }}
+          FRONTEND_IMAGE: ${{ env.REGISTRY }}/mydisk-frontend:${{ github.sha }}
         run: make security-images
 
       - name: Upload complete image reports
@@ -121,3 +139,4 @@ jobs:
         run: |
           docker push "$REGISTRY/mydisk-api:${GITHUB_SHA}"
           docker push "$REGISTRY/mydisk-api-migrations:${GITHUB_SHA}"
+          docker push "$REGISTRY/mydisk-frontend:${GITHUB_SHA}"

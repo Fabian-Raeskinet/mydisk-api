@@ -3,3 +3,17 @@ kind: Kustomization
 
 resources:
   - ../../../apps/api/k8s/overlays/cloud
+  - ../../../apps/frontend/k8s/overlays/cloud
+
+patches:
+  - target:
+      kind: Ingress
+      name: mydisk-api(-http)?
+    patch: |-
+      - op: add
+        path: /metadata/labels
+        value:
+          mydisk.io/deploy-after-frontend: "true"
+      - op: replace
+        path: /spec/rules/0/http/paths/0/backend/service/name
+        value: mydisk-frontend

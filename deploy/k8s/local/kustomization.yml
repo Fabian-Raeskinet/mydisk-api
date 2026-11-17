@@ -4,3 +4,19 @@ kind: Kustomization
 resources:
   - ../../../apps/api/k8s/overlays/local
   - ../../../apps/grafana/k8s/overlays/local
+  - ../../../apps/frontend/k8s/overlays/local
+
+# Reuse the existing HTTP redirect and TLS ingress. Nginx serves the frontend
+# and proxies API requests, health checks, maintenance and Swagger unchanged.
+patches:
+  - target:
+      kind: Ingress
+      name: mydisk-api(-https)?
+    patch: |-
+      - op: add
+        path: /metadata/labels
+        value:
+          mydisk.io/deploy-after-frontend: "true"
+      - op: replace
+        path: /spec/rules/0/http/paths/0/backend/service/name
+        value: mydisk-frontend

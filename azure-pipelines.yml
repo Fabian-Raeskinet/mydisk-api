@@ -40,6 +40,21 @@ stages:
               testResultsFiles: 'TestResults/*.trx'
               testRunTitle: 'Unit tests'
 
+      - job: Frontend
+        displayName: 'Blazor WebAssembly build'
+        steps:
+          - task: UseDotNet@2
+            displayName: 'Install .NET 11 SDK'
+            inputs:
+              packageType: 'sdk'
+              version: '11.0.x'
+
+          - script: make frontend-restore
+            displayName: 'Restore frontend dependencies'
+
+          - script: make frontend-check
+            displayName: 'Build frontend'
+
       - job: Infra
         displayName: 'OpenTofu validate'
         steps:
@@ -48,7 +63,7 @@ stages:
 
       - job: Images
         displayName: 'Container images'
-        dependsOn: [Test, Infra]
+        dependsOn: [Test, Frontend, Infra]
         steps:
           - ${{ if and(eq(variables['Build.SourceBranch'], 'refs/heads/master'), ne(variables['Build.Reason'], 'PullRequest')) }}:
             - task: Docker@2

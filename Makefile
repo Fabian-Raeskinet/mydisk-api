@@ -1,6 +1,8 @@
 
 API_DIR = apps/api
 GRAFANA_DIR = apps/grafana
+FRONTEND_DIR = apps/frontend
+FRONTEND_PROJECT = $(FRONTEND_DIR)/src/MyDisk.Frontend.csproj
 API_K8S = $(API_DIR)/k8s
 LOCAL_API_OVERLAY = $(API_K8S)/overlays/local
 COMPOSE = docker compose --env-file $(API_DIR)/.env -f $(API_DIR)/compose.yml
@@ -9,6 +11,7 @@ K8S_OVERLAY = deploy/k8s/$(ENV)
 IMAGE_NAME = mydisk-api:dev
 MIGRATIONS_IMAGE_NAME = mydisk-api-migrations:dev
 GRAFANA_IMAGE_NAME = mydisk-grafana:1.0.0
+FRONTEND_IMAGE_NAME = mydisk-frontend:dev
 CLUSTER_NAME ?= mydisk
 HTTP_PORT ?= 8080
 K8S_MIGRATIONS_TIMEOUT ?= 5m
@@ -16,6 +19,8 @@ LOAD_TEST_SCRIPT = $(API_K8S)/bench/load-test.js
 LOAD_TEST_PATH ?= /api/Disk/disks
 API_DEPLOYMENT = deployment/mydisk-api
 GRAFANA_DEPLOYMENT = deployment/mydisk-grafana
+FRONTEND_DEPLOYMENT = deployment/mydisk-frontend
+APP_DEPLOYMENTS = $(API_DEPLOYMENT) $(FRONTEND_DEPLOYMENT)
 ROLLOUT_TIMEOUT ?= 5m
 ROLLOUT_AUTO_UNDO ?= 1
 ROLLOUT_BROKEN_PATH ?= /health/broken
@@ -42,12 +47,13 @@ endif
 TOFU ?= tofu
 INFRA_CLUSTER = infra/cluster
 INFRA_PLATFORM = infra/platform/azure
+INFRA_FRONTEND = infra/apps/frontend
 INFRA_CONTEXT ?= $(AKS_CLUSTER_NAME)
 
-.PHONY: help up down restart logs ps build clean test-unit \
+.PHONY: help up down restart logs ps build clean test-unit frontend-restore frontend-dev frontend-check k8s-preflight k8s-smoke \
         local-https k8s-init-tls cluster-https-port cluster-create cluster-start cluster-stop cluster-delete cluster-reset cluster-status cluster-load \
         k8s-help k8s-init-secrets k8s-build k8s-render k8s-apply k8s-delete \
-        k8s-status k8s-restart k8s-logs k8s-logs-db k8s-logs-migrations k8s-forward-api k8s-forward-db k8s-up k8s-down \
+        k8s-status k8s-restart k8s-logs k8s-logs-db k8s-logs-migrations k8s-forward-api k8s-forward-frontend k8s-forward-db k8s-up k8s-down \
         k8s-push k8s-load-test k8s-watch-hpa dev-up dev-down \
         k8s-rollout-ok k8s-rollout-broken k8s-rollout-undo k8s-rollout-history k8s-watch-rollout k8s-watch-traffic \
         k8s-release-overlay k8s-deploy k8s-rollout-check \
@@ -88,6 +94,9 @@ help:
 	@echo ""
 	@echo "Test targets:"
 	@echo "  test-unit           Run every *.Tests project, TRX results in $(TEST_RESULTS)/"
+	@echo "  frontend-restore    Restore Blazor WebAssembly dependencies"
+	@echo "  frontend-dev        Run Blazor WebAssembly with dotnet watch"
+	@echo "  frontend-check      Build the Blazor WebAssembly frontend"
 	@echo ""
 	@echo "Infrastructure targets (OpenTofu, requires TF_VAR_state_passphrase):"
 	@echo "  infra-up            Create the AKS cluster, fetch credentials, install the platform"
@@ -95,25 +104,27 @@ help:
 	@echo "  infra-platform      Create or update the Azure platform ($(INFRA_PLATFORM))"
 	@echo "  infra-credentials   Merge the AKS kubeconfig into ~/.kube/config"
 	@echo "  infra-cluster       Install Traefik, namespace and DB Secret on context INFRA_CONTEXT=$(INFRA_CONTEXT)"
-	@echo "  infra-check         Format check and validate both stacks"
+	@echo "  infra-check         Format check and validate platform and frontend stacks"
 	@echo ""
 	@echo "Kubernetes targets (default ENV=local, ENV=cloud targets context $(AKS_CLUSTER_NAME)):"
 	@echo "  k8s-up              local: build, import to k3d, deploy | cloud: build, push to registry, deploy"
 	@echo "  k8s-push            Build linux/amd64 images and push them to $(REGISTRY) with tag $(IMAGE_TAG)"
 	@echo "  k8s-deploy          CD entry point, ENV=cloud only: pin IMAGE_TAG, run migrations, deploy, roll back on failure"
-	@echo "  k8s-rollout-check   Wait for the API rollout, undo it and fail if it does not complete"
+	@echo "  k8s-rollout-check   Wait for app rollouts; restore changed revisions on failure"
 	@echo "  k8s-down            Delete Kubernetes resources for current overlay"
-	@echo "  k8s-apply           Run migrations, then apply the API Deployment"
+	@echo "  k8s-apply           Run migrations, roll out API/frontend, then update ingress"
 	@echo "  k8s-delete          Delete overlay resources"
 	@echo "  k8s-render          Render and preview Kustomize manifests without applying"
-	@echo "  k8s-build           Build local Docker images ($(IMAGE_NAME), $(MIGRATIONS_IMAGE_NAME))"
+	@echo "  k8s-build           Build local API, migrations, frontend and Grafana images"
 	@echo "  k8s-init-secrets    Generate $(K8S_SECRETS) (gitignored) if missing, local only"
 	@echo "  k8s-status          Display status of pods, services, statefulsets, and PVCs"
-	@echo "  k8s-restart         Rollout restart the API deployment"
+	@echo "  k8s-smoke           Check the frontend and API through the HTTPS ingress"
+	@echo "  k8s-restart         Rollout restart the API and frontend deployments"
 	@echo "  k8s-logs            Stream logs from the API pods"
 	@echo "  k8s-logs-db         Stream logs from the PostgreSQL pod"
 	@echo "  k8s-logs-migrations Show logs from the migrations Job"
 	@echo "  k8s-forward-api     Port-forward API deployment to localhost:8081 (bypasses Ingress)"
+	@echo "  k8s-forward-frontend Port-forward frontend to localhost:3000"
 	@echo "  k8s-forward-db      Port-forward PostgreSQL service to localhost:5432"
 	@echo "  k8s-load-test       Run k6 CPU load test on LOAD_TEST_PATH=$(LOAD_TEST_PATH) to trigger HPA scale-up"
 	@echo "  k8s-watch-hpa       Watch HPA and API pods while the load test runs"
@@ -129,9 +140,9 @@ help:
 # -----------------------------------------------------------------------------
 # Create local k3d cluster if it does not exist
 cluster-create:
-	@if k3d cluster list | grep -q "^$(CLUSTER_NAME)"; then \
+	@set -e; if k3d cluster list | grep -q "^$(CLUSTER_NAME)"; then \
 		echo "Cluster '$(CLUSTER_NAME)' already exists."; \
-		k3d cluster start $(CLUSTER_NAME) 2>/dev/null || true; \
+		k3d cluster start $(CLUSTER_NAME) --timeout 120s; \
 	else \
 		echo "Creating cluster '$(CLUSTER_NAME)'..."; \
 		k3d cluster create $(CLUSTER_NAME) \
@@ -170,7 +181,7 @@ cluster-status:
 # Load local Docker images into the k3d cluster nodes
 cluster-load:
 	@echo "Importing images into cluster $(CLUSTER_NAME)..."
-	@k3d image import $(IMAGE_NAME) $(MIGRATIONS_IMAGE_NAME) $(GRAFANA_IMAGE_NAME) -c $(CLUSTER_NAME)
+	@k3d image import $(IMAGE_NAME) $(MIGRATIONS_IMAGE_NAME) $(GRAFANA_IMAGE_NAME) $(FRONTEND_IMAGE_NAME) -c $(CLUSTER_NAME)
 
 # -----------------------------------------------------------------------------
 # Docker Compose
@@ -212,6 +223,16 @@ test-unit:
 		dotnet test "$$project" -c Release --logger trx --results-directory "$(abspath $(TEST_RESULTS))" || rc=1; \
 	done; exit $$rc
 
+# Blazor WebAssembly development (.NET SDK).
+frontend-restore:
+	dotnet restore $(FRONTEND_PROJECT)
+
+frontend-dev:
+	dotnet watch --project $(FRONTEND_PROJECT)
+
+frontend-check:
+	dotnet build $(FRONTEND_PROJECT) -c Release --no-restore
+
 # -----------------------------------------------------------------------------
 # Kubernetes (K8s)
 # -----------------------------------------------------------------------------
@@ -234,35 +255,45 @@ k8s-build:
 	docker build --target api -t $(IMAGE_NAME) $(API_DIR)
 	docker build --target migrations -t $(MIGRATIONS_IMAGE_NAME) $(API_DIR)
 	docker build -t $(GRAFANA_IMAGE_NAME) $(GRAFANA_DIR)
+	docker build -t $(FRONTEND_IMAGE_NAME) $(FRONTEND_DIR)
 
 # Build linux/amd64 images and push them to the registry for cloud clusters
 k8s-push:
 	docker buildx build --platform linux/amd64 --target api -t $(REGISTRY)/mydisk-api:$(IMAGE_TAG) --push $(API_DIR)
 	docker buildx build --platform linux/amd64 --target migrations -t $(REGISTRY)/mydisk-api-migrations:$(IMAGE_TAG) --push $(API_DIR)
+	docker buildx build --platform linux/amd64 -t $(REGISTRY)/mydisk-frontend:$(IMAGE_TAG) --push $(FRONTEND_DIR)
 
 # Render manifests to inspect generated YAML (prints Secret data)
 k8s-render: k8s-init-secrets k8s-init-tls
 	kubectl kustomize $(K8S_OVERLAY)
 
-# Apply Kubernetes overlay manifests (Jobs are immutable: recreate it to rerun migrations)
+# Keep existing ingress routes until migrations and application rollouts succeed.
+# Jobs are immutable: recreate the migration Job for each deployment.
 k8s-apply: k8s-init-secrets k8s-init-tls
-	$(KUBECTL) delete job mydisk-api-migrations --ignore-not-found
-	$(KUBECTL) apply -k $(K8S_OVERLAY) -l 'mydisk.io/deploy-after-migrations!=true'
-	@echo "Waiting for PostgreSQL migrations to complete..."
-	$(KUBECTL) wait --for=condition=complete job/mydisk-api-migrations --timeout=$(K8S_MIGRATIONS_TIMEOUT)
 	@set -e; \
-	api_deployment=; \
+	baseline=; \
+	for deployment in $(APP_DEPLOYMENTS); do \
+		revision=$$($(KUBECTL) get "$$deployment" --ignore-not-found -o 'jsonpath={.metadata.annotations.deployment\.kubernetes\.io/revision}'); \
+		baseline="$$baseline $$deployment=$${revision:-none}"; \
+	done; \
+	$(KUBECTL) delete job mydisk-api-migrations --ignore-not-found; \
+	$(KUBECTL) apply -k $(K8S_OVERLAY) -l 'mydisk.io/deploy-after-migrations!=true,mydisk.io/deploy-after-frontend!=true'; \
+	echo "Waiting for PostgreSQL migrations to complete..."; \
+	$(KUBECTL) wait --for=condition=complete job/mydisk-api-migrations --timeout=$(K8S_MIGRATIONS_TIMEOUT); \
+	existing_deployments=; \
 	if [ "$(K8S_REFRESH_API_IMAGE)" = "1" ]; then \
-		api_deployment=$$($(KUBECTL) get deployment mydisk-api --ignore-not-found -o name); \
+		existing_deployments=$$($(KUBECTL) get $(APP_DEPLOYMENTS) --ignore-not-found -o name); \
 	fi; \
 	$(KUBECTL) apply -k $(K8S_OVERLAY) -l 'mydisk.io/deploy-after-migrations=true'; \
-	if [ -n "$$api_deployment" ]; then \
-		$(KUBECTL) rollout restart "$$api_deployment"; \
-	fi
+	for deployment in $$existing_deployments; do \
+		$(KUBECTL) rollout restart "$$deployment"; \
+	done; \
+	$(MAKE) k8s-rollout-check K8S_ROLLBACK_REVISIONS="$$baseline"; \
+	$(KUBECTL) apply -k $(K8S_OVERLAY) -l 'mydisk.io/deploy-after-frontend=true'
 ifeq ($(ENV),local)
-	@echo "API endpoint after rollout is $(API_URL)"
+	@echo "Frontend after rollout is $(API_URL); API documentation: $(API_URL)/swagger"
 else
-	@echo "API endpoint after rollout is $(API_URL)"
+	@echo "Frontend after rollout is $(API_URL); API documentation: $(API_URL)/swagger"
 endif
 
 # Delete Kubernetes overlay resources
@@ -271,20 +302,23 @@ k8s-delete: k8s-init-secrets k8s-init-tls
 
 # Full setup: build images, ship them to the cluster, apply manifests, roll out the rebuilt image
 ifeq ($(ENV),local)
-k8s-up: k8s-build
+k8s-up: k8s-preflight
+	$(MAKE) k8s-build
 	$(MAKE) cluster-load
+	$(MAKE) k8s-preflight
 	$(MAKE) k8s-apply K8S_REFRESH_API_IMAGE=1
 	$(KUBECTL) rollout restart $(GRAFANA_DEPLOYMENT)
 	$(KUBECTL) rollout status $(GRAFANA_DEPLOYMENT) --timeout=$(ROLLOUT_TIMEOUT)
+	$(MAKE) k8s-smoke
 else
 k8s-up: k8s-push
-	$(MAKE) k8s-apply K8S_REFRESH_API_IMAGE=1
+	$(MAKE) k8s-deploy
 endif
 
 # Alias to delete overlay resources
 k8s-down: k8s-delete
 
-# Generate a gitignored overlay on top of the cloud overlay, pinning both images to IMAGE_TAG
+# Generate a gitignored overlay on top of the cloud overlay, pinning all application images to IMAGE_TAG
 k8s-release-overlay:
 	@[ "$(ENV)" = cloud ] || { echo "k8s-release-overlay requires ENV=cloud."; exit 1; }
 	@mkdir -p $(RELEASE_OVERLAY)
@@ -297,11 +331,13 @@ k8s-release-overlay:
 		'  - name: $(REGISTRY)/mydisk-api' \
 		'    newTag: "$(IMAGE_TAG)"' \
 		'  - name: $(REGISTRY)/mydisk-api-migrations' \
+		'    newTag: "$(IMAGE_TAG)"' \
+		'  - name: $(REGISTRY)/mydisk-frontend' \
 		'    newTag: "$(IMAGE_TAG)"' > $(RELEASE_OVERLAY)/kustomization.yml
 	@rendered=$$(kubectl kustomize $(RELEASE_OVERLAY)); \
-	for image in mydisk-api mydisk-api-migrations; do \
+	for image in mydisk-api mydisk-api-migrations mydisk-frontend; do \
 		echo "$$rendered" | grep -q "image: $(REGISTRY)/$$image:$(IMAGE_TAG)$$" || { \
-			echo "Image $(REGISTRY)/$$image:$(IMAGE_TAG) not found in the rendered manifests: REGISTRY must match the image names of $(API_K8S)/overlays/cloud."; \
+			echo "Image $(REGISTRY)/$$image:$(IMAGE_TAG) not found in the rendered manifests: REGISTRY must match the image names in the cloud overlays."; \
 			exit 1; \
 		}; \
 	done
@@ -312,16 +348,41 @@ k8s-deploy:
 	@[ "$(ENV)" = cloud ] || { echo "k8s-deploy requires ENV=cloud, use k8s-up locally."; exit 1; }
 	$(MAKE) k8s-release-overlay
 	$(MAKE) k8s-apply K8S_OVERLAY=$(RELEASE_OVERLAY)
-	$(KUBECTL) annotate $(API_DEPLOYMENT) kubernetes.io/change-cause="deploy $(IMAGE_TAG)" --overwrite
-	$(MAKE) k8s-rollout-check
+	$(KUBECTL) annotate $(APP_DEPLOYMENTS) kubernetes.io/change-cause="deploy $(IMAGE_TAG)" --overwrite
 
-# Wait for the API rollout; on failure, show the state, roll back and fail
+# A deployment run passes its baseline revisions, so unchanged workloads are
+# never downgraded. A standalone check only rolls back deployments that fail.
 k8s-rollout-check:
-	@if ! $(KUBECTL) rollout status $(API_DEPLOYMENT) --timeout=$(ROLLOUT_TIMEOUT); then \
-		echo "Rollout failed, rolling back to the previous revision."; \
-		$(KUBECTL) get rs,pods -l app=mydisk-api; \
+	@status=0; failed_deployments=; \
+	for deployment in $(APP_DEPLOYMENTS); do \
+		if ! $(KUBECTL) rollout status "$$deployment" --timeout=$(ROLLOUT_TIMEOUT); then \
+			status=1; failed_deployments="$$failed_deployments $$deployment"; \
+		fi; \
+	done; \
+	if [ "$$status" != 0 ]; then \
+		echo "Application rollout failed; restoring changed deployments with an existing baseline."; \
+		$(KUBECTL) get rs,pods -l 'app in (mydisk-api,mydisk-frontend)'; \
 		$(KUBECTL) get events --field-selector reason=Unhealthy --sort-by=.lastTimestamp | tail -n 5; \
-		$(KUBECTL) rollout undo $(API_DEPLOYMENT) && $(KUBECTL) rollout status $(API_DEPLOYMENT) --timeout=$(ROLLOUT_TIMEOUT); \
+		for deployment in $(APP_DEPLOYMENTS); do \
+			baseline=; \
+			for entry in $(K8S_ROLLBACK_REVISIONS); do \
+				case "$$entry" in "$$deployment="*) baseline=$${entry#*=} ;; esac; \
+			done; \
+			if [ "$$baseline" = none ]; then \
+				echo "$$deployment was newly created; no previous revision exists."; \
+			elif [ -n "$$baseline" ]; then \
+				current=$$($(KUBECTL) get "$$deployment" -o 'jsonpath={.metadata.annotations.deployment\.kubernetes\.io/revision}'); \
+				if [ "$$current" != "$$baseline" ]; then \
+					$(KUBECTL) rollout undo "$$deployment" --to-revision="$$baseline" && \
+					$(KUBECTL) rollout status "$$deployment" --timeout=$(ROLLOUT_TIMEOUT); \
+				fi; \
+			else \
+				case " $$failed_deployments " in \
+					*" $$deployment "*) $(KUBECTL) rollout undo "$$deployment" && \
+						$(KUBECTL) rollout status "$$deployment" --timeout=$(ROLLOUT_TIMEOUT) ;; \
+				esac; \
+			fi; \
+		done; \
 		exit 1; \
 	fi
 
@@ -335,11 +396,35 @@ dev-down: k8s-down
 
 # Display status of all deployed Kubernetes resources
 k8s-status:
+	$(KUBECTL) get nodes
 	$(KUBECTL) get pods,services,statefulsets,deployments,pvc
 
-# Rollout restart the API deployment
+# A Ready node can still reject every pod because its Docker disk is full.
+k8s-preflight:
+	$(KUBECTL) wait --for=condition=Ready nodes --all --timeout=60s
+	@set -e; conditions=$$($(KUBECTL) get nodes -o 'jsonpath={range .items[*]}{.metadata.name}{" "}{range .status.conditions[?(@.type=="DiskPressure")]}{.status}{end}{"\n"}{end}'); \
+	pressure=$$(printf '%s\n' "$$conditions" | awk '$$2 == "True" {print $$1}'); \
+	if [ -n "$$pressure" ]; then \
+		echo "Kubernetes cannot schedule pods: DiskPressure on $$pressure" >&2; \
+		echo "Check Docker storage with 'docker system df', free build cache or increase Docker's disk, then wait for DiskPressure to clear before retrying." >&2; \
+		exit 1; \
+	fi
+
+# Readiness probes alone do not exercise nginx -> API Service routing.
+k8s-smoke:
+	@set -eu; set --; \
+	if [ "$(ENV)" = local ]; then set -- --cacert "$$(mkcert -CAROOT)/rootCA.pem"; fi; \
+	html=$$(curl "$$@" --fail --silent --show-error --retry 5 --retry-delay 2 --retry-all-errors --connect-timeout 5 --max-time 20 "$(API_URL)/"); \
+	printf '%s' "$$html" | grep -Fq '_framework/blazor.webassembly.js' || { echo "The ingress did not return the Blazor application." >&2; exit 1; }; \
+	health=$$(curl "$$@" --fail --silent --show-error --retry 5 --retry-delay 2 --retry-all-errors --connect-timeout 5 --max-time 20 "$(API_URL)/health/ready"); \
+	[ "$$health" = Healthy ] || { echo "The API readiness endpoint did not return Healthy." >&2; exit 1; }; \
+	content_type=$$(curl "$$@" --fail --silent --show-error --retry 5 --retry-delay 2 --retry-all-errors --connect-timeout 5 --max-time 20 --output /dev/null --write-out '%{content_type}' "$(API_URL)/api/Disk/disks"); \
+	case "$$content_type" in application/json*) ;; *) echo "The collection endpoint did not return JSON." >&2; exit 1 ;; esac; \
+	echo "Frontend and API verified through $(API_URL)."
+
+# Rollout restart application deployments
 k8s-restart:
-	$(KUBECTL) rollout restart deployment/mydisk-api
+	$(KUBECTL) rollout restart $(APP_DEPLOYMENTS)
 
 # Stream logs from API deployment
 k8s-logs:
@@ -356,6 +441,10 @@ k8s-logs-migrations:
 # Forward local port 8081 to API deployment (8080 is taken by the k3d load balancer)
 k8s-forward-api:
 	$(KUBECTL) port-forward deployment/mydisk-api 8081:8080
+
+# Access the SPA and its same-origin API proxy without the Ingress.
+k8s-forward-frontend:
+	$(KUBECTL) port-forward svc/mydisk-frontend 3000:8080
 
 # Forward local port 5432 to PostgreSQL service
 k8s-forward-db:
@@ -449,7 +538,7 @@ infra-down:
 # Check formatting and validate all stacks without touching any backend
 infra-check:
 	$(TOFU) fmt -check -recursive infra
-	@for stack in $(INFRA_PLATFORM)/bootstrap $(INFRA_PLATFORM) $(INFRA_CLUSTER); do \
+	@for stack in $(INFRA_PLATFORM)/bootstrap $(INFRA_PLATFORM) $(INFRA_CLUSTER) $(INFRA_FRONTEND); do \
 		$(TOFU) -chdir=$$stack init -backend=false -input=false >/dev/null && \
 		$(TOFU) -chdir=$$stack validate || exit 1; \
 	done
@@ -474,7 +563,12 @@ local-https: cluster-https-port
 	kubectl kustomize deploy/k8s/local > "$$rendered"; \
 	kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f "$$rendered" --dry-run=client >/dev/null
 	kubectl --context k3d-$(CLUSTER_NAME) -n default create secret tls mydisk-api-local-tls --cert=$(LOCAL_API_OVERLAY)/.tls/tls.crt --key=$(LOCAL_API_OVERLAY)/.tls/tls.key --dry-run=client -o yaml | kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f -
-	kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f $(LOCAL_API_OVERLAY)/https.yml
+	@set -e; backend=mydisk-api; \
+	if [ -n "$$(kubectl --context k3d-$(CLUSTER_NAME) -n default get deployment mydisk-frontend --ignore-not-found -o name)" ]; then \
+		backend=mydisk-frontend; \
+	fi; \
+	sed "s/name: mydisk-api$$/name: $$backend/" $(LOCAL_API_OVERLAY)/https.yml | \
+		kubectl --context k3d-$(CLUSTER_NAME) -n default apply -f -
 	kubectl --context k3d-$(CLUSTER_NAME) -n default patch ingress mydisk-api --type=merge --patch-file=$(LOCAL_API_OVERLAY)/api-ingress-http.yml
 	@echo "Local API: https://localhost:8443/swagger/index.html"
 
@@ -482,6 +576,7 @@ local-https: cluster-https-port
 TRIVY ?= trivy
 API_IMAGE ?= $(IMAGE_NAME)
 MIGRATIONS_IMAGE ?= $(MIGRATIONS_IMAGE_NAME)
+FRONTEND_IMAGE ?= $(FRONTEND_IMAGE_NAME)
 SECURITY_PLATFORM ?= linux/amd64
 
 .PHONY: security security-dependencies security-build security-images
@@ -504,13 +599,14 @@ security-dependencies:
 security-build:
 	docker build --pull --platform $(SECURITY_PLATFORM) --target api -t "$(API_IMAGE)" $(API_DIR)
 	docker build --pull --platform $(SECURITY_PLATFORM) --target migrations -t "$(MIGRATIONS_IMAGE)" $(API_DIR)
+	docker build --pull --platform $(SECURITY_PLATFORM) -t "$(FRONTEND_IMAGE)" $(FRONTEND_DIR)
 
 security-images:
 	@command -v "$(TRIVY)" >/dev/null || { echo 'Trivy is required. On macOS: brew install trivy'; exit 1; }
 	@mkdir -p security-reports
 	@status=0; \
-	for target in api migrations; do \
-		if [ "$$target" = api ]; then image="$(API_IMAGE)"; else image="$(MIGRATIONS_IMAGE)"; fi; \
+	for target in api migrations frontend; do \
+		case "$$target" in api) image="$(API_IMAGE)" ;; migrations) image="$(MIGRATIONS_IMAGE)" ;; frontend) image="$(FRONTEND_IMAGE)" ;; esac; \
 		rm -f "security-reports/$$target.json"; \
 		echo "Scanning $$image: full report, then blocking check"; \
 		if ! "$(TRIVY)" image --image-src docker --scanners vuln --timeout 10m \

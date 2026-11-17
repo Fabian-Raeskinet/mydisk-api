@@ -7,6 +7,7 @@ The business domain is intentionally simple: the goal is to demonstrate how a .N
 ## Highlights
 
 - **.NET 10 / ASP.NET Core** Web API with Swagger
+- **Blazor WebAssembly** frontend for the collection, reviews and API diagnostics, without authentication
 - **Domain-Driven Design** building blocks: aggregates, entities, value objects, domain events
 - **CQRS-style** application layer with MediatR, FluentValidation and AutoMapper
 - **PostgreSQL** with EF Core migrations and seeding, shipped as a migration bundle and run as a dedicated Job before the API
@@ -24,15 +25,17 @@ The business domain is intentionally simple: the goal is to demonstrate how a .N
 ```text
 apps/
 ├── api/                 # .NET solution, Docker Compose, Dockerfile and Kubernetes module
+├── frontend/            # Dockerfile, nginx, Kubernetes module and src/ Blazor application
 └── grafana/             # Reserved for the Grafana application
 platform/
 └── prometheus/          # Reserved for the Prometheus platform component
 deploy/k8s/
-├── local/               # Composes the API's local overlay
-└── cloud/               # Composes the API's cloud overlay
+├── local/               # Composes the local application overlays
+└── cloud/               # Composes the cloud application overlays
 infra/
 ├── cluster/             # Shared Kubernetes and Helm stack
-└── platform/azure/     # AKS and OpenTofu state bootstrap
+├── platform/azure/      # AKS and OpenTofu state bootstrap
+└── apps/frontend/       # Optional standalone frontend Terraform/OpenTofu stack
 ```
 
 Run `make` commands from the repository root. Open `apps/api/mydisk-api.sln`
@@ -104,7 +107,7 @@ these API overlays. Use the parent paths to render the deployment for each envir
 
 ### Networking
 
-The k3d load balancer maps `localhost:8443` to port 443 and `localhost:8080` to port 80. Traefik (bundled with k3s) terminates local TLS, redirects HTTP to HTTPS, and routes requests to the API `Service` through an `Ingress`. No port-forwarding is needed. The API pod only receives traffic once its readiness probe on `/health/ready` passes.
+The k3d load balancer maps `localhost:8443` to port 443 and `localhost:8080` to port 80. Traefik (bundled with k3s) terminates local TLS, redirects HTTP to HTTPS, and routes requests through an `Ingress` to the frontend. Nginx serves the UI and proxies API requests to the API `Service`. No port-forwarding is needed. The API pod only receives traffic once its readiness probe on `/health/ready` passes. Deployment keeps existing ingress routes until migrations and both application rollouts succeed, then switches the ingress to the frontend.
 
 ### Database migrations and seeding
 
@@ -281,15 +284,15 @@ The infrastructure is not part of the pipelines: the OpenTofu state is local and
 ### Pipeline stages
 
 1. **Unit tests**: `make test-unit` runs every `*.Tests` project and writes TRX results, published by both pipelines. Integration tests are not run yet, as they need a PostgreSQL instance with a configurable connection string.
-2. **Infrastructure checks**: `make infra-check` runs `tofu fmt -check` and `tofu validate` on both stacks, without any backend.
-3. **Images**: `make k8s-push REGISTRY=... IMAGE_TAG=<commit SHA>` builds and pushes the API and migration images for `linux/amd64`. On pull requests, `make k8s-build` only checks that the images build.
+2. **Infrastructure checks**: `make infra-check` runs `tofu fmt -check` and `tofu validate` on the platform and frontend stacks, without any backend.
+3. **Images**: `make k8s-push REGISTRY=... IMAGE_TAG=<commit SHA>` builds and pushes the API, migration and frontend images for `linux/amd64`. On pull requests, `make k8s-build` only checks that the images build.
 4. **Deploy**: after an Azure login, `az aks get-credentials` creates the `mydisk` kubeconfig context, then `make k8s-deploy ENV=cloud IMAGE_TAG=<commit SHA>`:
-   1. `k8s-release-overlay` generates `deploy/k8s/cloud-release/` (gitignored), an overlay on top of `deploy/k8s/cloud` that pins both images to the commit SHA. It fails if the rendered manifests do not contain the expected images, for instance when `REGISTRY` does not match the image names of the cloud overlay.
-   2. `k8s-apply` runs the migrations Job and waits for it to succeed before applying the API Deployment.
-   3. The Deployment is annotated with `kubernetes.io/change-cause: deploy <sha>`, so `make k8s-rollout-history` shows which commit each revision runs.
-   4. `k8s-rollout-check` waits for the rollout. If it does not complete, the Deployment reports `ProgressDeadlineExceeded` after 60 seconds without progress, and the target prints the pods and probe events, runs `rollout undo` and fails the pipeline. The previous pods keep serving throughout, see [Rolling updates and rollback](#rolling-updates-and-rollback).
+   1. `k8s-release-overlay` generates `deploy/k8s/cloud-release/` (gitignored), an overlay on top of `deploy/k8s/cloud` that pins all three application images to the commit SHA. It fails if the rendered manifests do not contain the expected images, for instance when `REGISTRY` does not match the image names of the cloud overlay.
+   2. `k8s-apply` records the current application revisions, runs the migrations Job, and waits for it to succeed before applying the API and frontend Deployments.
+   3. `k8s-rollout-check` waits for both rollouts. On failure, it prints pod and probe diagnostics, restores deployments whose revisions changed to their recorded revisions, and fails the pipeline. Unchanged deployments are left at their current revision; newly created deployments have no previous revision to restore. A standalone check without recorded revisions only rolls back failed deployments.
+   4. After successful rollouts, `k8s-apply` updates the ingress routes. The Deployments are annotated with `kubernetes.io/change-cause: deploy <sha>`, so rollout history identifies the deployed commit.
 
-Each deploy uses an immutable tag, so `rollout undo` goes back to the exact image of the previous revision. A rollback only concerns the API: migrations are forward-only and stay applied. Schema changes must therefore stay compatible with the previous API version, adding columns and tables first, and removing them in a later release.
+Each deploy uses an immutable tag, so restoring a recorded revision restores its exact image. Rollback concerns changed API and frontend Deployments: migrations are forward-only and stay applied. Schema changes must therefore stay compatible with the previous API version, adding columns and tables first, and removing them in a later release.
 
 Both pipelines deploy through a `production` environment, where approvals and branch restrictions can be configured. GitHub Actions serializes deploys with a `concurrency` group.
 
@@ -347,6 +350,87 @@ The registry, resource group and cluster name are variables at the top of `azure
 
 Both pipelines trigger on `master`. Connect only one of them to the cluster, or disable the trigger of the other, so that a single pipeline deploys each commit.
 
+## Frontend
+
+`apps/frontend/src` contains the Blazor WebAssembly application for the API's disk, author
+association, review and operational actions. It has no authentication; Keycloak
+can be integrated later. Every write is sent to the existing API. nginx serves
+the compiled WebAssembly application and proxies `/api`, `/health`,
+`/maintenance` and `/swagger` to the API on the same origin.
+
+The interface uses **MudBlazor** for navigation, responsive grids, cards, inputs,
+date pickers, dialogs, tabs, validation feedback and alerts. Branding lives in
+`src/Layout/UiTheme.cs`; the small `src/wwwroot/css/app.css` skin restores the cream and
+forest-green design without replacing component behavior. Decorative record
+sleeves have isolated CSS in `src/Components/AlbumArt.razor.css`.
+
+`src/App.razor` configures providers and routing. `src/Layout/MainLayout.razor` owns the
+shell; pages use `CollectionWorkspace` to coordinate API operations, while views
+and forms handle presentation. Component logic is in adjacent `.razor.cs` files.
+The `Dockerfile`, `.dockerignore`, `nginx/` and `k8s/` stay at the application root.
+
+```text
+apps/frontend/
+├── Dockerfile
+├── .dockerignore
+├── nginx/
+├── k8s/
+└── src/
+    ├── MyDisk.Frontend.csproj
+    ├── Program.cs / App.razor / _Imports.razor
+    ├── Components/ / Layout/ / Pages/
+    ├── Models/ / Services/ / Properties/
+    └── wwwroot/
+```
+
+For development with the API running separately:
+
+```bash
+# Terminal 1: API with a configured PostgreSQL connection
+Https__TerminatedAtProxy=true dotnet run --project apps/api/src/Api --no-launch-profile --urls http://localhost:5059
+# Terminal 2: frontend
+make frontend-restore
+make frontend-dev
+# Open http://localhost:5100
+```
+
+The development API URL is configured in
+`apps/frontend/src/wwwroot/appsettings.Development.json` (`ApiBaseUrl`, default
+`http://localhost:5059`). Production uses the current origin. Build the
+frontend with `make frontend-check` after restoring dependencies.
+The frontend uses .NET 10 Blazor packages; the repository's .NET 11 SDK also
+builds and publishes it.
+
+The collection supports filtering and sorting, disk creation/editing/deletion,
+author association, and review creation/archiving. The API currently exposes
+only exact-name detail lookup and no author directory or review-publication
+action. The UI offers known artists plus UUID entry, displays all review states
+in disk details, and refuses ambiguous detail results when names are duplicated.
+Release dates are sent as calendar dates without timezone offsets.
+
+Docker Compose publishes the UI on `127.0.0.1:3000`. Kubernetes uses
+`apps/frontend/k8s/base` plus local/cloud overlays, composed by the parent
+`deploy/k8s` overlays. The existing ingress and TLS configuration serve the
+frontend and its API proxy. `make k8s-forward-frontend` provides an alternative
+on http://localhost:3000. The image defaults to
+`ghcr.io/fabian-raeskinet/mydisk-frontend` in the cloud; make that GHCR package
+public before the first AKS deployment, as for the API packages.
+
+`make k8s-build`, `cluster-load`, `k8s-push` and the CI image scanning steps
+include the frontend. Release overlays pin API, migration and frontend images
+to the same commit tag. Deployments wait for successful database migrations;
+rollout verification checks the API and frontend and restores changed deployments
+to their recorded revisions on failure. Ingress switches to the frontend only
+after both application rollouts succeed.
+The frontend's `/frontend-health` probe checks nginx independently of the API.
+
+For Terraform-managed frontend resources, see
+[the standalone frontend stack](infra/apps/frontend/README.md). It targets an
+existing cluster and is an alternative to managing the frontend with Kustomize.
+The standard `infra/cluster` platform stack remains shared. `make infra-check`
+validates both the existing infrastructure and the frontend stack without
+applying resources.
+
 ## Dockerfile
 
 Multi-stage build producing two images from a shared build stage:
@@ -381,8 +465,10 @@ The container listens on port `8080`. The build context is `apps/api/`, where `.
 
 ```bash
 cp apps/api/.env.example apps/api/.env    # then set a strong POSTGRES_PASSWORD
-make up                 # build and start PostgreSQL, migrations and API
+make up                 # build and start PostgreSQL, migrations, API and frontend
 ```
+
+Open the frontend at http://localhost:3000 and Swagger at http://localhost:8080/swagger.
 
 ### Option 2: Kubernetes (k3d)
 
@@ -392,7 +478,17 @@ make dev-up             # create/start cluster, build + import images, generate 
 make k8s-status
 ```
 
-The API is then available at https://localhost:8443/swagger/index.html. HTTP on port 8080 redirects to HTTPS. On an existing running cluster, `make local-https` enables HTTPS without rebuilding images or rerunning migrations. See [HTTPS setup](infra/HTTPS.md).
+`make dev-up` checks node readiness and disk pressure before building. It also
+checks the Blazor page and a real collection request through the HTTPS ingress
+after deployment; run `make k8s-smoke` to repeat those checks.
+
+If the nodes report `DiskPressure`, inspect `docker system df` and free Docker
+build cache or increase Docker Desktop's disk allocation. Kubernetes may take
+several minutes to clear the condition after space is recovered. Pods and the
+migration Job cannot start while that condition is active. No data volume needs
+to be deleted to reclaim build cache.
+
+The frontend is then available at https://localhost:8443/ and Swagger at https://localhost:8443/swagger/index.html. HTTP on port 8080 redirects to HTTPS. On an existing running cluster, `make local-https` enables HTTPS without rebuilding images or rerunning migrations. See [HTTPS setup](infra/HTTPS.md).
 
 `make k8s-init-secrets` (run automatically by `dev-up`) creates `apps/api/k8s/overlays/local/secrets.env` with `600` permissions. It reuses `POSTGRES_PASSWORD` from `apps/api/.env` if present, otherwise it generates a random one. It adds random `POSTGRES_MIGRATOR_PASSWORD` and `POSTGRES_APP_PASSWORD` entries when missing and never overwrites an existing value.
 
@@ -473,13 +569,13 @@ Run `make help` for the full list. Optional variables: `ENV=local|cloud`, `CLUST
 |-------------------------|-----------------------------------------------------|
 | `make dev-up`           | Cluster + build + import + secrets + deploy         |
 | `make dev-down`         | Delete resources and stop the cluster               |
-| `make k8s-up`           | Build and import images (local) or push them (cloud), run migrations, and deploy the API |
+| `make k8s-up`           | Build and import images (local) or push them (cloud), run migrations, and deploy API and frontend |
 | `make k8s-push`         | Build `linux/amd64` images and push them to `$(REGISTRY)` |
 | `make k8s-deploy`       | CD entry point, `ENV=cloud` only: pin `IMAGE_TAG`, run migrations, deploy the API, roll back on failure |
-| `make k8s-release-overlay` | Generate `deploy/k8s/cloud-release/`, pinning both images to `IMAGE_TAG` |
-| `make k8s-rollout-check` | Wait for the API rollout, undo it and fail if it does not complete |
+| `make k8s-release-overlay` | Generate `deploy/k8s/cloud-release/`, pinning all three application images to `IMAGE_TAG` |
+| `make k8s-rollout-check` | Wait for app rollouts; restore changed revisions on failure, or failed deployments when run standalone |
 | `make k8s-down`         | Delete overlay resources                            |
-| `make k8s-apply`        | Run migrations successfully before applying the API Deployment      |
+| `make k8s-apply`        | Run migrations, roll out API/frontend, then update ingress |
 | `make k8s-render`       | Render manifests without applying (prints Secret data) |
 | `make k8s-init-secrets` | Generate the overlay `secrets.env` if missing (local only) |
 | `make k8s-status`       | Pods, services, statefulsets, deployments, PVCs     |
@@ -507,7 +603,7 @@ Run `make help` for the full list. Optional variables: `ENV=local|cloud`, `CLUST
 | `make infra-platform`    | Create or update the AKS cluster                         |
 | `make infra-credentials` | Merge the AKS kubeconfig into `~/.kube/config`           |
 | `make infra-cluster`     | Install Traefik, the namespace and the database Secret   |
-| `make infra-check`       | `tofu fmt -check` and `tofu validate` on both stacks     |
+| `make infra-check`       | `tofu fmt -check` and `tofu validate` on platform and frontend stacks     |
 
 `make k8s-up` restarts an existing API Deployment after importing the rebuilt `:dev` image. On first install, the new Deployment starts with the imported image.
 
@@ -548,7 +644,7 @@ Integration tests require a running PostgreSQL instance (see `appsettings.json` 
 
 ### Security checks in CI
 
-CI audits direct/transitive NuGet dependencies and scans both final container images
+CI audits direct/transitive NuGet dependencies and scans the API, migration and frontend container images
 before publishing them. High/Critical NuGet findings block restore; fixable
 High/Critical image findings block publication. Full reports are retained as
 GitHub Actions artifacts. Dependabot proposes weekly updates without auto-merging.

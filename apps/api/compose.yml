@@ -3,6 +3,22 @@ name: mydisk-api
 x-db-connection: &db-connection "Host=postgres;Port=5432;Database=mydisk;Username=mydisk;Password=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD manquant dans .env};GSS Encryption Mode=Disable"
 
 services:
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    image: mydisk-frontend:dev
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:8080"
+    environment:
+      API_UPSTREAM: http://api:8080
+    depends_on:
+      api:
+        condition: service_started
+    networks:
+      - mydisk-network
+
   api:
     build:
       context: .
@@ -14,6 +30,7 @@ services:
       - "8080:8080"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      Https__TerminatedAtProxy: "true"
       ConnectionStrings__DefaultConnection: *db-connection
     depends_on:
       migrations:

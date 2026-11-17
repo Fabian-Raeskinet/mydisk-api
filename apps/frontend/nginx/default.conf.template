@@ -1,0 +1,39 @@
+server {
+    listen 8080;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    add_header X-Content-Type-Options nosniff always;
+    add_header Referrer-Policy strict-origin-when-cross-origin always;
+
+    location = /frontend-health {
+        access_log off;
+        default_type text/plain;
+        return 200 "healthy\n";
+    }
+
+    # Preserve the API path and query, including /swagger's generated URLs.
+    # The variable defers DNS resolution so frontend boot is independent of API readiness.
+    location ~ ^/(api(?:/|$)|health(?:/|$)|maintenance(?:/|$)|swagger(?:/|$)) {
+        resolver ${NGINX_LOCAL_RESOLVERS} valid=10s ipv6=off;
+        set $api_upstream ${API_UPSTREAM};
+        proxy_pass $api_upstream$request_uri;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $http_x_forwarded_proto;
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 65s;
+        proxy_hide_header Access-Control-Allow-Origin;
+    }
+
+    # Do not cache the entrypoint or config across releases.
+    location = /index.html { add_header Cache-Control "no-store"; }
+    location ~ ^/appsettings.*\.json$ { add_header Cache-Control "no-store"; try_files $uri =404; }
+    location /_framework/ {
+        # Missing WASM/JS must return 404, not the SPA shell.
+        try_files $uri =404;
+        add_header Cache-Control "no-cache";
+    }
+    location / { try_files $uri $uri/ /index.html; }
+}
