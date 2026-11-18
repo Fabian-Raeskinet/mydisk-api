@@ -8,7 +8,9 @@ The stack reuses `apps/frontend/k8s/base/deployment.yml` and `service.yml`, with
 configurable image, namespace and replicas. It works with Terraform
 or OpenTofu and targets an existing cluster, namespace and API. The namespace,
 database credentials, ingress controller and certificate infrastructure remain
-in `infra/cluster`. There is no authentication or Keycloak configuration.
+in `infra/cluster`. This stack uses the frontend image's default authentication
+settings. See the [frontend setup](../../../README.md#frontend) for the Keycloak
+settings to supply when enabling sign-in.
 
 To choose Terraform for a new installation, deploy the API's own overlay
 (`apps/api/k8s/overlays/cloud`) instead of the parent `deploy/k8s/cloud` overlay.

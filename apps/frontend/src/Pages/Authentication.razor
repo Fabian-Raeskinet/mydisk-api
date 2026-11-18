@@ -1,0 +1,52 @@
+@page "/authentication/{Action}"
+@inject AuthenticationSettings AuthenticationSettings
+
+<PageTitle>MyDisk — Connexion</PageTitle>
+
+@if (!AuthenticationSettings.IsConfigured)
+{
+    <MudAlert Severity="Severity.Info">La connexion est indisponible sur ce déploiement.</MudAlert>
+    <MudButton Href="/" Color="Color.Primary" Class="mt-4">Revenir à la collection</MudButton>
+}
+else if (Action?.ToLowerInvariant() is RemoteAuthenticationActions.LogIn
+    or RemoteAuthenticationActions.LogInCallback or RemoteAuthenticationActions.LogInFailed
+    or RemoteAuthenticationActions.LogOut or RemoteAuthenticationActions.LogOutCallback
+    or RemoteAuthenticationActions.LogOutFailed or RemoteAuthenticationActions.LogOutSucceeded)
+{
+    <RemoteAuthenticatorView Action="@Action">
+        <LoggingIn>
+            <p role="status">Redirection vers la page de connexion…</p>
+        </LoggingIn>
+        <CompletingLoggingIn>
+            <p role="status">Connexion en cours…</p>
+        </CompletingLoggingIn>
+        <LogInFailed>
+            <MudAlert Severity="Severity.Error">La connexion a échoué. Réessayez depuis la collection.</MudAlert>
+            <MudButton Href="/" Color="Color.Primary" Class="mt-4">Revenir à la collection</MudButton>
+        </LogInFailed>
+        <LogOut>
+            <p role="status">Déconnexion en cours…</p>
+        </LogOut>
+        <CompletingLogOut>
+            <p role="status">Finalisation de la déconnexion…</p>
+        </CompletingLogOut>
+        <LogOutFailed>
+            <MudAlert Severity="Severity.Error">La déconnexion a échoué. Réessayez depuis la collection.</MudAlert>
+            <MudButton Href="/" Color="Color.Primary" Class="mt-4">Revenir à la collection</MudButton>
+        </LogOutFailed>
+        <LogOutSucceeded>
+            <MudAlert Severity="Severity.Success">Vous êtes déconnecté.</MudAlert>
+            <MudButton Href="/" Color="Color.Primary" Class="mt-4">Revenir à la collection</MudButton>
+        </LogOutSucceeded>
+    </RemoteAuthenticatorView>
+}
+else
+{
+    <MudAlert Severity="Severity.Warning">Cette page de connexion n’existe pas.</MudAlert>
+    <MudButton Href="/" Color="Color.Primary" Class="mt-4">Revenir à la collection</MudButton>
+}
+
+@code {
+    [Parameter]
+    public string? Action { get; set; }
+}

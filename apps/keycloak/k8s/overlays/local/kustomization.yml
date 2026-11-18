@@ -5,6 +5,11 @@ resources:
   - ../../base
   - keycloak-ingress.yml
 
+configMapGenerator:
+  - name: keycloak-local-realm
+    files:
+      - mydisk-realm.json
+
 secretGenerator:
   - name: keycloak-postgres-secret
     envs:
@@ -27,6 +32,21 @@ patches:
       kind: Deployment
       name: keycloak
     patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/args/-
+        value: --import-realm
+      - op: add
+        path: /spec/template/spec/containers/0/volumeMounts
+        value:
+          - name: realm-import
+            mountPath: /opt/keycloak/data/import
+            readOnly: true
+      - op: add
+        path: /spec/template/spec/volumes
+        value:
+          - name: realm-import
+            configMap:
+              name: keycloak-local-realm
       - op: add
         path: /spec/template/spec/containers/0/env/-
         value:

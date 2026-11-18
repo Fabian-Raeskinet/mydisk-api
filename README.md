@@ -7,7 +7,7 @@ The business domain is intentionally simple: the goal is to demonstrate how a .N
 ## Highlights
 
 - **.NET 10 / ASP.NET Core** Web API with Swagger
-- **Blazor WebAssembly** frontend for the collection, reviews and API diagnostics, without authentication
+- **Blazor WebAssembly** frontend for the collection, reviews and API diagnostics, with Keycloak sign-in
 - **Domain-Driven Design** building blocks: aggregates, entities, value objects, domain events
 - **CQRS-style** application layer with MediatR, FluentValidation and AutoMapper
 - **PostgreSQL** with EF Core migrations and seeding, shipped as a migration bundle and run as a dedicated Job before the API
@@ -353,8 +353,9 @@ Both pipelines trigger on `master`. Connect only one of them to the cluster, or 
 ## Frontend
 
 `apps/frontend/src` contains the Blazor WebAssembly application for the API's disk, author
-association, review and operational actions. It has no authentication; Keycloak
-can be integrated later. Every write is sent to the existing API. NGINX serves
+association, review and operational actions. The frontend supports signing in
+and out through Keycloak using OpenID Connect with authorization code and PKCE.
+The collection and the API remain publicly accessible. NGINX serves
 the compiled WebAssembly application. Traefik routes `/api`, `/health`,
 `/maintenance` and `/swagger` directly to the API on the same origin.
 
@@ -398,8 +399,21 @@ The development API URL is configured in
 `apps/frontend/src/wwwroot/appsettings.Development.json` (`ApiBaseUrl`, default
 `http://localhost:5059`). Production uses the current origin. Build the
 frontend with `make frontend-check` after restoring dependencies.
-The frontend uses .NET 10 Blazor packages; the repository's .NET 11 SDK also
-builds and publishes it.
+The frontend uses the repository's .NET 11 SDK and Blazor packages.
+
+The development profile and local Kubernetes overlay use the `mydisk` realm at
+`https://auth.mydisk.localhost:8443/realms/mydisk` and the public `mydisk-frontend`
+client. On a fresh local Kubernetes deployment, Keycloak imports the client from
+`apps/keycloak/k8s/overlays/local/mydisk-realm.json`. Create a user and set a
+password in the `mydisk` realm from the Keycloak admin console to sign in.
+If the realm already exists, add or update the client using **Realm settings →
+Action → Partial import** with the same JSON file. [Keycloak realm import](https://www.keycloak.org/server/importExport)
+
+Docker Compose and cloud deployments enable sign-in when the served
+`wwwroot/appsettings.json` provides `Authentication:Authority` (the public
+realm URL) and `Authentication:ClientId`. Register the frontend origin as a Web
+Origin on the public client and register the exact frontend URLs ending in
+`/authentication/login-callback` and `/authentication/logout-callback`.
 
 The collection supports filtering and sorting, disk creation/editing/deletion,
 author association, and review creation/archiving. The API currently exposes

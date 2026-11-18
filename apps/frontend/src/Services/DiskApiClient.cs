@@ -10,7 +10,6 @@ public sealed class ApiException(HttpStatusCode statusCode, string message) : Ex
     public HttpStatusCode StatusCode { get; } = statusCode;
 }
 
-/// <summary>Single place for API requests; a future Keycloak token handler can wrap the injected HttpClient.</summary>
 public sealed class DiskApiClient(HttpClient http)
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);

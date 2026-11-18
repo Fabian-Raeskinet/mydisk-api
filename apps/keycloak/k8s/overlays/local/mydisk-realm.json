@@ -1,0 +1,31 @@
+{
+  "realm": "mydisk",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "mydisk-frontend",
+      "name": "MyDisk",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:5100/authentication/login-callback",
+        "http://localhost:3000/authentication/login-callback",
+        "https://localhost:8443/authentication/login-callback"
+      ],
+      "webOrigins": [
+        "http://localhost:5100",
+        "http://localhost:3000",
+        "https://localhost:8443"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:5100/authentication/logout-callback##http://localhost:3000/authentication/logout-callback##https://localhost:8443/authentication/logout-callback"
+      }
+    }
+  ]
+}

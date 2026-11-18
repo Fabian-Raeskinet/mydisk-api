@@ -3,3 +3,27 @@ kind: Kustomization
 
 resources:
   - ../../base
+
+configMapGenerator:
+  - name: mydisk-frontend-config
+    files:
+      - appsettings.json
+
+patches:
+  - target:
+      kind: Deployment
+      name: mydisk-frontend
+    patch: |-
+      - op: add
+        path: /spec/template/spec/volumes/-
+        value:
+          name: config
+          configMap:
+            name: mydisk-frontend-config
+      - op: add
+        path: /spec/template/spec/containers/0/volumeMounts/-
+        value:
+          name: config
+          mountPath: /usr/share/nginx/html/appsettings.json
+          subPath: appsettings.json
+          readOnly: true
