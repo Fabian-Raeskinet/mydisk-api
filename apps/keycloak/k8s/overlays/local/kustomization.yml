@@ -14,6 +14,14 @@ secretGenerator:
     envs:
       - keycloak.env
 
+  - name: keycloak-local-tls
+    type: kubernetes.io/tls
+    files:
+      - tls.crt=.tls/tls.crt
+      - tls.key=.tls/tls.key
+    options:
+      disableNameSuffixHash: true
+
 patches:
   - target:
       kind: Deployment
@@ -23,7 +31,7 @@ patches:
         path: /spec/template/spec/containers/0/env/-
         value:
           name: KC_HOSTNAME
-          value: http://auth.mydisk.localhost:8080
+          value: https://auth.mydisk.localhost:8443
       - op: add
         path: /spec/template/spec/containers/0/env/-
         value:

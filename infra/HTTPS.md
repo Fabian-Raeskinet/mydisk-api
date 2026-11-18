@@ -67,11 +67,12 @@ make dev-up
 
 `make dev-up` adds port 8443 to existing k3d load balancers without deleting the
 cluster or its volumes. New clusters expose it from creation. `make k8s-init-tls`
-generates a certificate for localhost, 127.0.0.1 and ::1 in the ignored `.tls/`
-directory inside the local overlay. The local Kustomize overlay creates a TLS
-Secret containing only the leaf certificate and leaf private key, never the CA key.
-The certificate is reused while it has at least 30 days remaining; a later make
-run regenerates it as needed. Unlike cert-manager, this is not background renewal.
+generates the application certificate for localhost, 127.0.0.1 and ::1, plus
+a dedicated certificate for Keycloak at https://auth.mydisk.localhost:8443/admin.
+Each local overlay stores its certificate and private key in an ignored `.tls/`
+directory and creates a TLS Secret for Traefik. Later make runs renew certificates
+when fewer than 30 days remain. `make k8s-smoke-keycloak` verifies the HTTPS issuer
+and the redirect from http://auth.mydisk.localhost:8080/admin.
 
 For an existing, already running application, enable HTTPS without migrations:
 

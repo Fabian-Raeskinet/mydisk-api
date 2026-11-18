@@ -401,6 +401,7 @@ TestResults/
 
 # Generated local development certificate and private key.
 /apps/api/k8s/overlays/local/.tls/
+/apps/keycloak/k8s/overlays/local/.tls/
 
 # Generated security reports
 security-reports/

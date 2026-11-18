@@ -8,7 +8,8 @@ LOCAL_API_OVERLAY = $(API_K8S)/overlays/local
 COMPOSE_ENV_FILE = $(API_DIR)/postgres.env
 COMPOSE = docker compose --env-file $(COMPOSE_ENV_FILE) -f $(API_DIR)/compose.yml
 KEYCLOAK_OVERLAY = apps/keycloak/k8s/overlays/local
-KEYCLOAK_URL = http://auth.mydisk.localhost:$(HTTP_PORT)
+KEYCLOAK_HOST = auth.mydisk.localhost
+KEYCLOAK_URL = https://$(KEYCLOAK_HOST):8443
 ENV ?= local
 K8S_OVERLAY = deploy/k8s/$(ENV)
 IMAGE_NAME = mydisk-api:dev
@@ -474,9 +475,13 @@ k8s-forward-db:
 # KC_HOSTNAME pins every redirect to KEYCLOAK_URL, so a port-forward would not work.
 k8s-smoke-keycloak:
 	@set -eu; \
-	issuer=$$(curl --fail --silent --show-error --retry 10 --retry-delay 3 --retry-all-errors --connect-timeout 5 --max-time 20 \
-		"$(KEYCLOAK_URL)/realms/master/.well-known/openid-configuration" | sed -n 's/.*"issuer":"\([^"]*\)".*/\1/p'); \
+	metadata=$$(curl --cacert "$$(mkcert -CAROOT)/rootCA.pem" --fail --silent --show-error --retry 10 --retry-delay 3 --retry-all-errors --connect-timeout 5 --max-time 20 \
+		"$(KEYCLOAK_URL)/realms/master/.well-known/openid-configuration"); \
+	issuer=$$(printf '%s' "$$metadata" | sed -n 's/.*"issuer":"\([^"]*\)".*/\1/p'); \
 	[ "$$issuer" = "$(KEYCLOAK_URL)/realms/master" ] || { echo "Keycloak issuer is '$$issuer', expected $(KEYCLOAK_URL)/realms/master: check KC_HOSTNAME." >&2; exit 1; }; \
+	redirect=$$(curl --fail --silent --show-error --connect-timeout 5 --max-time 20 --output /dev/null --write-out '%{redirect_url}' \
+		"http://$(KEYCLOAK_HOST):$(HTTP_PORT)/admin"); \
+	[ "$$redirect" = "$(KEYCLOAK_URL)/admin" ] || { echo "Keycloak HTTP redirect is '$$redirect', expected $(KEYCLOAK_URL)/admin." >&2; exit 1; }; \
 	echo "Keycloak verified, admin console: $(KEYCLOAK_URL)/admin"
 
 # Run the k6 load test through the Ingress to push CPU above the HPA target
@@ -574,7 +579,10 @@ infra-check:
 
 # Local TLS only: never changes the cloud cluster or reruns database migrations.
 k8s-init-tls:
-	@if [ "$(ENV)" = local ]; then bash $(LOCAL_API_OVERLAY)/init-tls.sh; fi
+	@set -e; if [ "$(ENV)" = local ]; then \
+		bash deploy/k8s/local/init-tls.sh "$(LOCAL_API_OVERLAY)/.tls" localhost 127.0.0.1 ::1; \
+		bash deploy/k8s/local/init-tls.sh "$(KEYCLOAK_OVERLAY)/.tls" "$(KEYCLOAK_HOST)"; \
+	fi
 
 cluster-https-port:
 	@set -e; \
