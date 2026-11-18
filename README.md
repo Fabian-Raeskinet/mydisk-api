@@ -409,6 +409,13 @@ password in the `mydisk` realm from the Keycloak admin console to sign in.
 If the realm already exists, add or update the client using **Realm settings →
 Action → Partial import** with the same JSON file. [Keycloak realm import](https://www.keycloak.org/server/importExport)
 
+The local Keycloak overlay mounts the MyDisk login theme from
+`apps/keycloak/k8s/overlays/local/themes/mydisk/login`. A freshly imported
+`mydisk` realm uses the theme in French. For an existing realm, redeploy the
+Keycloak overlay and select `mydisk` under **Realm settings → Themes → Login theme**.
+To set the login language, enable internationalization and set French as the
+default under **Realm settings → Localization**. [Keycloak theme setup](https://www.keycloak.org/ui-customization/themes)
+
 Docker Compose and cloud deployments enable sign-in when the served
 `wwwroot/appsettings.json` provides `Authentication:Authority` (the public
 realm URL) and `Authentication:ClientId`. Register the frontend origin as a Web

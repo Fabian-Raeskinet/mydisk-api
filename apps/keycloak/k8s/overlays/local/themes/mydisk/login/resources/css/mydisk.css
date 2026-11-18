@@ -1,0 +1,247 @@
+.login-pf body.mydisk-login {
+    --mydisk-green: #153f35;
+    --mydisk-gold: #ddb769;
+    --mydisk-cream: #f8f7f2;
+    --mydisk-ink: #203b34;
+    --mydisk-paper: #fffefa;
+    --mydisk-border: #c2c9bf;
+    --pf-v5-global--FontFamily--text: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --pf-v5-global--FontFamily--heading: var(--pf-v5-global--FontFamily--text);
+    --pf-v5-global--Color--100: var(--mydisk-ink);
+    --pf-v5-global--Color--200: #58675e;
+    --pf-v5-global--BackgroundColor--100: var(--mydisk-paper);
+    --pf-v5-global--link--Color: var(--mydisk-green);
+    --pf-v5-global--link--Color--hover: #285645;
+    color-scheme: light;
+    background: var(--mydisk-cream);
+    color: var(--mydisk-ink);
+    font-family: var(--pf-v5-global--FontFamily--text);
+}
+
+.mydisk-login .pf-v5-c-login {
+    display: grid;
+    align-items: center;
+    min-height: 100vh;
+    min-height: 100svh;
+    padding: clamp(1rem, 4vw, 3rem);
+}
+
+.mydisk-login .pf-v5-c-login__container {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    grid-template-rows: auto;
+    grid-template-areas: "header main";
+    gap: 0;
+    align-items: stretch;
+    width: min(100%, 61rem);
+    min-height: 32rem;
+    margin: auto;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #e5e6dd;
+    border-radius: 1.125rem;
+    background: var(--mydisk-paper);
+    box-shadow: 0 1.5rem 4rem #153f3518;
+}
+
+.mydisk-login #kc-header {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin: 0;
+    padding: clamp(1.75rem, 4vw, 3rem);
+    overflow: hidden;
+    background: radial-gradient(ellipse at 85% 90%, #42604b, transparent 65%), var(--mydisk-green);
+}
+
+/* The sleeve and vinyl echo the collection banner in the frontend. */
+.mydisk-login #kc-header::before,
+.mydisk-login #kc-header::after {
+    position: absolute;
+    z-index: -1;
+    content: "";
+    pointer-events: none;
+}
+
+.mydisk-login #kc-header::before {
+    inset: auto auto 13% 14%;
+    width: 57%;
+    aspect-ratio: 1;
+    border: 0.45rem solid #ce916f;
+    border-radius: 0.3rem;
+    transform: rotate(-13deg);
+    background: linear-gradient(145deg, #d69a77, #aa6248);
+    box-shadow: 0 0.8rem 2rem #10251d66;
+}
+
+.mydisk-login #kc-header::after {
+    inset: auto -4% 9% auto;
+    width: 76%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(circle, #20362c 0 2%, #f1d18a 2.5% 9%, #ddb769 9.5% 22%, transparent 22.5%),
+        conic-gradient(from 30deg, transparent, #ced9c524 18%, transparent 28%, transparent 52%, #ced9c524 68%, transparent 82%),
+        repeating-radial-gradient(circle, #182a24 0 2px, #22352e 3px 5px);
+    box-shadow: 0 1rem 2.25rem #10251d80;
+}
+
+.mydisk-login #kc-header-wrapper {
+    display: inline-flex;
+    align-items: center;
+    width: auto;
+    color: #faf7ec !important;
+    font-size: clamp(1.6rem, 3vw, 2.25rem);
+    font-weight: 750;
+    letter-spacing: -0.065em;
+    text-transform: lowercase;
+}
+
+.mydisk-login #kc-header-wrapper::before {
+    width: 0.9em;
+    aspect-ratio: 1;
+    margin-inline-end: 0.4em;
+    border: 2px solid var(--mydisk-gold);
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--mydisk-gold) 0 13%, transparent 17% 39%, var(--mydisk-gold) 42% 46%, transparent 50%);
+    content: "";
+}
+
+.mydisk-login #kc-header-wrapper::after {
+    align-self: flex-end;
+    width: 0.15em;
+    aspect-ratio: 1;
+    margin-inline-start: 0.075em;
+    margin-block-end: 0.19em;
+    border-radius: 50%;
+    background: var(--mydisk-gold);
+    content: "";
+}
+
+.mydisk-login .pf-v5-c-login__main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-self: stretch;
+    min-width: 0;
+    padding: clamp(1.75rem, 5vw, 4rem);
+    background: var(--mydisk-paper);
+    box-shadow: none;
+}
+
+.mydisk-login .pf-v5-c-login__main-header {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    margin-block-end: 1.75rem;
+    padding: 0;
+    border-top: 0;
+}
+
+.mydisk-login #kc-page-title {
+    color: var(--mydisk-ink);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.045em;
+    overflow-wrap: anywhere;
+}
+
+.mydisk-login .pf-v5-c-login__main-body,
+.mydisk-login .pf-v5-c-login__main-footer-band {
+    padding-inline: 0;
+}
+
+.mydisk-login .pf-v5-c-login__main-body {
+    padding-block: 0;
+}
+
+.mydisk-login #kc-form-login {
+    --pf-v5-c-form--GridGap: 1.15rem;
+}
+
+.mydisk-login .pf-v5-c-form__label {
+    margin-block-end: 0.35rem;
+    color: var(--mydisk-ink);
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.mydisk-login .pf-v5-c-form-control {
+    --pf-v5-c-form-control--BackgroundColor: #fcfbf7;
+    min-height: 2.9rem;
+    border: 1px solid var(--mydisk-border);
+    border-radius: 0.55rem;
+    font-size: 1rem;
+}
+
+.mydisk-login .pf-v5-c-form-control::before,
+.mydisk-login .pf-v5-c-form-control::after {
+    border: 0;
+}
+
+.mydisk-login .pf-v5-c-form-control:is(.pf-m-error, :has([aria-invalid="true"])) {
+    border-color: #a22a23;
+}
+
+.mydisk-login .pf-v5-c-form-control :is(input, select) {
+    color: var(--mydisk-ink);
+}
+
+.mydisk-login .pf-v5-c-form-control :is(input, select):focus-visible {
+    outline: none;
+}
+
+.mydisk-login [data-password-toggle] {
+    min-width: 2.9rem;
+    color: var(--mydisk-ink);
+    border-radius: 0.55rem;
+}
+
+.mydisk-login [data-password-toggle]::after {
+    border-color: var(--mydisk-border);
+    border-radius: inherit;
+}
+
+.mydisk-login .pf-v5-c-button.pf-m-primary {
+    --pf-v5-c-button--m-primary--BackgroundColor: var(--mydisk-green);
+    --pf-v5-c-button--m-primary--hover--BackgroundColor: #285645;
+    --pf-v5-c-button--m-primary--focus--BackgroundColor: #285645;
+    --pf-v5-c-button--m-primary--active--BackgroundColor: #102f27;
+    min-height: 2.9rem;
+    border-radius: 0.55rem;
+    font-weight: 650;
+}
+
+.mydisk-login :is(a, button, input, select):focus-visible:not(.pf-v5-c-form-control *),
+.mydisk-login .pf-v5-c-form-control:has(:focus-visible) {
+    outline: 2px solid var(--mydisk-green);
+    outline-offset: 2px;
+}
+
+@media (max-width: 43rem) {
+    .mydisk-login .pf-v5-c-login__container {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-areas: "header" "main";
+        min-height: 0;
+    }
+
+    .mydisk-login #kc-header {
+        justify-content: center;
+        min-height: 6rem;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .mydisk-login #kc-header::before {
+        inset: -0.75rem 2.75rem auto auto;
+        width: 5rem;
+    }
+
+    .mydisk-login #kc-header::after {
+        inset: -0.55rem -0.8rem auto auto;
+        width: 7.75rem;
+    }
+
+    .mydisk-login .pf-v5-c-login__main {
+        padding: 1.6rem;
+    }
+}

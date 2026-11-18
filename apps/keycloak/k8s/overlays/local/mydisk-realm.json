@@ -1,6 +1,11 @@
 {
   "realm": "mydisk",
   "enabled": true,
+  "displayName": "MyDisk",
+  "loginTheme": "mydisk",
+  "internationalizationEnabled": true,
+  "supportedLocales": ["fr"],
+  "defaultLocale": "fr",
   "clients": [
     {
       "clientId": "mydisk-frontend",
