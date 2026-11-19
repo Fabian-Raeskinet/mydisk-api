@@ -355,7 +355,8 @@ Both pipelines trigger on `master`. Connect only one of them to the cluster, or 
 `apps/frontend/src` contains the Blazor WebAssembly application for the API's disk, author
 association, review and operational actions. The frontend supports signing in
 and out through Keycloak using OpenID Connect with authorization code and PKCE.
-The collection and the API remain publicly accessible. NGINX serves
+The frontend redirects signed-out visitors to Keycloak and returns them there
+after logout. The HTTP API remains publicly accessible. NGINX serves
 the compiled WebAssembly application. Traefik routes `/api`, `/health`,
 `/maintenance` and `/swagger` directly to the API on the same origin.
 
@@ -416,11 +417,12 @@ Keycloak overlay and select `mydisk` under **Realm settings → Themes → Login
 To set the login language, enable internationalization and set French as the
 default under **Realm settings → Localization**. [Keycloak theme setup](https://www.keycloak.org/ui-customization/themes)
 
-Docker Compose and cloud deployments enable sign-in when the served
+Docker Compose and cloud deployments require authentication settings in the served
 `wwwroot/appsettings.json` provides `Authentication:Authority` (the public
 realm URL) and `Authentication:ClientId`. Register the frontend origin as a Web
 Origin on the public client and register the exact frontend URLs ending in
 `/authentication/login-callback` and `/authentication/logout-callback`.
+The frontend displays a connection-unavailable message until both settings are supplied.
 
 The collection supports filtering and sorting, disk creation/editing/deletion,
 author association, and review creation/archiving. The API currently exposes

@@ -1,0 +1,16 @@
+@using MyDisks.Frontend.Layout
+@inject NavigationManager Navigation
+
+<LayoutView Layout="typeof(AuthenticationLayout)">
+    <p role="status">Redirection vers la page de connexion…</p>
+</LayoutView>
+
+@code {
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Navigation.NavigateToLogin(RemoteAuthenticationDefaults.LoginPath);
+        }
+    }
+}

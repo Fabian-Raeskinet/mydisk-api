@@ -1,17 +1,12 @@
 @page "/authentication/{Action}"
-@inject AuthenticationSettings AuthenticationSettings
+@inject NavigationManager Navigation
 
 <PageTitle>MyDisk — Connexion</PageTitle>
 
-@if (!AuthenticationSettings.IsConfigured)
-{
-    <MudAlert Severity="Severity.Info">La connexion est indisponible sur ce déploiement.</MudAlert>
-    <MudButton Href="/" Color="Color.Primary" Class="mt-4">Revenir à la collection</MudButton>
-}
-else if (Action?.ToLowerInvariant() is RemoteAuthenticationActions.LogIn
+@if (Action?.ToLowerInvariant() is RemoteAuthenticationActions.LogIn
     or RemoteAuthenticationActions.LogInCallback or RemoteAuthenticationActions.LogInFailed
     or RemoteAuthenticationActions.LogOut or RemoteAuthenticationActions.LogOutCallback
-    or RemoteAuthenticationActions.LogOutFailed or RemoteAuthenticationActions.LogOutSucceeded)
+    or RemoteAuthenticationActions.LogOutFailed)
 {
     <RemoteAuthenticatorView Action="@Action">
         <LoggingIn>
@@ -21,8 +16,8 @@ else if (Action?.ToLowerInvariant() is RemoteAuthenticationActions.LogIn
             <p role="status">Connexion en cours…</p>
         </CompletingLoggingIn>
         <LogInFailed>
-            <MudAlert Severity="Severity.Error">La connexion a échoué. Réessayez depuis la collection.</MudAlert>
-            <MudButton Href="/" Color="Color.Primary" Class="mt-4">Revenir à la collection</MudButton>
+            <MudAlert Severity="Severity.Error">La connexion a échoué.</MudAlert>
+            <MudButton OnClick="RetryLogin" Color="Color.Primary" Class="mt-4">Réessayer</MudButton>
         </LogInFailed>
         <LogOut>
             <p role="status">Déconnexion en cours…</p>
@@ -34,10 +29,6 @@ else if (Action?.ToLowerInvariant() is RemoteAuthenticationActions.LogIn
             <MudAlert Severity="Severity.Error">La déconnexion a échoué. Réessayez depuis la collection.</MudAlert>
             <MudButton Href="/" Color="Color.Primary" Class="mt-4">Revenir à la collection</MudButton>
         </LogOutFailed>
-        <LogOutSucceeded>
-            <MudAlert Severity="Severity.Success">Vous êtes déconnecté.</MudAlert>
-            <MudButton Href="/" Color="Color.Primary" Class="mt-4">Revenir à la collection</MudButton>
-        </LogOutSucceeded>
     </RemoteAuthenticatorView>
 }
 else
@@ -49,4 +40,7 @@ else
 @code {
     [Parameter]
     public string? Action { get; set; }
+
+    private void RetryLogin() => Navigation.NavigateToLogin(RemoteAuthenticationDefaults.LoginPath,
+        new InteractiveRequestOptions { Interaction = InteractionType.SignIn, ReturnUrl = Navigation.BaseUri });
 }

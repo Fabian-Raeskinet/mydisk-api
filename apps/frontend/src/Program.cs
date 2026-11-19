@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
 using MyDisks.Frontend;
@@ -20,6 +21,7 @@ if (authentication.IsConfigured)
         options.ProviderOptions.ClientId = authentication.ClientId;
         options.ProviderOptions.ResponseType = "code";
         options.UserOptions.NameClaim = "preferred_username";
+        options.AuthenticationPaths.LogOutSucceededPath = RemoteAuthenticationDefaults.LoginPath;
     });
 }
 

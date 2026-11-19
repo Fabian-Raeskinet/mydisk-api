@@ -1,0 +1,18 @@
+@using MyDisks.Frontend.Layout
+
+<AuthorizeView>
+    <Authorized>@ChildContent</Authorized>
+    <Authorizing>
+        <LayoutView Layout="typeof(AuthenticationLayout)">
+            <p role="status">Vérification de la session…</p>
+        </LayoutView>
+    </Authorizing>
+    <NotAuthorized>
+        <RedirectToLogin />
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [Parameter, EditorRequired]
+    public RenderFragment ChildContent { get; set; } = default!;
+}
