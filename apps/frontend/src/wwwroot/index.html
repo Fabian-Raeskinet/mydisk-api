@@ -8,12 +8,43 @@
     <base href="/" />
     <title>MyDisk — Votre collection</title>
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <style>
+        /* The loader is available before Blazor and independently of cached stylesheets. */
+        .md-loading {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            background: #f8f7f2;
+        }
+        .md-loading-spinner {
+            box-sizing: border-box;
+            width: 3.5rem;
+            aspect-ratio: 1;
+            border: 0.22rem solid #153f35;
+            border-top-color: #ad8940;
+            border-radius: 50%;
+            padding: 0.35rem;
+            background: radial-gradient(circle, #f8f7f2 0 8%, #ddb769 9% 25%, #153f35 26% 50%, #4e6c5d 51% 55%, #153f35 56%) content-box;
+            animation: md-loading-spin 1s linear infinite;
+        }
+        @keyframes md-loading-spin {
+            to { transform: rotate(360deg); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .md-loading-spinner { animation: none; }
+        }
+    </style>
     <link rel="stylesheet" href="_content/MudBlazor/MudBlazor.min.css" />
     <link rel="stylesheet" href="MyDisk.Frontend.styles.css" />
     <link rel="stylesheet" href="css/app.css" />
 </head>
 <body>
-    <div id="app"><p role="status">Chargement de MyDisk…</p></div>
+    <div id="app">
+        <div class="md-loading" role="status" aria-label="Chargement de MyDisk">
+            <span class="md-loading-spinner" aria-hidden="true"></span>
+        </div>
+    </div>
     <div id="blazor-error-ui" role="alert">Une erreur a interrompu l’application. <a href="/">Recharger</a></div>
     <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>
     <script src="_framework/blazor.webassembly.js"></script>

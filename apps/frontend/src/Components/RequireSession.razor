@@ -1,11 +1,7 @@
-@using MyDisks.Frontend.Layout
-
 <AuthorizeView>
     <Authorized>@ChildContent</Authorized>
     <Authorizing>
-        <LayoutView Layout="typeof(AuthenticationLayout)">
-            <p role="status">Vérification de la session…</p>
-        </LayoutView>
+        <LoadingIndicator Label="Vérification de la session…" />
     </Authorizing>
     <NotAuthorized>
         <RedirectToLogin />

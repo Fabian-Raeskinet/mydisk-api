@@ -1,0 +1,8 @@
+<div class="md-loading" role="status" aria-label="@Label">
+    <span class="md-loading-spinner" aria-hidden="true"></span>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Label { get; set; } = string.Empty;
+}

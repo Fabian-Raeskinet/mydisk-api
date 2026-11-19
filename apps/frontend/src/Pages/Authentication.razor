@@ -10,20 +10,20 @@
 {
     <RemoteAuthenticatorView Action="@Action">
         <LoggingIn>
-            <p role="status">Redirection vers la page de connexion…</p>
+            <LoadingIndicator Label="Redirection vers la page de connexion…" />
         </LoggingIn>
         <CompletingLoggingIn>
-            <p role="status">Connexion en cours…</p>
+            <LoadingIndicator Label="Connexion en cours…" />
         </CompletingLoggingIn>
         <LogInFailed>
             <MudAlert Severity="Severity.Error">La connexion a échoué.</MudAlert>
             <MudButton OnClick="RetryLogin" Color="Color.Primary" Class="mt-4">Réessayer</MudButton>
         </LogInFailed>
         <LogOut>
-            <p role="status">Déconnexion en cours…</p>
+            <LoadingIndicator Label="Déconnexion en cours…" />
         </LogOut>
         <CompletingLogOut>
-            <p role="status">Finalisation de la déconnexion…</p>
+            <LoadingIndicator Label="Finalisation de la déconnexion…" />
         </CompletingLogOut>
         <LogOutFailed>
             <MudAlert Severity="Severity.Error">La déconnexion a échoué. Réessayez depuis la collection.</MudAlert>

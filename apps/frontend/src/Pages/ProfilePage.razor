@@ -1,0 +1,65 @@
+@page "/profil"
+
+<PageTitle>MyDisk — Mon profil</PageTitle>
+
+<section class="md-profile" aria-labelledby="profile-title">
+    <MudText Typo="Typo.h3" HtmlTag="h1" id="profile-title" Class="mb-6">Mon profil</MudText>
+    <AuthorizeView>
+        <MudPaper Outlined="true" Class="pa-5 pa-sm-7">
+            <dl class="md-profile-details">
+                <div>
+                    <dt>Nom d’utilisateur</dt>
+                    <dd>@Display(context.User.Identity?.Name)</dd>
+                </div>
+                <div>
+                    <dt>Prénom</dt>
+                    <dd>@Display(context.User.FindFirst("given_name")?.Value)</dd>
+                </div>
+                <div>
+                    <dt>Nom</dt>
+                    <dd>@Display(context.User.FindFirst("family_name")?.Value)</dd>
+                </div>
+                <div>
+                    <dt>Adresse e-mail</dt>
+                    <dd>@Display(context.User.FindFirst("email")?.Value)</dd>
+                </div>
+            </dl>
+        </MudPaper>
+        <MudPaper Outlined="true" Class="pa-5 pa-sm-7 mt-4">
+            <details class="md-profile-claims">
+                <summary>Claims de la session (débogage)</summary>
+                @{
+                    var claims = context.User.Claims.OrderBy(claim => claim.Type, StringComparer.Ordinal).ToArray();
+                }
+                @if (claims.Length == 0)
+                {
+                    <p>Aucun claim disponible.</p>
+                }
+                else
+                {
+                    <table>
+                        <thead>
+                            <tr>
+                                <th scope="col">Type</th>
+                                <th scope="col">Valeur</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var claim in claims)
+                            {
+                                <tr>
+                                    <td><code>@claim.Type</code></td>
+                                    <td><code>@claim.Value</code></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </details>
+        </MudPaper>
+    </AuthorizeView>
+</section>
+
+@code {
+    private static string Display(string? value) => string.IsNullOrWhiteSpace(value) ? "Non renseigné" : value;
+}

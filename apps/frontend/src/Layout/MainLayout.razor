@@ -12,7 +12,12 @@
         <MudText Typo="Typo.body2">Votre espace musique</MudText>
         <MudSpacer />
         <AuthorizeView>
-            <MudText Typo="Typo.body2" Class="d-none d-md-block">@context.User.Identity?.Name</MudText>
+            @if (!string.IsNullOrWhiteSpace(context.User.Identity?.Name))
+            {
+                <MudLink Href="/profil" Typo="Typo.body2" Class="d-none d-md-block" aria-label="Mon profil">
+                    @context.User.Identity?.Name
+                </MudLink>
+            }
             <MudButton StartIcon="@Icons.Material.Filled.Logout" Color="Color.Primary" OnClick="LogOut">
                 Se déconnecter
             </MudButton>
@@ -43,6 +48,9 @@
             </MudNavLink>
             <MudNavLink Href="/etat-api" Icon="@Icons.Material.Filled.MonitorHeart">
                 État de l’API
+            </MudNavLink>
+            <MudNavLink Href="/profil" Icon="@Icons.Material.Filled.Person">
+                Mon profil
             </MudNavLink>
             <MudDivider Class="my-2" />
             <MudNavLink Href="@SwaggerUrl"

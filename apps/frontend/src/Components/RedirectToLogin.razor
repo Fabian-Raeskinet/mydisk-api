@@ -1,9 +1,6 @@
-@using MyDisks.Frontend.Layout
 @inject NavigationManager Navigation
 
-<LayoutView Layout="typeof(AuthenticationLayout)">
-    <p role="status">Redirection vers la page de connexion…</p>
-</LayoutView>
+<LoadingIndicator Label="Redirection vers la page de connexion…" />
 
 @code {
     protected override void OnAfterRender(bool firstRender)

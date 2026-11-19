@@ -20,6 +20,7 @@ if (authentication.IsConfigured)
         options.ProviderOptions.Authority = authentication.Authority;
         options.ProviderOptions.ClientId = authentication.ClientId;
         options.ProviderOptions.ResponseType = "code";
+        options.ProviderOptions.DefaultScopes.Add("email");
         options.UserOptions.NameClaim = "preferred_username";
         options.AuthenticationPaths.LogOutSucceededPath = RemoteAuthenticationDefaults.LoginPath;
     });
