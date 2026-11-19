@@ -24,6 +24,7 @@ if (authentication.IsConfigured)
         options.UserOptions.NameClaim = "preferred_username";
         options.AuthenticationPaths.LogOutSucceededPath = RemoteAuthenticationDefaults.LoginPath;
     });
+    builder.Services.AddScoped<DiskApiClient>();
 }
 
 builder.Services.AddMudServices();
@@ -35,5 +36,4 @@ builder.Services.AddScoped(_ => new HttpClient
     BaseAddress = new Uri(string.IsNullOrWhiteSpace(apiAddress) ? builder.HostEnvironment.BaseAddress : apiAddress),
     Timeout = TimeSpan.FromSeconds(60)
 });
-builder.Services.AddScoped<DiskApiClient>();
 await builder.Build().RunAsync();

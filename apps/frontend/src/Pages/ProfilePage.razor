@@ -1,4 +1,5 @@
 @page "/profil"
+@inject DiskApiClient Api
 
 <PageTitle>MyDisk — Mon profil</PageTitle>
 
@@ -28,38 +29,67 @@
         <MudPaper Outlined="true" Class="pa-5 pa-sm-7 mt-4">
             <details class="md-profile-claims">
                 <summary>Claims de la session (débogage)</summary>
-                @{
-                    var claims = context.User.Claims.OrderBy(claim => claim.Type, StringComparer.Ordinal).ToArray();
-                }
-                @if (claims.Length == 0)
-                {
-                    <p>Aucun claim disponible.</p>
-                }
-                else
-                {
-                    <table>
-                        <thead>
-                            <tr>
-                                <th scope="col">Type</th>
-                                <th scope="col">Valeur</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var claim in claims)
-                            {
-                                <tr>
-                                    <td><code>@claim.Type</code></td>
-                                    <td><code>@claim.Value</code></td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                }
+                <ClaimsTable Claims="context.User.Claims.Select(claim => new ClaimResult(claim.Type, claim.Value))" />
+            </details>
+        </MudPaper>
+        <MudPaper Outlined="true" Class="pa-5 pa-sm-7 mt-4">
+            <details class="md-profile-claims">
+                <summary>Claims validés par l’API</summary>
+                <MudStack Spacing="3" Class="mt-3">
+                    <div>
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="CheckApiSessionAsync" Disabled="_checkingApiSession">
+                            Vérifier la connexion à l’API
+                        </MudButton>
+                    </div>
+                    @if (_checkingApiSession)
+                    {
+                        <MudProgressLinear Indeterminate="true" Color="Color.Primary" aria-label="Vérification de la session par l’API" />
+                    }
+                    else if (_apiSessionError is not null)
+                    {
+                        <MudAlert Severity="Severity.Error">@_apiSessionError</MudAlert>
+                    }
+                    else if (_apiClaims is not null)
+                    {
+                        <MudAlert Severity="Severity.Success">L’API a validé votre jeton d’accès.</MudAlert>
+                        <ClaimsTable Claims="_apiClaims" />
+                    }
+                </MudStack>
             </details>
         </MudPaper>
     </AuthorizeView>
 </section>
 
 @code {
+    private bool _checkingApiSession;
+    private List<ClaimResult>? _apiClaims;
+    private string? _apiSessionError;
+
     private static string Display(string? value) => string.IsNullOrWhiteSpace(value) ? "Non renseigné" : value;
+
+    private async Task CheckApiSessionAsync()
+    {
+        if (_checkingApiSession) return;
+
+        _checkingApiSession = true;
+        _apiClaims = null;
+        _apiSessionError = null;
+
+        try
+        {
+            _apiClaims = await Api.GetSessionClaimsAsync();
+        }
+        catch (ApiException ex)
+        {
+            _apiSessionError = ex.Message;
+        }
+        catch (Exception ex) when (ex is HttpRequestException or OperationCanceledException or Microsoft.JSInterop.JSException)
+        {
+            _apiSessionError = "Impossible de vérifier la session. Réessayez.";
+        }
+        finally
+        {
+            _checkingApiSession = false;
+        }
+    }
 }

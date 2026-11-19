@@ -1,6 +1,8 @@
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using MyDisks.Frontend.Models;
 
 namespace MyDisks.Frontend.Services;
@@ -10,7 +12,7 @@ public sealed class ApiException(HttpStatusCode statusCode, string message) : Ex
     public HttpStatusCode StatusCode { get; } = statusCode;
 }
 
-public sealed class DiskApiClient(HttpClient http)
+public sealed class DiskApiClient(HttpClient http, IAccessTokenProvider accessTokenProvider)
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
@@ -41,6 +43,9 @@ public sealed class DiskApiClient(HttpClient http)
     public Task<MaintenanceResult> GetMaintenanceAsync(CancellationToken ct = default) =>
         GetAsync<MaintenanceResult>("maintenance", ct);
 
+    public Task<List<ClaimResult>> GetSessionClaimsAsync(CancellationToken ct = default) =>
+        GetAsync<List<ClaimResult>>("api/auth/me", ct);
+
     public async Task<string> GetHealthAsync(string probe = "ready", CancellationToken ct = default)
     {
         if (probe is not ("live" or "ready" or ""))
@@ -58,7 +63,13 @@ public sealed class DiskApiClient(HttpClient http)
 
     private async Task<T> GetAsync<T>(string path, CancellationToken ct)
     {
-        using var response = await http.GetAsync(path, ct);
+        using var request = new HttpRequestMessage(HttpMethod.Get, path);
+        using var response = await SendRequestAsync(request, ct);
+        return await ReadResponseAsync<T>(response, ct);
+    }
+
+    private static async Task<T> ReadResponseAsync<T>(HttpResponseMessage response, CancellationToken ct)
+    {
         await EnsureSuccessAsync(response, ct);
         try
         {
@@ -75,8 +86,28 @@ public sealed class DiskApiClient(HttpClient http)
     {
         using var request = new HttpRequestMessage(method, path);
         if (body is not null) request.Content = JsonContent.Create(body, options: JsonOptions);
-        using var response = await http.SendAsync(request, ct);
+        using var response = await SendRequestAsync(request, ct);
         await EnsureSuccessAsync(response, ct);
+    }
+
+    private async Task<HttpResponseMessage> SendRequestAsync(HttpRequestMessage request, CancellationToken ct)
+    {
+        if (request.RequestUri is { IsAbsoluteUri: false } uri &&
+            uri.OriginalString.StartsWith("api/", StringComparison.Ordinal))
+        {
+            ct.ThrowIfCancellationRequested();
+            var result = await accessTokenProvider.RequestAccessToken();
+            ct.ThrowIfCancellationRequested();
+            if (!result.TryGetToken(out var token))
+            {
+                throw new ApiException(HttpStatusCode.Unauthorized,
+                    "Aucun jeton d’accès disponible. Reconnectez-vous puis réessayez.");
+            }
+
+            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Value);
+        }
+
+        return await http.SendAsync(request, ct);
     }
 
     private static async Task EnsureSuccessAsync(HttpResponseMessage response, CancellationToken ct)
@@ -87,7 +118,7 @@ public sealed class DiskApiClient(HttpClient http)
         {
             HttpStatusCode.ServiceUnavailable => "L’API est en maintenance ou temporairement indisponible.",
             HttpStatusCode.NotFound => "L’élément demandé est introuvable.",
-            HttpStatusCode.Unauthorized => "Une authentification est requise par l’API.",
+            HttpStatusCode.Unauthorized => "L’API a refusé la session (401). Reconnectez-vous puis réessayez.",
             HttpStatusCode.Forbidden => "Cette action n’est pas autorisée.",
             _ => $"L’API a renvoyé une erreur ({(int)response.StatusCode})."
         };

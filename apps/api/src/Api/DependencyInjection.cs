@@ -3,6 +3,8 @@ using MyDisks.Api.Filters;
 using MyDisks.Api.Maintenance;
 using MyDisks.Api.Resiliences;
 using MyDisks.RetryService;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi;
 using Newtonsoft.Json.Converters;
 using Polly.Registry;
 
@@ -52,7 +54,16 @@ public static class DependencyInjection
 
     private static void AddSwaggerConfiguration(this IServiceCollection services)
     {
-        services.AddSwaggerGen();
+        services.AddSwaggerGen(options =>
+        {
+            options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+            {
+                Type = SecuritySchemeType.Http,
+                Scheme = "bearer",
+                BearerFormat = "JWT"
+            });
+            options.OperationFilter<SwaggerAuthorizationFilter>();
+        });
         services.AddSwaggerGenNewtonsoftSupport();
     }
 

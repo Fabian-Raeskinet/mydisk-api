@@ -1,0 +1,22 @@
+table {
+    width: 100%;
+    margin-top: 0.75rem;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+:is(th, td) {
+    padding: 0.5rem 0.5rem 0.5rem 0;
+    border-bottom: 1px solid var(--mud-palette-divider);
+    text-align: start;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+}
+
+th:first-child {
+    width: 40%;
+}
+
+code {
+    white-space: pre-wrap;
+}

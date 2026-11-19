@@ -27,6 +27,18 @@
         "http://localhost:3000",
         "https://localhost:8443"
       ],
+      "protocolMappers": [
+        {
+          "name": "mydisk-api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "config": {
+            "included.custom.audience": "mydisk-api",
+            "access.token.claim": "true",
+            "id.token.claim": "false"
+          }
+        }
+      ],
       "attributes": {
         "pkce.code.challenge.method": "S256",
         "post.logout.redirect.uris": "http://localhost:5100/authentication/logout-callback##http://localhost:3000/authentication/logout-callback##https://localhost:8443/authentication/logout-callback"

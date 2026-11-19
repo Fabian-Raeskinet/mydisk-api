@@ -12,6 +12,12 @@ configMapGenerator:
     literals:
       - ASPNETCORE_ENVIRONMENT=Development
       - Https__TerminatedAtProxy=true
+      - Authentication__Authority=https://auth.mydisk.localhost:8443/realms/mydisk
+      - Authentication__Audience=mydisk-api
+      - SSL_CERT_DIR=/etc/ssl/certs:/etc/mydisk/keycloak-ca
+  - name: keycloak-dev-ca
+    files:
+      - rootCA.pem=.tls/rootCA.pem
   - name: migrations-config
     behavior: merge
     literals:
@@ -32,3 +38,19 @@ secretGenerator:
 
 patches:
   - path: api-ingress-http.yml
+  - target:
+      kind: Deployment
+      name: mydisk-api
+    patch: |-
+      - op: add
+        path: /spec/template/spec/containers/0/volumeMounts
+        value:
+          - name: keycloak-dev-ca
+            mountPath: /etc/mydisk/keycloak-ca
+            readOnly: true
+      - op: add
+        path: /spec/template/spec/volumes
+        value:
+          - name: keycloak-dev-ca
+            configMap:
+              name: keycloak-dev-ca

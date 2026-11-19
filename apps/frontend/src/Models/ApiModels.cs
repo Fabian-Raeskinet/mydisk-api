@@ -38,3 +38,5 @@ public sealed class MaintenanceResult
 {
     public MaintenanceStatus Status { get; set; }
 }
+
+public sealed record ClaimResult(string Type, string Value);

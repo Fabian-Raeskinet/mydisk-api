@@ -56,7 +56,7 @@ INFRA_FRONTEND = infra/apps/frontend
 INFRA_CONTEXT ?= $(AKS_CLUSTER_NAME)
 
 .PHONY: help up down restart logs ps build clean test-unit frontend-restore frontend-dev frontend-check k8s-preflight k8s-smoke \
-        local-https k8s-init-tls cluster-https-port cluster-create cluster-start cluster-stop cluster-delete cluster-reset cluster-status cluster-load \
+        local-https local-keycloak-network k8s-init-tls cluster-https-port cluster-create cluster-start cluster-stop cluster-delete cluster-reset cluster-status cluster-load \
         k8s-help k8s-init-secrets k8s-build k8s-render k8s-apply k8s-delete \
         k8s-status k8s-restart k8s-logs k8s-logs-db k8s-logs-migrations k8s-logs-keycloak k8s-forward-api k8s-forward-frontend k8s-forward-db k8s-smoke-keycloak k8s-up k8s-down \
         k8s-push k8s-load-test k8s-watch-hpa dev-up dev-down \
@@ -286,6 +286,10 @@ k8s-render: k8s-init-secrets k8s-init-tls
 # Update existing ingress routes before replacing the frontend image.
 # Jobs are immutable: recreate the migration Job for each deployment.
 k8s-apply: k8s-init-secrets k8s-init-tls
+ifeq ($(ENV),local)
+k8s-apply: local-keycloak-network
+endif
+k8s-apply:
 	@set -e; \
 	baseline=; \
 	for deployment in $(APP_DEPLOYMENTS); do \
@@ -436,8 +440,8 @@ k8s-smoke:
 	printf '%s' "$$html" | grep -Fq '_framework/blazor.webassembly.js' || { echo "The ingress did not return the Blazor application." >&2; exit 1; }; \
 	health=$$(curl "$$@" --fail --silent --show-error --retry 5 --retry-delay 2 --retry-all-errors --connect-timeout 5 --max-time 20 "$(API_URL)/health/ready"); \
 	[ "$$health" = Healthy ] || { echo "The API readiness endpoint did not return Healthy." >&2; exit 1; }; \
-	content_type=$$(curl "$$@" --fail --silent --show-error --retry 5 --retry-delay 2 --retry-all-errors --connect-timeout 5 --max-time 20 --output /dev/null --write-out '%{content_type}' "$(API_URL)/api/Disk/disks"); \
-	case "$$content_type" in application/json*) ;; *) echo "The collection endpoint did not return JSON." >&2; exit 1 ;; esac; \
+	status=$$(curl "$$@" --silent --show-error --retry 5 --retry-delay 2 --connect-timeout 5 --max-time 20 --output /dev/null --write-out '%{http_code}' "$(API_URL)/api/Disk/disks"); \
+	[ "$$status" = 401 ] || { echo "The collection endpoint should return 401 without an access token (got $$status)." >&2; exit 1; }; \
 	echo "Frontend and API verified through $(API_URL)."
 
 # Rollout restart application deployments
@@ -582,6 +586,7 @@ k8s-init-tls:
 	@set -e; if [ "$(ENV)" = local ]; then \
 		bash deploy/k8s/local/init-tls.sh "$(LOCAL_API_OVERLAY)/.tls" localhost 127.0.0.1 ::1; \
 		bash deploy/k8s/local/init-tls.sh "$(KEYCLOAK_OVERLAY)/.tls" "$(KEYCLOAK_HOST)"; \
+		cp "$$(mkcert -CAROOT)/rootCA.pem" "$(LOCAL_API_OVERLAY)/.tls/rootCA.pem"; \
 	fi
 
 cluster-https-port:
@@ -593,7 +598,10 @@ cluster-https-port:
 		echo "Port 443 is already mapped to another host port: $$ports"; exit 1; \
 	fi
 
-local-https: cluster-https-port
+local-keycloak-network:
+	kubectl --context k3d-$(CLUSTER_NAME) -n kube-system apply -k deploy/k8s/local/networking
+
+local-https: cluster-https-port local-keycloak-network
 	$(MAKE) k8s-init-tls ENV=local
 	$(MAKE) k8s-init-secrets ENV=local
 	@set -e; rendered=$$(mktemp); trap 'rm -f "$$rendered"' EXIT; \

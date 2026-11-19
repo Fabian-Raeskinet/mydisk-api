@@ -1,0 +1,29 @@
+@if (!Claims.Any())
+{
+    <p>Aucun claim disponible.</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th scope="col">Type</th>
+                <th scope="col">Valeur</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var claim in Claims.OrderBy(claim => claim.Type, StringComparer.Ordinal))
+            {
+                <tr>
+                    <td><code>@claim.Type</code></td>
+                    <td><code>@claim.Value</code></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public IEnumerable<ClaimResult> Claims { get; set; } = [];
+}

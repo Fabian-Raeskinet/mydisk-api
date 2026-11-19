@@ -186,6 +186,10 @@ make k8s-watch-hpa      # HPA target vs current CPU, per-pod CPU, pod list, refr
 make k8s-load-test      # add ENV=cloud to target the Traefik public IP
 ```
 
+Export `MYDISK_ACCESS_TOKEN` in the load-test terminal before running the
+command. Use an access token for the `mydisk-api` audience that will remain
+valid for the whole run.
+
 The rates depend on the CPU cost of a request on your machine and can be overridden through environment variables, without editing the script:
 
 ```bash
@@ -356,7 +360,7 @@ Both pipelines trigger on `master`. Connect only one of them to the cluster, or 
 association, review and operational actions. The frontend supports signing in
 and out through Keycloak using OpenID Connect with authorization code and PKCE.
 The frontend redirects signed-out visitors to Keycloak and returns them there
-after logout. The HTTP API remains publicly accessible. NGINX serves
+after logout. NGINX serves
 the compiled WebAssembly application. Traefik routes `/api`, `/health`,
 `/maintenance` and `/swagger` directly to the API on the same origin.
 
@@ -423,6 +427,28 @@ realm URL) and `Authentication:ClientId`. Register the frontend origin as a Web
 Origin on the public client and register the exact frontend URLs ending in
 `/authentication/login-callback` and `/authentication/logout-callback`.
 The frontend displays a connection-unavailable message until both settings are supplied.
+
+### Verify the Keycloak session from the API
+
+In **Mon profil**, open **Claims validés par l’API** and run the check. The
+frontend sends its access token to `GET /api/auth/me`. The API validates the
+signature, expiry, public Keycloak issuer and `mydisk-api` audience before
+returning the token claims. Disk reads and writes, review writes, and the retry
+diagnostic endpoint require the same bearer access token. The frontend sends it
+automatically. Health probes and maintenance status remain public.
+
+Configure the API with `Authentication__Authority` and, if needed,
+`Authentication__Audience` (default `mydisk-api`). The local Kubernetes overlay
+uses the public issuer URL for OpenID Connect discovery and TLS. Inside k3d,
+CoreDNS resolves the Keycloak hostname to a ClusterIP Service that forwards
+port 8443 to Traefik. `make k8s-init-tls` stages the public mkcert CA used by
+the API pod.
+
+The local Keycloak realm file includes an Audience mapper for the
+`mydisk-frontend` client. In an existing realm, add an **Audience** mapper in
+the client's dedicated scope with **Included Custom Audience** set to
+`mydisk-api`, **Add to access token** enabled and **Add to ID token** disabled.
+Sign out and back in to get a token with the new audience.
 
 The collection supports filtering and sorting, disk creation/editing/deletion,
 author association, and review creation/archiving. The API currently exposes
@@ -500,8 +526,8 @@ make k8s-status
 ```
 
 `make dev-up` checks node readiness and disk pressure before building. It also
-checks the Blazor page and a real collection request through the HTTPS ingress
-after deployment; run `make k8s-smoke` to repeat those checks.
+checks the Blazor page, API readiness and anonymous rejection by the collection
+endpoint through the HTTPS ingress. Run `make k8s-smoke` to repeat those checks.
 
 If the nodes report `DiskPressure`, inspect `docker system df` and free Docker
 build cache or increase Docker Desktop's disk allocation. Kubernetes may take

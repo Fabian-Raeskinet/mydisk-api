@@ -3,6 +3,17 @@ import { check } from 'k6';
 
 const baseUrl = __ENV.BASE_URL || 'http://localhost:8080';
 const path = __ENV.TARGET_PATH || '/api/Disk/disks';
+const requiresToken = /^\/api(?:\/|\?|$)/i.test(path);
+const accessToken = __ENV.MYDISK_ACCESS_TOKEN;
+
+if (requiresToken && !accessToken) {
+  throw new Error('Set MYDISK_ACCESS_TOKEN to a Keycloak access token for the mydisk-api audience.');
+}
+
+const requestOptions = {
+  redirects: 0,
+  headers: requiresToken ? { Authorization: `Bearer ${accessToken}` } : {},
+};
 
 const lightRate = Number(__ENV.LIGHT_RATE || 5);
 const mediumRate = Number(__ENV.MEDIUM_RATE || 150);
@@ -30,7 +41,7 @@ export const options = {
 };
 
 export default function () {
-  const response = http.get(`${baseUrl}${path}`);
+  const response = http.get(`${baseUrl}${path}`, requestOptions);
 
   check(response, {
     'status is 200': (r) => r.status === 200,

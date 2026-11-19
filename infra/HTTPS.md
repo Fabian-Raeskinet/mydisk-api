@@ -74,6 +74,14 @@ directory and creates a TLS Secret for Traefik. Later make runs renew certificat
 when fewer than 30 days remain. `make k8s-smoke-keycloak` verifies the HTTPS issuer
 and the redirect from http://auth.mydisk.localhost:8080/admin.
 
+For API token validation, `make local-keycloak-network` installs an exact
+CoreDNS rewrite for `auth.mydisk.localhost` and a ClusterIP Service that forwards
+port 8443 to Traefik's HTTPS entrypoint. The local deployment applies these
+resources in `kube-system`. `make k8s-init-tls` copies the public mkcert root
+certificate into the ignored API `.tls/` directory so the API pod can verify
+Keycloak's certificate when it downloads the issuer metadata and signing keys
+from their public URL. [K3s CoreDNS configuration](https://docs.k3s.io/advanced#coredns-custom-configuration-imports)
+
 For an existing, already running application, enable HTTPS without migrations:
 
 ```sh

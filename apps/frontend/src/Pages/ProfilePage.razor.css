@@ -26,29 +26,6 @@
     font-weight: 600;
 }
 
-.md-profile-claims table {
-    width: 100%;
-    margin-top: 0.75rem;
-    table-layout: fixed;
-    border-collapse: collapse;
-}
-
-.md-profile-claims :is(th, td) {
-    padding: 0.5rem 0.5rem 0.5rem 0;
-    border-bottom: 1px solid var(--mud-palette-divider);
-    text-align: start;
-    vertical-align: top;
-    overflow-wrap: anywhere;
-}
-
-.md-profile-claims th:first-child {
-    width: 40%;
-}
-
-.md-profile-claims code {
-    white-space: pre-wrap;
-}
-
 @media (max-width: 600px) {
     .md-profile-details {
         grid-template-columns: minmax(0, 1fr);
