@@ -1,0 +1,152 @@
+@implements IDisposable
+@inject DiskApiClient Api
+@inject IDialogService Dialogs
+
+@if (_loading)
+{
+    <MudProgressLinear Indeterminate="true" Color="Color.Primary" aria-label="Chargement des avis" />
+}
+
+@if (_error is not null)
+{
+    <MudAlert Severity="Severity.Error">@_error</MudAlert>
+}
+
+@if (_loadFailed)
+{
+    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="LoadAsync" Disabled="_loading">
+        Réessayer
+    </MudButton>
+}
+else if (_notice is not null)
+{
+    <MudAlert Severity="Severity.Success">@_notice</MudAlert>
+}
+
+@if (!_loading && !_loadFailed && _reviews.Count == 0)
+{
+    <MudAlert Severity="Severity.Info">Aucun avis à afficher.</MudAlert>
+}
+
+@foreach (var review in _reviews)
+{
+    <MudPaper @key="review.Id" Outlined="true" Class="pa-4">
+        <MudStack Spacing="2">
+            <MudText Typo="Typo.overline" Color="Color.Secondary">@review.DiskName</MudText>
+            <MudText Typo="Typo.h6" HtmlTag="h2">@review.Title</MudText>
+            <MudText Typo="Typo.body2" Style="white-space: pre-wrap; overflow-wrap: anywhere;">@review.Content</MudText>
+            <MudStack Row="true" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap" Spacing="2">
+                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">@StatusLabel(review.Status)</MudChip>
+                <MudText Typo="Typo.body2">@review.Note.ToString("0.#", FrenchCulture) / 5</MudText>
+                @if (review.Status != ReviewStatus.Archived)
+                {
+                    <MudButton Variant="Variant.Outlined" Color="Color.Error" Disabled="_archiving"
+                               OnClick="() => ConfirmArchiveAsync(review)">
+                        Retirer l’avis
+                    </MudButton>
+                }
+            </MudStack>
+        </MudStack>
+    </MudPaper>
+}
+
+@code {
+    private static readonly CultureInfo FrenchCulture = CultureInfo.GetCultureInfo("fr-FR");
+    private readonly CancellationTokenSource _lifetime = new();
+    private List<AdminReviewResult> _reviews = [];
+    private bool _loading;
+    private bool _loadFailed;
+    private bool _archiving;
+    private string? _error;
+    private string? _notice;
+
+    protected override Task OnInitializedAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        var ct = _lifetime.Token;
+        _loading = true;
+        _loadFailed = false;
+        _error = null;
+        _notice = null;
+        try
+        {
+            _reviews = await Api.GetAdminReviewsAsync(ct);
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { }
+        catch (Exception error)
+        {
+            _loadFailed = true;
+            ShowError(error);
+        }
+        finally
+        {
+            _loading = false;
+        }
+    }
+
+    private async Task ConfirmArchiveAsync(AdminReviewResult review)
+    {
+        var index = _reviews.IndexOf(review);
+        if (_archiving || index < 0)
+            return;
+
+        var ct = _lifetime.Token;
+        _archiving = true;
+        _error = null;
+        _notice = null;
+        try
+        {
+            var confirmed = await Dialogs.ShowMessageBoxAsync(
+                "Retirer cet avis ?", "L’avis sera archivé.", yesText: "Retirer l’avis", cancelText: "Annuler");
+            if (confirmed != true || ct.IsCancellationRequested)
+                return;
+
+            await Api.ArchiveAdminReviewAsync(review.Id, ct);
+            _reviews[index] = review with { Status = ReviewStatus.Archived };
+            _notice = "L’avis a été archivé.";
+        }
+        catch (OperationCanceledException) when (ct.IsCancellationRequested) { }
+        catch (Exception error)
+        {
+            ShowError(error);
+        }
+        finally
+        {
+            _archiving = false;
+        }
+    }
+
+    private void ShowError(Exception error)
+    {
+        if (error is ApiException { StatusCode: System.Net.HttpStatusCode.Unauthorized or System.Net.HttpStatusCode.Forbidden })
+        {
+            _reviews.Clear();
+            _loadFailed = true;
+            _error = "L’accès à la modération est indisponible pour cette session. Vérifiez le rôle du compte, puis reconnectez-vous.";
+            return;
+        }
+
+        _error = error switch
+        {
+            ApiException => error.Message,
+            OperationCanceledException => "L’API a mis trop de temps à répondre. Réessayez.",
+            _ => "Impossible de contacter l’API. Réessayez."
+        };
+    }
+
+    private static string StatusLabel(ReviewStatus status) => status switch
+    {
+        ReviewStatus.New => "Nouveau",
+        ReviewStatus.Pending => "En attente",
+        ReviewStatus.Published => "Publié",
+        ReviewStatus.Archived => "Archivé",
+        _ => "Statut inconnu"
+    };
+
+    public void Dispose()
+    {
+        _lifetime.Cancel();
+        _lifetime.Dispose();
+    }
+}

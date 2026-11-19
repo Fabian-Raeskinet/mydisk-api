@@ -1,5 +1,7 @@
+using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
+using MyDisks.Domain.Disks;
 using MyDisks.Domain.Exceptions;
 using MyDisks.Domain.Reviews;
 using MyDisks.Services.Reviews;
@@ -23,7 +25,7 @@ public class ArchiveReviewCommandHandlerFixture
         {
             // Arrange
             sut.ReviewRepository.AsMock()
-                .Setup(x => x.GetReviewByFilterAsync(r => r.Id == request.ReviewId))
+                .Setup(x => x.GetReviewByFilterAsync(It.IsAny<Expression<Func<Review, bool>>>()))
                 .ReturnsAsync(review);
 
             // Act
@@ -31,7 +33,7 @@ public class ArchiveReviewCommandHandlerFixture
 
             // Assert
             sut.ReviewRepository.AsMock()
-                .Verify(x => x.GetReviewByFilterAsync(r => r.Id == request.ReviewId));
+                .Verify(x => x.GetReviewByFilterAsync(It.IsAny<Expression<Func<Review, bool>>>()));
         }
 
         [Theory]
@@ -44,7 +46,7 @@ public class ArchiveReviewCommandHandlerFixture
         {
             // Arrange
             sut.ReviewRepository.AsMock()
-                .Setup(x => x.GetReviewByFilterAsync(r => r.Id == request.ReviewId))
+                .Setup(x => x.GetReviewByFilterAsync(It.IsAny<Expression<Func<Review, bool>>>()))
                 .ReturnsAsync((Review)null!);
 
             // Act
@@ -65,7 +67,7 @@ public class ArchiveReviewCommandHandlerFixture
         {
             // Arrange
             sut.ReviewRepository.AsMock()
-                .Setup(x => x.GetReviewByFilterAsync(r => r.Id == request.ReviewId))
+                .Setup(x => x.GetReviewByFilterAsync(It.IsAny<Expression<Func<Review, bool>>>()))
                 .ReturnsAsync(review);
 
             // Act

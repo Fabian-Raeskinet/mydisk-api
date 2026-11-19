@@ -12,7 +12,7 @@ public class DeleteDiskCommandValidatorFixture
     public async Task ShouldThrowValidationException()
     {
         // Arrange
-        var request = new DeleteDiskCommandRequest { DiskId = Guid.Empty};
+        var request = new DeleteDiskCommandRequest { DiskId = Guid.Empty, Owner = new("issuer", "subject") };
 
         // Act
         var act = await new DeleteDiskCommandValidator().ValidateAsync(request);

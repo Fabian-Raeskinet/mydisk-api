@@ -11,7 +11,7 @@ public class AttachAuthorCommandValidatorFixture
     public async Task ShouldThrowValidationException()
     {
         // Arrange
-        var request = new AttachAuthorCommandRequest { AuthorId = Guid.Empty, DiskId = Guid.Empty };
+        var request = new AttachAuthorCommandRequest { AuthorId = Guid.Empty, DiskId = Guid.Empty, Owner = new("issuer", "subject") };
 
         // Act
         var act = await new AttachAuthorCommandValidator().ValidateAsync(request);

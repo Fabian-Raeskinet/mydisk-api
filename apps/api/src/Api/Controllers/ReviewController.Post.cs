@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MyDisks.Contracts.Reviews;
 using MyDisks.Services.Reviews;
@@ -11,12 +10,15 @@ public partial class ReviewController
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> CreateReview(CreateReviewCommand command)
     {
-        var request = new CreateReviewCommandRequest()
+        var owner = User.GetRequiredDiskOwner();
+
+        var request = new CreateReviewCommandRequest
         {
             Title = command.Title,
             Content = command.Content,
             DiskId = command.DiskId,
-            Note = command.Note
+            Note = command.Note,
+            Owner = owner
         };
         await Mediator.Send(request);
         return NoContent();
@@ -26,9 +28,12 @@ public partial class ReviewController
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> ArchiveReview(ArchiveReviewCommand command)
     {
-        var request = new ArchiveReviewCommandRequest()
+        var owner = User.GetRequiredDiskOwner();
+
+        var request = new ArchiveReviewCommandRequest
         {
-            ReviewId = command.ReviewId
+            ReviewId = command.ReviewId,
+            Owner = owner
         };
         
         await Mediator.Send(request);

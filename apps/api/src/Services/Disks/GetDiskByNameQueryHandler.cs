@@ -21,7 +21,10 @@ public class GetDiskByNameQueryHandler : IQueryHandler<GetDiskByNameQueryRequest
     public async Task<DiskResult> Handle(GetDiskByNameQueryRequest request,
         CancellationToken cancellationToken)
     {
-        var data = await UnitOfWork.DiskRepository.GetDiskByFilterAsync(d => d.Name == request.Name);
+        var data = await UnitOfWork.DiskRepository.GetDiskByFilterAsync(d =>
+            d.Name == request.Name &&
+            d.CreatedByIssuer == request.Owner.Issuer &&
+            d.CreatedBySubject == request.Owner.Subject);
 
         if (data is null)
             throw new ObjectNotFoundException();

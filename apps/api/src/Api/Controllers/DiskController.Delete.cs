@@ -11,9 +11,12 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> DeleteDiskById([FromQuery] Guid diskId)
     {
+        var owner = User.GetRequiredDiskOwner();
+
         await Mediator.Send(new DeleteDiskCommandRequest
         {
-            DiskId = diskId
+            DiskId = diskId,
+            Owner = owner
         });
         return NoContent();
     }

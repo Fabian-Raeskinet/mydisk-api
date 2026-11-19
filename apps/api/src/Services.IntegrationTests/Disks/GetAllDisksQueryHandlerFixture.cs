@@ -12,7 +12,7 @@ public class GetAllDisksQueryHandlerFixture : ServiceFixtureBase
 {
     [Theory]
     [AutoServiceData]
-    public async Task Should(GetAllDisksQueryRequest request)
+    public async Task Does_not_return_disks_for_an_unknown_owner(GetAllDisksQueryRequest request)
     {
         // Arrange
         var sut = ServiceProvider.GetRequiredService<IRequestHandler<GetAllDisksQueryRequest, IEnumerable<DiskResult>>>();
@@ -20,6 +20,6 @@ public class GetAllDisksQueryHandlerFixture : ServiceFixtureBase
         // Act
         var act = await sut?.Handle(request, CancellationToken.None)!;
 
-        act.Should().NotBeEmpty();
+        act.Should().BeEmpty();
     }
 }

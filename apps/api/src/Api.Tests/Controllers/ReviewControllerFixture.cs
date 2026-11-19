@@ -14,6 +14,7 @@ public class ReviewControllerFixture
         public async Task Should_Use_Mediator(CreateReviewCommand command, [NoAutoProperties] ReviewController sut)
         {
             // Act
+            DiskControllerFixture.SetAuthenticatedUser(sut);
             var act = await sut.CreateReview(command);
 
             // Assert
@@ -33,6 +34,7 @@ public class ReviewControllerFixture
             [NoAutoProperties] ReviewController sut)
         {
             // Act
+            DiskControllerFixture.SetAuthenticatedUser(sut);
             var act = await sut.CreateReview(command);
 
             // Assert
@@ -47,6 +49,7 @@ public class ReviewControllerFixture
         public async Task Should_Use_Mediator(ArchiveReviewCommand command, [NoAutoProperties] ReviewController sut)
         {
             // Act
+            DiskControllerFixture.SetAuthenticatedUser(sut);
             var act = await sut.ArchiveReview(command);
 
             // Assert
@@ -62,6 +65,7 @@ public class ReviewControllerFixture
             [NoAutoProperties] ReviewController sut)
         {
             // Act
+            DiskControllerFixture.SetAuthenticatedUser(sut);
             var act = await sut.ArchiveReview(command);
 
             // Assert

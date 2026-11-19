@@ -40,6 +40,12 @@ public sealed class DiskApiClient(HttpClient http, IAccessTokenProvider accessTo
     public Task ArchiveReviewAsync(Guid reviewId, CancellationToken ct = default) =>
         SendAsync(HttpMethod.Post, "api/Review/Archive", new { reviewId }, ct);
 
+    public Task<List<AdminReviewResult>> GetAdminReviewsAsync(CancellationToken ct = default) =>
+        GetAsync<List<AdminReviewResult>>("api/admin/reviews", ct);
+
+    public Task ArchiveAdminReviewAsync(Guid reviewId, CancellationToken ct = default) =>
+        SendAsync(HttpMethod.Post, $"api/admin/reviews/{reviewId}/archive", null, ct);
+
     public Task<MaintenanceResult> GetMaintenanceAsync(CancellationToken ct = default) =>
         GetAsync<MaintenanceResult>("maintenance", ct);
 

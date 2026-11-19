@@ -1,0 +1,15 @@
+@page "/administration/avis"
+
+<PageTitle>MyDisk — Administration des avis</PageTitle>
+
+<MudStack Spacing="4">
+    <MudText Typo="Typo.h4" HtmlTag="h1">Administration des avis</MudText>
+    <AuthorizeView Roles="admin">
+        <Authorized>
+            <AdminReviewsView />
+        </Authorized>
+        <NotAuthorized>
+            <MudAlert Severity="Severity.Warning">Cette page est réservée aux administrateurs.</MudAlert>
+        </NotAuthorized>
+    </AuthorizeView>
+</MudStack>

@@ -24,7 +24,7 @@ public class DiskRepositoryFixture : DatabaseFixtureBase
             await Sut.CreateDiskAsync(disk1);
             await Sut.CreateDiskAsync(disk2);
             // Act
-            var act = await Sut.GetDisksAsync();
+            var act = await Sut.GetDisksAsync(_ => true);
 
             // Assert
             act.Should().NotBeEmpty();

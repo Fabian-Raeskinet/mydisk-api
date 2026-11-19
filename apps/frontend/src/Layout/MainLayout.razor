@@ -52,6 +52,11 @@
             <MudNavLink Href="/profil" Icon="@Icons.Material.Filled.Person">
                 Mon profil
             </MudNavLink>
+            <AuthorizeView Roles="admin">
+                <MudNavLink Href="/administration/avis" Icon="@Icons.Material.Filled.AdminPanelSettings">
+                    Administration
+                </MudNavLink>
+            </AuthorizeView>
             <MudDivider Class="my-2" />
             <MudNavLink Href="@SwaggerUrl"
                         Target="_blank"

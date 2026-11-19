@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using FluentAssertions;
 using Moq;
 using MyDisks.Domain.Disks;
@@ -23,7 +24,7 @@ public class CreateReviewCommandHandlerFixture
         {
             // Arrange
             sut.DiskRepository.AsMock()
-                .Setup(x => x.GetDiskByFilterAsync(disk => disk.Id == request.DiskId))
+                .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
                 .ReturnsAsync(disk);
 
             // Act
@@ -31,7 +32,7 @@ public class CreateReviewCommandHandlerFixture
 
             // Assert
             sut.DiskRepository.AsMock()
-                .Verify(x => x.GetDiskByFilterAsync(disk => disk.Id == request.DiskId));
+                .Verify(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()));
         }
 
         [Theory]
@@ -44,7 +45,7 @@ public class CreateReviewCommandHandlerFixture
         {
             // Arrange
             sut.DiskRepository.AsMock()
-                .Setup(x => x.GetDiskByFilterAsync(disk => disk.Id == request.DiskId))
+                .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
                 .ReturnsAsync((Disk)null!);
 
             // Act
@@ -65,7 +66,7 @@ public class CreateReviewCommandHandlerFixture
         {
             // Arrange
             sut.DiskRepository.AsMock()
-                .Setup(x => x.GetDiskByFilterAsync(d => d.Id == request.DiskId))
+                .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
                 .ReturnsAsync(disk);
 
             // Act
@@ -89,7 +90,7 @@ public class CreateReviewCommandHandlerFixture
         {
             // Arrange
             sut.DiskRepository.AsMock()
-                .Setup(x => x.GetDiskByFilterAsync(d => d.Id == request.DiskId))
+                .Setup(x => x.GetDiskByFilterAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
                 .ReturnsAsync(disk);
 
             // Act

@@ -13,6 +13,16 @@ public class ReviewRepository : IReviewRepository
         Context = context;
     }
 
+    public async Task<IReadOnlyList<Review>> GetReviewsWithDisksAsync(CancellationToken cancellationToken)
+    {
+        return await Context.Reviews
+            .AsNoTracking()
+            .Include(review => review.Disk)
+            .OrderByDescending(review => review.PublishedDate)
+            .ThenBy(review => review.Id)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<Review?> GetReviewByFilterAsync(Expression<Func<Review, bool>> predicate)
     {
         return await Context.Reviews

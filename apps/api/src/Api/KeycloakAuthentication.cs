@@ -21,7 +21,11 @@ internal static class KeycloakAuthentication
                     ? issuer
                     : throw new SecurityTokenInvalidIssuerException("The token issuer does not match the configured authority.");
         });
-        services.AddAuthorization();
+        services.AddAuthorization(options => options.AddPolicy("Admin", policy => policy
+            .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+            .RequireAuthenticatedUser()
+            .RequireClaim("sub")
+            .RequireClaim("mydisk_roles", "admin")));
     }
 
 }

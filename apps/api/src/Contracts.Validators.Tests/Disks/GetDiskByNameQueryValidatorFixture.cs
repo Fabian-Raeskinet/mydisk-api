@@ -15,7 +15,8 @@ public class GetDiskByNameQueryValidatorFixture
         // Arrange
         var request = new GetDiskByNameQueryRequest
         {
-            Name = name
+            Name = name,
+            Owner = new("issuer", "subject")
         };
 
         // Act

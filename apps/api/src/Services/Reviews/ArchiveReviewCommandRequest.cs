@@ -4,5 +4,6 @@ namespace MyDisks.Services.Reviews;
 
 public class ArchiveReviewCommandRequest : ArchiveReviewCommand, ICommand
 {
+    public required DiskOwner Owner { get; init; }
     
 }

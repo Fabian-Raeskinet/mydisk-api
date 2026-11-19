@@ -13,17 +13,14 @@ public partial class DiskController
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> CreateDisk([FromBody] CreateDiskCommand command)
     {
-        var issuer = User.FindFirst("iss")?.Value;
-        var subject = User.FindFirst("sub")?.Value;
-        if (string.IsNullOrWhiteSpace(issuer) || string.IsNullOrWhiteSpace(subject))
-            return Forbid();
+        var owner = User.GetRequiredDiskOwner();
 
         var request = new CreateDiskCommandRequest
         {
             Name = command.Name,
             ReleaseDate = command.ReleaseDate,
-            CreatedByIssuer = issuer,
-            CreatedBySubject = subject
+            CreatedByIssuer = owner.Issuer,
+            CreatedBySubject = owner.Subject
         };
         await Mediator.Send(request);
         return NoContent();
@@ -35,7 +32,14 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> AttachAuthor([FromBody] AttachAuthorCommand command)
     {
-        var request = new AttachAuthorCommandRequest { AuthorId = command.AuthorId, DiskId = command.DiskId };
+        var owner = User.GetRequiredDiskOwner();
+
+        var request = new AttachAuthorCommandRequest
+        {
+            AuthorId = command.AuthorId,
+            DiskId = command.DiskId,
+            Owner = owner
+        };
         await Mediator.Send(request);
         return NoContent();
     }

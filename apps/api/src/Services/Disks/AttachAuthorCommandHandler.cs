@@ -20,11 +20,15 @@ public class AttachAuthorCommandHandler : ICommandHandler<AttachAuthorCommandReq
 
     public async Task Handle(AttachAuthorCommandRequest request, CancellationToken cancellationToken)
     {
-        
-        var author = await UnitOfWork.AuthorRepository.GetAuthorByFilterAsync(x => x.Id == request.AuthorId);
-        var disk = await UnitOfWork.DiskRepository.GetDiskByFilterAsync(x => x.Id == request.DiskId);
+        var disk = await UnitOfWork.DiskRepository.GetDiskByFilterAsync(x =>
+            x.Id == request.DiskId &&
+            x.CreatedByIssuer == request.Owner.Issuer &&
+            x.CreatedBySubject == request.Owner.Subject);
+        if (disk is null)
+            throw new ObjectNotFoundException("no matches found");
 
-        if (author is null || disk is null)
+        var author = await UnitOfWork.AuthorRepository.GetAuthorByFilterAsync(x => x.Id == request.AuthorId);
+        if (author is null)
             throw new ObjectNotFoundException("no matches found");
 
         disk.AttachAuthor(author);

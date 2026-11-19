@@ -9,6 +9,21 @@ namespace MyDisks.Api.Tests.Controllers;
 
 public class DiskControllerFixture
 {
+    private const string Issuer = "https://keycloak.example/realms/mydisk";
+    private const string Subject = "disk-creator";
+
+    internal static void SetAuthenticatedUser(ControllerBase controller)
+    {
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = new DefaultHttpContext
+            {
+                User = new ClaimsPrincipal(new ClaimsIdentity(
+                    [new Claim("iss", Issuer), new Claim("sub", Subject)], "test"))
+            }
+        };
+    }
+
     public class GetAllDisksFixture
     {
         [Theory]
@@ -16,6 +31,7 @@ public class DiskControllerFixture
         public async void Should_Use_Mediator([NoAutoProperties] DiskController sut)
         {
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.GetAllDisks();
 
             // Assert
@@ -28,6 +44,7 @@ public class DiskControllerFixture
         public async void Should_Returns_OkObjectResult([NoAutoProperties] DiskController sut)
         {
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.GetAllDisks();
 
             // Assert
@@ -48,6 +65,7 @@ public class DiskControllerFixture
                 .ReturnsAsync(diskResponses);
 
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.GetAllDisks() as OkObjectResult;
             var result = (IEnumerable<DiskResult>)act!.Value!;
 
@@ -65,6 +83,7 @@ public class DiskControllerFixture
                 .ReturnsAsync(Array.Empty<DiskResult>());
 
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.GetAllDisks() as OkObjectResult;
             var result = (IEnumerable<DiskResult>)act!.Value!;
 
@@ -84,6 +103,7 @@ public class DiskControllerFixture
         )
         {
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.GetByName(diskName);
 
             // Assert
@@ -100,6 +120,7 @@ public class DiskControllerFixture
         )
         {
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.GetByName(diskName);
 
             // Assert
@@ -121,6 +142,7 @@ public class DiskControllerFixture
                 .ReturnsAsync(diskResponse);
 
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.GetByName(diskName) as OkObjectResult;
             var result = (DiskResult)act!.Value!;
 
@@ -137,6 +159,7 @@ public class DiskControllerFixture
         )
         {
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.GetByName(diskName);
 
             // Assert
@@ -149,9 +172,6 @@ public class DiskControllerFixture
 
     public class CreateDiskFixture
     {
-        private const string Issuer = "https://keycloak.example/realms/mydisk";
-        private const string Subject = "disk-creator";
-
         [Theory]
         [AutoApiData]
         public async Task Should_Use_Mediator
@@ -209,17 +229,6 @@ public class DiskControllerFixture
                         CancellationToken.None));
         }
 
-        private static void SetAuthenticatedUser(DiskController controller)
-        {
-            controller.ControllerContext = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext
-                {
-                    User = new ClaimsPrincipal(new ClaimsIdentity(
-                        [new Claim("iss", Issuer), new Claim("sub", Subject)], "test"))
-                }
-            };
-        }
     }
 
     public class AttachAuthorFixture
@@ -233,6 +242,7 @@ public class DiskControllerFixture
         )
         {
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.AttachAuthor(command);
 
             // Assert
@@ -250,6 +260,7 @@ public class DiskControllerFixture
         )
         {
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.AttachAuthor(command);
 
             // Assert
@@ -265,6 +276,7 @@ public class DiskControllerFixture
         )
         {
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.AttachAuthor(command);
 
             // Assert
@@ -288,6 +300,7 @@ public class DiskControllerFixture
         )
         {
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.DeleteDiskById(diskId);
 
             // Assert
@@ -305,6 +318,7 @@ public class DiskControllerFixture
         )
         {
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.DeleteDiskById(diskId);
 
             // Assert
@@ -320,6 +334,7 @@ public class DiskControllerFixture
         )
         {
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.DeleteDiskById(diskId);
 
             // Assert
@@ -340,6 +355,7 @@ public class DiskControllerFixture
         )
         {
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.UpdateDisk(command);
 
             // Assert
@@ -357,6 +373,7 @@ public class DiskControllerFixture
         )
         {
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.UpdateDisk(command);
 
             // Assert
@@ -372,6 +389,7 @@ public class DiskControllerFixture
         )
         {
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.UpdateDisk(command);
 
             // Assert

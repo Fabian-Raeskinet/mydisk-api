@@ -20,7 +20,7 @@ public sealed class DiskControllerFixture
         {
             // Arrange
             _factory.DiskRepositoryMock
-                .Setup(x => x.GetDisksAsync())
+                .Setup(x => x.GetDisksAsync(It.IsAny<Expression<Func<Disk, bool>>>()))
                 .ReturnsAsync(disks);
 
             // Act

@@ -1,6 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using MyDisks.Api.Exceptions;
 using MyDisks.Domain.Exceptions;
 
 namespace MyDisks.Api.Filters;
@@ -13,7 +14,8 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
         {
             { typeof(ValidationException), HandleValidationException },
             { typeof(ObjectNotFoundException), HandleObjectyNotFoundException },
-            { typeof(FormatException), HandleFormatException }
+            { typeof(FormatException), HandleFormatException },
+            { typeof(ForbiddenAccessException), HandleForbiddenAccessException }
         };
     }
 
@@ -59,6 +61,12 @@ public class ApiExceptionFilterAttribute : ExceptionFilterAttribute
 
         context.Result = new BadRequestObjectResult(new List<string> { error });
 
+        context.ExceptionHandled = true;
+    }
+
+    private static void HandleForbiddenAccessException(ExceptionContext context)
+    {
+        context.Result = new ForbidResult();
         context.ExceptionHandled = true;
     }
 }

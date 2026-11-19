@@ -6,6 +6,16 @@
   "internationalizationEnabled": true,
   "supportedLocales": ["fr"],
   "defaultLocale": "fr",
+  "roles": {
+    "client": {
+      "mydisk-frontend": [
+        {
+          "name": "admin",
+          "description": "View and archive reviews in MyDisk"
+        }
+      ]
+    }
+  },
   "clients": [
     {
       "clientId": "mydisk-frontend",
@@ -36,6 +46,20 @@
             "included.custom.audience": "mydisk-api",
             "access.token.claim": "true",
             "id.token.claim": "false"
+          }
+        },
+        {
+          "name": "mydisk-roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-client-role-mapper",
+          "config": {
+            "usermodel.clientRoleMapping.clientId": "mydisk-frontend",
+            "claim.name": "mydisk_roles",
+            "jsonType.label": "String",
+            "multivalued": "true",
+            "access.token.claim": "true",
+            "id.token.claim": "true",
+            "userinfo.token.claim": "true"
           }
         }
       ],

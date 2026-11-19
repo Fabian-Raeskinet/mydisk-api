@@ -11,7 +11,7 @@ public interface IDiskRepository
     /// A <see cref="Task"/> representing the asynchronous operation. The task result contains
     /// an <see cref="IEnumerable{Disk}"/> that represents the list of disks retrieved.
     /// </returns>
-    public Task<IEnumerable<Disk>?> GetDisksAsync();
+    public Task<IEnumerable<Disk>?> GetDisksAsync(Expression<Func<Disk, bool>> predicate);
     
     /// <summary>
     /// Retrieves a disk that matches the given filter asynchronously.

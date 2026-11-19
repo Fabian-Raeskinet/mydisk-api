@@ -22,8 +22,9 @@ if (authentication.IsConfigured)
         options.ProviderOptions.ResponseType = "code";
         options.ProviderOptions.DefaultScopes.Add("email");
         options.UserOptions.NameClaim = "preferred_username";
+        options.UserOptions.RoleClaim = "mydisk_roles";
         options.AuthenticationPaths.LogOutSucceededPath = RemoteAuthenticationDefaults.LoginPath;
-    });
+    }).AddAccountClaimsPrincipalFactory<RoleClaimsPrincipalFactory>();
     builder.Services.AddScoped<DiskApiClient>();
 }
 

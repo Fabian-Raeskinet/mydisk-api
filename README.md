@@ -118,6 +118,13 @@ From the repository root in a second terminal, run `make frontend-restore` and t
 
 For a different provider or environment, set `Authentication:Authority` and `Authentication:ClientId` in the frontend's public configuration. In the API, set `Authentication__Authority` and, if needed, `Authentication__Audience`, which defaults to `mydisk-api`. The OIDC client must allow the frontend origin and the full callback URLs for `/authentication/login-callback` and `/authentication/logout-callback`. [Frontend configuration](apps/frontend/src/wwwroot/)
 
+### Review moderation
+
+1. In the `mydisk` realm, open **Clients → mydisk-frontend → Roles**. A new realm already has the client role `admin`. For an existing realm, create it there.
+2. In the same client's dedicated scope, add a **User Client Role** mapper for `mydisk-frontend` if `mydisk-roles` is missing. Set the claim name to `mydisk_roles`, the JSON type to `String`, enable **Multivalued**, and add it to the access token, ID token, and userinfo. See the [realm configuration](apps/keycloak/k8s/overlays/local/mydisk-realm.json) for the exact mapper keys.
+3. Under **Users → Role mapping**, assign the `mydisk-frontend` client role `admin` to a test account. Sign out and sign in again so MyDisk receives tokens with the new role.
+4. Open **Administration → Avis** in MyDisk. The admin can view and archive reviews across collections. **Ma collection** shows the signed-in account’s disks. Older records with no recorded creator stay outside personal collections.
+
 ## Tests and verification
 
 ### Automated suites

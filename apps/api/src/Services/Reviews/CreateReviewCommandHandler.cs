@@ -15,7 +15,10 @@ public class CreateReviewCommandHandler : ICommandHandler<CreateReviewCommandReq
 
     public async Task Handle(CreateReviewCommandRequest request, CancellationToken cancellationToken)
     {
-        var disk = await DiskRepository.GetDiskByFilterAsync(x => x.Id == request.DiskId);
+        var disk = await DiskRepository.GetDiskByFilterAsync(x =>
+            x.Id == request.DiskId &&
+            x.CreatedByIssuer == request.Owner.Issuer &&
+            x.CreatedBySubject == request.Owner.Subject);
 
         if (disk is null)
             throw new ObjectNotFoundException();

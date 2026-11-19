@@ -14,7 +14,10 @@ public class ArchiveReviewCommandHandler : ICommandHandler<ArchiveReviewCommandR
 
     public async Task Handle(ArchiveReviewCommandRequest request, CancellationToken cancellationToken)
     {
-        var review = await ReviewRepository.GetReviewByFilterAsync(x => x.Id == request.ReviewId);
+        var review = await ReviewRepository.GetReviewByFilterAsync(x =>
+            x.Id == request.ReviewId && x.Disk != null &&
+            x.Disk.CreatedByIssuer == request.Owner.Issuer &&
+            x.Disk.CreatedBySubject == request.Owner.Subject);
 
         if (review is null)
             throw new ObjectNotFoundException();

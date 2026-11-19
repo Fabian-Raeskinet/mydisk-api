@@ -20,8 +20,8 @@ public class GetAllDisksQueryHandler : IQueryHandler<GetAllDisksQueryRequest, IE
     public async Task<IEnumerable<DiskResult>> Handle(GetAllDisksQueryRequest request,
         CancellationToken cancellationToken)
     {
-        //await Task.Delay(5000);
-        var result = await UnitOfWork.DiskRepository.GetDisksAsync();
+        var result = await UnitOfWork.DiskRepository.GetDisksAsync(disk =>
+            disk.CreatedByIssuer == request.Owner.Issuer && disk.CreatedBySubject == request.Owner.Subject);
         return Mapper.Map<IEnumerable<DiskResult>>(result);
     }
 }

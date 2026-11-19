@@ -31,6 +31,15 @@ public sealed class ReviewResult
     public double Note { get; set; }
 }
 
+public sealed record AdminReviewResult(
+    Guid Id,
+    Guid DiskId,
+    string DiskName,
+    string? Title,
+    string? Content,
+    double Note,
+    ReviewStatus Status);
+
 [JsonConverter(typeof(JsonStringEnumConverter))]
 public enum MaintenanceStatus { Active = 1, Inactive = 2 }
 

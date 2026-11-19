@@ -12,8 +12,15 @@ public partial class DiskController
     [ProducesResponseType(400)]
     public async Task<IActionResult> UpdateDisk([FromBody] UpdateDiskCommand command)
     {
+        var owner = User.GetRequiredDiskOwner();
+
         var request = new UpdateDiskCommandRequest
-            { Id = command.Id, Name = command.Name, ReleaseDate = command.ReleaseDate };
+        {
+            Id = command.Id,
+            Name = command.Name,
+            ReleaseDate = command.ReleaseDate,
+            Owner = owner
+        };
 
         await Mediator.Send(request);
 

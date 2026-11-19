@@ -13,7 +13,7 @@ public class UpdateDiskCommandValidatorFixture
     {
         // Arrange
         var request = new UpdateDiskCommandRequest
-            { Name = name, ReleaseDate = DateTime.Now, Id = Guid.Empty };
+            { Name = name, ReleaseDate = DateTime.Now, Id = Guid.Empty, Owner = new("issuer", "subject") };
 
         // Act
         var act = await new UpdateDiskCommandValidator().ValidateAsync(request);
