@@ -1,705 +1,198 @@
-# MyDisk API
+# MyDisk
 
-A REST API for managing a music disk collection (disks, authors, reviews), built as a **portfolio project**.
+MyDisk is a portfolio project built around a record collection. The application lets you browse and manage records, associate artists with them, and write or archive reviews. The deliberately simple domain makes it easier to focus on designing a .NET API, connecting it to a web frontend, and running the stack on Kubernetes.
 
-The business domain is intentionally simple: the goal is to demonstrate how a .NET backend is designed, tested, containerized and deployed — from a clean layered architecture to a Kubernetes setup with proper secret management.
+- [Applications and goals](#applications-and-goals)
+- [Architecture](#architecture)
+- [Getting started](#getting-started)
+- [Tests and verification](#tests-and-verification)
+- [Kubernetes experiments](#kubernetes-experiments)
+- [Infrastructure and delivery](#infrastructure-and-delivery)
+- [Open work](#open-work)
 
-## Highlights
+## Applications and goals
 
-- **.NET 10 / ASP.NET Core** Web API with Swagger
-- **Blazor WebAssembly** frontend for the collection, reviews and API diagnostics, with Keycloak sign-in
-- **Domain-Driven Design** building blocks: aggregates, entities, value objects, domain events
-- **CQRS-style** application layer with MediatR, FluentValidation and AutoMapper
-- **PostgreSQL** with EF Core migrations and seeding, shipped as a migration bundle and run as a dedicated Job before the API
-- **Resilience** with Polly, health checks on `/health` (including the database)
-- **Unit and integration tests** with xUnit, Moq, AutoFixture and FluentAssertions
-- **Containerized** with a multi-stage, non-root Docker image
-- **Infrastructure evolution**: Docker Compose first, then Kubernetes with Kustomize overlays on a local k3d cluster
-- **Zero-downtime rolling updates** gated by readiness, with a progress deadline and rollback, demonstrated with a deliberately broken revision
-- **Horizontal autoscaling** on CPU with a `HorizontalPodAutoscaler`, demonstrated by a k6 load test with light and heavy phases
-- **CI/CD** to AKS with both GitHub Actions and Azure Pipelines, sharing the same Makefile targets: unit tests, OpenTofu validation, images tagged with the commit SHA, migrations, then a rollout with automatic rollback
-- **Infrastructure as code** with OpenTofu: a cloud-agnostic platform layer on top of a swappable cluster module (AKS)
-
-## Repository layout
-
-```text
-apps/
-├── api/                 # .NET solution, Docker Compose, Dockerfile and Kubernetes module
-├── frontend/            # Dockerfile, nginx, Kubernetes module and src/ Blazor application
-└── grafana/             # Reserved for the Grafana application
-platform/
-└── prometheus/          # Reserved for the Prometheus platform component
-deploy/k8s/
-├── local/               # Composes the local application overlays
-└── cloud/               # Composes the cloud application overlays
-infra/
-├── cluster/             # Shared Kubernetes and Helm stack
-├── platform/azure/      # AKS and OpenTofu state bootstrap
-└── apps/frontend/       # Optional standalone frontend Terraform/OpenTofu stack
-```
-
-Run `make` commands from the repository root. Open `apps/api/mydisk-api.sln`
-in your IDE.
+| Component | Role in MyDisk | What the project explores |
+| --- | --- | --- |
+| [ASP.NET Core API](apps/api/) | Exposes the collection, reviews, and diagnostics over HTTP, with Swagger for exploring the endpoints. | Layered backend design, domain modeling, separation of commands and queries, testing at each layer, and retry policies with Polly. |
+| [Blazor WebAssembly frontend](apps/frontend/) | Provides the collection views, forms, diagnostics, and user profile. | Calling a REST API from a browser-based .NET application, building the interface with MudBlazor, and managing loading, error, and session states. |
+| [Keycloak](apps/keycloak/) | Provides the `mydisk` realm, the public `mydisk-frontend` client, and the French sign-in theme for k3d. | Delegating sign-in to an identity provider, using the OpenID Connect authorization code flow with PKCE, and validating access tokens issued for `mydisk-api`. |
+| [Grafana](apps/grafana/) | Runs locally with a preconfigured Prometheus data source. | Preparing to visualize application metrics under load. The [Prometheus module](platform/prometheus/) and dashboards are still to be integrated. |
+| [PostgreSQL and EF Core migrations](apps/api/src/Data.Migrations/) | Stores collection data. A migration executable initializes and updates the schema. Keycloak uses a separate PostgreSQL instance. | Running migrations independently of API startup, persisting data across restarts, and giving the API and the migration job different SQL privileges on Kubernetes. |
 
 ## Architecture
 
-```
-apps/api/src/
-├── Api                                 # Controllers, health checks, composition root
-├── Contracts / Contracts.Validators    # Request/response DTOs and their validation rules
-├── Services                            # Application layer (MediatR handlers)
-├── Domain                              # Aggregates, value objects, domain events (no dependencies)
-├── Data / Data.Configurations          # EF Core DbContext, repositories, entity mappings
-├── Data.Migrations                     # EF Core migrations
-├── DependencyInjection.Configurations  # Shared DI wiring
-├── RetryService / RandomServices       # Cross-cutting utilities
-└── *.Tests / *.IntegrationTests        # Unit and integration test projects
-```
-
-Dependencies point inward: `Api → Services → Domain`, with `Data` implementing the repository interfaces declared in `Domain`.
-
-## Infrastructure: from Compose to Kubernetes
-
-The project started with **Docker Compose** (`apps/api/compose.yml`), a simple way to run the API and PostgreSQL together on a single machine. It then moved to **Kubernetes** to work with production-grade concepts:
-
-| Concern       | Docker Compose                    | Kubernetes                                          |
-|---------------|-----------------------------------|-----------------------------------------------------|
-| Orchestration | Single host                       | k3d cluster (k3s in Docker), 1 server + 1 agent     |
-| Database      | Service with a named volume       | `StatefulSet` with a `PersistentVolumeClaim`        |
-| Configuration | Inline environment variables      | `ConfigMap` generated by Kustomize                  |
-| Secrets       | `postgres.env` file               | `Secret` generated per overlay, mounted as a file for Postgres |
-| Environments  | One file                          | `base` + `overlays/<env>`                           |
-| Readiness     | `healthcheck`                     | `readinessProbe` / `livenessProbe`                  |
-| Updates       | Container recreated, brief outage | `RollingUpdate`, new pod Ready before the old one leaves |
-| Scaling       | Fixed, one container per service  | `HorizontalPodAutoscaler` on CPU, 1 to 6 API pods   |
-| Migrations    | One-shot `migrations` service     | `Job` running the EF Core migration bundle          |
-| Exposure      | Published port `8080`             | Traefik `Ingress`, k3d load balancer on `8080`      |
-
-Both setups are still supported: Compose for a quick start, Kubernetes for the target architecture.
-
-### Kubernetes layout
-
-```
-apps/api/k8s/
-├── base/                 # Environment-agnostic manifests + public configuration
-│   ├── api-deployment.yml
-│   ├── api-hpa.yml       # CPU-based autoscaling, 1 to 6 replicas
-│   ├── api-service.yml
-│   ├── api-ingress.yml
-│   ├── api-migrations-job.yml
-│   ├── postgres-statefulset.yml
-│   ├── postgres-service.yml
-│   ├── postgres-init-roles.sql   # least-privilege roles, run on first DB start
-│   ├── postgres-network-policy.yml
-│   └── kustomization.yml # db-config / api-config ConfigMaps
-├── bench/
-│   └── load-test.js      # k6 scenarios used to demonstrate scale-up and scale-down
-└── overlays/
-    ├── local/            # k3d: Development settings + locally generated secret
-    │   ├── kustomization.yml
-    │   └── secrets.env.example
-    └── cloud/            # any cluster: GHCR images, namespace `mydisk`, Secret from OpenTofu
-        └── kustomization.yml
-```
-
-The parent overlays in `deploy/k8s/local` and `deploy/k8s/cloud` reference
-these API overlays. Use the parent paths to render the deployment for each environment.
-
-### Networking
-
-The k3d load balancer maps `localhost:8443` to port 443 and `localhost:8080` to port 80. Traefik (bundled with k3s) terminates local TLS, redirects HTTP to HTTPS, and routes requests through an `Ingress` to the API and frontend Services. NGINX serves the Blazor files. No port-forwarding is needed. The API pod only receives traffic once its readiness probe on `/health/ready` passes. On first deployment the ingress is applied after both rollouts succeed. Existing frontend installations get the direct API routes after migrations and before the frontend rollout.
-
-### Database migrations and seeding
-
-The API never writes to the database at startup. EF Core migrations are compiled into a self-contained **migration bundle** (`efbundle`) packaged in its own image, and run by:
-
-- the `mydisk-api-migrations` **Job** on Kubernetes (`make k8s-apply` recreates the Job, then waits for it to succeed before applying the API Deployment). The wait defaults to five minutes and can be adjusted with `K8S_MIGRATIONS_TIMEOUT`. If the wait fails, the API rollout stops and existing replicas can continue serving,
-- the one-shot `migrations` service on Compose, which the API waits for (`service_completed_successfully`).
-
-This keeps migrations out of the request-serving process: they run once per deploy instead of once per replica, and the API itself does not need schema-altering privileges.
-
-- **Waiting for the database**: on Kubernetes, an init container runs `pg_isready` until PostgreSQL accepts connections; on Compose, the service waits for the Postgres healthcheck.
-- **Idempotent**: the bundle compares the migrations it contains with `__EFMigrationsHistory` and applies only pending ones, under an exclusive lock. When the schema is up to date it is a no-op.
-- **Seeding**: demo data is inserted through EF Core's `UseSeeding` / `UseAsyncSeeding`, which the bundle runs right after migrating, so ordering is guaranteed. It is enabled with `SEED_DATA=true` (`migrations-config` ConfigMap, `false` in `base`, `true` in the local overlay and Compose), and only inserts data into empty tables.
-
-### Configuration and secrets
-
-Public and sensitive values are kept strictly separate:
-
-| Value                                    | Type     | Source                                                   |
-|------------------------------------------|----------|----------------------------------------------------------|
-| DB host, port, name, role names          | Public   | `db-config` ConfigMap (`apps/api/k8s/base`)                       |
-| `ASPNETCORE_ENVIRONMENT`                 | Public   | `api-config` ConfigMap, overridden per overlay           |
-| `POSTGRES_*_PASSWORD` (superuser, migrator, app) | Secret | `postgres-credentials` Secret, from `apps/api/k8s/overlays/local/secrets.env` (gitignored) |
-| `ConnectionStrings__DefaultConnection`   | Derived  | Built in the pod from the values above, never stored     |
-
-The base only requires each overlay to provide a `postgres-credentials` Secret with these three keys. Each pod only receives the key it needs. The local overlay generates it from a file. The cloud overlay expects it to exist: `infra/cluster` generates the passwords and creates it, with no change to the base.
-
-#### Least-privilege database roles
-
-On first start (empty volume), `postgres-init-roles.sql` runs from `/docker-entrypoint-initdb.d` and creates one role per workload:
-
-| Role              | Used by        | Privileges                                                              |
-|-------------------|----------------|-------------------------------------------------------------------------|
-| `mydisk`          | PostgreSQL only| Bootstrap superuser, its password is never given to another pod          |
-| `mydisk_migrator` | Migrations Job | `CONNECT`, `CREATE` on schema `public`, owns the tables it creates       |
-| `mydisk_api`      | API            | `CONNECT`, `SELECT/INSERT/UPDATE/DELETE` on tables, `USAGE` on sequences |
-
-`ALTER DEFAULT PRIVILEGES` grants the API access to every table the migrator creates, so new migrations need no extra grant step. The API cannot create, alter, drop or truncate tables. `CONNECT` is revoked from `PUBLIC` on the application and `postgres` databases. A NetworkPolicy only lets the API and migration pods reach PostgreSQL on port 5432.
-
-Init scripts only run on an empty volume. To apply them to an existing local cluster, delete the PVC (`kubectl delete pvc postgres-data-postgres-0`) and redeploy.
-
-### Autoscaling
-
-The API Deployment does not set `replicas`: the `mydisk-api` `HorizontalPodAutoscaler` owns the replica count, between **1 and 6 pods**. It targets an average CPU utilization of **70 % of the request**. Each API pod requests `200m` CPU and `256Mi` memory, and is limited to `1000m` and `512Mi`, so the HPA adds a pod when the pods average more than about `140m`.
-
-CPU usage comes from the Metrics API. k3s bundles metrics-server and AKS installs it by default. Without it, the HPA reports `<unknown>` and never scales.
-
-The `behavior` section is tuned for a live demonstration, so that every step is visible:
-
-| Direction  | Stabilization window | Policy                 | Effect                                                    |
-|------------|----------------------|------------------------|-----------------------------------------------------------|
-| Scale up   | `0s`                 | +1 pod every 15 seconds | Reacts immediately, but climbs one pod at a time          |
-| Scale down | `10s`                | -1 pod every 15 seconds | Starts shrinking seconds after the load drops             |
-
-With the Kubernetes defaults, the HPA can double the replicas at once and waits 5 minutes before scaling down, so a load test jumps straight to the maximum and the scale-down is never seen. Production values would keep a longer scale-down window, in the order of minutes, to avoid flapping on bursty traffic.
-
-New pods only receive traffic once `/health/ready` passes, and removed pods drain through the `preStop` hook, so scaling does not drop requests.
-
-#### Load test
-
-`apps/api/k8s/bench/load-test.js` is a [k6](https://k6.io) script that calls `GET /api/Disk/disks` through the Ingress. The liveness endpoint is too cheap to raise the CPU, while this endpoint runs the whole stack: MVC, MediatR pipeline behaviors, an EF Core query on PostgreSQL, AutoMapper and JSON serialization.
-
-The test lasts 3 min 30 and runs four phases. Each phase uses a `constant-arrival-rate` executor: k6 sends a fixed number of requests per second regardless of response time, so the load does not drop when the API slows down.
-
-| Phase      | Time            | Default rate | Expected effect                    |
-|------------|-----------------|--------------|------------------------------------|
-| `light`    | 0 – 30 s        | 5 req/s      | Baseline, 1 pod                    |
-| `medium`   | 30 s – 1 min 30 | 150 req/s    | Scale up to 2 or 3 pods            |
-| `heavy`    | 1 min 30 – 2 min 30 | 600 req/s | Scale up to the maximum of 6 pods |
-| `cooldown` | 2 min 30 – 3 min 30 | 5 req/s   | Scale down, one pod at a time      |
-
-Run the test and watch the cluster in two terminals:
-
-```bash
-make k8s-watch-hpa      # HPA target vs current CPU, per-pod CPU, pod list, refreshed every 3 s
-make k8s-load-test      # add ENV=cloud to target the Traefik public IP
-```
-
-Export `MYDISK_ACCESS_TOKEN` in the load-test terminal before running the
-command. Use an access token for the `mydisk-api` audience that will remain
-valid for the whole run.
-
-The rates depend on the CPU cost of a request on your machine and can be overridden through environment variables, without editing the script:
-
-```bash
-MEDIUM_RATE=100 HEAVY_RATE=1000 make k8s-load-test
-LOAD_TEST_PATH='/api/Disk/disk-by-name?name=<name>' make k8s-load-test
-```
-
-If the `medium` phase already reaches 6 pods, lower `MEDIUM_RATE`. If the `heavy` phase does not reach the maximum, raise `HEAVY_RATE`. The endpoint returns more work when the disks table contains data, which the local overlay seeds by default.
-
-Expect each change of replicas to lag the change of phase by 15 to 30 seconds: metrics-server samples CPU every 15 seconds and the HPA evaluates every 15 seconds. New pods also need a few seconds to start and pass readiness.
-
-#### Limits of the current setup
-
-- **Node capacity**: the HPA creates pods, it does not add nodes. The default AKS node pool has a single `Standard_D4ls_v6` node (4 vCPU, 8 GiB RAM). Six API pods request `1.2` CPU, on top of PostgreSQL, Traefik and system pods. Pods can stay `Pending` when their combined resource requests exceed the node capacity. Raise `node_count` or enable the cluster autoscaler (see roadmap).
-- **Single database**: every API pod opens its own connection pool to the same PostgreSQL instance. Under heavy load, the database becomes the bottleneck before the API pods do, and more replicas mean more connections.
-- **CPU as the only signal**: CPU is a proxy for load. It does not react to I/O-bound slowness, such as a slow database, where latency grows while CPU stays low.
-
-### Rolling updates and rollback
-
-Every change to the pod template, such as a new image, configuration or probe, creates a new **revision**: a new ReplicaSet scales up while the previous one scales down. The Deployment is configured so that a bad revision can never take the API down:
-
-| Setting                   | Value | Effect                                                                        |
-|---------------------------|-------|-------------------------------------------------------------------------------|
-| `maxSurge`                | `1`   | One extra pod is created on top of the current replicas                       |
-| `maxUnavailable`          | `0`   | No old pod is removed before a new one is available                           |
-| `readinessProbe`          | `/health/ready` | A new pod only counts as available, and only receives traffic, once it passes |
-| `minReadySeconds`         | `5`   | A new pod must stay Ready for 5 seconds before the next old pod is removed     |
-| `progressDeadlineSeconds` | `60`  | Without progress for 60 seconds, the Deployment reports `ProgressDeadlineExceeded` instead of waiting the default 10 minutes |
-| `revisionHistoryLimit`    | `5`   | Keeps the last 5 ReplicaSets available for `rollout undo`                      |
-
-#### Demonstration
-
-Watch the cluster and the traffic in two terminals:
-
-```bash
-make k8s-watch-rollout   # Deployment, ReplicaSets and pods, refreshed every 2 s
-make k8s-watch-traffic   # status code of /health/ready through the Ingress, every 0.5 s
-```
-
-**Healthy rollout**: `make k8s-rollout-ok` changes an annotation of the pod template, which creates a new revision without changing the image.
-
-1. The new ReplicaSet creates a pod: the API briefly runs 2 pods for 1 replica (`maxSurge: 1`).
-2. The new pod passes its startup probe, then its readiness probe, and stays Ready for `minReadySeconds`.
-3. Only then is the old pod terminated, through the `preStop` hook so that in-flight requests drain.
-
-**Broken rollout**: `make k8s-rollout-broken` points the readiness probe of the new revision to `/health/broken`, which returns `404`.
-
-1. The new pod starts and its container runs, since the startup and liveness probes still pass, but it stays `0/1` Ready and never receives traffic.
-2. Because of `maxUnavailable: 0`, the old pod is never removed and keeps serving: `k8s-watch-traffic` keeps printing `200`.
-3. After 60 seconds without progress, the Deployment reports `ProgressDeadlineExceeded` and `rollout status` fails.
-4. The target prints the ReplicaSets, the pods and the `Readiness probe failed` events, then runs `rollout undo`: the Deployment goes back to the previous revision and the broken pod is removed.
-
-On the local cluster, 113 requests sent during a broken rollout and its rollback all returned `200`.
-
-Use `ROLLOUT_AUTO_UNDO=0 make k8s-rollout-broken` to leave the rollout stuck and inspect it with `kubectl describe`, then roll back with `make k8s-rollout-undo`. `make k8s-rollout-history` shows the revisions with their `kubernetes.io/change-cause`.
-
-#### Rollout strategy
-
-A failed rollout does not cause an outage, but it does not fix itself either: the Deployment keeps the broken ReplicaSet and the extra pod until someone acts. The strategy used here, and proposed for the deploy pipeline, is:
-
-1. **Gate on readiness**: `maxUnavailable: 0` and a readiness probe that checks real dependencies, so a broken pod never replaces a working one.
-2. **Fail fast**: a short `progressDeadlineSeconds`, so a stuck rollout is detected in about a minute.
-3. **Roll back automatically**: wait with `kubectl rollout status --timeout`, and run `kubectl rollout undo` when it fails, as `k8s-rollout-broken` does.
-4. **Fix forward from Git**: the rollback only restores the cluster, the faulty change must still be reverted or fixed in the manifests.
-
-The demo targets patch the live Deployment, so the cluster drifts from the manifests until the next `make k8s-apply`. `rollout undo` warns that it does not update the `last-applied-configuration` annotation. This is expected for a demonstration: the next `make k8s-apply` reapplies the manifests.
-
-## Cloud infrastructure (OpenTofu)
-
-Infrastructure is written for [OpenTofu](https://opentofu.org), the open-source fork of Terraform (same HCL, Terraform-compatible). It is split in two stacks so that only one of them depends on a cloud provider:
-
-| Stack | Providers | Creates |
-|-------|-----------|---------|
-| `infra/platform/azure` | `azurerm` | Resource group, AKS cluster (Azure CNI overlay, Cilium data plane and NetworkPolicy enforcement) |
-| `infra/cluster` | `kubernetes`, `helm`, `random` | Traefik ingress controller (Helm), namespace `mydisk` with Pod Security `baseline` enforced and `restricted` warnings, `postgres-credentials` Secret with three random passwords |
-
-`infra/cluster` only needs a kubeconfig context, so it runs unchanged on AKS, EKS, GKE or k3d. Moving to another cloud means adding an `infra/platform/<provider>` stack. Traefik is used on every cluster, the same controller k3s bundles locally, so the `Ingress` behaves identically. The application itself is not deployed by OpenTofu: `make k8s-up ENV=cloud` keeps the ordering where migrations must succeed before the API rolls out.
-
-Both states contain secrets (the cluster admin kubeconfig, the database passwords), so they are encrypted with OpenTofu state encryption (PBKDF2 + AES-GCM). The passphrase comes from `TF_VAR_state_passphrase` (16 characters minimum) and is never written to disk. State is local for now.
-
-Images are pushed to GHCR (`ghcr.io/fabian-raeskinet`), built for `linux/amd64`. The cloud overlay pulls `:latest` with `imagePullPolicy: Always`, which `make k8s-up ENV=cloud` pushes from a workstation. The pipelines deploy an immutable tag instead, see [CI/CD](#cicd). The GHCR packages must be public, or the cluster needs an image pull secret.
-
-Every `kubectl` call in the Makefile passes `--context` and `-n` explicitly (`k3d-mydisk` / `default` locally, `mydisk` / `mydisk` in cloud), so a target never runs against whichever cluster happens to be the current context.
-
-## CI/CD
-
-Two equivalent pipelines deploy the application to the AKS cluster: GitHub Actions (`.github/workflows/`) and Azure Pipelines (`azure-pipelines.yml`). They contain no deployment logic of their own and call the same Makefile targets, so a deploy behaves the same from a pipeline or from a terminal.
-
-| Trigger             | Steps                                                                                 |
-|---------------------|---------------------------------------------------------------------------------------|
-| Pull request to `master` | Unit tests, `make infra-check`, image build without push                         |
-| Push to `master`    | Same checks, images pushed to GHCR with the commit SHA as tag, then deploy to AKS     |
-
-The infrastructure is not part of the pipelines: the OpenTofu state is local and encrypted, so `make infra-up` stays a manual step. The pipelines only need the cluster, Traefik, the namespace and the `postgres-credentials` Secret to exist.
-
-### Pipeline stages
-
-1. **Unit tests**: `make test-unit` runs every `*.Tests` project and writes TRX results, published by both pipelines. Integration tests are not run yet, as they need a PostgreSQL instance with a configurable connection string.
-2. **Infrastructure checks**: `make infra-check` runs `tofu fmt -check` and `tofu validate` on the platform and frontend stacks, without any backend.
-3. **Images**: `make k8s-push REGISTRY=... IMAGE_TAG=<commit SHA>` builds and pushes the API, migration and frontend images for `linux/amd64`. On pull requests, `make k8s-build` only checks that the images build.
-4. **Deploy**: after an Azure login, `az aks get-credentials` creates the `mydisk` kubeconfig context, then `make k8s-deploy ENV=cloud IMAGE_TAG=<commit SHA>`:
-   1. `k8s-release-overlay` generates `deploy/k8s/cloud-release/` (gitignored), an overlay on top of `deploy/k8s/cloud` that pins all three application images to the commit SHA. It fails if the rendered manifests do not contain the expected images, for instance when `REGISTRY` does not match the image names of the cloud overlay.
-   2. `k8s-apply` records the current application revisions, runs the migrations Job, and waits for it to succeed before applying the API and frontend Deployments.
-   3. `k8s-rollout-check` waits for both rollouts. On failure, it prints pod and probe diagnostics, restores deployments whose revisions changed to their recorded revisions, and fails the pipeline. Unchanged deployments are left at their current revision; newly created deployments have no previous revision to restore. A standalone check without recorded revisions only rolls back failed deployments.
-   4. After successful rollouts, `k8s-apply` updates the ingress routes. The Deployments are annotated with `kubernetes.io/change-cause: deploy <sha>`, so rollout history identifies the deployed commit.
-
-Each deploy uses an immutable tag, so restoring a recorded revision restores its exact image. Rollback concerns changed API and frontend Deployments: migrations are forward-only and stay applied. Schema changes must therefore stay compatible with the previous API version, adding columns and tables first, and removing them in a later release.
-
-Both pipelines deploy through a `production` environment, where approvals and branch restrictions can be configured. GitHub Actions serializes deploys with a `concurrency` group.
-
-### Setup on Azure
-
-Create the cluster and its platform first (`make infra-up`, see [Option 3](#option-3-kubernetes-in-the-cloud-aks)).
-
-The pipeline identity needs the **Azure Kubernetes Service Cluster User Role** on the cluster, which allows `az aks get-credentials`. The cluster uses Kubernetes local accounts, without Entra ID integration, so these credentials are cluster-admin: restrict who can run the deploy job with the `production` environment.
-
-After the first push, set the two GHCR packages, `mydisk-api` and `mydisk-api-migrations`, to public in the GitHub package settings. Otherwise AKS cannot pull them.
-
-### GitHub Actions
-
-`ci.yml` runs on pull requests, and is reused by `cd.yml`, which runs on push to `master` or manually. Authentication to Azure uses OpenID Connect: no client secret is stored in GitHub. Images are pushed with the built-in `GITHUB_TOKEN`.
-
-Create an app registration with a federated credential for the `production` environment, and grant it access to the cluster:
-
-```bash
-app_id=$(az ad app create --display-name mydisk-github --query appId -o tsv)
-az ad sp create --id "$app_id"
-az ad app federated-credential create --id "$app_id" --parameters '{
-  "name": "github-production",
-  "issuer": "https://token.actions.githubusercontent.com",
-  "subject": "repo:<owner>/<repo>:environment:production",
-  "audiences": ["api://AzureADTokenExchange"]
-}'
-az role assignment create --assignee "$app_id" \
-  --role "Azure Kubernetes Service Cluster User Role" \
-  --scope "$(az aks show -g rg-mydisk -n mydisk --query id -o tsv)"
-```
-
-Then, in the repository settings:
-
-| Setting                         | Value                                                         |
-|---------------------------------|---------------------------------------------------------------|
-| Environment                     | `production`, with required reviewers and the `master` branch only |
-| Variable `AZURE_CLIENT_ID`      | `$app_id`                                                     |
-| Variable `AZURE_TENANT_ID`      | `az account show --query tenantId -o tsv`                     |
-| Variable `AZURE_SUBSCRIPTION_ID`| `az account show --query id -o tsv`                           |
-| Variables `AKS_RESOURCE_GROUP`, `AKS_CLUSTER_NAME` | Optional, default to `rg-mydisk` and `mydisk` |
-
-The registry is derived from the repository owner, in lowercase: `ghcr.io/<owner>`.
-
-### Azure Pipelines
-
-`azure-pipelines.yml` runs the CI stage on pull requests and on `master`, and the Deploy stage on `master` only. In the Azure DevOps project, create:
-
-| Resource                                   | Name           | Configuration                                                           |
-|--------------------------------------------|----------------|-------------------------------------------------------------------------|
-| Service connection, Azure Resource Manager | `mydisk-azure` | Workload identity federation, scoped to the `rg-mydisk` resource group, or the app registration above with an Azure DevOps federated credential |
-| Service connection, Docker Registry        | `ghcr`         | Type `Others`, registry `https://ghcr.io`, a GitHub user and a token with `write:packages` |
-| Environment                                | `production`   | Add approvals and checks as needed                                      |
-
-The registry, resource group and cluster name are variables at the top of `azure-pipelines.yml`. OpenTofu runs in its official container image, so the agent only needs Docker.
-
-Both pipelines trigger on `master`. Connect only one of them to the cluster, or disable the trigger of the other, so that a single pipeline deploys each commit.
-
-## Frontend
-
-`apps/frontend/src` contains the Blazor WebAssembly application for the API's disk, author
-association, review and operational actions. The frontend supports signing in
-and out through Keycloak using OpenID Connect with authorization code and PKCE.
-The frontend redirects signed-out visitors to Keycloak and returns them there
-after logout. NGINX serves
-the compiled WebAssembly application. Traefik routes `/api`, `/health`,
-`/maintenance` and `/swagger` directly to the API on the same origin.
-
-The interface uses **MudBlazor** for navigation, responsive grids, cards, inputs,
-date pickers, dialogs, tabs, validation feedback and alerts. Branding lives in
-`src/Layout/UiTheme.cs`; the small `src/wwwroot/css/app.css` skin restores the cream and
-forest-green design without replacing component behavior. Decorative record
-sleeves have isolated CSS in `src/Components/AlbumArt.razor.css`.
-
-`src/App.razor` configures providers and routing. `src/Layout/MainLayout.razor` owns the
-shell; pages use `CollectionWorkspace` to coordinate API operations, while views
-and forms handle presentation. Component logic is in adjacent `.razor.cs` files.
-The `Dockerfile`, `.dockerignore`, `nginx/` and `k8s/` stay at the application root.
-
 ```text
-apps/frontend/
-├── Dockerfile
-├── .dockerignore
-├── nginx/
-├── k8s/
-└── src/
-    ├── MyDisk.Frontend.csproj
-    ├── Program.cs / App.razor / _Imports.razor
-    ├── Components/ / Layout/ / Pages/
-    ├── Models/ / Services/ / Properties/
-    └── wwwroot/
+Browser ── HTTPS ──► Traefik ── / ─────► NGINX ──► Blazor WASM files
+                        │
+                        └── /api ───► ASP.NET Core ──► MyDisk PostgreSQL
+
+Browser ── OIDC ──► Keycloak ──► Keycloak PostgreSQL     (k3d)
+API ── OIDC metadata and signing keys ──► Keycloak
+Migration Job ── EF Core bundle ──► MyDisk PostgreSQL    (Kubernetes)
 ```
 
-For development with the API running separately:
+The browser loads Blazor from NGINX. Traefik routes `/api`, `/health`, `/maintenance`, and `/swagger` directly to the API on the same origin. The frontend includes the access token when calling protected endpoints. The API validates the token signature, expiration, issuer, and `mydisk-api` audience. On k3d, a CoreDNS rule lets the API pod resolve the same issuer hostname that the browser uses. The pod trusts the local mkcert certificate authority for OIDC discovery. [Traefik routing](deploy/k8s/routing/) · [HTTPS and Keycloak discovery](infra/HTTPS.md#local-k3d-https)
 
-```bash
-# Terminal 1: API with a configured PostgreSQL connection
-Https__TerminatedAtProxy=true dotnet run --project apps/api/src/Api --no-launch-profile --urls http://localhost:5059
-# Terminal 2: frontend
-make frontend-restore
-make frontend-dev
-# Open http://localhost:5100
-```
+### API and domain
 
-The development API URL is configured in
-`apps/frontend/src/wwwroot/appsettings.Development.json` (`ApiBaseUrl`, default
-`http://localhost:5059`). Production uses the current origin. Build the
-frontend with `make frontend-check` after restoring dependencies.
-The frontend uses the repository's .NET 11 SDK and Blazor packages.
+The API and frontend target **.NET 11**. The backend solution is [`apps/api/mydisk-api.sln`](apps/api/mydisk-api.sln), and the API layers are under [`apps/api/src`](apps/api/src/).
 
-The development profile and local Kubernetes overlay use the `mydisk` realm at
-`https://auth.mydisk.localhost:8443/realms/mydisk` and the public `mydisk-frontend`
-client. On a fresh local Kubernetes deployment, Keycloak imports the client from
-`apps/keycloak/k8s/overlays/local/mydisk-realm.json`. Create a user and set a
-password in the `mydisk` realm from the Keycloak admin console to sign in.
-If the realm already exists, add or update the client using **Realm settings →
-Action → Partial import** with the same JSON file. [Keycloak realm import](https://www.keycloak.org/server/importExport)
+| Layer | Responsibility |
+| --- | --- |
+| `Api` | REST controllers, Swagger, JWT authentication, health probes, and dependency wiring. |
+| `Contracts` and `Contracts.Validators` | Input and output contracts and FluentValidation rules. |
+| `Services` | Use cases expressed as MediatR commands and queries, AutoMapper mappings, and shared validation, logging, and transaction behaviors. |
+| `Domain` | Collection entities and aggregates, value objects, domain events, and repository interfaces. Business rules are independent of HTTP and EF Core. |
+| `Data` and `Data.Configurations` | Repository and unit-of-work implementations, EF Core persistence mappings, and PostgreSQL access through Npgsql. |
+| `Data.Migrations` | Migration history, bundle configuration, and demo data. |
 
-The local Keycloak overlay mounts the MyDisk login theme from
-`apps/keycloak/k8s/overlays/local/themes/mydisk/login`. A freshly imported
-`mydisk` realm uses the theme in French. For an existing realm, redeploy the
-Keycloak overlay and select `mydisk` under **Realm settings → Themes → Login theme**.
-To set the login language, enable internationalization and set French as the
-default under **Realm settings → Localization**. [Keycloak theme setup](https://www.keycloak.org/ui-customization/themes)
+Creating a record starts in a controller and goes through a command handler. The handler constructs the entity with the `Name` value object. The EF Core repository saves the record, and the `Services` layer handles its creation event. [Controller](apps/api/src/Api/Controllers/DiskController.Post.cs) · [Command handler](apps/api/src/Services/Disks/CreateDiskCommandHandler.cs) · [EF Core repository](apps/api/src/Data/DiskRepository.cs)
 
-Docker Compose and cloud deployments require authentication settings in the served
-`wwwroot/appsettings.json` provides `Authentication:Authority` (the public
-realm URL) and `Authentication:ClientId`. Register the frontend origin as a Web
-Origin on the public client and register the exact frontend URLs ending in
-`/authentication/login-callback` and `/authentication/logout-callback`.
-The frontend displays a connection-unavailable message until both settings are supplied.
+### Frontend
 
-### Verify the Keycloak session from the API
+`App.razor` configures routing and the Blazor providers. `Layout` contains navigation and the MudBlazor theme, `Pages` and `Components` make up the screens, and `Services` coordinates API access. `CollectionWorkspace` groups collection operations. The application's root directory contains its `Dockerfile`, NGINX configuration, and Kubernetes manifests. [Frontend source](apps/frontend/src/)
 
-In **Mon profil**, open **Claims validés par l’API** and run the check. The
-frontend sends its access token to `GET /api/auth/me`. The API validates the
-signature, expiry, public Keycloak issuer and `mydisk-api` audience before
-returning the token claims. Disk reads and writes, review writes, and the retry
-diagnostic endpoint require the same bearer access token. The frontend sends it
-automatically. Health probes and maintenance status remain public.
+Record details are looked up by exact name. The interface flags ambiguous results when multiple records share a name. You can associate a known artist or enter a UUID. The review workflow supports creating and archiving reviews. Sign-in settings depend on the environment. [OpenID Connect configuration](#openid-connect-configuration)
 
-Configure the API with `Authentication__Authority` and, if needed,
-`Authentication__Audience` (default `mydisk-api`). The local Kubernetes overlay
-uses the public issuer URL for OpenID Connect discovery and TLS. Inside k3d,
-CoreDNS resolves the Keycloak hostname to a ClusterIP Service that forwards
-port 8443 to Traefik. `make k8s-init-tls` stages the public mkcert CA used by
-the API pod.
+### Platform and environments
 
-The local Keycloak realm file includes an Audience mapper for the
-`mydisk-frontend` client. In an existing realm, add an **Audience** mapper in
-the client's dedicated scope with **Included Custom Audience** set to
-`mydisk-api`, **Add to access token** enabled and **Add to ID token** disabled.
-Sign out and back in to get a token with the new audience.
+| Environment | Components and use |
+| --- | --- |
+| [Docker Compose](apps/api/compose.yml) | Runs Traefik, Blazor, the API, migrations, and PostgreSQL on one machine. Use it to explore Swagger, exercise the health endpoints, or prepare a development environment. |
+| [Local k3d](deploy/k8s/local/) | Runs the full stack with Keycloak and Grafana. k3d runs k3s in Docker, Kustomize assembles the local overlays, and Traefik serves HTTPS with mkcert certificates. |
+| [AKS](deploy/k8s/cloud/) | Runs the API, frontend, migrations, and PostgreSQL. OpenTofu provisions the platform and Kustomize assembles the application manifests. To enable sign-in, provide a reachable OIDC issuer and configure the API and frontend. |
 
-The collection supports filtering and sorting, disk creation/editing/deletion,
-author association, and review creation/archiving. The API currently exposes
-only exact-name detail lookup and no author directory or review-publication
-action. The UI offers known artists plus UUID entry, displays all review states
-in disk details, and refuses ambiguous detail results when names are duplicated.
-Release dates are sent as calendar dates without timezone offsets.
+On Kubernetes, PostgreSQL runs in a `StatefulSet` with a persistent volume. A `ConfigMap` holds public settings and a `Secret` holds passwords. Separate PostgreSQL roles handle initial administration, schema ownership and migrations, and API reads and writes. A `NetworkPolicy` allows only the API and migration pods to connect to PostgreSQL. PostgreSQL creates the roles when it initializes an empty data volume. [API manifests](apps/api/k8s/base/)
 
-Docker Compose publishes Traefik on `127.0.0.1:3000`. Kubernetes uses
-`apps/frontend/k8s/base` plus local/cloud overlays, composed by the parent
-`deploy/k8s` overlays. The existing ingress and TLS configuration serve both backends.
-`make k8s-forward-frontend` previews static assets on http://localhost:3000. The image defaults to
-`ghcr.io/fabian-raeskinet/mydisk-frontend` in the cloud; make that GHCR package
-public before the first AKS deployment, as for the API packages.
+Migrations ship in a dedicated image. Under Compose, the API waits for the `migrations` service to succeed. On Kubernetes, application deployment waits for the `mydisk-api-migrations` Job to succeed before deploying the API and frontend. The bundle applies pending migrations. With `SEED_DATA=true`, it adds demo data to empty tables. Compose and k3d enable this setting.
 
-`make k8s-build`, `cluster-load`, `k8s-push` and the CI image scanning steps
-include the frontend. Release overlays pin API, migration and frontend images
-to the same commit tag. Deployments wait for successful database migrations;
-rollout verification checks the API and frontend and restores changed deployments
-to their recorded revisions on failure.
-The frontend's `/frontend-health` probe checks nginx independently of the API.
-
-For Terraform-managed frontend resources, see
-[the standalone frontend stack](infra/apps/frontend/README.md). It targets an
-existing cluster and is an alternative to managing the frontend with Kustomize.
-The standard `infra/cluster` platform stack remains shared. `make infra-check`
-validates both the existing infrastructure and the frontend stack without
-applying resources.
-
-## Dockerfile
-
-Multi-stage build producing two images from a shared build stage:
-
-1. **`build`** (`dotnet/sdk:11.0`): copies only the `.csproj` files first and runs `dotnet restore`, so the NuGet restore layer stays cached until dependencies change. It then copies the sources.
-2. **`publish-api`**: `dotnet publish -c Release` of the API.
-3. **`bundle-migrations`**: installs `dotnet-ef` and builds the EF Core migration bundle.
-4. **`migrations`** (`dotnet/aspnet:11.0`): the bundle only, image `mydisk-api-migrations:dev`.
-5. **`api`** (`dotnet/aspnet:11.0`, default target): the published API only, image `mydisk-api:dev`.
-
-Runtime images contain neither the SDK nor the sources, and run as the image's built-in **non-root** user (`$APP_UID`).
-
-The container listens on port `8080`. The build context is `apps/api/`, where `.dockerignore` excludes `postgres.env`, `k8s/` and build artifacts.
-
-## Prerequisites
-
-| Tool                                                    | Needed for                         |
-|---------------------------------------------------------|------------------------------------|
-| [.NET 11 SDK](https://dotnet.microsoft.com/download)    | Building, running and testing      |
-| [Docker](https://docs.docker.com/get-docker/)           | Compose, image builds, k3d         |
-| [mkcert](https://github.com/FiloSottile/mkcert) | Trusted local HTTPS certificates |
-| [k3d](https://k3d.io)                                   | Local Kubernetes cluster           |
-| [kubectl](https://kubernetes.io/docs/tasks/tools/)      | Kubernetes (Kustomize is built in) |
-| `make`, `openssl`                                       | Makefile targets, secret generation |
-| [OpenTofu](https://opentofu.org/docs/intro/install/)    | Cloud infrastructure (>= 1.8)      |
-| [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) | AKS only: `az login`, cluster credentials |
-| [k6](https://grafana.com/docs/k6/latest/set-up/install-k6/) | Autoscaling load test only |
+The Dockerfiles separate build and runtime stages. The API Dockerfile produces separate images for the ASP.NET Core server and the EF Core bundle. The frontend Dockerfile publishes static files to an NGINX image. All three images run as a non-root user. [API and migrations Dockerfile](apps/api/Dockerfile) · [Frontend Dockerfile](apps/frontend/Dockerfile)
 
 ## Getting started
 
-### Option 1: Docker Compose
+Run `make` commands from the repository root. `make help` lists the targets and their options.
+
+### k3d with sign-in
+
+This setup requires Docker, `make`, `openssl`, `k3d`, `kubectl`, and `mkcert`.
 
 ```bash
-cp apps/api/postgres.env.example apps/api/postgres.env    # then set a strong POSTGRES_PASSWORD
-make up                 # build and start PostgreSQL, migrations, API, frontend and Traefik
-```
-
-Open the frontend at http://localhost:3000 and Swagger at http://localhost:8080/swagger.
-
-### Option 2: Kubernetes (k3d)
-
-```bash
-mkcert -install         # once: trust the local development CA (install mkcert first if needed)
-make dev-up             # create/start cluster, build + import images, generate secrets + TLS, deploy
+mkcert -install
+make dev-up
 make k8s-status
 ```
 
-`make dev-up` checks node readiness and disk pressure before building. It also
-checks the Blazor page, API readiness and anonymous rejection by the collection
-endpoint through the HTTPS ingress. Run `make k8s-smoke` to repeat those checks.
+`make dev-up` creates or starts the cluster, checks node health, builds and imports the images, initializes local secrets and certificates, and deploys the applications. It also waits for the Grafana and Keycloak rollouts and runs HTTP smoke checks. If a node reports `DiskPressure`, use `docker system df` to check disk usage before retrying deployment.
 
-If the nodes report `DiskPressure`, inspect `docker system df` and free Docker
-build cache or increase Docker Desktop's disk allocation. Kubernetes may take
-several minutes to clear the condition after space is recovered. Pods and the
-migration Job cannot start while that condition is active. No data volume needs
-to be deleted to reclaim build cache.
+| Service | Local address |
+| --- | --- |
+| Frontend | `https://localhost:8443/` |
+| Swagger | `https://localhost:8443/swagger/index.html` |
+| Keycloak admin console | `https://auth.mydisk.localhost:8443/admin` |
+| Grafana | `http://grafana.localhost:8080/` |
 
-The frontend is then available at https://localhost:8443/ and Swagger at https://localhost:8443/swagger/index.html. HTTP on port 8080 redirects to HTTPS. On an existing running cluster, `make local-https` enables HTTPS without rebuilding images or rerunning migrations. See [HTTPS setup](infra/HTTPS.md).
+Deployment generates the Keycloak admin credentials in `apps/keycloak/k8s/overlays/local/keycloak.env`, which Git ignores. In the Keycloak console, create a user in the `mydisk` realm and set a password to sign in to MyDisk. A fresh installation imports the realm, its client, and the audience mapper. For an existing realm, use **Realm settings → Action → Partial import** to update the client. If you update it manually, configure the mapper to add the `mydisk-api` audience to the access token. Set the `mydisk` theme and the default language under **Themes** and **Localization**. [Realm configuration](apps/keycloak/k8s/overlays/local/mydisk-realm.json)
 
-Open the local Keycloak console at https://auth.mydisk.localhost:8443/admin. The bootstrap admin credentials are in `apps/keycloak/k8s/overlays/local/keycloak.env` (gitignored, generated by `make k8s-init-secrets`). `make k8s-smoke-keycloak` verifies the TLS certificate, the OpenID Connect issuer and the redirect from port 8080.
+`make cluster-stop` stops the cluster between sessions. `make dev-down` removes the overlay resources and then stops the cluster. `make local-https` updates local HTTPS on an existing cluster without rebuilding the images or rerunning migrations. [HTTPS setup](infra/HTTPS.md#local-k3d-https)
 
-`make k8s-init-secrets` (run automatically by `dev-up`) creates `apps/api/k8s/overlays/local/secrets.env` with `600` permissions. It reuses `POSTGRES_PASSWORD` from `apps/api/postgres.env` if present, otherwise it generates a random one. It adds random `POSTGRES_MIGRATOR_PASSWORD` and `POSTGRES_APP_PASSWORD` entries when missing and never overwrites an existing value.
-
-Tear down with `make dev-down`.
-
-### Option 3: Kubernetes in the cloud (AKS)
+### Quick start with Docker Compose
 
 ```bash
-az login
-export ARM_SUBSCRIPTION_ID=<subscription-id>
-export TF_VAR_state_passphrase=<at least 16 characters>
-echo <github-token> | docker login ghcr.io -u <github-user> --password-stdin
-
-make infra-up           # AKS cluster, kubeconfig context `mydisk`, Traefik, namespace, Secret
-make k8s-up ENV=cloud   # build + push images, run migrations, deploy the API
-make k8s-status ENV=cloud
+cp apps/api/postgres.env.example apps/api/postgres.env
+# Set POSTGRES_PASSWORD in apps/api/postgres.env.
+make up
+make ps
 ```
 
-The API is exposed on the public IP of the Traefik load balancer, printed at the end of `k8s-up`. Tear down everything with `make infra-down`, which also stops the Azure costs.
+Traefik serves the frontend at `http://localhost:3000/`. Swagger is also available directly at `http://localhost:8080/swagger`. To sign in to the frontend, follow the k3d setup or configure an external OIDC provider. `make down` stops the services and keeps the data. `make clean` also deletes the PostgreSQL volumes.
 
-### Option 4: Run the API from the IDE / CLI
+### Development from the IDE
 
-Start the database and apply migrations, then give the API the password through user secrets so it never goes into `appsettings`:
+With the .NET 11 SDK installed, open `apps/api/mydisk-api.sln`. To run the API on its own, prepare `apps/api/postgres.env` as shown above, start PostgreSQL and apply the migrations, then save the connection string to ASP.NET Core user secrets.
 
 ```bash
 cd apps/api
 docker compose --env-file postgres.env up -d postgres migrations
-
+docker compose --env-file postgres.env wait migrations
 dotnet user-secrets init --project src/Api
-dotnet user-secrets set --project src/Api "ConnectionStrings:DefaultConnection" \
-  "Host=localhost;Port=5432;Database=mydisk;Username=mydisk;Password=<POSTGRES_PASSWORD>"
-
-dotnet run --project src/Api
+dotnet user-secrets set --project src/Api 'ConnectionStrings:DefaultConnection' \
+  'Host=localhost;Port=5432;Database=mydisk;Username=mydisk;Password=<POSTGRES_PASSWORD>'
+ASPNETCORE_ENVIRONMENT=Development Https__TerminatedAtProxy=true \
+  dotnet run --project src/Api --no-launch-profile --urls http://localhost:5059
 ```
 
-The `migrations` service also inserts the demo data.
+From the repository root in a second terminal, run `make frontend-restore` and then `make frontend-dev`. The frontend runs at `http://localhost:5100` and calls the API at `http://localhost:5059`. Sign-in with the supplied development settings requires access to the local Keycloak HTTPS endpoint.
 
-### Endpoints
+### OpenID Connect configuration
 
-- Swagger UI: `/swagger`
-- Liveness: `/health/live` checks that the API can respond, independently of PostgreSQL.
-- Readiness: `/health/ready` includes PostgreSQL with a two-second health check timeout.
-- Health check: `/health` retains the existing combined check.
+For a different provider or environment, set `Authentication:Authority` and `Authentication:ClientId` in the frontend's public configuration. In the API, set `Authentication__Authority` and, if needed, `Authentication__Audience`, which defaults to `mydisk-api`. The OIDC client must allow the frontend origin and the full callback URLs for `/authentication/login-callback` and `/authentication/logout-callback`. [Frontend configuration](apps/frontend/src/wwwroot/)
 
-Kubernetes allows approximately 60 seconds for startup. After startup succeeds, two consecutive readiness failures remove the pod from Service traffic. Three consecutive liveness failures restart the container. A database outage affects readiness while the API can keep serving its liveness endpoint. PostgreSQL recovery allows the pod to become ready again.
+## Tests and verification
 
-## Makefile commands
+### Automated suites
 
-Run `make help` for the full list. Optional variables: `ENV=local|cloud`, `CLUSTER_NAME=mydisk`, `HTTP_PORT=8080`, `AKS_CLUSTER_NAME=mydisk`, `REGISTRY=ghcr.io/fabian-raeskinet`, `IMAGE_TAG=latest`.
+| Suite | Coverage | How to run |
+| --- | --- | --- |
+| xUnit unit tests | Domain rules for disks and reviews, contract validation, MediatR handlers, domain events and pipeline behaviors, controllers and filters, a disk repository with simulated persistence, random number generation, and Polly retry behavior. | `make test-unit` runs the seven `*.Tests` projects and writes TRX reports to `TestResults/`. |
+| HTTP integration | `WebApplicationFactory` runs the ASP.NET Core pipeline with mock repositories and test authentication. Tests cover disk operations, `401` responses to unauthenticated requests on protected routes, and public access to the liveness and maintenance endpoints. | `dotnet test apps/api/src/Api.IntegrationTests/Api.IntegrationTests.csproj` |
+| PostgreSQL integration | Repository tests exercise disk and artist persistence. Service tests include creating and reading disks through EF Core. | `(cd apps/api && dotnet test mydisk-api.sln)` runs the entire solution. Both PostgreSQL suites require a test database with migrations already applied. Configure the connections in [`xunit.json`](apps/api/src/Data.IntegrationTests/xunit.json) and [`appsettings.json`](apps/api/src/Services.IntegrationTests/appsettings.json). |
+| Blazor build | Restores dependencies and builds the components, C# code, and WebAssembly assets in Release mode. | `make frontend-restore frontend-check` |
+| OpenTofu validation | Checks HCL formatting and validates the Azure bootstrap, AKS, Kubernetes platform, and standalone frontend stacks. | `make infra-check` |
 
-**Docker Compose**
+### Checks against a running deployment
 
-| Command        | Description                                   |
-|----------------|-----------------------------------------------|
-| `make up`      | Build and start all services                  |
-| `make down`    | Stop and remove containers                    |
-| `make restart` | Restart services                              |
-| `make logs`    | Stream logs                                   |
-| `make ps`      | Show service status                           |
-| `make build`   | Build images                                  |
-| `make clean`   | Stop and remove volumes (**deletes the DB**)  |
+| Check | What it verifies |
+| --- | --- |
+| `make k8s-smoke` | Through the HTTPS ingress, the page HTML contains the Blazor startup script, `/health/ready` returns `Healthy`, and `/api/Disk/disks` returns `401` without a token. |
+| `make k8s-smoke-keycloak` | The local TLS certificate is trusted, the `master` realm discovery document reports the expected issuer, and an HTTP request to `/admin` redirects to HTTPS. |
+| Keycloak session, manual | Sign in, open **Mon profil → Claims validés par l’API**, and run the check. The frontend calls `GET /api/auth/me` with the session’s access token. A response containing the claims confirms that the API accepts the token. |
+| GitHub Actions after deployment to AKS | The Kubernetes certificate becomes `Ready`, `/health/live` responds over HTTPS, and the home page HTML contains the Blazor startup script. |
 
-**k3d cluster**
+`/health/live` checks that the HTTP process responds. `/health/ready` also checks PostgreSQL and determines whether Kubernetes routes Service traffic to the pod. `/health` provides the combined check for existing clients.
 
-| Command               | Description                              |
-|-----------------------|------------------------------------------|
-| `make cluster-create` | Create the cluster (or start it if it exists) |
-| `make cluster-start`  | Start a stopped cluster                  |
-| `make cluster-stop`   | Stop the cluster to free resources       |
-| `make cluster-delete` | Delete the cluster                       |
-| `make cluster-reset`  | Delete and recreate the cluster          |
-| `make cluster-status` | List clusters                            |
-| `make cluster-load`   | Import the local images into the cluster |
+### Recorded results and limits
 
-**Kubernetes**
+- **Local unit tests.** 128 of 129 tests passed. The test for adding a review before a disk’s release date expects an `InvalidOperationException`. `AddReview` currently checks for duplicates and then adds the review. [Unit test](apps/api/src/Domain.Tests/Disks/DiskFixture.cs#L54) · [Domain rule](apps/api/src/Domain/Disks/Disk.cs#L20)
+- **Local HTTP integration tests.** All 26 tests passed in two of four runs. In the other two runs, the artist association test expected HTTP `204` and received `500`. AutoFixture generates birth and release dates independently, so the date order can violate the domain rule. [Artist association test](apps/api/src/Api.IntegrationTests/Controllers/DiskControllerFixture.cs#L124) · [Domain rule](apps/api/src/Domain/Disks/Disk.cs#L26)
+- **Local build and configuration checks.** The Blazor Release build, Docker Compose configuration validation, and Kustomize rendering of the `local` and `cloud` overlays passed. Rendering verifies that the overlays assemble. The HTTP checks above require a running deployment.
+- **Local rollback.** During the rollout of a deliberately broken revision and its rollback, **113 requests to `/health/ready` returned HTTP 200** through Traefik. [Original result in the README history](../../commit/1638977)
+- **Dependency and image scanning.** The DevSecOps exercise documents findings from NuGet and Trivy and the updates made in response, including `Microsoft.OpenApi` and `AutoMapper`. [DevSecOps walkthrough](docs/DEVSECOPS.md#verified-remediation-exercise)
+- **Load testing.** The repository includes the k6 scenario and its phases. The arrival rates are inputs chosen to trigger scaling. The repository contains no measured load-test report.
+- **Integration and UI coverage.** CI runs the unit tests and builds Blazor. HTTP and PostgreSQL integration suites run separately. Browser sign-in can be verified manually. Automated end-to-end coverage for browser workflows and Grafana dashboards remains open.
 
-| Command                 | Description                                         |
-|-------------------------|-----------------------------------------------------|
-| `make dev-up`           | Cluster + build + import + secrets + deploy         |
-| `make dev-down`         | Delete resources and stop the cluster               |
-| `make k8s-up`           | Build and import images (local) or push them (cloud), run migrations, and deploy API and frontend |
-| `make k8s-push`         | Build `linux/amd64` images and push them to `$(REGISTRY)` |
-| `make k8s-deploy`       | CD entry point, `ENV=cloud` only: pin `IMAGE_TAG`, run migrations, deploy the API, roll back on failure |
-| `make k8s-release-overlay` | Generate `deploy/k8s/cloud-release/`, pinning all three application images to `IMAGE_TAG` |
-| `make k8s-rollout-check` | Wait for app rollouts; restore changed revisions on failure, or failed deployments when run standalone |
-| `make k8s-down`         | Delete overlay resources                            |
-| `make k8s-apply`        | Run migrations, roll out API/frontend, then update ingress |
-| `make k8s-render`       | Render manifests without applying (prints Secret data) |
-| `make k8s-init-secrets` | Generate the overlay `secrets.env` if missing (local only) |
-| `make k8s-status`       | Pods, services, statefulsets, deployments, PVCs     |
-| `make k8s-restart`      | Rollout restart the API                             |
-| `make k8s-logs`         | Stream API logs                                     |
-| `make k8s-logs-db`      | Stream PostgreSQL logs                              |
-| `make k8s-logs-migrations` | Show migrations Job logs                        |
-| `make k8s-forward-api`  | Port-forward the API to `localhost:8081` (bypasses the Ingress) |
-| `make k8s-forward-db`   | Port-forward PostgreSQL to `localhost:5432`         |
-| `make k8s-load-test`    | Run the k6 load test through the Ingress (`LOAD_TEST_PATH`, `*_RATE` variables) |
-| `make k8s-watch-hpa`    | Watch the HPA, pod CPU and API pods during the load test |
-| `make k8s-rollout-ok`   | Roll out a healthy revision: a new pod is added, then the old one is removed |
-| `make k8s-rollout-broken` | Roll out a revision with a failing readiness probe, then roll back (`ROLLOUT_AUTO_UNDO=0` to keep it stuck) |
-| `make k8s-rollout-undo` | Roll back the API to the previous revision          |
-| `make k8s-rollout-history` | Show the API revisions and their change causes   |
-| `make k8s-watch-rollout` | Watch the Deployment, ReplicaSets and API pods     |
-| `make k8s-watch-traffic` | Print the status code of `/health/ready` through the Ingress every 0.5 s |
+## Kubernetes experiments
 
-**Infrastructure (OpenTofu)**
+### Rolling updates and rollback
 
-| Command                  | Description                                              |
-|--------------------------|----------------------------------------------------------|
-| `make infra-up`          | Cluster + credentials + platform                         |
-| `make infra-down`        | Destroy the platform, then the cluster                   |
-| `make infra-platform`    | Create or update the AKS cluster                         |
-| `make infra-credentials` | Merge the AKS kubeconfig into `~/.kube/config`           |
-| `make infra-cluster`     | Install Traefik, the namespace and the database Secret   |
-| `make infra-check`       | `tofu fmt -check` and `tofu validate` on platform and frontend stacks     |
+The API `Deployment` uses `maxSurge: 1`, `maxUnavailable: 0`, and `/health/ready`. A new replica must stay ready for five seconds before Kubernetes can stop an old one. After 60 seconds without progress, the Deployment reports `ProgressDeadlineExceeded`. [Deployment configuration](apps/api/k8s/base/api-deployment.yml)
 
-`make k8s-up` restarts an existing API Deployment after importing the rebuilt `:dev` image. On first install, the new Deployment starts with the imported image.
+Run `make k8s-watch-rollout` and `make k8s-watch-traffic` in separate terminals against the local cluster. `make k8s-rollout-ok` starts a healthy rollout. `make k8s-rollout-broken` points the new replica’s readiness probe to `/health/broken`. The new replica fails the probe while the old replica continues serving traffic. The target prints diagnostics and rolls back. Set `ROLLOUT_AUTO_UNDO=0` to inspect the stuck rollout, then run `make k8s-rollout-undo` to restore the previous revision. `make k8s-rollout-history` lists the revisions, and `make k8s-apply` reapplies the manifests after the demonstration.
 
-## Tests
+### Horizontal autoscaling
 
-```bash
-make test-unit    # every *.Tests project, as in CI, TRX results in TestResults/
-dotnet test       # whole solution, including integration tests
-```
+The `HorizontalPodAutoscaler` scales the API between **1 and 6 replicas**, targeting average CPU utilization of **70% of each pod’s CPU request**. Short stabilization windows make changes easier to observe during the demonstration. Node capacity and connections to a single PostgreSQL instance limit what the experiment can measure. [HPA configuration](apps/api/k8s/base/api-hpa.yml)
 
-Integration tests require a running PostgreSQL instance (see `appsettings.json` in the integration test projects).
+Run `make k8s-watch-hpa` in one terminal. In another, export a `MYDISK_ACCESS_TOKEN` for the `mydisk-api` audience that stays valid throughout the test, then run `make k8s-load-test` with k6 installed. The scenario calls `GET /api/Disk/disks` and checks for HTTP `200`. It runs for 3 minutes and 30 seconds at target rates of **5 → 150 → 600 → 5 requests per second**. Observe the replica count as it rises and falls, and adjust `MEDIUM_RATE` or `HEAVY_RATE` to suit the host’s resources. [k6 scenario](apps/api/k8s/bench/load-test.js)
 
-## Roadmap
+## Infrastructure and delivery
 
-**Scaling**
+### OpenTofu and AKS
 
-- Per-overlay HPA `behavior`: keep the fast demo values in `local`, use a scale-down window of a few minutes in `cloud`
-- Cluster autoscaler on the AKS node pool (`auto_scaling_enabled`, `min_count`, `max_count`), so pending API pods trigger new nodes
-- `PodDisruptionBudget` for the API, so node drains and cluster scale-down keep at least one pod serving
-- Scaling on request rate or latency instead of CPU only, with Prometheus and the Prometheus Adapter, or KEDA
-- Connection pooling with PgBouncer, and a bounded `Maximum Pool Size` per pod, so adding replicas does not exhaust PostgreSQL connections
-- Read replicas or a managed PostgreSQL (Azure Database for PostgreSQL) to scale the database tier
-- Vertical Pod Autoscaler in recommendation mode to right-size the CPU and memory requests the HPA relies on
+- [`infra/platform/azure`](infra/platform/azure/) creates the Azure resource group and AKS cluster. Its `bootstrap` subdirectory provisions Azure state storage.
+- [`infra/cluster`](infra/cluster/) uses a Kubernetes context to install Traefik and cert-manager and provision the `mydisk` namespace and PostgreSQL Secret. This stack configures the platform separately from the Azure cluster itself.
+- [`infra/apps/frontend`](infra/apps/frontend/README.md) can manage the frontend independently on an existing cluster. The standard deployment uses the frontend’s Kustomize overlay.
 
-**Deployments**
+The **Infrastructure AKS** workflow stores encrypted OpenTofu state in Azure Blob Storage. To provision from a workstation with Azure CLI and OpenTofu, sign in with `az login`, set `ARM_SUBSCRIPTION_ID`, and provide `TF_VAR_state_passphrase` with at least 16 characters. `make infra-up` provisions the cluster using encrypted local state. After signing in to GHCR, run `make k8s-up ENV=cloud` to build, publish, and deploy the images. AKS needs access to all three GHCR packages. [GitHub Actions guide](infra/GITHUB-ACTIONS.md) · [Azure DNS and HTTPS](infra/HTTPS.md)
 
-- Canary or blue-green releases with Argo Rollouts, promoted on metrics instead of readiness only
-- A smoke test through the Ingress after each deploy, rolling back when it fails
-- Integration tests in CI, against a PostgreSQL service container, with the connection string read from environment variables
+### CI/CD
 
-**Security and delivery**
+GitHub Actions and Azure Pipelines share Makefile targets for unit tests, the Blazor build, OpenTofu validation, and deployment. On `master`, the pipelines publish the API, migration, and frontend images tagged with the commit SHA. GitHub Actions also audits the API solution’s NuGet dependencies and scans all three images with Trivy before publishing. High or critical NuGet findings block restore. High or critical image vulnerabilities with a fix available block publication. Run `make security` to repeat the scans locally. [GitHub Actions CI](.github/workflows/ci.yml) · [Azure Pipelines](azure-pipelines.yml) · [Policies and reports](docs/DEVSECOPS.md)
 
-- External Secrets Operator in `infra/cluster`, so passwords live in a secret manager instead of the OpenTofu state
-- `securityContext` hardening to enforce the `restricted` Pod Security level
-- TLS with cert-manager and a host-based rule on the Ingress for the cloud overlay
-- Remote OpenTofu state backend, then an infrastructure pipeline running `tofu plan` on pull requests and `tofu apply` after approval
-- Entra ID integration on AKS with Kubernetes RBAC, so the pipeline identity is limited to the `mydisk` namespace instead of cluster-admin
+`make k8s-deploy ENV=cloud IMAGE_TAG=<sha>` pins the three images to that release, waits for migrations to finish, and monitors the API and frontend rollouts. If a rollout fails, the target gathers diagnostics and restores the previous revisions of changed Deployments where available. Applied migrations remain in place, so schema changes need to work with the previous API version. GitHub CD runs its HTTPS checks after the rollout stage. [GitHub Actions CD](.github/workflows/cd.yml)
 
-### Security checks in CI
+## Open work
 
-CI audits direct/transitive NuGet dependencies and scans the API, migration and frontend container images
-before publishing them. High/Critical NuGet findings block restore; fixable
-High/Critical image findings block publication. Full reports are retained as
-GitHub Actions artifacts. Dependabot proposes weekly updates without auto-merging.
-
-See [the DevSecOps walkthrough](docs/DEVSECOPS.md) for policies, limits and the
-actual vulnerability corrections. Install Trivy (`brew install trivy` on macOS),
-start Docker, and run `make security` to audit dependencies, build amd64 images,
-and scan them without publishing or deploying. The same Makefile targets are
-used in GitHub Actions; no custom security scripts are required.
+- Connect Prometheus to Grafana and build dashboards to track replica count, request rate, and latency during the k6 scenario.
+- Run the PostgreSQL integration suites in CI and automate browser workflows that sign in through Keycloak and use the collection.
+- Explore progressive delivery based on metrics and measure PostgreSQL capacity as the API replica count grows.
