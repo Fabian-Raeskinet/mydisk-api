@@ -17,7 +17,7 @@ namespace MyDisks.Data.Migrations.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.0")
+                .HasAnnotation("ProductVersion", "10.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -51,6 +51,12 @@ namespace MyDisks.Data.Migrations.Migrations
                     b.Property<Guid?>("AuthorId")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("CreatedByIssuer")
+                        .HasColumnType("text");
+
+                    b.Property<string>("CreatedBySubject")
+                        .HasColumnType("text");
+
                     b.Property<string>("ImageUrl")
                         .HasColumnType("text");
 
@@ -66,7 +72,10 @@ namespace MyDisks.Data.Migrations.Migrations
 
                     b.HasIndex("AuthorId");
 
-                    b.ToTable("Disks");
+                    b.ToTable("Disks", t =>
+                        {
+                            t.HasCheckConstraint("CK_Disks_CreatedByIdentity", "(\"CreatedByIssuer\" IS NULL) = (\"CreatedBySubject\" IS NULL)");
+                        });
                 });
 
             modelBuilder.Entity("MyDisks.Domain.Reviews.Review", b =>

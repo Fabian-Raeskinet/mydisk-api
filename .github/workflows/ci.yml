@@ -39,6 +39,11 @@ jobs:
           if-no-files-found: ignore
           retention-days: 14
 
+      - name: API integration tests
+        run: >-
+          dotnet test apps/api/src/Api.IntegrationTests/Api.IntegrationTests.csproj
+          --configuration Release --no-restore --logger trx --results-directory TestResults
+
       - name: Unit tests
         run: make test-unit
 

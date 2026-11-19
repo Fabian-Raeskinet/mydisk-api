@@ -10,9 +10,21 @@ public partial class DiskController
     [Route("create-disk")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(400)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> CreateDisk([FromBody] CreateDiskCommand command)
     {
-        var request = new CreateDiskCommandRequest { Name = command.Name, ReleaseDate = command.ReleaseDate };
+        var issuer = User.FindFirst("iss")?.Value;
+        var subject = User.FindFirst("sub")?.Value;
+        if (string.IsNullOrWhiteSpace(issuer) || string.IsNullOrWhiteSpace(subject))
+            return Forbid();
+
+        var request = new CreateDiskCommandRequest
+        {
+            Name = command.Name,
+            ReleaseDate = command.ReleaseDate,
+            CreatedByIssuer = issuer,
+            CreatedBySubject = subject
+        };
         await Mediator.Send(request);
         return NoContent();
     }

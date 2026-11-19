@@ -9,6 +9,10 @@ public class DiskConfiguration : IEntityTypeConfiguration<Disk>
 {
     public void Configure(EntityTypeBuilder<Disk> builder)
     {
+        builder.ToTable(table => table.HasCheckConstraint(
+            "CK_Disks_CreatedByIdentity",
+            "(\"CreatedByIssuer\" IS NULL) = (\"CreatedBySubject\" IS NULL)"));
+
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id)
             .HasValueGenerator<NewIdGenerator>();

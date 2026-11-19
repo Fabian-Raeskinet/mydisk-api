@@ -47,12 +47,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RetryService.Tests", "src\R
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{9A09C49C-CCCF-4C26-AA04-267E632CFA56}"
 	ProjectSection(SolutionItems) = preProject
-		azure-pipelines.yml = ..\..\azure-pipelines.yml
 		Dockerfile = Dockerfile
-		compose.yml = compose.yml
 		.gitignore = ..\..\.gitignore
 		.dockerignore = .dockerignore
-		.env = .env
 		Makefile = ..\..\Makefile
 	EndProjectSection
 EndProject

@@ -55,17 +55,18 @@ Creating a record starts in a controller and goes through a command handler. The
 
 Record details are looked up by exact name. The interface flags ambiguous results when multiple records share a name. You can associate a known artist or enter a UUID. The review workflow supports creating and archiving reviews. Sign-in settings depend on the environment. [OpenID Connect configuration](#openid-connect-configuration)
 
+When a signed-in user creates a disk, the API records the issuer and subject from their validated access token. Existing records and local demo records can have an unknown creator.
+
 ### Platform and environments
 
 | Environment | Components and use |
 | --- | --- |
-| [Docker Compose](apps/api/compose.yml) | Runs Traefik, Blazor, the API, migrations, and PostgreSQL on one machine. Use it to explore Swagger, exercise the health endpoints, or prepare a development environment. |
 | [Local k3d](deploy/k8s/local/) | Runs the full stack with Keycloak and Grafana. k3d runs k3s in Docker, Kustomize assembles the local overlays, and Traefik serves HTTPS with mkcert certificates. |
 | [AKS](deploy/k8s/cloud/) | Runs the API, frontend, migrations, and PostgreSQL. OpenTofu provisions the platform and Kustomize assembles the application manifests. To enable sign-in, provide a reachable OIDC issuer and configure the API and frontend. |
 
 On Kubernetes, PostgreSQL runs in a `StatefulSet` with a persistent volume. A `ConfigMap` holds public settings and a `Secret` holds passwords. Separate PostgreSQL roles handle initial administration, schema ownership and migrations, and API reads and writes. A `NetworkPolicy` allows only the API and migration pods to connect to PostgreSQL. PostgreSQL creates the roles when it initializes an empty data volume. [API manifests](apps/api/k8s/base/)
 
-Migrations ship in a dedicated image. Under Compose, the API waits for the `migrations` service to succeed. On Kubernetes, application deployment waits for the `mydisk-api-migrations` Job to succeed before deploying the API and frontend. The bundle applies pending migrations. With `SEED_DATA=true`, it adds demo data to empty tables. Compose and k3d enable this setting.
+Migrations ship in a dedicated image. Application deployment waits for the `mydisk-api-migrations` Job to succeed before deploying the API and frontend. The bundle applies pending migrations. The local k3d overlay sets `SEED_DATA=true` to add demo data to empty tables.
 
 The Dockerfiles separate build and runtime stages. The API Dockerfile produces separate images for the ASP.NET Core server and the EF Core bundle. The frontend Dockerfile publishes static files to an NGINX image. All three images run as a non-root user. [API and migrations Dockerfile](apps/api/Dockerfile) · [Frontend Dockerfile](apps/frontend/Dockerfile)
 
@@ -96,30 +97,19 @@ Deployment generates the Keycloak admin credentials in `apps/keycloak/k8s/overla
 
 `make cluster-stop` stops the cluster between sessions. `make dev-down` removes the overlay resources and then stops the cluster. `make local-https` updates local HTTPS on an existing cluster without rebuilding the images or rerunning migrations. [HTTPS setup](infra/HTTPS.md#local-k3d-https)
 
-### Quick start with Docker Compose
-
-```bash
-cp apps/api/postgres.env.example apps/api/postgres.env
-# Set POSTGRES_PASSWORD in apps/api/postgres.env.
-make up
-make ps
-```
-
-Traefik serves the frontend at `http://localhost:3000/`. Swagger is also available directly at `http://localhost:8080/swagger`. To sign in to the frontend, follow the k3d setup or configure an external OIDC provider. `make down` stops the services and keeps the data. `make clean` also deletes the PostgreSQL volumes.
-
 ### Development from the IDE
 
-With the .NET 11 SDK installed, open `apps/api/mydisk-api.sln`. To run the API on its own, prepare `apps/api/postgres.env` as shown above, start PostgreSQL and apply the migrations, then save the connection string to ASP.NET Core user secrets.
+With the .NET 11 SDK installed, open `apps/api/mydisk-api.sln`. Start the local k3d stack with `make dev-up` to run Keycloak and prepare PostgreSQL. Run `make k8s-forward-db` from the repository root and leave it running while you debug the API.
+
+From the repository root, start the API with the application database role. The following command reads the generated password from the local overlay and passes it to the API through its environment.
 
 ```bash
-cd apps/api
-docker compose --env-file postgres.env up -d postgres migrations
-docker compose --env-file postgres.env wait migrations
-dotnet user-secrets init --project src/Api
-dotnet user-secrets set --project src/Api 'ConnectionStrings:DefaultConnection' \
-  'Host=localhost;Port=5432;Database=mydisk;Username=mydisk;Password=<POSTGRES_PASSWORD>'
-ASPNETCORE_ENVIRONMENT=Development Https__TerminatedAtProxy=true \
-  dotnet run --project src/Api --no-launch-profile --urls http://localhost:5059
+(
+  pg_app_password=$(sed -n 's/^POSTGRES_APP_PASSWORD=//p' apps/api/k8s/overlays/local/secrets.env)
+  ASPNETCORE_ENVIRONMENT=Development Https__TerminatedAtProxy=true \
+    ConnectionStrings__DefaultConnection="Host=127.0.0.1;Port=5432;Database=mydisk;Username=mydisk_api;Password=${pg_app_password};GSS Encryption Mode=Disable" \
+    dotnet run --project apps/api/src/Api --no-launch-profile --urls http://localhost:5059
+)
 ```
 
 From the repository root in a second terminal, run `make frontend-restore` and then `make frontend-dev`. The frontend runs at `http://localhost:5100` and calls the API at `http://localhost:5059`. Sign-in with the supplied development settings requires access to the local Keycloak HTTPS endpoint.
@@ -155,7 +145,7 @@ For a different provider or environment, set `Authentication:Authority` and `Aut
 
 - **Local unit tests.** 128 of 129 tests passed. The test for adding a review before a disk’s release date expects an `InvalidOperationException`. `AddReview` currently checks for duplicates and then adds the review. [Unit test](apps/api/src/Domain.Tests/Disks/DiskFixture.cs#L54) · [Domain rule](apps/api/src/Domain/Disks/Disk.cs#L20)
 - **Local HTTP integration tests.** All 26 tests passed in two of four runs. In the other two runs, the artist association test expected HTTP `204` and received `500`. AutoFixture generates birth and release dates independently, so the date order can violate the domain rule. [Artist association test](apps/api/src/Api.IntegrationTests/Controllers/DiskControllerFixture.cs#L124) · [Domain rule](apps/api/src/Domain/Disks/Disk.cs#L26)
-- **Local build and configuration checks.** The Blazor Release build, Docker Compose configuration validation, and Kustomize rendering of the `local` and `cloud` overlays passed. Rendering verifies that the overlays assemble. The HTTP checks above require a running deployment.
+- **Local build and configuration checks.** The Blazor Release build and Kustomize rendering of the `local` and `cloud` overlays passed. Rendering verifies that the overlays assemble. The HTTP checks above require a running deployment.
 - **Local rollback.** During the rollout of a deliberately broken revision and its rollback, **113 requests to `/health/ready` returned HTTP 200** through Traefik. [Original result in the README history](../../commit/1638977)
 - **Dependency and image scanning.** The DevSecOps exercise documents findings from NuGet and Trivy and the updates made in response, including `Microsoft.OpenApi` and `AutoMapper`. [DevSecOps walkthrough](docs/DEVSECOPS.md#verified-remediation-exercise)
 - **Load testing.** The repository includes the k6 scenario and its phases. The arrival rates are inputs chosen to trigger scaling. The repository contains no measured load-test report.
@@ -187,7 +177,7 @@ The **Infrastructure AKS** workflow stores encrypted OpenTofu state in Azure Blo
 
 ### CI/CD
 
-GitHub Actions and Azure Pipelines share Makefile targets for unit tests, the Blazor build, OpenTofu validation, and deployment. On `master`, the pipelines publish the API, migration, and frontend images tagged with the commit SHA. GitHub Actions also audits the API solution’s NuGet dependencies and scans all three images with Trivy before publishing. High or critical NuGet findings block restore. High or critical image vulnerabilities with a fix available block publication. Run `make security` to repeat the scans locally. [GitHub Actions CI](.github/workflows/ci.yml) · [Azure Pipelines](azure-pipelines.yml) · [Policies and reports](docs/DEVSECOPS.md)
+GitHub Actions runs the unit tests and API integration tests, builds Blazor, validates OpenTofu, and deploys to AKS. On `master`, it publishes the API, migration, and frontend images tagged with the commit SHA. It audits the API solution’s NuGet dependencies and scans all three images with Trivy before publishing. High or critical NuGet findings block restore. High or critical image vulnerabilities with a fix available block publication. Run `make security` to repeat the scans locally. [GitHub Actions CI](.github/workflows/ci.yml) · [Policies and reports](docs/DEVSECOPS.md)
 
 `make k8s-deploy ENV=cloud IMAGE_TAG=<sha>` pins the three images to that release, waits for migrations to finish, and monitors the API and frontend rollouts. If a rollout fails, the target gathers diagnostics and restores the previous revisions of changed Deployments where available. Applied migrations remain in place, so schema changes need to work with the previous API version. GitHub CD runs its HTTPS checks after the rollout stage. [GitHub Actions CD](.github/workflows/cd.yml)
 

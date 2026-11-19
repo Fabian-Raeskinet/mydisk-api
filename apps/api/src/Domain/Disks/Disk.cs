@@ -13,6 +13,8 @@ public sealed class Disk : AggregateRoot<Guid>
     public required Name Name { get; set; }
     public DateTime? ReleaseDate { get; set; }
     public string? ImageUrl { get; set; }
+    public string? CreatedByIssuer { get; init; }
+    public string? CreatedBySubject { get; init; }
     public Guid? AuthorId { get; set; }
     public Author? Author { get; private set; }
     public List<Review> Reviews { get; }

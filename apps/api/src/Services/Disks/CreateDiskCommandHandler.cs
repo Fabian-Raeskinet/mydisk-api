@@ -17,7 +17,9 @@ public sealed class CreateDiskCommandHandler : ICommandHandler<CreateDiskCommand
         var disk = new Disk
         {
             Name = new Name(request.Name),
-            ReleaseDate = request.ReleaseDate
+            ReleaseDate = request.ReleaseDate,
+            CreatedByIssuer = request.CreatedByIssuer,
+            CreatedBySubject = request.CreatedBySubject
         };
 
         var newDiskEvent = new NewDiskCreatedDomainEvent(disk);

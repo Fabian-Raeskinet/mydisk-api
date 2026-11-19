@@ -22,7 +22,11 @@ internal sealed class TestAuthenticationHandler(
             return Task.FromResult(AuthenticateResult.NoResult());
         }
 
-        var claims = new[] { new Claim(ClaimTypes.NameIdentifier, "integration-test") };
+        var claims = new[]
+        {
+            new Claim("iss", "https://keycloak.test/realms/mydisk"),
+            new Claim("sub", "integration-test")
+        };
         var principal = new ClaimsPrincipal(new ClaimsIdentity(claims, SchemeName));
         return Task.FromResult(AuthenticateResult.Success(new AuthenticationTicket(principal, SchemeName)));
     }

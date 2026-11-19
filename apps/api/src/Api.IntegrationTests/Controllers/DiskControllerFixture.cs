@@ -124,6 +124,7 @@ public sealed class DiskControllerFixture
         public async Task Should_HttpStatusCode_Be_NoContent(AttachAuthorCommand command, Disk disk, Author author)
         {
             // Arrange
+            disk.ReleaseDate = author.Birthdate.AddDays(1);
             var content = JsonContent.Create(command);
 
             _factory.DiskRepositoryMock
@@ -209,9 +210,18 @@ public sealed class DiskControllerFixture
     {
         [Theory]
         [AutoApiData]
-        public async Task Should_HttpStatusCode_Be_NoContent(Guid diskId, Name diskName, Disk disk)
+        public async Task Updates_disk_without_changing_its_creator(Guid diskId, Name diskName)
         {
             // Arrange
+            const string createdByIssuer = "https://keycloak.test/realms/mydisk";
+            const string createdBySubject = "original-creator";
+            var disk = new Disk
+            {
+                Id = diskId,
+                Name = new Name("Original name"),
+                CreatedByIssuer = createdByIssuer,
+                CreatedBySubject = createdBySubject
+            };
             var command = new UpdateDiskCommand
             {
                 Id = diskId,
@@ -227,6 +237,9 @@ public sealed class DiskControllerFixture
 
             // Assert
             act.StatusCode.Should().Be(HttpStatusCode.NoContent);
+            _factory.DiskRepositoryMock.Verify(repository => repository.UpdateDiskAsync(It.Is<Disk>(updated =>
+                updated.Name == diskName && updated.CreatedByIssuer == createdByIssuer &&
+                updated.CreatedBySubject == createdBySubject)), Times.Once);
         }
 
         [Fact]

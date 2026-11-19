@@ -26,7 +26,9 @@ public class CreateDiskCommandHandlerFixture : ServiceFixtureBase
         var request = new CreateDiskCommandRequest
         {
             Name = diskName,
-            ReleaseDate = DateTime.Now
+            ReleaseDate = DateTime.Now,
+            CreatedByIssuer = "https://keycloak.example/realms/mydisk",
+            CreatedBySubject = "disk-creator"
         };
         var sut = ServiceProvider.GetRequiredService<IRequestHandler<CreateDiskCommandRequest>>();
 
@@ -36,5 +38,7 @@ public class CreateDiskCommandHandlerFixture : ServiceFixtureBase
         // Assert
         var disk = await DiskRepository.GetDiskByFilterAsync(x => x.Name == request.Name);
         disk.Should().NotBeNull();
+        disk!.CreatedByIssuer.Should().Be(request.CreatedByIssuer);
+        disk.CreatedBySubject.Should().Be(request.CreatedBySubject);
     }
 }

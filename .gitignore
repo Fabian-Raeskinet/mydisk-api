@@ -378,7 +378,7 @@ FodyWeavers.xsd
 !/apps/api/.idea/.idea.mydisk-api/.idea/indexLayout.xml
 !/apps/api/.idea/.idea.mydisk-api/.idea/vcs.xml
 
-# Local secrets (docker compose & k8s)
+# Local secrets
 *.env
 .env*
 !.env.example

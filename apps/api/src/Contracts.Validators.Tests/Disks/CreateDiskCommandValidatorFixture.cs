@@ -16,7 +16,9 @@ public class CreateDiskCommandValidatorFixture
         var request = new CreateDiskCommandRequest
         {
             Name = name,
-            ReleaseDate = DateTime.ParseExact(releaseDate, "dd-MM-yy HH:mm:ss", CultureInfo.InvariantCulture)
+            ReleaseDate = DateTime.ParseExact(releaseDate, "dd-MM-yy HH:mm:ss", CultureInfo.InvariantCulture),
+            CreatedByIssuer = "https://keycloak.example/realms/mydisk",
+            CreatedBySubject = "disk-creator"
         };
 
         // Act

@@ -5,8 +5,6 @@ FRONTEND_DIR = apps/frontend
 FRONTEND_PROJECT = $(FRONTEND_DIR)/src/MyDisk.Frontend.csproj
 API_K8S = $(API_DIR)/k8s
 LOCAL_API_OVERLAY = $(API_K8S)/overlays/local
-COMPOSE_ENV_FILE = $(API_DIR)/postgres.env
-COMPOSE = docker compose --env-file $(COMPOSE_ENV_FILE) -f $(API_DIR)/compose.yml
 KEYCLOAK_OVERLAY = apps/keycloak/k8s/overlays/local
 KEYCLOAK_HOST = auth.mydisk.localhost
 KEYCLOAK_URL = https://$(KEYCLOAK_HOST):8443
@@ -55,7 +53,7 @@ INFRA_PLATFORM = infra/platform/azure
 INFRA_FRONTEND = infra/apps/frontend
 INFRA_CONTEXT ?= $(AKS_CLUSTER_NAME)
 
-.PHONY: help up down restart logs ps build clean test-unit frontend-restore frontend-dev frontend-check k8s-preflight k8s-smoke \
+.PHONY: help test-unit frontend-restore frontend-dev frontend-check k8s-preflight k8s-smoke \
         local-https local-keycloak-network k8s-init-tls cluster-https-port cluster-create cluster-start cluster-stop cluster-delete cluster-reset cluster-status cluster-load \
         k8s-help k8s-init-secrets k8s-build k8s-render k8s-apply k8s-delete \
         k8s-status k8s-restart k8s-logs k8s-logs-db k8s-logs-migrations k8s-logs-keycloak k8s-forward-api k8s-forward-frontend k8s-forward-db k8s-smoke-keycloak k8s-up k8s-down \
@@ -87,15 +85,6 @@ help:
 	@echo "Combined workflow targets:"
 	@echo "  dev-up              Ensure cluster is ready, build image, import, and deploy"
 	@echo "  dev-down            Delete Kubernetes deployment and stop cluster"
-	@echo ""
-	@echo "Docker Compose targets:"
-	@echo "  up                  Build and start all services in detached mode"
-	@echo "  down                Stop and remove all containers"
-	@echo "  restart             Restart all running services"
-	@echo "  logs                Stream logs from all services"
-	@echo "  ps                  Display the status of all services"
-	@echo "  build               Build or rebuild service images"
-	@echo "  clean               Stop containers and remove volumes (WARNING: deletes DB)"
 	@echo ""
 	@echo "Test targets:"
 	@echo "  test-unit           Run every *.Tests project, TRX results in $(TEST_RESULTS)/"
@@ -191,37 +180,6 @@ cluster-load:
 	@k3d image import $(IMAGE_NAME) $(MIGRATIONS_IMAGE_NAME) $(GRAFANA_IMAGE_NAME) $(FRONTEND_IMAGE_NAME) -c $(CLUSTER_NAME)
 
 # -----------------------------------------------------------------------------
-# Docker Compose
-# -----------------------------------------------------------------------------
-# Build and start all services in detached mode
-up:
-	$(COMPOSE) up --build -d
-
-# Stop and remove all containers without deleting persistent data
-down:
-	$(COMPOSE) down
-
-# Restart all running services without rebuilding their images
-restart:
-	$(COMPOSE) restart
-
-# Stream logs from all services
-logs:
-	$(COMPOSE) logs -f
-
-# Display the status of all services
-ps:
-	$(COMPOSE) ps
-
-# Build or rebuild service images
-build:
-	$(COMPOSE) build
-
-# Stop containers and remove all volumes (WARNING: deletes database data)
-clean:
-	$(COMPOSE) down -v
-
-# -----------------------------------------------------------------------------
 # Tests
 # -----------------------------------------------------------------------------
 # Run every unit test project, keep going after a failure so all results are reported
@@ -243,16 +201,14 @@ frontend-check:
 # -----------------------------------------------------------------------------
 # Kubernetes (K8s)
 # -----------------------------------------------------------------------------
-# Generate overlay secrets.env, adding any missing password (reuses postgres.env password to keep existing PVC usable)
+# Generate local overlay secrets and preserve existing credentials.
 K8S_SECRETS = $(LOCAL_API_OVERLAY)/secrets.env
 k8s-init-secrets:
 	@[ "$(ENV)" = local ] || exit 0; \
 	set -e; umask 077; touch $(K8S_SECRETS); \
 	for key in POSTGRES_PASSWORD POSTGRES_MIGRATOR_PASSWORD POSTGRES_APP_PASSWORD; do \
 		grep -q "^$$key=" $(K8S_SECRETS) && continue; \
-		pw=; \
-		[ "$$key" = POSTGRES_PASSWORD ] && [ -f $(COMPOSE_ENV_FILE) ] && pw=$$(sed -n 's/^POSTGRES_PASSWORD=//p' $(COMPOSE_ENV_FILE)); \
-		[ -n "$$pw" ] || pw=$$(openssl rand -hex 32); \
+		pw=$$(openssl rand -hex 32); \
 		printf '%s=%s\n' "$$key" "$$pw" >> $(K8S_SECRETS); \
 		echo "Added $$key to $(K8S_SECRETS)."; \
 	done; \

@@ -1,4 +1,6 @@
-﻿using MyDisks.Contracts.Disks;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using MyDisks.Contracts.Disks;
 using MyDisks.Services.Disks;
 using MyDisks.Tests.Api;
 using MyDisks.Tests.Utils;
@@ -147,6 +149,9 @@ public class DiskControllerFixture
 
     public class CreateDiskFixture
     {
+        private const string Issuer = "https://keycloak.example/realms/mydisk";
+        private const string Subject = "disk-creator";
+
         [Theory]
         [AutoApiData]
         public async Task Should_Use_Mediator
@@ -156,6 +161,7 @@ public class DiskControllerFixture
         )
         {
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.CreateDisk(command);
 
             // Assert
@@ -172,6 +178,7 @@ public class DiskControllerFixture
         )
         {
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.CreateDisk(command);
 
             // Assert
@@ -187,6 +194,7 @@ public class DiskControllerFixture
         )
         {
             // Act
+            SetAuthenticatedUser(sut);
             var act = await sut.CreateDisk(command);
 
             // Assert
@@ -194,8 +202,23 @@ public class DiskControllerFixture
                 .Verify(_ =>
                     _.Send(
                         It.Is<CreateDiskCommandRequest>(request =>
-                            request.Name == command.Name && request.ReleaseDate == command.ReleaseDate),
+                            request.Name == command.Name
+                            && request.ReleaseDate == command.ReleaseDate
+                            && request.CreatedByIssuer == Issuer
+                            && request.CreatedBySubject == Subject),
                         CancellationToken.None));
+        }
+
+        private static void SetAuthenticatedUser(DiskController controller)
+        {
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(
+                        [new Claim("iss", Issuer), new Claim("sub", Subject)], "test"))
+                }
+            };
         }
     }
 
