@@ -5,7 +5,7 @@ RUN dotnet restore MyDisk.Frontend.csproj
 COPY src/ ./
 RUN dotnet publish MyDisk.Frontend.csproj --no-restore -c Release -o /app/publish
 
-FROM nginxinc/nginx-unprivileged:1.30-alpine AS runtime
+FROM nginxinc/nginx-unprivileged:1.31-alpine AS runtime
 USER root
 # Apply distribution security fixes released since the base image was published.
 RUN apk upgrade --no-cache
