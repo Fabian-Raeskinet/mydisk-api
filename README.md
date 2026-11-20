@@ -1,9 +1,10 @@
 # MyDisk
 
-MyDisk is a portfolio project built around a record collection. The application lets you browse and manage records, associate artists with them, and write or archive reviews. The deliberately simple domain makes it easier to focus on designing a .NET API, connecting it to a web frontend, and running the stack on Kubernetes.
+MyDisk is a portfolio project for managing a private record collection. Members can add and edit records, associate artists, and submit reviews. The API accepts reviews for asynchronous moderation. Administrators can inspect and archive reviews across collections. The project explores .NET application design, reliable background processing, and Kubernetes deployment.
 
 - [Applications and goals](#applications-and-goals)
 - [Architecture](#architecture)
+- [Documentation and diagrams](#documentation-and-diagrams)
 - [Getting started](#getting-started)
 - [Tests and verification](#tests-and-verification)
 - [Kubernetes experiments](#kubernetes-experiments)
@@ -16,20 +17,28 @@ MyDisk is a portfolio project built around a record collection. The application 
 | --- | --- | --- |
 | [ASP.NET Core API](apps/api/) | Exposes the collection, reviews, and diagnostics over HTTP, with Swagger for exploring the endpoints. | Layered backend design, domain modeling, separation of commands and queries, testing at each layer, and retry policies with Polly. |
 | [Blazor WebAssembly frontend](apps/frontend/) | Provides the collection views, forms, diagnostics, and user profile. | Calling a REST API from a browser-based .NET application, building the interface with MudBlazor, and managing loading, error, and session states. |
+| [.NET Worker](apps/api/src/Worker/) | Publishes queued events and moderates submitted reviews in the background. | Separating HTTP requests from background jobs, storing events in a transactional outbox, and handling retries and redelivery. |
+| [RabbitMQ](apps/messaging/) | Routes review events to the worker and holds failed deliveries in a dead-letter queue. The local overlay deploys the broker. | Durable message delivery and acknowledgments. |
 | [Keycloak](apps/keycloak/) | Provides the `mydisk` realm, the public `mydisk-frontend` client, and the French sign-in theme for k3d. | Delegating sign-in to an identity provider, using the OpenID Connect authorization code flow with PKCE, and validating access tokens issued for `mydisk-api`. |
 | [Grafana](apps/grafana/) | Runs locally with a preconfigured Prometheus data source. | Preparing to visualize application metrics under load. The [Prometheus module](platform/prometheus/) and dashboards are still to be integrated. |
-| [PostgreSQL and EF Core migrations](apps/api/src/Data.Migrations/) | Stores collection data. A migration executable initializes and updates the schema. Keycloak uses a separate PostgreSQL instance. | Running migrations independently of API startup, persisting data across restarts, and giving the API and the migration job different SQL privileges on Kubernetes. |
+| [PostgreSQL and EF Core migrations](apps/api/src/Data.Migrations/) | Stores collections, reviews, and the outbox. A migration bundle initializes and updates the schema. Keycloak uses a separate PostgreSQL instance. | Running migrations independently of API startup, persisting data across restarts, and separating application and migration privileges on Kubernetes. |
 
 ## Architecture
 
-```text
-Browser ── HTTPS ──► Traefik ── / ─────► NGINX ──► Blazor WASM files
-                        │
-                        └── /api ───► ASP.NET Core ──► MyDisk PostgreSQL
-
-Browser ── OIDC ──► Keycloak ──► Keycloak PostgreSQL     (k3d)
-API ── OIDC metadata and signing keys ──► Keycloak
-Migration Job ── EF Core bundle ──► MyDisk PostgreSQL    (Kubernetes)
+```mermaid
+flowchart LR
+    Browser["Browser · Blazor WASM"] -->|"HTTPS"| Router["Traefik"]
+    Router -->|"/"| Static["NGINX · static frontend"]
+    Router -->|"/api and technical routes"| API["ASP.NET Core API"]
+    Router -->|"OIDC hostname · local"| Keycloak["Keycloak"]
+    API -->|"Collection, reviews, outbox"| DB[("MyDisk PostgreSQL")]
+    subgraph Local["Local background processing"]
+        Worker[".NET Worker"]
+        MQ["RabbitMQ"]
+        Worker -->|"Publish"| MQ
+        MQ -->|"Deliver"| Worker
+    end
+    Worker -->|"Read outbox, update review"| DB
 ```
 
 The browser loads Blazor from NGINX. Traefik routes `/api`, `/health`, `/maintenance`, and `/swagger` directly to the API on the same origin. The frontend includes the access token when calling protected endpoints. The API validates the token signature, expiration, issuer, and `mydisk-api` audience. On k3d, a CoreDNS rule lets the API pod resolve the same issuer hostname that the browser uses. The pod trusts the local mkcert certificate authority for OIDC discovery. [Traefik routing](deploy/k8s/routing/) · [HTTPS and Keycloak discovery](infra/HTTPS.md#local-k3d-https)
@@ -42,10 +51,11 @@ The API and frontend target **.NET 11**. The backend solution is [`apps/api/mydi
 | --- | --- |
 | `Api` | REST controllers, Swagger, JWT authentication, health probes, and dependency wiring. |
 | `Contracts` and `Contracts.Validators` | Input and output contracts and FluentValidation rules. |
-| `Services` | Use cases expressed as MediatR commands and queries, AutoMapper mappings, and shared validation, logging, and transaction behaviors. |
+| `Services` | Use cases expressed as MediatR commands and queries, AutoMapper mappings, validation and transaction behaviors, and review moderation rules. |
 | `Domain` | Collection entities and aggregates, value objects, domain events, and repository interfaces. Business rules are independent of HTTP and EF Core. |
-| `Data` and `Data.Configurations` | Repository and unit-of-work implementations, EF Core persistence mappings, and PostgreSQL access through Npgsql. |
-| `Data.Migrations` | Migration history, bundle configuration, and demo data. |
+| `Data` and `Data.Configurations` | Repository, unit-of-work and outbox implementations, EF Core mappings, and PostgreSQL access through Npgsql. |
+| `Data.Migrations` | Migration history and bundle configuration. |
+| `Worker` and `Messaging` | Background host, outbox publication, and RabbitMQ consumption. |
 
 Creating a record starts in a controller and goes through a command handler. The handler constructs the entity with the `Name` value object. The EF Core repository saves the record, and the `Services` layer handles its creation event. [Controller](apps/api/src/Api/Controllers/DiskController.Post.cs) · [Command handler](apps/api/src/Services/Disks/CreateDiskCommandHandler.cs) · [EF Core repository](apps/api/src/Data/DiskRepository.cs)
 
@@ -53,22 +63,37 @@ Creating a record starts in a controller and goes through a command handler. The
 
 `App.razor` configures routing and the Blazor providers. `Layout` contains navigation and the MudBlazor theme, `Pages` and `Components` make up the screens, and `Services` coordinates API access. `CollectionWorkspace` groups collection operations. The application's root directory contains its `Dockerfile`, NGINX configuration, and Kubernetes manifests. [Frontend source](apps/frontend/src/)
 
-Record details are looked up by exact name. The interface flags ambiguous results when multiple records share a name. You can associate a known artist or enter a UUID. The review workflow supports creating and archiving reviews. Sign-in settings depend on the environment. [OpenID Connect configuration](#openid-connect-configuration)
+Record details are looked up by exact name. The interface flags ambiguous results when multiple records share a name. You can associate a known artist or enter a UUID. After submission, the frontend polls for the review status and displays the moderation result. Sign-in settings depend on the environment. [OpenID Connect configuration](#openid-connect-configuration)
 
 When a signed-in user creates a disk, the API records the issuer and subject from their validated access token. Existing records and local demo records can have an unknown creator.
+
+### Worker and review lifecycle
+
+`POST /api/Review` saves the new review as `Pending` and records its event in the PostgreSQL outbox in the same transaction. It returns HTTP `202 Accepted` and a location where the frontend can read the status. In the worker process, `RabbitMqOutboxPublisher` sends the event to RabbitMQ and `ReviewCreatedConsumer` dispatches the moderation command. The keyword moderator produces a `Published` or `Rejected` decision. A member or an administrator can also archive a review within their permissions. [Worker, outbox, and retry sequences](docs/WORKER.md)
 
 ### Platform and environments
 
 | Environment | Components and use |
 | --- | --- |
-| [Local k3d](deploy/k8s/local/) | Runs the full stack with Keycloak and Grafana. k3d runs k3s in Docker, Kustomize assembles the local overlays, and Traefik serves HTTPS with mkcert certificates. |
-| [AKS](deploy/k8s/cloud/) | Runs the API, frontend, migrations, and PostgreSQL. OpenTofu provisions the platform and Kustomize assembles the application manifests. To enable sign-in, provide a reachable OIDC issuer and configure the API and frontend. |
+| [Local k3d](deploy/k8s/local/) | Runs the full stack with the worker, RabbitMQ, Keycloak and Grafana. k3d runs k3s in Docker, Kustomize assembles the local overlays, and Traefik serves HTTPS with mkcert certificates. |
+| [AKS](deploy/k8s/cloud/) | Runs the API, frontend, migrations, and PostgreSQL. To enable sign-in, provide a reachable OIDC issuer and configure the API and frontend. The worker and RabbitMQ are local-only in the current manifests, so any reviews submitted on AKS stay `Pending`. |
 
-On Kubernetes, PostgreSQL runs in a `StatefulSet` with a persistent volume. A `ConfigMap` holds public settings and a `Secret` holds passwords. Separate PostgreSQL roles handle initial administration, schema ownership and migrations, and API reads and writes. A `NetworkPolicy` allows only the API and migration pods to connect to PostgreSQL. PostgreSQL creates the roles when it initializes an empty data volume. [API manifests](apps/api/k8s/base/)
+On Kubernetes, PostgreSQL runs in a `StatefulSet` with a persistent volume. A `ConfigMap` holds public settings and a `Secret` holds passwords. The API and worker share the application role, and the migration job uses a separate role. A `NetworkPolicy` allows the API, worker and migration pods to connect to PostgreSQL. PostgreSQL creates the roles when it initializes an empty data volume. [API manifests](apps/api/k8s/base/)
 
-Migrations ship in a dedicated image. Application deployment waits for the `mydisk-api-migrations` Job to succeed before deploying the API and frontend. The bundle applies pending migrations. The local k3d overlay sets `SEED_DATA=true` to add demo data to empty tables.
+Migrations ship in a dedicated image. Application deployment waits for the `mydisk-api-migrations` Job to succeed before deploying the API, frontend, and local worker. The bundle applies pending migrations. The local k3d overlay sets `SEED_DATA=true` to add demo data to empty tables.
 
-The Dockerfiles separate build and runtime stages. The API Dockerfile produces separate images for the ASP.NET Core server and the EF Core bundle. The frontend Dockerfile publishes static files to an NGINX image. All three images run as a non-root user. [API and migrations Dockerfile](apps/api/Dockerfile) · [Frontend Dockerfile](apps/frontend/Dockerfile)
+The Dockerfiles separate build and runtime stages. The API Dockerfile produces separate images for the ASP.NET Core server, the EF Core bundle, and the worker. The frontend Dockerfile publishes static files to an NGINX image. These images run as a non-root user. [Backend Dockerfile](apps/api/Dockerfile) · [Frontend Dockerfile](apps/frontend/Dockerfile)
+
+## Documentation and diagrams
+
+| Guide | Diagrams and details |
+| --- | --- |
+| [Architecture](docs/ARCHITECTURE.md) | System context, components, .NET project dependencies, local and AKS deployments, CI/CD, and migration sequence. |
+| [Use cases and HTTP sequences](docs/CAS-UTILISATION.md) | Actors and permissions, sign-in, collection operations, review submission and archiving, administration, and health checks. |
+| [Class guide and data model](docs/CLASSES.md) | Responsibilities of the main classes, class relationships, and the PostgreSQL schema. |
+| [Worker and outbox](docs/WORKER.md) | Review and outbox states, publication and consumption sequences, retry behavior, and local operation. |
+
+The guides are written in French. Their Mermaid diagrams render directly in GitHub.
 
 ## Getting started
 
@@ -84,7 +109,7 @@ make dev-up
 make k8s-status
 ```
 
-`make dev-up` creates or starts the cluster, checks node health, builds and imports the images, initializes local secrets and certificates, and deploys the applications. It also waits for the Grafana and Keycloak rollouts and runs HTTP smoke checks. If a node reports `DiskPressure`, use `docker system df` to check disk usage before retrying deployment.
+`make dev-up` creates or starts the cluster, checks node health, builds and imports the images, initializes local secrets and certificates, and deploys the applications. It waits for the application, Grafana, Keycloak and RabbitMQ rollouts and runs HTTP smoke checks. If a node reports `DiskPressure`, use `docker system df` to check disk usage before retrying deployment.
 
 | Service | Local address |
 | --- | --- |
@@ -119,6 +144,10 @@ From the repository root in a second terminal, run `make frontend-restore` and t
 For a different provider or environment, set `Authentication:Authority` and `Authentication:ClientId` in the frontend's public configuration. In the API, set `Authentication__Authority` and, if needed, `Authentication__Audience`, which defaults to `mydisk-api`. The OIDC client must allow the frontend origin and the full callback URLs for `/authentication/login-callback` and `/authentication/logout-callback`. [Frontend configuration](apps/frontend/src/wwwroot/)
 
 ### Review moderation
+
+To verify the local worker, sign in, create a disk with a past release date, and submit a review from the disk’s detail page. The review appears as **En cours de modération** and should become **Publié** after the worker processes it. A separate review containing the configured test phrase `kazoo goblin` should become **Refusé**. Run `make k8s-logs-worker` to follow the processing. [Moderation rules](apps/api/src/Services/Reviews/Moderation/KeywordReviewModerator.cs)
+
+To give a test account access to review administration, configure the Keycloak client role:
 
 1. In the `mydisk` realm, open **Clients → mydisk-frontend → Roles**. A new realm already has the client role `admin`. For an existing realm, create it there.
 2. In the same client's dedicated scope, add a **User Client Role** mapper for `mydisk-frontend` if `mydisk-roles` is missing. Set the claim name to `mydisk_roles`, the JSON type to `String`, enable **Multivalued**, and add it to the access token, ID token, and userinfo. See the [realm configuration](apps/keycloak/k8s/overlays/local/mydisk-realm.json) for the exact mapper keys.
@@ -156,7 +185,7 @@ For a different provider or environment, set `Authentication:Authority` and `Aut
 - **Local rollback.** During the rollout of a deliberately broken revision and its rollback, **113 requests to `/health/ready` returned HTTP 200** through Traefik. [Original result in the README history](../../commit/1638977)
 - **Dependency and image scanning.** The DevSecOps exercise documents findings from NuGet and Trivy and the updates made in response, including `Microsoft.OpenApi` and `AutoMapper`. [DevSecOps walkthrough](docs/DEVSECOPS.md#verified-remediation-exercise)
 - **Load testing.** The repository includes the k6 scenario and its phases. The arrival rates are inputs chosen to trigger scaling. The repository contains no measured load-test report.
-- **Integration and UI coverage.** CI runs the unit tests and builds Blazor. HTTP and PostgreSQL integration suites run separately. Browser sign-in can be verified manually. Automated end-to-end coverage for browser workflows and Grafana dashboards remains open.
+- **Integration and UI coverage.** CI runs the unit and HTTP integration tests and builds Blazor. The PostgreSQL integration suites run separately. Browser sign-in and the review moderation flow can be verified manually.
 
 ## Kubernetes experiments
 
