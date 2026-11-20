@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - statefulset.yml
+  - service.yml
+  - network-policy.yml
+
+# Overlays must provide Secret `rabbitmq-credentials` with keys UserName and Password.
+configMapGenerator:
+  - name: rabbitmq-definitions
+    files:
+      - definitions.json

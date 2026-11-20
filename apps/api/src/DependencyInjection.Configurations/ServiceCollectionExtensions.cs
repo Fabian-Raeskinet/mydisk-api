@@ -2,6 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyDisks.Contracts.Validators;
 using MyDisks.Data;
+using MyDisks.Messaging;
 using MyDisks.RandomServices;
 using MyDisks.RetryService;
 using MyDisks.Services;
@@ -14,6 +15,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddApplicationServices();
         services.AddInfrastructureServices(configuration);
+        services.AddRabbitMqMessaging(configuration);
         services.AddContractValidators();
         services.AddRetryService();
         services.AddRandomServices();

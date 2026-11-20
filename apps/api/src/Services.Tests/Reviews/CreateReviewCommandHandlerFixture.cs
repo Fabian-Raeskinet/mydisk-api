@@ -3,6 +3,7 @@ using FluentAssertions;
 using Moq;
 using MyDisks.Domain.Disks;
 using MyDisks.Domain.Exceptions;
+using MyDisks.Domain.Reviews;
 using MyDisks.Services.Reviews;
 using MyDisks.Tests.Services;
 using MyDisks.Tests.Utils;
@@ -57,7 +58,7 @@ public class CreateReviewCommandHandlerFixture
 
         [Theory]
         [AutoServiceData]
-        public async Task Should_AddReview
+        public async Task Should_AddReviewAndRecordDomainEvent
         (
             CreateReviewCommandRequest request,
             Disk disk,
@@ -73,10 +74,15 @@ public class CreateReviewCommandHandlerFixture
             await sut.Handle(request, CancellationToken.None);
 
             // Assert
-            disk.Reviews.Should().Contain(review =>
+            var review = disk.Reviews.Should().ContainSingle(review =>
                 review.Title == request.Title
                 && review.Content == request.Content
-                && Math.Abs(review.Note - request.Note) < 2);
+                && Math.Abs(review.Note - request.Note) < 2).Which;
+
+            var domainEvent = review.DomainEvents.Should().ContainSingle().Which
+                .Should().BeOfType<NewReviewCreatedDomainEvent>().Which;
+            domainEvent.Review.Should().BeSameAs(review);
+            domainEvent.DiskId.Should().Be(disk.Id);
         }
 
         [Theory]

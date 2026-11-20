@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using MyDisks.Data.Configurations.Disks;
+using MyDisks.Data.Configurations.Outbox;
 using MyDisks.Domain.Authors;
 using MyDisks.Domain.Disks;
 using MyDisks.Domain.Reviews;
@@ -29,6 +30,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
     public virtual DbSet<Disk> Disks => Set<Disk>();
     public DbSet<Author> Authors => Set<Author>();
     public DbSet<Review> Reviews => Set<Review>();
+    internal DbSet<OutboxEntry> OutboxMessages => Set<OutboxEntry>();
 
     public async Task<int> SaveChangesAsync()
     {

@@ -6,6 +6,7 @@ resources:
   - ../../../apps/grafana/k8s/overlays/local
   - ../../../apps/frontend/k8s/overlays/local
   - ../../../apps/keycloak/k8s/overlays/local
+  - ../../../apps/messaging/k8s/overlays/local
 
 components:
   - ../routing

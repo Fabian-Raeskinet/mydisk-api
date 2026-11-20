@@ -6,6 +6,7 @@ FRONTEND_PROJECT = $(FRONTEND_DIR)/src/MyDisk.Frontend.csproj
 API_K8S = $(API_DIR)/k8s
 LOCAL_API_OVERLAY = $(API_K8S)/overlays/local
 KEYCLOAK_OVERLAY = apps/keycloak/k8s/overlays/local
+MESSAGING_OVERLAY = apps/messaging/k8s/overlays/local
 KEYCLOAK_HOST = auth.mydisk.localhost
 KEYCLOAK_URL = https://$(KEYCLOAK_HOST):8443
 ENV ?= local
@@ -23,6 +24,7 @@ API_DEPLOYMENT = deployment/mydisk-api
 GRAFANA_DEPLOYMENT = deployment/mydisk-grafana
 FRONTEND_DEPLOYMENT = deployment/mydisk-frontend
 KEYCLOAK_DEPLOYMENT = deployment/keycloak
+MESSAGING_STATEFULSET = statefulset/mydisk-messaging
 APP_DEPLOYMENTS = $(API_DEPLOYMENT) $(FRONTEND_DEPLOYMENT)
 ROLLOUT_TIMEOUT ?= 5m
 ROLLOUT_AUTO_UNDO ?= 1
@@ -110,7 +112,7 @@ help:
 	@echo "  k8s-delete          Delete overlay resources"
 	@echo "  k8s-render          Render and preview Kustomize manifests without applying"
 	@echo "  k8s-build           Build local API, migrations, frontend and Grafana images"
-	@echo "  k8s-init-secrets    Generate $(K8S_SECRETS) and Keycloak env files (gitignored) if missing, local only"
+	@echo "  k8s-init-secrets    Generate missing API, Keycloak and RabbitMQ credentials in gitignored env files (local only)"
 	@echo "  k8s-status          Display status of pods, services, statefulsets, and PVCs"
 	@echo "  k8s-smoke           Check the frontend and API through the HTTPS ingress"
 	@echo "  k8s-restart         Rollout restart the API and frontend deployments"
@@ -212,9 +214,15 @@ k8s-init-secrets:
 		printf '%s=%s\n' "$$key" "$$pw" >> $(K8S_SECRETS); \
 		echo "Added $$key to $(K8S_SECRETS)."; \
 	done; \
-	for entry in postgres.env:POSTGRES_USER=keycloak postgres.env:POSTGRES_PASSWORD= postgres.env:POSTGRES_DB=keycloak \
-		keycloak.env:ADMIN_USERNAME=admin keycloak.env:ADMIN_PASSWORD=; do \
-		file=$(KEYCLOAK_OVERLAY)/$${entry%%:*}; pair=$${entry#*:}; key=$${pair%%=*}; value=$${pair#*=}; \
+	for entry in \
+		"$(KEYCLOAK_OVERLAY)/postgres.env:POSTGRES_USER=keycloak" \
+		"$(KEYCLOAK_OVERLAY)/postgres.env:POSTGRES_PASSWORD=" \
+		"$(KEYCLOAK_OVERLAY)/postgres.env:POSTGRES_DB=keycloak" \
+		"$(KEYCLOAK_OVERLAY)/keycloak.env:ADMIN_USERNAME=admin" \
+		"$(KEYCLOAK_OVERLAY)/keycloak.env:ADMIN_PASSWORD=" \
+		"$(MESSAGING_OVERLAY)/rabbitmq.env:UserName=mydisk" \
+		"$(MESSAGING_OVERLAY)/rabbitmq.env:Password="; do \
+		file=$${entry%%:*}; pair=$${entry#*:}; key=$${pair%%=*}; value=$${pair#*=}; \
 		touch "$$file"; \
 		grep -q "^$$key=" "$$file" && continue; \
 		[ -n "$$value" ] || value=$$(openssl rand -hex 32); \
@@ -286,6 +294,7 @@ k8s-up: k8s-preflight
 	$(KUBECTL) rollout restart $(GRAFANA_DEPLOYMENT)
 	$(KUBECTL) rollout status $(GRAFANA_DEPLOYMENT) --timeout=$(ROLLOUT_TIMEOUT)
 	$(KUBECTL) rollout status $(KEYCLOAK_DEPLOYMENT) --timeout=$(ROLLOUT_TIMEOUT)
+	$(KUBECTL) rollout status $(MESSAGING_STATEFULSET) --timeout=$(ROLLOUT_TIMEOUT)
 	$(MAKE) k8s-smoke
 	$(MAKE) k8s-smoke-keycloak
 else

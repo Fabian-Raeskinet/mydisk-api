@@ -1,0 +1,32 @@
+{
+  "exchanges": [
+    {
+      "name": "mydisk.events",
+      "vhost": "/",
+      "type": "topic",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "queues": [
+    {
+      "name": "mydisk.review.created",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": { "x-queue-type": "quorum" }
+    }
+  ],
+  "bindings": [
+    {
+      "source": "mydisk.events",
+      "vhost": "/",
+      "destination": "mydisk.review.created",
+      "destination_type": "queue",
+      "routing_key": "review.created",
+      "arguments": {}
+    }
+  ]
+}

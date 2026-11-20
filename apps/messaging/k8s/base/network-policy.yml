@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: mydisk-messaging-ingress
+spec:
+  podSelector:
+    matchLabels:
+      app: mydisk-messaging
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: mydisk-api
+      ports:
+        - protocol: TCP
+          port: 5672
+    # The node reaches itself through its pod IP (epmd, Erlang distribution, CLI tools).
+    - from:
+        - podSelector:
+            matchLabels:
+              app: mydisk-messaging

@@ -10,6 +10,10 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <InternalsVisibleTo Include="MyDisks.Data.Tests" />
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\Data.Configurations\Data.Configurations.csproj"/>
         <ProjectReference Include="..\Services\Services.csproj" />
     </ItemGroup>

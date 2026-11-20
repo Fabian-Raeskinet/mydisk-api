@@ -2,11 +2,13 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MyDisks.Data.Messaging;
 using MyDisks.Domain;
 using MyDisks.Domain.Authors;
 using MyDisks.Domain.Disks;
 using MyDisks.Domain.Reviews;
 using MyDisks.Services;
+using MyDisks.Services.Messaging;
 
 namespace MyDisks.Data;
 
@@ -18,6 +20,7 @@ public static class DependencyInjection
         return services
             .AddUnitOfWork()
             .AddRepositories()
+            .AddOutbox()
             .AddDatabaseConfiguration(configuration)
             .AddDateTimeService();
     }
@@ -29,6 +32,13 @@ public static class DependencyInjection
         services.AddScoped<IReviewRepository, ReviewRepository>();
 
         return services;
+    }
+
+    private static IServiceCollection AddOutbox(this IServiceCollection services)
+    {
+        return services
+            .AddScoped<IOutboxWriter, OutboxWriter>()
+            .AddScoped<IOutboxStore, OutboxStore>();
     }
 
     private static IServiceCollection AddDatabaseConfiguration(this IServiceCollection services,

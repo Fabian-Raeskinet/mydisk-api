@@ -16,9 +16,8 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Contracts.Validators\Contracts.Validators.csproj" />
-      <ProjectReference Include="..\Services\Services.csproj" />
-      <ProjectReference Include="..\Contracts.Validators\Contracts.Validators.csproj" />
       <ProjectReference Include="..\Data\Data.csproj" />
+      <ProjectReference Include="..\Messaging\Messaging.csproj" />
       <ProjectReference Include="..\Services\Services.csproj" />
     </ItemGroup>
 

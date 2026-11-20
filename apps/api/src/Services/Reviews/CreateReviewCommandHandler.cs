@@ -31,6 +31,7 @@ public class CreateReviewCommandHandler : ICommandHandler<CreateReviewCommandReq
         };
         
         disk.AddReview(review);
+        review.AddDomainEvent(new NewReviewCreatedDomainEvent(review, disk.Id));
         
         await DiskRepository.UpdateDiskAsync(disk);
     }

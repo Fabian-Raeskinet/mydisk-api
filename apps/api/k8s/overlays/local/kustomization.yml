@@ -15,6 +15,7 @@ configMapGenerator:
       - Authentication__Authority=https://auth.mydisk.localhost:8443/realms/mydisk
       - Authentication__Audience=mydisk-api
       - SSL_CERT_DIR=/etc/ssl/certs:/etc/mydisk/keycloak-ca
+      - RabbitMq__HostName=mydisk-messaging
   - name: keycloak-dev-ca
     files:
       - rootCA.pem=.tls/rootCA.pem
@@ -54,3 +55,9 @@ patches:
           - name: keycloak-dev-ca
             configMap:
               name: keycloak-dev-ca
+      - op: add
+        path: /spec/template/spec/containers/0/envFrom/-
+        value:
+          prefix: RabbitMq__
+          secretRef:
+            name: rabbitmq-credentials
