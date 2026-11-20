@@ -89,11 +89,11 @@ The Dockerfiles separate build and runtime stages. The API Dockerfile produces s
 | Guide | Diagrams and details |
 | --- | --- |
 | [Architecture](docs/ARCHITECTURE.md) | System context, components, .NET project dependencies, local and AKS deployments, CI/CD, and migration sequence. |
-| [Use cases and HTTP sequences](docs/CAS-UTILISATION.md) | Actors and permissions, sign-in, collection operations, review submission and archiving, administration, and health checks. |
+| [Use cases and HTTP sequences](docs/USE-CASES.md) | Actors and permissions, sign-in, collection operations, review submission and archiving, administration, and health checks. |
 | [Class guide and data model](docs/CLASSES.md) | Responsibilities of the main classes, class relationships, and the PostgreSQL schema. |
 | [Worker and outbox](docs/WORKER.md) | Review and outbox states, publication and consumption sequences, retry behavior, and local operation. |
 
-The guides are written in French. Their Mermaid diagrams render directly in GitHub.
+The Mermaid diagrams render directly in GitHub.
 
 ## Getting started
 

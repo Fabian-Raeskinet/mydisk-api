@@ -1,43 +1,43 @@
-# Architecture de MyDisk
+# MyDisk architecture
 
-MyDisk gère des collections de disques, associe des artistes et permet de soumettre des avis. Le navigateur exécute le frontend Blazor WebAssembly. L’API ASP.NET Core porte les règles d’accès et les opérations métier, PostgreSQL conserve les données, et un worker séparé traite les avis en arrière-plan dans l’environnement local.
+MyDisk lets members manage record collections, associate artists with records, and submit reviews. The browser runs the Blazor WebAssembly frontend. The ASP.NET Core API enforces access and business rules, PostgreSQL stores the data, and a separate worker moderates reviews in the background in the local environment.
 
-| Pour comprendre | Consulter |
+| To learn about | See |
 | --- | --- |
-| Les utilisateurs, les permissions et les échanges HTTP | [Cas d’utilisation et séquences](CAS-UTILISATION.md) |
-| Les responsabilités des classes et le modèle de données | [Guide des classes](CLASSES.md) |
-| La création, la publication et la modération d’un avis | [Worker et outbox](WORKER.md) |
-| Les commandes de démarrage et de vérification | [README](../README.md#getting-started) |
+| Users, permissions, and HTTP flows | [Use cases and sequences](USE-CASES.md) |
+| Class responsibilities and the data model | [Class guide](CLASSES.md) |
+| Review submission, message publication, and moderation | [Worker and outbox](WORKER.md) |
+| Startup and verification commands | [README](../README.md#getting-started) |
 
-## Contexte et composants
+## System context and components
 
-La vue ci-dessous montre les composants du déploiement local. Le même navigateur télécharge les fichiers statiques puis exécute Blazor. L’application s’adresse à l’API par la même origine. Le flux OpenID Connect passe par le nom d’hôte de Keycloak. [Routage HTTPS](../deploy/k8s/routing/https-routes.yml) · [Configuration TLS et DNS local](../infra/HTTPS.md#local-k3d-https)
+The diagram shows the local deployment. The browser downloads the static files and runs Blazor. The frontend calls the API on the same origin. OpenID Connect requests go to the Keycloak hostname. [HTTPS routing](../deploy/k8s/routing/https-routes.yml) · [Local TLS and DNS configuration](../infra/HTTPS.md#local-k3d-https)
 
 ```mermaid
 flowchart LR
-    User["Membre ou administrateur"]
-    Browser["Navigateur · Blazor WASM"]
+    User["Member or administrator"]
+    Browser["Browser · Blazor WASM"]
     User --> Browser
-    Browser -->|"HTTPS · HTML, fichiers et appels API"| Ingress["Traefik"]
-    Browser -->|"HTTPS · connexion OIDC"| Ingress
-    Ingress -->|"/ et routes Blazor"| Front["NGINX · fichiers statiques"]
-    Ingress -->|"/api, /health, /maintenance, /swagger"| API["API ASP.NET Core"]
-    Ingress -->|"Hôte auth.mydisk.localhost"| IDP["Keycloak"]
-    Ingress -->|"Hôte grafana.localhost · HTTP local"| Grafana["Grafana"]
-    API -.->|"Découverte OIDC et clés de signature via Traefik"| IDP
-    IDP --> IDPDB[("PostgreSQL Keycloak")]
-    API -->|"Données métier et outbox"| DB[("PostgreSQL MyDisk")]
-    Job["Job EF Core"] -->|"Migrations"| DB
-    Worker["Worker .NET"] -->|"Lit l’outbox et écrit la décision"| DB
-    Worker -->|"Publie via AMQP"| MQ["RabbitMQ"]
-    MQ -->|"Livre les demandes de modération"| Worker
+    Browser -->|"HTTPS · HTML, assets, and API calls"| Ingress["Traefik"]
+    Browser -->|"HTTPS · OIDC sign-in"| Ingress
+    Ingress -->|"/ and Blazor routes"| Front["NGINX · static files"]
+    Ingress -->|"/api, /health, /maintenance, /swagger"| API["ASP.NET Core API"]
+    Ingress -->|"Host auth.mydisk.localhost"| IDP["Keycloak"]
+    Ingress -->|"Host grafana.localhost · local HTTP"| Grafana["Grafana"]
+    API -.->|"OIDC discovery and signing keys via Traefik"| IDP
+    IDP --> IDPDB[("Keycloak PostgreSQL")]
+    API -->|"Application data and outbox"| DB[("MyDisk PostgreSQL")]
+    Job["EF Core Job"] -->|"Migrations"| DB
+    Worker[".NET Worker"] -->|"Read outbox and write decision"| DB
+    Worker -->|"Publish via AMQP"| MQ["RabbitMQ"]
+    MQ -->|"Deliver moderation requests"| Worker
 ```
 
-L’API enregistre l’avis et le message d’outbox dans PostgreSQL dans la même transaction. Le worker relaie ensuite le message à RabbitMQ et traite sa livraison. Le navigateur récupère le statut par HTTP. Une interruption du worker ou du broker peut retarder la décision tout en laissant l’API accepter l’avis tant que ses propres dépendances répondent. [Détail de la modération et des reprises](WORKER.md)
+The API writes the review and its outbox message to PostgreSQL in the same transaction. The worker publishes the message to RabbitMQ and then processes its delivery. The browser requests the review status over HTTP. If the worker or broker is unavailable, moderation can be delayed while the API continues to accept reviews as long as its own dependencies are available. [Moderation and retries](WORKER.md)
 
-## Dépendances du backend
+## Backend dependencies
 
-Les flèches représentent les références directes entre projets .NET pour le chemin métier. `Api` et `Worker` sont les points d’entrée à l’exécution. Ils appellent `RegisterApplicationServices` pour configurer la validation, MediatR, les dépôts et EF Core. Les dépendances techniques vers les bibliothèques NuGet sont décrites dans les fichiers projet. [Solution backend](../apps/api/mydisk-api.sln) · [Enregistrement partagé](../apps/api/src/DependencyInjection.Configurations/ServiceCollectionExtensions.cs)
+Arrows show direct .NET project references. `Api` and `Worker` are the runtime entry points. Both call `RegisterApplicationServices` to configure validation, MediatR, repositories, and EF Core. The project files list the NuGet dependencies. [Backend solution](../apps/api/mydisk-api.sln) · [Shared service registration](../apps/api/src/DependencyInjection.Configurations/ServiceCollectionExtensions.cs)
 
 ```mermaid
 flowchart TB
@@ -65,53 +65,53 @@ flowchart TB
     Services --> Random["RandomServices"]
 ```
 
-- `Contracts` définit les données échangées à la frontière HTTP. `Services` traduit les commandes et requêtes en opérations métier. `Domain` porte les entités, les règles et les interfaces de dépôts.
-- `Data` implémente les dépôts et l’unité de travail. `Data.Configurations` fixe les mappings EF Core. `Data.Migrations` contient l’historique du schéma et le point d’entrée de conception utilisé par le bundle.
-- `Messaging` relie l’outbox et les commandes de modération à RabbitMQ. `Worker` héberge ces traitements. Le frontend possède ses modèles de transport et rejoint le backend par HTTP.
+- `Contracts` defines HTTP request and response types. `Services` implements application use cases as commands and queries. `Domain` contains entities, business rules, and repository interfaces.
+- `Data` implements repositories and the unit of work. `Data.Configurations` defines EF Core mappings. `Data.Migrations` contains schema history and the design-time entry point used by the migration bundle.
+- `Messaging` connects the outbox and moderation commands to RabbitMQ. `Worker` hosts the background services. The frontend has its own transport models and calls the API over HTTP.
 
-[Responsabilités des classes](CLASSES.md) · [Définition du pipeline MediatR](../apps/api/src/Services/DependencyInjection.cs)
+[Class responsibilities](CLASSES.md) · [MediatR pipeline registration](../apps/api/src/Services/DependencyInjection.cs)
 
-## Déploiements
+## Deployments
 
-| Élément | k3d local | AKS, overlay cloud |
+| Component | Local k3d | AKS cloud overlay |
 | --- | --- | --- |
-| Composition | Namespace `default`, Traefik de k3s, application, Keycloak, Grafana et RabbitMQ | Namespace `mydisk`, API, frontend et PostgreSQL. Traefik et cert-manager proviennent de la configuration OpenTofu du cluster |
-| TLS | Certificats mkcert, HTTPS sur le port hôte 8443, CA locale montée dans le pod API pour la découverte Keycloak | Certificat géré par cert-manager et Let’s Encrypt |
-| Identité | Keycloak et son PostgreSQL dédiés. Le navigateur et le pod API utilisent le même nom d’émetteur | Fournisseur OIDC accessible à configurer dans le frontend et l’API |
-| Modération | Un déploiement `mydisk-worker` et un StatefulSet RabbitMQ, avec stockage persistant du broker | Worker retiré par l’overlay et RabbitMQ absent. Les avis créés restent `Pending`, et leurs messages restent dans l’outbox |
-| Données | PostgreSQL MyDisk dans un StatefulSet avec volume persistant. Rôle applicatif partagé par API et worker, rôle distinct pour le Job de migration. Données de démonstration activées | PostgreSQL MyDisk et rôle de migration identiques dans la structure. Données de démonstration désactivées par défaut |
-| Images applicatives | Construites sur la machine de développement puis importées dans k3d | API, migrations et frontend tirés de GHCR. Le déploiement de release fixe leur tag |
+| Stack | The `default` namespace, k3s Traefik, the application, Keycloak, Grafana, and RabbitMQ | The `mydisk` namespace, API, frontend, and PostgreSQL. OpenTofu configures Traefik and cert-manager in the cluster |
+| TLS | mkcert certificates, HTTPS on host port 8443, and a local CA mounted in the API pod for Keycloak discovery | A Let's Encrypt certificate managed by cert-manager |
+| Identity | Keycloak with its own PostgreSQL instance. The browser and API pod use the same issuer hostname | A reachable OIDC provider that must be configured in both the frontend and API |
+| Moderation | The `mydisk-worker` Deployment and a RabbitMQ StatefulSet with persistent broker storage | The overlay removes the worker and omits RabbitMQ. Submitted reviews stay `Pending` unless archived, and their messages remain in the outbox |
+| Data | MyDisk PostgreSQL in a StatefulSet with a persistent volume. The API and worker share the application role, and the migration Job uses a separate role. Demo data is enabled | The same MyDisk PostgreSQL structure and dedicated migration role. Demo data is disabled by default |
+| Application images | Built on the developer machine and imported into k3d | API, migration, and frontend images pulled from GHCR. The release deployment pins their tags |
 
-[Overlay local](../deploy/k8s/local/kustomization.yml) · [Overlay AKS](../deploy/k8s/cloud/kustomization.yml) · [Différences de l’API sur AKS](../apps/api/k8s/overlays/cloud/kustomization.yml) · [Règles réseau PostgreSQL](../apps/api/k8s/base/postgres-network-policy.yml)
+[Local overlay](../deploy/k8s/local/kustomization.yml) · [AKS overlay](../deploy/k8s/cloud/kustomization.yml) · [AKS API configuration](../apps/api/k8s/overlays/cloud/kustomization.yml) · [PostgreSQL network policy](../apps/api/k8s/base/postgres-network-policy.yml)
 
-### Topologie AKS
+### AKS topology
 
 ```mermaid
 flowchart LR
-    Client["Navigateur"]
-    Provider["Fournisseur OIDC externe · à configurer"]
-    Registry["GHCR · images de la release"]
+    Client["Browser"]
+    Provider["External OIDC provider · configuration required"]
+    Registry["GHCR · release images"]
 
-    subgraph AKS["Cluster Azure Kubernetes Service"]
+    subgraph AKS["Azure Kubernetes Service cluster"]
         Cert["cert-manager"]
         Ingress["Traefik · HTTPS"]
-        subgraph App["Namespace mydisk"]
-            UIService["Service frontend"]
-            UIS["Deployment NGINX · 2 réplicas"]
-            APIService["Service API"]
-            APIS["Deployment API · HPA de 1 à 6 réplicas"]
-            Job["Job de migration"]
-            DB[("StatefulSet PostgreSQL MyDisk")]
-            Volume["Volume persistant"]
+        subgraph App["mydisk namespace"]
+            UIService["Frontend Service"]
+            UIS["NGINX Deployment · 2 replicas"]
+            APIService["API Service"]
+            APIS["API Deployment · HPA scales from 1 to 6 replicas"]
+            Job["Migration Job"]
+            DB[("MyDisk PostgreSQL StatefulSet")]
+            Volume["Persistent volume"]
         end
     end
 
     Client -->|"HTTPS"| Ingress
     Client -.->|"OIDC"| Provider
-    Cert -->|"Secret TLS utilisé par l’ingress"| Ingress
+    Cert -->|"TLS Secret used by the Ingress"| Ingress
     Ingress -->|"/"| UIService --> UIS
-    Ingress -->|"/api et routes techniques"| APIService --> APIS
-    APIS -.->|"Métadonnées et clés OIDC"| Provider
+    Ingress -->|"/api and operational routes"| APIService --> APIS
+    APIS -.->|"OIDC metadata and signing keys"| Provider
     APIS --> DB
     Job --> DB
     DB --- Volume
@@ -120,62 +120,62 @@ flowchart LR
     Registry -.-> Job
 ```
 
-Le HPA cible une utilisation CPU moyenne de 70 % de la ressource demandée par les pods de l’API. `/health/live` vérifie que le processus HTTP répond et `/health/ready` inclut PostgreSQL. La disponibilité de RabbitMQ et la progression des avis relèvent des métriques ou observations du traitement en arrière-plan. Grafana est installé en local avec une source Prometheus préconfigurée. L’installation de Prometheus et les tableaux de bord restent à intégrer. [HPA](../apps/api/k8s/base/api-hpa.yml) · [Sondes](../apps/api/k8s/base/api-deployment.yml) · [Prometheus](../platform/prometheus/README.md)
+The HPA targets average CPU utilization of 70% of the CPU requested by the API pods. `/health/live` checks that the HTTP process responds, and `/health/ready` includes a PostgreSQL check. Worker logs can help track RabbitMQ connectivity and review decisions. Local Grafana has a preconfigured Prometheus data source. Prometheus installation and dashboards remain open work. [HPA](../apps/api/k8s/base/api-hpa.yml) · [Health probes](../apps/api/k8s/base/api-deployment.yml) · [Prometheus](../platform/prometheus/README.md)
 
-## Livraison et migrations
+## Delivery and migrations
 
-### Chaîne GitHub Actions
+### GitHub Actions pipeline
 
-Le workflow CI s’exécute notamment sur les pull requests vers `master`. Le workflow CD le réutilise avec publication activée pour les pushes sur `master` et les déclenchements manuels de CD. L’infrastructure AKS est provisionnée indépendamment par OpenTofu. [Workflow CI](../.github/workflows/ci.yml) · [Workflow CD](../.github/workflows/cd.yml) · [Infrastructure et droits Azure](../infra/GITHUB-ACTIONS.md)
+The CI workflow runs on pull requests targeting `master`. CD reuses it with image publishing enabled on pushes to `master` and manual CD runs. OpenTofu provisions the AKS infrastructure separately. [CI workflow](../.github/workflows/ci.yml) · [CD workflow](../.github/workflows/cd.yml) · [Azure infrastructure and permissions](../infra/GITHUB-ACTIONS.md)
 
 ```mermaid
 flowchart TD
-    PR["Pull request vers master"] --> CI["Workflow CI"]
-    Push["Push sur master ou déclenchement manuel de CD"] --> CD["Workflow CD"]
-    CD -->|"Réutilise la CI avec publication"| CI
-    CI --> NET["Audit NuGet, tests HTTP, tests unitaires"]
-    CI --> UI["Build Blazor"]
-    CI --> Infra["Validation OpenTofu"]
-    NET --> Images["Construction et scan Trivy des trois images"]
+    PR["Pull request targeting master"] --> CI["CI workflow"]
+    Push["Push to master or manual CD run"] --> CD["CD workflow"]
+    CD -->|"Reuse CI with publishing enabled"| CI
+    CI --> NET["NuGet audit, HTTP integration tests, and unit tests"]
+    CI --> UI["Blazor build"]
+    CI --> Infra["OpenTofu validation"]
+    NET --> Images["Build and scan three images with Trivy"]
     UI --> Images
     Infra --> Images
-    Images --> Publish{"Publication demandée ?"}
-    Publish -->|"Oui"| GHCR["Publication des images GHCR avec le SHA"]
-    Publish -->|"Non"| Finish["CI terminée"]
-    GHCR --> Login["Connexion Azure par OIDC"]
-    Login --> Deploy["Déploiement AKS et migrations"]
-    Deploy --> Check["Vérification du certificat, de la liveness et de la page d’accueil"]
+    Images --> Publish{"Publish images?"}
+    Publish -->|"Yes"| GHCR["Push images to GHCR with the commit SHA"]
+    Publish -->|"No"| Finish["CI complete"]
+    GHCR --> Login["Sign in to Azure using OIDC"]
+    Login --> Deploy["Deploy to AKS and run migrations"]
+    Deploy --> Check["Verify the certificate, liveness probe, and home page"]
 ```
 
-### Ordre de déploiement
+### Deployment order
 
-Le flux partagé par `make k8s-apply` en local et `make k8s-deploy` sur AKS applique en dernier la version finale du routage. Si un frontend existe déjà, les routes qui dépendent du frontend peuvent être mises à jour avant son remplacement. [Makefile](../Makefile) · [Job de migration](../apps/api/k8s/base/api-migrations-job.yml)
+Both local `make k8s-apply` and AKS `make k8s-deploy` apply the final routing configuration after the rollout. If a frontend already exists, routes that depend on it can be updated before its replacement. [Makefile](../Makefile) · [Migration Job](../apps/api/k8s/base/api-migrations-job.yml)
 
 ```mermaid
 sequenceDiagram
     participant Make as Makefile
     participant K8s as Kubernetes
-    participant Job as Job EF Core
-    participant PG as PostgreSQL MyDisk
-    Make->>K8s: Relever les révisions actuelles des Deployments
-    Make->>K8s: Recréer le Job et appliquer les ressources de base
-    K8s->>Job: Démarrer le Job de migration
-    Job->>PG: Attendre PostgreSQL et appliquer les migrations
-    opt Données de démonstration activées en local
-        Job->>PG: Alimenter les tables vides
+    participant Job as EF Core Job
+    participant PG as MyDisk PostgreSQL
+    Make->>K8s: Record current Deployment revisions
+    Make->>K8s: Recreate the Job and apply base resources
+    K8s->>Job: Start the migration Job
+    Job->>PG: Wait for PostgreSQL and apply migrations
+    opt Demo data enabled locally
+        Job->>PG: Seed empty tables
     end
-    Make->>K8s: Attendre la fin du Job
-    alt Migration réussie
-        Make->>K8s: Appliquer API et frontend avec le worker sur k3d
-        Make->>K8s: Attendre les rollouts
-        alt Rollouts réussis
-            Make->>K8s: Appliquer les routes finales
-        else Échec d’un rollout
-            Make->>K8s: Collecter les diagnostics et restaurer les révisions disponibles
+    Make->>K8s: Wait for the Job to finish
+    alt Migration succeeds
+        Make->>K8s: Apply the API and frontend, plus the worker on k3d
+        Make->>K8s: Wait for the rollouts
+        alt Rollouts succeed
+            Make->>K8s: Apply final routes
+        else A rollout fails
+            Make->>K8s: Collect diagnostics and restore available revisions
         end
-    else Job en échec ou délai dépassé
-        Make-->>Make: Arrêter avant l’application des nouvelles révisions
+    else Job fails or times out
+        Make-->>Make: Stop before applying new revisions
     end
 ```
 
-Le rollback concerne les Deployments modifiés pendant l’opération et disposant d’une révision précédente. Les migrations appliquées restent dans PostgreSQL. [Expériences de déploiement et de rollback](../README.md#rolling-updates-and-rollback)
+Rollback restores changed Deployments that have a previous revision. Applied migrations remain in PostgreSQL. [Rollout and rollback experiments](../README.md#rolling-updates-and-rollback)
