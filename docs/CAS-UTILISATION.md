@@ -9,7 +9,8 @@ MyDisk permet à chaque compte de gérer sa collection de disques et ses avis. L
 | Visiteur | Se connecter via Keycloak. Les sondes HTTP sont aussi accessibles sans session. |
 | Membre | Gérer sa collection, soumettre et archiver ses avis, consulter leur statut, vérifier sa session et consulter l’état de l’API. |
 | Administrateur MyDisk | Utiliser les fonctions de membre et consulter ou archiver les avis de toutes les collections avec le rôle client `admin`. |
-| Exploitant ou client de supervision | Interroger les sondes de santé et l’indicateur de maintenance. Un développeur peut consulter le contrat HTTP dans Swagger. |
+| Exploitant ou client de supervision | Interroger les sondes de santé et l’indicateur de maintenance. |
+| Développeur et intégrateur | Consulter le contrat HTTP dans Swagger. |
 | Keycloak | Authentifier le compte, émettre les jetons et terminer la session à la déconnexion. |
 
 ```mermaid
@@ -18,6 +19,7 @@ flowchart LR
     M["Membre connecté"]
     A["Administrateur MyDisk"]
     O["Exploitant ou supervision"]
+    I["Développeur ou intégrateur"]
     K["Keycloak"]
 
     subgraph MyDisk
@@ -31,6 +33,7 @@ flowchart LR
         U(["Consulter son profil et vérifier sa session"])
         H(["Vérifier la santé et la maintenance de l’API"])
         T(["Lancer la démonstration de retry"])
+        W(["Consulter le contrat HTTP dans Swagger"])
     end
 
     V --- S
@@ -45,6 +48,7 @@ flowchart LR
     M --- T
     A --- Q
     O --- H
+    I --- W
     S --- K
 ```
 
@@ -226,7 +230,7 @@ sequenceDiagram
 
 ## Soumission et suivi d’un avis
 
-Le formulaire recueille un titre de 30 caractères au maximum, un texte et une note de 0 à 5. L’interface masque le formulaire jusqu’à la date de sortie du disque. Cette règle de date s’applique dans la fiche Blazor. La création enregistre l’avis `Pending` et son message d’outbox dans la même transaction, puis renvoie `202`. Le frontend interroge le statut par identifiant avec un délai progressif et aléatoire, selon une échéance de 60 secondes vérifiée entre les tentatives. Il s’arrête lorsque l’avis quitte `Pending` ou que l’API répond `404`. Rouvrir le détail d’un disque relance le suivi des avis toujours en attente. [Fiche Blazor](../apps/frontend/src/Components/DiskDetail.razor) · [Contrôleur](../apps/api/src/Api/Controllers/ReviewController.Post.cs) · [Suivi dans Blazor](../apps/frontend/src/Services/ReviewModerationWatcher.cs) · [Publication et consommation du message](WORKER.md)
+Dans la fiche Blazor, le formulaire est disponible à partir de la date de sortie du disque. Il recueille un titre de 30 caractères au maximum, un texte et une note de 0 à 5. La création enregistre l’avis `Pending` et son message d’outbox dans la même transaction, puis renvoie `202`. Le frontend interroge le statut par identifiant avec un délai progressif et aléatoire, selon une échéance de 60 secondes vérifiée entre les tentatives. Il s’arrête lorsque l’avis quitte `Pending` ou que l’API répond `404`. Rouvrir le détail d’un disque relance le suivi des avis toujours en attente. [Fiche Blazor](../apps/frontend/src/Components/DiskDetail.razor) · [Contrôleur](../apps/api/src/Api/Controllers/ReviewController.Post.cs) · [Suivi dans Blazor](../apps/frontend/src/Services/ReviewModerationWatcher.cs) · [Publication et consommation du message](WORKER.md)
 
 ```mermaid
 sequenceDiagram

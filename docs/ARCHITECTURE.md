@@ -23,6 +23,7 @@ flowchart LR
     Ingress -->|"/ et routes Blazor"| Front["NGINX · fichiers statiques"]
     Ingress -->|"/api, /health, /maintenance, /swagger"| API["API ASP.NET Core"]
     Ingress -->|"Hôte auth.mydisk.localhost"| IDP["Keycloak"]
+    Ingress -->|"Hôte grafana.localhost · HTTP local"| Grafana["Grafana"]
     API -.->|"Découverte OIDC et clés de signature via Traefik"| IDP
     IDP --> IDPDB[("PostgreSQL Keycloak")]
     API -->|"Données métier et outbox"| DB[("PostgreSQL MyDisk")]
@@ -165,7 +166,7 @@ sequenceDiagram
     end
     Make->>K8s: Attendre la fin du Job
     alt Migration réussie
-        Make->>K8s: Appliquer API, frontend et worker en local selon l’overlay
+        Make->>K8s: Appliquer API et frontend avec le worker sur k3d
         Make->>K8s: Attendre les rollouts
         alt Rollouts réussis
             Make->>K8s: Appliquer les routes finales

@@ -76,7 +76,7 @@ When a signed-in user creates a disk, the API records the issuer and subject fro
 | Environment | Components and use |
 | --- | --- |
 | [Local k3d](deploy/k8s/local/) | Runs the full stack with the worker, RabbitMQ, Keycloak and Grafana. k3d runs k3s in Docker, Kustomize assembles the local overlays, and Traefik serves HTTPS with mkcert certificates. |
-| [AKS](deploy/k8s/cloud/) | Runs the API, frontend, migrations, and PostgreSQL. To enable sign-in, provide a reachable OIDC issuer and configure the API and frontend. The worker and RabbitMQ are local-only in the current manifests, so any reviews submitted on AKS stay `Pending`. |
+| [AKS](deploy/k8s/cloud/) | Runs the API, frontend, migrations, and PostgreSQL. To enable sign-in, provide a reachable OIDC issuer and configure the API and frontend. The current manifests deploy the worker and RabbitMQ only on k3d. Reviews submitted on AKS stay `Pending` unless archived. |
 
 On Kubernetes, PostgreSQL runs in a `StatefulSet` with a persistent volume. A `ConfigMap` holds public settings and a `Secret` holds passwords. The API and worker share the application role, and the migration job uses a separate role. A `NetworkPolicy` allows the API, worker and migration pods to connect to PostgreSQL. PostgreSQL creates the roles when it initializes an empty data volume. [API manifests](apps/api/k8s/base/)
 
@@ -147,7 +147,7 @@ For a different provider or environment, set `Authentication:Authority` and `Aut
 
 To verify the local worker, sign in, create a disk with a past release date, and submit a review from the disk’s detail page. The review appears as **En cours de modération** and should become **Publié** after the worker processes it. A separate review containing the configured test phrase `kazoo goblin` should become **Refusé**. Run `make k8s-logs-worker` to follow the processing. [Moderation rules](apps/api/src/Services/Reviews/Moderation/KeywordReviewModerator.cs)
 
-To give a test account access to review administration, configure the Keycloak client role:
+The following steps grant a test account access to review administration.
 
 1. In the `mydisk` realm, open **Clients → mydisk-frontend → Roles**. A new realm already has the client role `admin`. For an existing realm, create it there.
 2. In the same client's dedicated scope, add a **User Client Role** mapper for `mydisk-frontend` if `mydisk-roles` is missing. Set the claim name to `mydisk_roles`, the JSON type to `String`, enable **Multivalued**, and add it to the access token, ID token, and userinfo. See the [realm configuration](apps/keycloak/k8s/overlays/local/mydisk-realm.json) for the exact mapper keys.
