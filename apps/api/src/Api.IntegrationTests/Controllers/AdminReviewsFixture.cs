@@ -67,7 +67,7 @@ public sealed class AdminReviewsFixture : IDisposable
         result.GetProperty("title").GetString().Should().Be(review.Title);
         result.GetProperty("content").GetString().Should().Be(review.Content);
         result.GetProperty("note").GetDouble().Should().Be(review.Note);
-        result.GetProperty("status").GetString().Should().Be(nameof(ReviewStatus.New));
+        result.GetProperty("status").GetString().Should().Be(nameof(ReviewStatus.Pending));
     }
 
     [Fact]

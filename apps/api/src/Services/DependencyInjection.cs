@@ -6,6 +6,7 @@ using MyDisks.RandomServices;
 using MyDisks.RetryService;
 using MyDisks.Services.Behaviors;
 using MyDisks.Services.Disks;
+using MyDisks.Services.Reviews.Moderation;
 
 namespace MyDisks.Services;
 
@@ -15,7 +16,13 @@ public static class DependencyInjection
     {
         services
             .AddMediatRServices()
-            .AddAutoMapperServices();
+            .AddAutoMapperServices()
+            .AddReviewModeration();
+    }
+
+    private static IServiceCollection AddReviewModeration(this IServiceCollection services)
+    {
+        return services.AddScoped<IReviewModerator, KeywordReviewModerator>();
     }
 
     private static IServiceCollection AddAutoMapperServices(this IServiceCollection services)

@@ -36,7 +36,7 @@ else if (_notice is not null)
             <MudText Typo="Typo.h6" HtmlTag="h2">@review.Title</MudText>
             <MudText Typo="Typo.body2" Style="white-space: pre-wrap; overflow-wrap: anywhere;">@review.Content</MudText>
             <MudStack Row="true" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap" Spacing="2">
-                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">@StatusLabel(review.Status)</MudChip>
+                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined">@ReviewStatusDisplay.Label(review.Status)</MudChip>
                 <MudText Typo="Typo.body2">@review.Note.ToString("0.#", FrenchCulture) / 5</MudText>
                 @if (review.Status != ReviewStatus.Archived)
                 {
@@ -134,15 +134,6 @@ else if (_notice is not null)
             _ => "Impossible de contacter l’API. Réessayez."
         };
     }
-
-    private static string StatusLabel(ReviewStatus status) => status switch
-    {
-        ReviewStatus.New => "Nouveau",
-        ReviewStatus.Pending => "En attente",
-        ReviewStatus.Published => "Publié",
-        ReviewStatus.Archived => "Archivé",
-        _ => "Statut inconnu"
-    };
 
     public void Dispose()
     {

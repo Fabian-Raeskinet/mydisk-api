@@ -30,15 +30,23 @@ public class ReviewControllerFixture
 
         [Theory]
         [AutoApiData]
-        public async Task Should_Return_NoContentResult(CreateReviewCommand command,
+        public async Task Should_Return_AcceptedWithReviewId(CreateReviewCommand command, Guid reviewId,
             [NoAutoProperties] ReviewController sut)
         {
+            // Arrange
+            sut.Mediator.AsMock()
+                .Setup(x => x.Send(It.IsAny<CreateReviewCommandRequest>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(reviewId);
+
             // Act
             DiskControllerFixture.SetAuthenticatedUser(sut);
             var act = await sut.CreateReview(command);
 
             // Assert
-            act.Should().BeOfType<NoContentResult>();
+            var accepted = act.Should().BeOfType<AcceptedAtActionResult>().Which;
+            accepted.ActionName.Should().Be(nameof(ReviewController.GetReview));
+            accepted.RouteValues.Should().Contain("reviewId", reviewId);
+            accepted.Value.Should().Be(new CreateReviewResult(reviewId, ReviewStatus.Pending));
         }
     }
 

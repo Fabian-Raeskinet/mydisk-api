@@ -29,6 +29,11 @@ public class ReviewRepository : IReviewRepository
             .FirstOrDefaultAsync(predicate);
     }
 
+    public void AddReview(Review review)
+    {
+        Context.Reviews.Add(review);
+    }
+
     public Task UpdateReviewAsync(Review review)
     {
         Context.Reviews.Update(review);

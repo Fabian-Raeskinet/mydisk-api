@@ -6,7 +6,7 @@ public class Review : AggregateRoot<Guid>
 {
     public Review()
     {
-        Status = ReviewStatus.New;
+        Status = ReviewStatus.Pending;
         PublishedDate = DateTimeOffset.UtcNow;
     }
 
@@ -58,6 +58,24 @@ public class Review : AggregateRoot<Guid>
     public void Archive()
     {
         Status = ReviewStatus.Archived;
+    }
+
+    public void Publish()
+    {
+        EnsurePending(nameof(Publish));
+        Status = ReviewStatus.Published;
+    }
+
+    public void Reject()
+    {
+        EnsurePending(nameof(Reject));
+        Status = ReviewStatus.Rejected;
+    }
+
+    private void EnsurePending(string operation)
+    {
+        if (Status is not ReviewStatus.Pending)
+            throw new InvalidOperationException($"Cannot {operation} review {Id} because its status is {Status}");
     }
 
     private void EnsureNotArchived(string parameterName)

@@ -7,7 +7,7 @@ namespace MyDisks.Api.Controllers;
 public partial class ReviewController
 {
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(CreateReviewResult), StatusCodes.Status202Accepted)]
     public async Task<IActionResult> CreateReview(CreateReviewCommand command)
     {
         var owner = User.GetRequiredDiskOwner();
@@ -20,8 +20,9 @@ public partial class ReviewController
             Note = command.Note,
             Owner = owner
         };
-        await Mediator.Send(request);
-        return NoContent();
+        var reviewId = await Mediator.Send(request);
+        return AcceptedAtAction(nameof(GetReview), new { reviewId },
+            new CreateReviewResult(reviewId, ReviewStatus.Pending));
     }
 
     [HttpPost("Archive")]

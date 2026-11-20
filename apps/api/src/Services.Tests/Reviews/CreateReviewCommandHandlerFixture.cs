@@ -71,13 +71,17 @@ public class CreateReviewCommandHandlerFixture
                 .ReturnsAsync(disk);
 
             // Act
-            await sut.Handle(request, CancellationToken.None);
+            var reviewId = await sut.Handle(request, CancellationToken.None);
 
             // Assert
             var review = disk.Reviews.Should().ContainSingle(review =>
                 review.Title == request.Title
                 && review.Content == request.Content
                 && Math.Abs(review.Note - request.Note) < 2).Which;
+
+            reviewId.Should().Be(review.Id);
+            review.Status.Should().Be(ReviewStatus.Pending);
+            sut.ReviewRepository.AsMock().Verify(x => x.AddReview(review), Times.Once);
 
             var domainEvent = review.DomainEvents.Should().ContainSingle().Which
                 .Should().BeOfType<NewReviewCreatedDomainEvent>().Which;

@@ -34,8 +34,11 @@ public sealed class DiskApiClient(HttpClient http, IAccessTokenProvider accessTo
     public Task AttachAuthorAsync(Guid diskId, Guid authorId, CancellationToken ct = default) =>
         SendAsync(HttpMethod.Post, "api/Disk/attach-author", new { diskId, authorId }, ct);
 
-    public Task CreateReviewAsync(Guid diskId, string title, string content, double note, CancellationToken ct = default) =>
-        SendAsync(HttpMethod.Post, "api/Review", new { diskId, title, content, note }, ct);
+    public Task<CreateReviewResult> CreateReviewAsync(Guid diskId, string title, string content, double note, CancellationToken ct = default) =>
+        SendAsync<CreateReviewResult>(HttpMethod.Post, "api/Review", new { diskId, title, content, note }, ct);
+
+    public Task<ReviewResult> GetReviewAsync(Guid reviewId, CancellationToken ct = default) =>
+        GetAsync<ReviewResult>($"api/Review/{reviewId}", ct);
 
     public Task ArchiveReviewAsync(Guid reviewId, CancellationToken ct = default) =>
         SendAsync(HttpMethod.Post, "api/Review/Archive", new { reviewId }, ct);
@@ -86,6 +89,14 @@ public sealed class DiskApiClient(HttpClient http, IAccessTokenProvider accessTo
         {
             throw new ApiException(response.StatusCode, "Réponse API illisible. Vérifiez l’adresse et le proxy de l’API.");
         }
+    }
+
+    private async Task<T> SendAsync<T>(HttpMethod method, string path, object? body, CancellationToken ct)
+    {
+        using var request = new HttpRequestMessage(method, path);
+        if (body is not null) request.Content = JsonContent.Create(body, options: JsonOptions);
+        using var response = await SendRequestAsync(request, ct);
+        return await ReadResponseAsync<T>(response, ct);
     }
 
     private async Task SendAsync(HttpMethod method, string path, object? body, CancellationToken ct)

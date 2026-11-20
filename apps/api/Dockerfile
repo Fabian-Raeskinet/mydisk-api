@@ -16,8 +16,10 @@ COPY ["src/Messaging/Messaging.csproj", "src/Messaging/"]
 COPY ["src/RandomServices/RandomServices.csproj", "src/RandomServices/"]
 COPY ["src/RetryService/RetryService.csproj", "src/RetryService/"]
 COPY ["src/Services/Services.csproj", "src/Services/"]
+COPY ["src/Worker/Worker.csproj", "src/Worker/"]
 
 RUN dotnet restore src/Api/Api.csproj \
+ && dotnet restore src/Worker/Worker.csproj \
  && dotnet restore src/Data.Migrations/Data.Migrations.csproj
 
 COPY ["src/Api/", "src/Api/"]
@@ -32,6 +34,7 @@ COPY ["src/Messaging/", "src/Messaging/"]
 COPY ["src/RandomServices/", "src/RandomServices/"]
 COPY ["src/RetryService/", "src/RetryService/"]
 COPY ["src/Services/", "src/Services/"]
+COPY ["src/Worker/", "src/Worker/"]
 
 FROM build AS bundle-migrations
 RUN dotnet tool install --tool-path /tools dotnet-ef --version 11.0.*
@@ -44,6 +47,9 @@ RUN /tools/dotnet-ef migrations bundle \
 FROM build AS publish-api
 RUN dotnet publish src/Api/Api.csproj -c Release -o /app/publish --no-restore
 
+FROM build AS publish-worker
+RUN dotnet publish src/Worker/Worker.csproj -c Release -o /app/publish --no-restore
+
 FROM mcr.microsoft.com/dotnet/aspnet:11.0 AS migrations
 WORKDIR /app
 COPY --from=bundle-migrations ["/app/efbundle", "."]
@@ -55,3 +61,9 @@ WORKDIR /app
 COPY --from=publish-api ["/app/publish", "."]
 USER $APP_UID
 ENTRYPOINT ["dotnet", "MyDisks.Api.dll"]
+
+FROM mcr.microsoft.com/dotnet/runtime:11.0 AS worker
+WORKDIR /app
+COPY --from=publish-worker ["/app/publish", "."]
+USER $APP_UID
+ENTRYPOINT ["dotnet", "MyDisks.Worker.dll"]

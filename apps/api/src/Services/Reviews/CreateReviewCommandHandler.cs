@@ -4,16 +4,18 @@ using MyDisks.Domain.Reviews;
 
 namespace MyDisks.Services.Reviews;
 
-public class CreateReviewCommandHandler : ICommandHandler<CreateReviewCommandRequest>
+public class CreateReviewCommandHandler : ICommandHandler<CreateReviewCommandRequest, Guid>
 {
-    public CreateReviewCommandHandler(IDiskRepository diskRepository)
+    public CreateReviewCommandHandler(IDiskRepository diskRepository, IReviewRepository reviewRepository)
     {
         DiskRepository = diskRepository;
+        ReviewRepository = reviewRepository;
     }
 
     public IDiskRepository DiskRepository { get; }
+    public IReviewRepository ReviewRepository { get; }
 
-    public async Task Handle(CreateReviewCommandRequest request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(CreateReviewCommandRequest request, CancellationToken cancellationToken)
     {
         var disk = await DiskRepository.GetDiskByFilterAsync(x =>
             x.Id == request.DiskId &&
@@ -29,10 +31,12 @@ public class CreateReviewCommandHandler : ICommandHandler<CreateReviewCommandReq
             Content = request.Content,
             Note = request.Note,
         };
-        
+
         disk.AddReview(review);
+        ReviewRepository.AddReview(review);
         review.AddDomainEvent(new NewReviewCreatedDomainEvent(review, disk.Id));
-        
+
         await DiskRepository.UpdateDiskAsync(disk);
+        return review.Id;
     }
 }

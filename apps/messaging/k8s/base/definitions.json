@@ -8,11 +8,27 @@
       "auto_delete": false,
       "internal": false,
       "arguments": {}
+    },
+    {
+      "name": "mydisk.dead-letter",
+      "vhost": "/",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
     }
   ],
   "queues": [
     {
       "name": "mydisk.review.created",
+      "vhost": "/",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": { "x-queue-type": "quorum" }
+    },
+    {
+      "name": "mydisk.dead-letter",
       "vhost": "/",
       "durable": true,
       "auto_delete": false,
@@ -27,6 +43,27 @@
       "destination_type": "queue",
       "routing_key": "review.created",
       "arguments": {}
+    },
+    {
+      "source": "mydisk.dead-letter",
+      "vhost": "/",
+      "destination": "mydisk.dead-letter",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {}
+    }
+  ],
+  "policies": [
+    {
+      "name": "mydisk-dead-letter",
+      "vhost": "/",
+      "pattern": "^mydisk\\.review\\.created$",
+      "apply-to": "queues",
+      "priority": 0,
+      "definition": {
+        "dead-letter-exchange": "mydisk.dead-letter",
+        "delivery-limit": 5
+      }
     }
   ]
 }

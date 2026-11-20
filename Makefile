@@ -13,6 +13,7 @@ ENV ?= local
 K8S_OVERLAY = deploy/k8s/$(ENV)
 IMAGE_NAME = mydisk-api:dev
 MIGRATIONS_IMAGE_NAME = mydisk-api-migrations:dev
+WORKER_IMAGE_NAME = mydisk-worker:dev
 GRAFANA_IMAGE_NAME = mydisk-grafana:1.0.0
 FRONTEND_IMAGE_NAME = mydisk-frontend:dev
 CLUSTER_NAME ?= mydisk
@@ -25,7 +26,11 @@ GRAFANA_DEPLOYMENT = deployment/mydisk-grafana
 FRONTEND_DEPLOYMENT = deployment/mydisk-frontend
 KEYCLOAK_DEPLOYMENT = deployment/keycloak
 MESSAGING_STATEFULSET = statefulset/mydisk-messaging
+WORKER_DEPLOYMENT = deployment/mydisk-worker
 APP_DEPLOYMENTS = $(API_DEPLOYMENT) $(FRONTEND_DEPLOYMENT)
+ifeq ($(ENV),local)
+APP_DEPLOYMENTS += $(WORKER_DEPLOYMENT)
+endif
 ROLLOUT_TIMEOUT ?= 5m
 ROLLOUT_AUTO_UNDO ?= 1
 ROLLOUT_BROKEN_PATH ?= /health/broken
@@ -58,7 +63,7 @@ INFRA_CONTEXT ?= $(AKS_CLUSTER_NAME)
 .PHONY: help test-unit frontend-restore frontend-dev frontend-check k8s-preflight k8s-smoke \
         local-https local-keycloak-network k8s-init-tls cluster-https-port cluster-create cluster-start cluster-stop cluster-delete cluster-reset cluster-status cluster-load \
         k8s-help k8s-init-secrets k8s-build k8s-render k8s-apply k8s-delete \
-        k8s-status k8s-restart k8s-logs k8s-logs-db k8s-logs-migrations k8s-logs-keycloak k8s-forward-api k8s-forward-frontend k8s-forward-db k8s-smoke-keycloak k8s-up k8s-down \
+        k8s-status k8s-restart k8s-logs k8s-logs-worker k8s-logs-db k8s-logs-migrations k8s-logs-keycloak k8s-forward-api k8s-forward-frontend k8s-forward-db k8s-smoke-keycloak k8s-up k8s-down \
         k8s-push k8s-load-test k8s-watch-hpa dev-up dev-down \
         k8s-rollout-ok k8s-rollout-broken k8s-rollout-undo k8s-rollout-history k8s-watch-rollout k8s-watch-traffic \
         k8s-release-overlay k8s-deploy k8s-rollout-check \
@@ -111,12 +116,13 @@ help:
 	@echo "  k8s-apply           Run migrations, roll out API/frontend, then update ingress"
 	@echo "  k8s-delete          Delete overlay resources"
 	@echo "  k8s-render          Render and preview Kustomize manifests without applying"
-	@echo "  k8s-build           Build local API, migrations, frontend and Grafana images"
+	@echo "  k8s-build           Build local API, migrations, worker, frontend and Grafana images"
 	@echo "  k8s-init-secrets    Generate missing API, Keycloak and RabbitMQ credentials in gitignored env files (local only)"
 	@echo "  k8s-status          Display status of pods, services, statefulsets, and PVCs"
 	@echo "  k8s-smoke           Check the frontend and API through the HTTPS ingress"
-	@echo "  k8s-restart         Rollout restart the API and frontend deployments"
+	@echo "  k8s-restart         Rollout restart the API, worker and frontend deployments"
 	@echo "  k8s-logs            Stream logs from the API pods"
+	@echo "  k8s-logs-worker     Stream logs from the worker pods (outbox publisher and review moderation)"
 	@echo "  k8s-logs-db         Stream logs from the PostgreSQL pod"
 	@echo "  k8s-logs-migrations Show logs from the migrations Job"
 	@echo "  k8s-logs-keycloak   Stream logs from the Keycloak pod"
@@ -179,7 +185,7 @@ cluster-status:
 # Load local Docker images into the k3d cluster nodes
 cluster-load:
 	@echo "Importing images into cluster $(CLUSTER_NAME)..."
-	@k3d image import $(IMAGE_NAME) $(MIGRATIONS_IMAGE_NAME) $(GRAFANA_IMAGE_NAME) $(FRONTEND_IMAGE_NAME) -c $(CLUSTER_NAME)
+	@k3d image import $(IMAGE_NAME) $(MIGRATIONS_IMAGE_NAME) $(WORKER_IMAGE_NAME) $(GRAFANA_IMAGE_NAME) $(FRONTEND_IMAGE_NAME) -c $(CLUSTER_NAME)
 
 # -----------------------------------------------------------------------------
 # Tests
@@ -234,6 +240,7 @@ k8s-init-secrets:
 k8s-build:
 	docker build --target api -t $(IMAGE_NAME) $(API_DIR)
 	docker build --target migrations -t $(MIGRATIONS_IMAGE_NAME) $(API_DIR)
+	docker build --target worker -t $(WORKER_IMAGE_NAME) $(API_DIR)
 	docker build -t $(GRAFANA_IMAGE_NAME) $(GRAFANA_DIR)
 	docker build -t $(FRONTEND_IMAGE_NAME) $(FRONTEND_DIR)
 
@@ -348,7 +355,7 @@ k8s-rollout-check:
 	done; \
 	if [ "$$status" != 0 ]; then \
 		echo "Application rollout failed; restoring changed deployments with an existing baseline."; \
-		$(KUBECTL) get rs,pods -l 'app in (mydisk-api,mydisk-frontend)'; \
+		$(KUBECTL) get rs,pods -l 'app in (mydisk-api,mydisk-worker,mydisk-frontend)'; \
 		$(KUBECTL) get events --field-selector reason=Unhealthy --sort-by=.lastTimestamp | tail -n 5; \
 		for deployment in $(APP_DEPLOYMENTS); do \
 			baseline=; \
@@ -416,6 +423,10 @@ k8s-restart:
 # Stream logs from API deployment
 k8s-logs:
 	$(KUBECTL) logs -l app=mydisk-api -f --tail=100
+
+# Stream logs from the worker pods
+k8s-logs-worker:
+	$(KUBECTL) logs -l app=mydisk-worker -f --tail=100
 
 # Stream logs from PostgreSQL statefulset
 k8s-logs-db:

@@ -68,23 +68,6 @@ public partial class DiskDetail : IAsyncDisposable
     private Task OnVisibleChangedAsync(bool visible) =>
         !visible && !_disposed ? RequestCloseAsync() : Task.CompletedTask;
 
-    private static string StatusLabel(ReviewStatus status) => status switch
-    {
-        ReviewStatus.New => "Nouveau",
-        ReviewStatus.Pending => "En attente",
-        ReviewStatus.Published => "Publié",
-        ReviewStatus.Archived => "Archivé",
-        _ => "Inconnu"
-    };
-
-    private static Color StatusColor(ReviewStatus status) => status switch
-    {
-        ReviewStatus.Published => Color.Success,
-        ReviewStatus.Pending => Color.Warning,
-        ReviewStatus.Archived => Color.Default,
-        _ => Color.Info
-    };
-
     public async ValueTask DisposeAsync()
     {
         _disposed = true;

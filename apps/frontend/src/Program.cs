@@ -26,6 +26,7 @@ if (authentication.IsConfigured)
         options.AuthenticationPaths.LogOutSucceededPath = RemoteAuthenticationDefaults.LoginPath;
     }).AddAccountClaimsPrincipalFactory<RoleClaimsPrincipalFactory>();
     builder.Services.AddScoped<DiskApiClient>();
+    builder.Services.AddScoped<ReviewModerationWatcher>();
 }
 
 builder.Services.AddMudServices();

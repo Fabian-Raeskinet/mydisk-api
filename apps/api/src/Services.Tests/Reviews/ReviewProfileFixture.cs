@@ -25,7 +25,7 @@ public class ReviewProfileFixture
            Title = review.Title,
            Content = review.Content,
            Note = review.Note,
-           Status = ReviewStatus.New,
+           Status = ReviewStatus.Pending,
            PublishedDate = review.PublishedDate
         };
 

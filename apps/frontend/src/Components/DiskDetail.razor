@@ -117,9 +117,10 @@
                                                       Wrap="Wrap.Wrap"
                                                       Spacing="2">
                                                 <MudChip T="string"
-                                                         Color="@StatusColor(review.Status)"
+                                                         Color="@ReviewStatusDisplay.Color(review.Status)"
+                                                         Icon="@(review.Status == ReviewStatus.Pending ? Icons.Material.Filled.HourglassTop : null)"
                                                          Size="Size.Small">
-                                                    @StatusLabel(review.Status)
+                                                    @ReviewStatusDisplay.Label(review.Status)
                                                 </MudChip>
                                                 @if (review.PublishedDate.Year > 1)
                                                 {
@@ -183,7 +184,7 @@
                                                       Variant="Variant.Outlined"
                                                       Disabled="Busy" />
                                         <MudText Typo="Typo.body2" Color="Color.Secondary">
-                                            Les nouveaux avis ont le statut « Nouveau ». L’API ne propose pas encore de publication.
+                                            Chaque avis est vérifié automatiquement avant d’être publié.
                                         </MudText>
                                         <MudButton ButtonType="ButtonType.Submit"
                                                    Color="Color.Primary"

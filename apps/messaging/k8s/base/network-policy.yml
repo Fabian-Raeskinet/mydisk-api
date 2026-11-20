@@ -12,7 +12,7 @@ spec:
     - from:
         - podSelector:
             matchLabels:
-              app: mydisk-api
+              app: mydisk-worker
       ports:
         - protocol: TCP
           port: 5672

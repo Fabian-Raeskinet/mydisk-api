@@ -122,5 +122,45 @@ public class ReviewFixture
                 sut.Status.Should().Be(ReviewStatus.Archived);
             }
         }
+
+        public class ModerationFixture
+        {
+            [Fact]
+            public void Should_Be_Pending_When_Created()
+            {
+                new Review().Status.Should().Be(ReviewStatus.Pending);
+            }
+
+            [Fact]
+            public void Should_Publish_PendingReview()
+            {
+                var sut = new Review();
+
+                sut.Publish();
+
+                sut.Status.Should().Be(ReviewStatus.Published);
+            }
+
+            [Fact]
+            public void Should_Reject_PendingReview()
+            {
+                var sut = new Review();
+
+                sut.Reject();
+
+                sut.Status.Should().Be(ReviewStatus.Rejected);
+            }
+
+            [Fact]
+            public void Should_Throw_When_Moderating_NonPendingReview()
+            {
+                var sut = new Review();
+                sut.Archive();
+
+                var act = () => sut.Publish();
+
+                act.Should().Throw<InvalidOperationException>();
+            }
+        }
     }
 }

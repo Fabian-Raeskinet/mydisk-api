@@ -8,6 +8,7 @@ resources:
   - api-ingress.yml
   - same-origin-api.yml
   - api-migrations-job.yml
+  - worker-deployment.yml
   - postgres-statefulset.yml
   - postgres-service.yml
   - postgres-network-policy.yml
@@ -29,6 +30,9 @@ configMapGenerator:
   - name: api-config
     literals:
       - ASPNETCORE_ENVIRONMENT=Production
+  - name: worker-config
+    literals:
+      - DOTNET_ENVIRONMENT=Production
   - name: migrations-config
     literals:
       - SEED_DATA=false

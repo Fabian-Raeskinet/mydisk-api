@@ -18,6 +18,13 @@ images:
 
 patches:
   - path: api-ingress-tls.yml
+  # No RabbitMQ in the cloud yet: reviews stay pending until the worker is deployed there.
+  - patch: |-
+      $patch: delete
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: mydisk-worker
   - target:
       kind: Deployment
       name: mydisk-api

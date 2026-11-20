@@ -19,7 +19,7 @@ public sealed class AuthorResult
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter))]
-public enum ReviewStatus { New = 1, Pending = 2, Published = 3, Archived = 4 }
+public enum ReviewStatus { New = 1, Pending = 2, Published = 3, Archived = 4, Rejected = 5 }
 
 public sealed class ReviewResult
 {
@@ -30,6 +30,8 @@ public sealed class ReviewResult
     public string? Title { get; set; }
     public double Note { get; set; }
 }
+
+public sealed record CreateReviewResult(Guid Id, ReviewStatus Status);
 
 public sealed record AdminReviewResult(
     Guid Id,

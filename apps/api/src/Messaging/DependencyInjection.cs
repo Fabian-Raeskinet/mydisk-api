@@ -9,12 +9,9 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddRabbitMqMessaging(this IServiceCollection services, IConfiguration configuration)
     {
-        var section = configuration.GetSection(RabbitMqOptions.SectionName);
-        if (string.IsNullOrWhiteSpace(section[nameof(RabbitMqOptions.HostName)]))
-            return services;
-
         services.AddOptions<RabbitMqOptions>()
-            .Bind(section)
+            .Bind(configuration.GetSection(RabbitMqOptions.SectionName))
+            .Validate(o => !string.IsNullOrWhiteSpace(o.HostName), "RabbitMq:HostName is required.")
             .Validate(o => !string.IsNullOrWhiteSpace(o.UserName) && !string.IsNullOrEmpty(o.Password),
                 "RabbitMq:UserName and RabbitMq:Password are required.")
             .Validate(o => o.Port is > 0 and <= 65535, "RabbitMq:Port must be between 1 and 65535.")
@@ -31,11 +28,13 @@ public static class DependencyInjection
                 VirtualHost = options.VirtualHost,
                 UserName = options.UserName,
                 Password = options.Password,
-                ClientProvidedName = "mydisk-api",
+                ClientProvidedName = "mydisk-worker",
                 AutomaticRecoveryEnabled = false
             };
         });
+
         services.AddHostedService<RabbitMqOutboxPublisher>();
+        services.AddHostedService<ReviewCreatedConsumer>();
 
         return services;
     }

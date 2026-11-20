@@ -16,6 +16,9 @@ spec:
         - podSelector:
             matchLabels:
               app: mydisk-api-migrations
+        - podSelector:
+            matchLabels:
+              app: mydisk-worker
       ports:
         - protocol: TCP
           port: 5432
